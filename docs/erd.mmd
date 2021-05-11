@@ -1,0 +1,166 @@
+erDiagram
+  Deelnemer ||--O{ Inschrijving: schrijft-in
+  Cursuslocatie ||--|| Adres: bevind-zich-in
+  Adres }O--|| Provincie: bevindt-zich-in
+  Cursus ||--O{ Inschrijving: heeft
+  Cursus }O--O| Cursuslocatie: "vindt plaats op"
+  Deelnemer ||--O| IndividueleFiche: heeft
+  Deelnemer |O--O| Organisatie: begeleidende-dienst
+  Deelnemer |O--|| FolderVoorkeur: voorkeur
+  Deelnemer ||--|| Adres: woont
+  Vrijwilliger |O--O| Adres: woont
+  Organisatie |O--|| FolderVoorkeur: voorkeur
+  Organisatie |O--|| Adres: bevind-zich-in
+  ExtraPersoon |O--|| Adres: woont
+  Deelnemer ||--O| Contactpersoon: heeft
+  Contactpersoon }O--O| Organisatie: werkt-in
+  Deelnemer |O--|| Persoon: "is een"
+  Deelnemer ||--O{ Deelname: ""
+  Activiteit ||--O{ Deelname: "Heeft"
+  Vrijwilliger |O--|| Persoon: "is een"
+  Organisatie }O--O{ Aanbod: "heeft"
+  Vrijwilliger }O--O{ Cursus: "begeleid"
+  Cursus }O--O| Campagne: "hoort bij"
+  Cursus ||--|{ Activiteit: "bestaat uit"
+
+  IndividueleFiche {
+    boolean medicatie
+    tekst medicatieOpmerking
+    tekst alcoholgebruik
+    tekst omgaanMetGeld
+    tekst hygiene
+    tekst vervoersmogelijkheden
+    boolean migratieachtergrond
+    tekst migratieachtergrondOpmerking
+    boolean armoedeAchtergrond
+    tekst financieleBijzonderheden
+    tekst verbaalVermogen
+    tekst inzichtVermogen
+    tekst lezenEnSchrijven
+    tekst praktischVermogen
+    tekst opmerking
+    boolean gerechterlijkToezicht
+    boolean gerechterlijkToelichting
+  }
+
+  ExtraPersoon {
+    tekst naam
+    tekst TAV
+    tekst opmerking
+  }
+
+  Adres {
+    tekst naam
+    tekst adres
+    tekst gemeente
+    tekst postcode
+    tekst plaats
+  }
+
+  Provincie {
+    tekst naam
+  }
+
+  Inschrijving {
+    datumtijd tijdstip
+    datumtijd bevestigingsTijdstip
+    datumtijd vervoersbriefTijdstip
+    tekst uittrekselnummers
+    boolean toestemmingFotos
+    boolean wachtlijst
+  }
+
+  Deelname {
+    nummer effectieveDeelnamePerunage
+    boolean annulatie
+  }
+
+  Cursuslocatie {
+    tekst naam
+  }
+
+  Organisatie {
+    tekst naam
+    tekst emailadres
+    tekst opmerking
+    tekst doelgroep
+    tekst soort
+  }
+
+  Aanbod {
+    tekst categorie
+    tekst naam
+  }
+
+  FolderVoorkeur {
+    boolean deKei
+    boolean keiJongNietBuso
+    boolean keiJongBuso
+    boolean zomervakantie
+    boolean wintervakantie
+  }
+
+  Contactpersoon {
+  }
+  
+  Deelnemer {
+    enum woonsituatie
+    tekst woonsituatieOpmerking
+    enum werksituatie
+    tekst werksituatieOpmerking
+    enum voedingswens
+    tekst voedingswensOpmerking
+  }
+
+  Cursus {
+    tekst cursusnummer
+    tekst naam
+    enum doelgroep
+    enum soort
+    boolean overnachting
+  }
+
+  Vakantie {
+    tekst vakantienummer
+    tekst bestemming
+    nummer jaar
+    enum seizoen
+    enum land
+    nummer prijs
+    nummer vosal
+    nummer saldo
+    enum verblijf
+    enum vervoer
+  }
+
+  Activiteit {
+    datumtijd van
+    datumtijd tot    
+    nummer vormingsuren
+  }
+
+  Campagne {
+    naam
+  }
+
+  Vrijwilliger {
+    tekst opmerking
+    boolean begeleidtVakanties
+    boolean begeleidtCursus
+    enum communicatie
+  }
+
+  Persoon {
+    tekst voornaam
+    tekst achternaam
+    tekst emailadres
+    datum geboortedatum
+    tekst geboorteplaats
+    enum geslacht
+    tekst rekeningnummer
+    tekst rijksregisternummer
+    tekst telefoonnummer
+    tekst gsmNummer
+    tekst emailadres
+    enum communicatievoorkeur
+  }
