@@ -1,7 +1,7 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: ['packages/backend/tsconfig.src.json', 'packages/backend/tsconfig.test.json', 'packages/frontend/tsconfig.src.json'],
+    project: ['packages/backend/tsconfig.src.json', 'packages/backend/tsconfig.test.json', 'packages/frontend/tsconfig.json', 'packages/shared/tsconfig.json'],
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
@@ -20,5 +20,6 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off'
   },
 };

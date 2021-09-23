@@ -1,0 +1,8 @@
+{
+  "name": "@kei-crm/shared",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "author": "",
+  "license": "ISC"
+}

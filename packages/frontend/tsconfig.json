@@ -1,8 +1,12 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.src.json"
-    }
-  ]
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["node"],
+    "emitDecoratorMetadata": false,
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
+  "references": [ { "path": "../shared" } ],
 }

@@ -1,26 +1,32 @@
 {
   "name": "@kei-crm/backend",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "nodemon -r source-map-support/register dist/main.js",
+    "start": "nodemon -r dotenv/config -r source-map-support/register dist/main.js",
     "test": "mocha"
   },
   "dependencies": {
-    "@nestjs/common": "^7.6.15",
-    "@nestjs/core": "^7.6.15",
-    "@nestjs/platform-express": "^7.6.15",
+    "@kei-crm/frontend": "0.1.0",
+    "@kei-crm/shared": "0.1.0",
+    "@nestjs/common": "^8.0.6",
+    "@nestjs/core": "^8.0.6",
+    "@nestjs/platform-express": "^8.0.6",
+    "@nestjs/serve-static": "^2.2.2",
+    "@prisma/client": "^3.1.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.6"
+    "rxjs": "^7.3.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^7.6.0",
-    "@nestjs/schematics": "^7.3.0",
-    "@nestjs/testing": "^7.6.15",
-    "nodemon": "^2.0.7"
+    "@nestjs/cli": "^8.1.1",
+    "@nestjs/schematics": "^8.0.3",
+    "@nestjs/testing": "^8.0.6",
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.12",
+    "prisma": "^3.1.1"
   }
 }

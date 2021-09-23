@@ -1,10 +1,27 @@
+import path from 'path';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
+import { AppController } from './personen.controller';
+import { PersoonService } from './services/persoon.service';
+import { DBService } from './services/db.service';
+
+const rootPath = path.resolve(
+  __dirname,
+  '..',
+  'node_modules',
+  '@kei-crm',
+  'frontend',
+  'dist',
+);
 @Module({
-  imports: [],
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath,
+      exclude: ['/api*'],
+    }),
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [PersoonService, DBService],
 })
 export class AppModule {}

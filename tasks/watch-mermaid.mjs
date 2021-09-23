@@ -5,13 +5,13 @@ import childProcess from 'child_process';
 
 const resolveDocs = path.resolve.bind(path, path.dirname(fileURLToPath(import.meta.url)), '..', 'docs');
 
-const dirents = await fs.promises.readdir(resolveDocs(), { withFileTypes: true });
+const entries = await fs.promises.readdir(resolveDocs(), { withFileTypes: true });
 
-dirents.forEach((dirent) => {
-  if (dirent.isFile() && dirent.name.endsWith('.mmd')) {
-    console.log(`Watching ${dirent.name} 👀`);
-    fs.watchFile(resolveDocs(dirent.name), { interval: 500 }, () => {
-      console.log(`👀 ${dirent.name} changed, running mermaidjs`);
+entries.forEach((entry) => {
+  if (entry.isFile() && entry.name.endsWith('.mmd')) {
+    console.log(`Watching ${entry.name} 👀`);
+    fs.watchFile(resolveDocs(entry.name), { interval: 500 }, () => {
+      console.log(`👀 ${entry.name} changed, running mermaid-js`);
       runMermaid();
     });
   }

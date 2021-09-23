@@ -1,0 +1,39 @@
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/dist": true,
+    "**/dist-test": true,
+    "**/*.tsbuildinfo": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "cSpell.words": [
+    "achternaam",
+    "Acties",
+    "communicatievoorkeur",
+    "cursus",
+    "Cursussen",
+    "emailadres",
+    "geboortedatum",
+    "geboorteplaats",
+    "geslacht",
+    "Insertable",
+    "Naam",
+    "nestjs",
+    "Nummer",
+    "onbekend",
+    "Opslaan",
+    "Personen",
+    "Persoon",
+    "rekeningnummer",
+    "rijksregisternummer",
+    "telefoonnummer",
+    "toevoegen",
+    "Upsertable",
+    "voornaam",
+    "wijzigen"
+  ],
+}
