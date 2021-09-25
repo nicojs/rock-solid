@@ -1,12 +1,13 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { html, LitElement } from 'lit';
+import { html, LitElement, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { InputType } from '.';
+import { InputType, SelectDescription } from './input-description';
 import {
   CheckboxInputDescription,
   InputDescription,
   StringInputDescription,
 } from './input-description';
+import { capitalize } from '../shared';
 
 @customElement('kei-reactive-form-control')
 export class ReactiveFormControl<TEntity> extends LitElement {
@@ -26,33 +27,50 @@ export class ReactiveFormControl<TEntity> extends LitElement {
 
   override render() {
     return html`<div class="mb-3 row">
-      <label for="${this.control.name}" class="col-sm-2 col-form-label"
-        >${this.control.label ?? this.control.name}</label
-      >
-      <div class="col-sm-10">
+      <div class="col-lg-2 col-md-4">
+        ${this.control.type !== InputType.checkbox
+          ? html`<label for="${this.control.name}" class="col-form-label"
+              >${this.control.label ?? capitalize(this.control.name)}</label
+            >`
+          : ''}
+      </div>
+      <div class="col-lg-10 col-md-8">
         ${this.renderInput(this.control)}
         <div class="invalid-feedback">${this.validationMessage}</div>
       </div>
     </div>`;
   }
 
-  private renderInput(control: InputDescription<TEntity>) {
+  private renderInput(control: InputDescription<TEntity>): TemplateResult {
     switch (control.type) {
       case InputType.checkbox:
         return this.renderCheckbox(control);
       case InputType.text:
       case InputType.email:
+      case InputType.tel:
         return this.renderStringInput(control);
+      case InputType.select:
+        return this.renderSelect(control);
     }
   }
 
   private renderCheckbox(control: CheckboxInputDescription<TEntity>) {
-    return html`<input
-      type="checkbox"
-      class="form-control"
-      ?required="${control.validators?.required}"
-      ?checked="${this.entity[control.name]}"
-    />`;
+    return html`<div class="form-check">
+      <input
+        id="${control.name}"
+        type="checkbox"
+        class="form-check-input"
+        ?required="${control.validators?.required}"
+        ?checked="${this.entity[control.name]}"
+        @change="${(e: Event) => {
+          const inputEl = e.target as HTMLInputElement;
+          (this.entity[control.name] as unknown as boolean) = inputEl.checked;
+        }}"
+      />
+      <label for="${this.control.name}" class="form-check-label"
+        >${this.control.label ?? capitalize(this.control.name)}</label
+      >
+    </div> `;
   }
 
   private renderStringInput(control: StringInputDescription<TEntity>) {
@@ -61,7 +79,9 @@ export class ReactiveFormControl<TEntity> extends LitElement {
       class="form-control"
       id="${control.name}"
       value="${this.entity[control.name]}"
-      ?required="${control.validators?.required}"
+      ?required=${control.validators?.required}
+      placeholder=${ifDefined(control.placeholder)}
+      pattern="${ifDefined(control.validators?.pattern)}"
       minlength="${ifDefined(control.validators?.minLength)}"
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
@@ -77,18 +97,25 @@ export class ReactiveFormControl<TEntity> extends LitElement {
     this.validationMessage = inputEl.validationMessage;
   }
 
-  // private renderSelect(control: EnumInputDescription<TEntity>) {
-  //   return html`<select class="form-select">
-  //     ${control.items.map(
-  //       (item) =>
-  //         html`<option
-  //           value="item"
-  //           ?selected="${(item as unknown as TEntity[keyof TEntity]) ===
-  //           this.entity[control.name]}"
-  //         >
-  //           ${item}
-  //         </option>`,
-  //     )}
-  //   </select>`;
-  // }
+  private renderSelect(control: SelectDescription<TEntity>) {
+    return html`<select
+      class="form-select"
+      @change="${(e: Event) => {
+        const selectEl = e.target as HTMLSelectElement;
+        (this.entity[control.name] as unknown as string) = selectEl.value;
+      }}"
+    >
+      ${control.items.map(
+        (item) =>
+          html`<option
+            value="${item}"
+            ?selected="${(item as unknown as TEntity[keyof TEntity]) ===
+            this.entity[control.name]}"
+            ?required="${control.validators?.required}"
+          >
+            ${item}
+          </option>`,
+      )}
+    </select>`;
+  }
 }

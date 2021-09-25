@@ -1,10 +1,20 @@
-import { Persoon } from '@kei-crm/shared';
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
-import { PersoonService } from './services/persoon.service';
+import { Persoon, UpsertablePersoon } from '@kei-crm/shared';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { PersoonMapper } from './services/persoon.mapper';
 
 @Controller({ path: 'personen' })
 export class AppController {
-  constructor(private readonly persoonService: PersoonService) {}
+  constructor(private readonly persoonService: PersoonMapper) {}
 
   @Get()
   getAll(): Promise<Persoon[]> {
@@ -19,5 +29,20 @@ export class AppController {
     } else {
       throw new NotFoundException();
     }
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() persoon: UpsertablePersoon) {
+    return this.persoonService.createUser(persoon);
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async update(
+    @Param('id') id: string,
+    @Body() persoon: UpsertablePersoon,
+  ): Promise<void> {
+    await this.persoonService.updateUser({ where: { id: +id }, data: persoon });
   }
 }

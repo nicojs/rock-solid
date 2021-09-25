@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { AppController } from './personen.controller';
-import { PersoonService } from './services/persoon.service';
+import { PersoonMapper } from './services/persoon.mapper';
 import { DBService } from './services/db.service';
 
 const rootPath = path.resolve(
@@ -22,6 +22,6 @@ const rootPath = path.resolve(
     }),
   ],
   controllers: [AppController],
-  providers: [PersoonService, DBService],
+  providers: [PersoonMapper, DBService],
 })
 export class AppModule {}

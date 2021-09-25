@@ -11,7 +11,6 @@ generator client {
 }
 
 model Persoon {
-  @@map("persoon")
   id                   Int                  @id @default(autoincrement())
   voornaam             String?              @db.VarChar(255)
   achternaam           String               @db.VarChar(255)
@@ -24,17 +23,64 @@ model Persoon {
   telefoonnummer       String?              @db.VarChar(255)
   gsmNummer            String?              @db.VarChar(255)
   communicatievoorkeur Communicatievoorkeur @default(post)
+  type                 PersoonType          @default(deelnemer)
+
+  // Deelnemer
+  woonsituatie          Woonsituatie @default(onbekend)
+  woonsituatieOpmerking String?
+  werksituatie          Werksituatie @default(onbekend)
+  werksituatieOpmerking String?
+  voedingswens          Voedingswens @default(geen)
+  voedingswensOpmerking String?
+
+  // Vrijwilliger
+  vrijwilligerOpmerking String?
+  begeleidtVakanties    Boolean @default(false)
+  begeleidtCursus       Boolean @default(false)
+}
+
+enum PersoonType {
+  deelnemer
+  vrijwilliger
 }
 
 enum Geslacht {
-  @@map("geslacht")
   onbekend
   man
   vrouw
+
+  @@map("geslacht")
 }
 
 enum Communicatievoorkeur {
-  @@map("communicatievoorkeur")
   post
   email
+
+  @@map("communicatievoorkeur")
+}
+
+enum Woonsituatie {
+  onbekend
+  thuis
+  residentieel
+
+  @@map("woonsituatie")
+}
+
+enum Werksituatie {
+  onbekend
+  dagcentrum
+  begeleidwerkOfVrijwilligerswerk
+  maatwerkbedrijf
+  reguliereArbeidscircuit
+  werkzoekend
+
+  @@map("werksituatie")
+}
+
+enum Voedingswens {
+  geen
+  vegetarisch
+
+  @@map("voedingswens")
 }

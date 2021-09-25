@@ -11,13 +11,27 @@ export class Link extends LitElement {
   @property({ type: Boolean })
   public btn = false;
 
+  @property({ type: Boolean })
+  public btnPrimary = false;
+
+  @property({ type: Boolean })
+  public btnSuccess = false;
+
+  @property({ type: Boolean })
+  public btnSecondary = false;
+
   @property()
   public href = '';
 
   override render() {
     return html`
       <a
-        class="${classMap({ btn: this.btn })}"
+        class="${classMap({
+          btn: this.btn,
+          'btn-primary': this.btnPrimary,
+          'btn-success': this.btnSuccess,
+          'btn-secondary': this.btnSecondary,
+        })}"
         href="${this.href}"
         @click="${this.linkClick}"
       >

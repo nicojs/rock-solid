@@ -49,7 +49,9 @@ export class KeiCrmApp extends LitElement {
               entityId="${this.route.path[2]}"
             ></kei-personen-edit>`;
           case 'new':
-            return html`<kei-personen-edit></kei-personen-edit>`;
+            return html`<kei-personen-edit
+              type="${this.route.path[2]}"
+            ></kei-personen-edit>`;
           default:
             return html`<kei-personen></kei-personen>`;
         }

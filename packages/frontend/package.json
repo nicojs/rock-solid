@@ -25,5 +25,8 @@
     "webpack-cli": "^4.8.0",
     "webpack-livereload-plugin": "^3.0.2",
     "webpack-merge": "^5.8.0"
+  },
+  "dependencies": {
+    "bootstrap-icons": "^1.5.0"
   }
 }

@@ -1,5 +1,5 @@
-import { Persoon } from './persoon';
+import { BasePersoon, UpsertablePersoon } from './persoon';
 
 export interface RestRoutes {
-  personen: Persoon;
+  personen: { entity: BasePersoon; upsertableEntity: UpsertablePersoon };
 }
