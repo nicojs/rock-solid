@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service';
 import * as db from '@prisma/client';
 import type { Prisma } from '@prisma/client';
-import { Persoon, UpsertablePersoon } from '@kei-crm/shared';
+import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
 import { purgeNulls } from './mapper-utils';
 
 /**
@@ -22,14 +22,21 @@ export class PersoonMapper {
     return this.maybeToPersoon(persoon);
   }
 
-  async getAll(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.PersoonWhereUniqueInput;
-    where?: Prisma.PersoonWhereInput;
-    orderBy?: Prisma.PersoonOrderByWithRelationInput;
-  }): Promise<Persoon[]> {
-    const people = await this.db.persoon.findMany(params);
+  async getAll(filter: PersoonFilter): Promise<Persoon[]> {
+    let people;
+    switch (filter.searchType) {
+      case 'persoon':
+        const { searchType, ...where } = filter;
+        people = await this.db.persoon.findMany({ where });
+        break;
+      case 'text':
+        people = await this.db.$queryRaw<
+          db.Persoon[]
+        >`SELECT * FROM persoon WHERE concat(voornaam, ' ', achternaam) ILIKE ${`%${filter.search}%`} AND type = ${
+          filter.type
+        };`;
+        break;
+    }
     return people.map(this.toPersoon);
   }
 

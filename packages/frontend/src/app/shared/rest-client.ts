@@ -4,8 +4,9 @@ import { HttpStatus } from './http-status';
 export class RestClient {
   async getAll<TEntityName extends keyof RestRoutes>(
     entityName: TEntityName,
+    query?: Record<string, unknown>,
   ): Promise<RestRoutes[TEntityName]['entity'][]> {
-    const response = await fetch(`/api/${entityName}`);
+    const response = await fetch(`/api/${entityName}${toQueryString(query)}`);
     return response.json();
   }
 
@@ -53,3 +54,15 @@ export class RestClient {
 }
 
 export const restClient = new RestClient();
+
+function toQueryString(query: Record<string, unknown> | undefined) {
+  if (query) {
+    return `?${Object.entries(query)
+      .map(
+        ([key, val]) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(String(val))}`,
+      )
+      .join('&')}`;
+  }
+  return '';
+}

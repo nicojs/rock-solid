@@ -1,4 +1,4 @@
-import { Persoon, UpsertablePersoon } from '@kei-crm/shared';
+import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
 import {
   Body,
   Controller,
@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { PersoonMapper } from './services/persoon.mapper';
 
@@ -17,8 +18,8 @@ export class AppController {
   constructor(private readonly persoonService: PersoonMapper) {}
 
   @Get()
-  getAll(): Promise<Persoon[]> {
-    return this.persoonService.getAll({});
+  getAll(@Query() filter: PersoonFilter): Promise<Persoon[]> {
+    return this.persoonService.getAll(filter);
   }
 
   @Get(':id')

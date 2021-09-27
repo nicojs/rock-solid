@@ -11,6 +11,7 @@ generator client {
 }
 
 model Persoon {
+  @@map("persoon")
   id                   Int                  @id @default(autoincrement())
   voornaam             String?              @db.VarChar(255)
   achternaam           String               @db.VarChar(255)
@@ -42,6 +43,8 @@ model Persoon {
 enum PersoonType {
   deelnemer
   vrijwilliger
+  
+  @@map("persoon_type")
 }
 
 enum Geslacht {
