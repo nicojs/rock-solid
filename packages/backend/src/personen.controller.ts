@@ -14,7 +14,7 @@ import {
 import { PersoonMapper } from './services/persoon.mapper';
 
 @Controller({ path: 'personen' })
-export class AppController {
+export class PersonenController {
   constructor(private readonly persoonService: PersoonMapper) {}
 
   @Get()

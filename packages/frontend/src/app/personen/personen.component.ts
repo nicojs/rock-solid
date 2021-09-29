@@ -61,7 +61,7 @@ export class PersonenComponent extends LitElement {
               type="text"
               ${ref(this.searchRef)}
               class="form-control"
-              placeholder="Zoek op achternaam"
+              placeholder="Zoek op naam"
             />
             <button type="submit" class="btn btn-outline-secondary">
               <kei-icon icon="search"></kei-icon>
@@ -101,7 +101,10 @@ export class PersonenComponent extends LitElement {
               <td>${show(persoon.gsmNummer)}</td>
               <td>${show(persoon.communicatievoorkeur)}</td>
               <td>
-                <kei-link btn btnSecondary href="/personen/edit/${persoon.id}"
+                <kei-link
+                  btn
+                  btnSecondary
+                  href="/${this.type}s/edit/${persoon.id}"
                   ><kei-icon icon="pencil"></kei-icon
                 ></kei-link>
               </td>

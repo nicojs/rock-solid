@@ -11,12 +11,11 @@ generator client {
 }
 
 model Persoon {
-  @@map("persoon")
   id                   Int                  @id @default(autoincrement())
   voornaam             String?              @db.VarChar(255)
   achternaam           String               @db.VarChar(255)
   emailadres           String?              @db.VarChar(255)
-  geboortedatum        DateTime?
+  geboortedatum        DateTime?            @db.Date
   geboorteplaats       String?              @db.VarChar(255)
   geslacht             Geslacht             @default(onbekend)
   rekeningnummer       String?              @db.VarChar(255)
@@ -38,12 +37,51 @@ model Persoon {
   vrijwilligerOpmerking String?
   begeleidtVakanties    Boolean @default(false)
   begeleidtCursus       Boolean @default(false)
+  @@map("persoon")
+}
+
+model Project {
+  id            Int         @id @default(autoincrement())
+  projectnummer String      @unique @db.VarChar(255)
+  type          ProjectType
+  naam          String      @db.VarChar(255)
+
+  // Cursus
+  bedrijfsonderdeel Bedrijfsonderdeel
+  overnachting      Boolean
+
+  activiteiten Activiteit[]
+  @@map("project")
+}
+
+model Activiteit {
+  id           Int       @id @default(autoincrement())
+  project      Project   @relation(fields: [projectId], references: [id])
+  projectId    Int
+  van          DateTime  @db.Date
+  tot          DateTime? @db.Date
+  vormingsuren Decimal?
+
+  @@map("activiteit")
+}
+
+enum ProjectType {
+  cursus
+  vakantie
+
+  @@map("project_type")
+}
+
+enum Bedrijfsonderdeel {
+  keiJongBuSO
+  keiJongNietBuSO
+  deKei
 }
 
 enum PersoonType {
   deelnemer
   vrijwilliger
-  
+
   @@map("persoon_type")
 }
 
@@ -86,4 +124,9 @@ enum Voedingswens {
   vegetarisch
 
   @@map("voedingswens")
+}
+
+enum Doelgroep {
+  werkende
+  buzo
 }

@@ -25,16 +25,16 @@ export class PersoonMapper {
   async getAll(filter: PersoonFilter): Promise<Persoon[]> {
     let people;
     switch (filter.searchType) {
-      case 'persoon':
-        const { searchType, ...where } = filter;
-        people = await this.db.persoon.findMany({ where });
-        break;
       case 'text':
         people = await this.db.$queryRaw<
           db.Persoon[]
         >`SELECT * FROM persoon WHERE concat(voornaam, ' ', achternaam) ILIKE ${`%${filter.search}%`} AND type = ${
           filter.type
         };`;
+        break;
+      default:
+        const { searchType, ...where } = filter;
+        people = await this.db.persoon.findMany({ where });
         break;
     }
     return people.map(this.toPersoon);

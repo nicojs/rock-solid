@@ -46,8 +46,11 @@ export class KeiCrmApp extends LitElement {
 
   private renderMain() {
     switch (this.route?.path[0]) {
-      case 'cursussen':
-        return html`<h2>Cursussen</h2>`;
+      case 'projecten':
+        return html`<kei-projecten
+          .path="${this.route.path.slice(1)}"
+          .query="${this.route.query}"
+        ></kei-projecten>`;
       case 'vrijwilligers':
       case 'deelnemers':
         const persoonType: PersoonType =

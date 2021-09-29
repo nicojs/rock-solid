@@ -106,6 +106,14 @@ const basePersoonFormControls: InputDescription<BasePersoon>[] = [
     items: geslachten,
   },
   {
+    name: 'geboortedatum',
+    type: InputType.date,
+    validators: {
+      min: new Date(1910, 1, 1),
+      max: new Date(new Date().getFullYear() - 5, 1, 1),
+    },
+  },
+  {
     name: 'gsmNummer',
     label: 'GSM',
     type: InputType.tel,

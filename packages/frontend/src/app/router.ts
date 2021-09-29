@@ -1,7 +1,7 @@
 import { Observable, fromEvent, of, merge, Subject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
-type Query = Record<string, string | undefined>;
+export type Query = Record<string, string | undefined>;
 
 export interface RouteParams {
   path: string[];

@@ -4,18 +4,22 @@ export enum InputType {
   tel = 'tel',
   checkbox = 'checkbox',
   select = 'select',
+  date = 'date',
 }
 
 interface Validators {
   required?: boolean;
   minLength?: number;
+  min?: Date;
+  max?: Date;
   pattern?: string;
 }
 
 export type InputDescription<TEntity> =
   | StringInputDescription<TEntity>
   | CheckboxInputDescription<TEntity>
-  | SelectDescription<TEntity>;
+  | SelectDescription<TEntity>
+  | DateInputDescription<TEntity>;
 
 export interface BaseInputDescription {
   label?: string;
@@ -34,6 +38,11 @@ type KeysOfEnums<TEntity> = {
 export interface StringInputDescription<TEntity> extends BaseInputDescription {
   name: KeysOfType<TEntity, string>;
   type: InputType.text | InputType.email | InputType.tel;
+}
+
+export interface DateInputDescription<TEntity> extends BaseInputDescription {
+  name: KeysOfType<TEntity, Date>;
+  type: InputType.date;
 }
 
 export interface CheckboxInputDescription<TEntity>

@@ -1,4 +1,4 @@
-import { RestRoutes } from '@kei-crm/shared';
+import { parse, RestRoutes } from '@kei-crm/shared';
 import { HttpStatus } from './http-status';
 
 export class RestClient {
@@ -7,7 +7,8 @@ export class RestClient {
     query?: Record<string, unknown>,
   ): Promise<RestRoutes[TEntityName]['entity'][]> {
     const response = await fetch(`/api/${entityName}${toQueryString(query)}`);
-    return response.json();
+    const bodyText = await response.text();
+    return parse(bodyText);
   }
 
   async getOne<TEntityName extends keyof RestRoutes>(
@@ -15,7 +16,8 @@ export class RestClient {
     id: string,
   ): Promise<RestRoutes[TEntityName]['entity']> {
     const response = await fetch(`/api/${entityName}/${id}`);
-    return response.json();
+    const bodyText = await response.text();
+    return parse(bodyText);
   }
 
   async update<TEntityName extends keyof RestRoutes>(
@@ -49,7 +51,8 @@ export class RestClient {
     if (response.status !== HttpStatus.CREATED) {
       throw new Error(`Create failed (HTTP status code ${response.status})`);
     }
-    return response.json();
+    const bodyText = await response.text();
+    return parse(bodyText);
   }
 }
 
