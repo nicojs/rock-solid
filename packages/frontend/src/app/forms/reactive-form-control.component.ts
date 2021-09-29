@@ -52,8 +52,9 @@ export class ReactiveFormControl<TEntity> extends LitElement {
       case InputType.text:
       case InputType.email:
       case InputType.tel:
-      case InputType.date:
         return this.renderStringInput(control);
+      case InputType.date:
+        return this.renderDateInput(control);
       case InputType.select:
         return this.renderSelect(control);
     }
@@ -79,17 +80,13 @@ export class ReactiveFormControl<TEntity> extends LitElement {
     </div> `;
   }
 
-  private renderStringInput(
-    control: StringInputDescription<TEntity> | DateInputDescription<TEntity>,
-  ) {
+  private renderStringInput(control: StringInputDescription<TEntity>) {
     return html`<input
       type="${control.type}"
       class="form-control"
       id="${control.name}"
       name="${control.name}"
-      value="${control.type === InputType.date
-        ? toDateString(this.entity[control.name] as unknown as Date)
-        : this.entity[control.name]}"
+      value="${this.entity[control.name]}"
       ?required=${control.validators?.required}
       placeholder=${ifDefined(control.placeholder)}
       min="${ifDefined(toDateString(control.validators?.min))}"
@@ -100,12 +97,27 @@ export class ReactiveFormControl<TEntity> extends LitElement {
       @change="${(e: Event) => {
         this.updateValidationMessage(e);
         const inputEl = e.target as HTMLInputElement;
-        if (control.type === InputType.date) {
-          (this.entity[control.name] as unknown as Date | undefined) =
-            inputEl.valueAsDate ?? undefined;
-        } else {
-          (this.entity[control.name] as unknown as string) = inputEl.value;
-        }
+        (this.entity[control.name] as unknown as string) = inputEl.value;
+      }}"
+    /> `;
+  }
+
+  private renderDateInput(control: DateInputDescription<TEntity>) {
+    return html`<input
+      type="${control.type}"
+      class="form-control"
+      id="${control.name}"
+      name="${control.name}"
+      value="${toDateString(this.entity[control.name] as unknown as Date)}"
+      ?required=${control.validators?.required}
+      min="${ifDefined(toDateString(control.validators?.min))}"
+      max="${ifDefined(toDateString(control.validators?.max))}"
+      @invalid="${this.updateValidationMessage}"
+      @change="${(e: Event) => {
+        this.updateValidationMessage(e);
+        const inputEl = e.target as HTMLInputElement;
+        (this.entity[control.name] as unknown as Date | undefined) =
+          inputEl.valueAsDate ?? undefined;
       }}"
     /> `;
   }
