@@ -13,7 +13,7 @@ export class RestClient {
 
   async getOne<TEntityName extends keyof RestRoutes>(
     entityName: TEntityName,
-    id: string,
+    id: string | number,
   ): Promise<RestRoutes[TEntityName]['entity']> {
     const response = await fetch(`/api/${entityName}/${id}`);
     const bodyText = await response.text();
@@ -22,7 +22,7 @@ export class RestClient {
 
   async update<TEntityName extends keyof RestRoutes>(
     entityName: TEntityName,
-    id: string,
+    id: string | number,
     entity: RestRoutes[TEntityName]['upsertableEntity'],
   ): Promise<void> {
     const response = await fetch(`/api/${entityName}/${id}`, {

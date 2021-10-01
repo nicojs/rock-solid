@@ -11,7 +11,7 @@ import {
 } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { InputDescription, InputType } from '../forms';
+import { InputControl, InputType } from '../forms';
 
 @customElement('kei-persoon-edit')
 export class PersonenEditComponent extends LitElement {
@@ -40,7 +40,7 @@ export class PersonenEditComponent extends LitElement {
   }
 }
 
-const basePersoonFormControls: InputDescription<BasePersoon>[] = [
+const basePersoonFormControls: InputControl<BasePersoon>[] = [
   {
     name: 'achternaam',
     label: 'Naam',
@@ -100,7 +100,7 @@ const basePersoonFormControls: InputDescription<BasePersoon>[] = [
   },
 ];
 
-const vrijwilligerFormControls: InputDescription<Vrijwilliger>[] = [
+const vrijwilligerFormControls: InputControl<Vrijwilliger>[] = [
   ...basePersoonFormControls,
   {
     name: 'vrijwilligerOpmerking',
@@ -119,7 +119,7 @@ const vrijwilligerFormControls: InputDescription<Vrijwilliger>[] = [
   },
 ];
 
-const deelnemerFormControls: InputDescription<Deelnemer>[] = [
+const deelnemerFormControls: InputControl<Deelnemer>[] = [
   ...basePersoonFormControls,
   {
     name: 'woonsituatie',

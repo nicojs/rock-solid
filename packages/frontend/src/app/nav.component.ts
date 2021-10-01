@@ -43,10 +43,18 @@ export class NavComponent extends LitElement {
       </li>
       <li class="nav-item">
         <a
-          class="nav-link ${this.activeClass('projecten')}"
+          class="nav-link ${this.activeClass('cursussen')}"
           @click="${router.linkClick}"
-          href="/projecten"
-          >Projecten</a
+          href="/cursussen"
+          >Cursussen</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link ${this.activeClass('vakanties')}"
+          @click="${router.linkClick}"
+          href="/vakanties"
+          >Vakanties</a
         >
       </li>
     </ul>`;

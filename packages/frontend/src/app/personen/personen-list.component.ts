@@ -1,9 +1,9 @@
 import { html, LitElement } from 'lit';
-import { createRef, Ref, ref } from 'lit/directives/ref.js';
+import { createRef, Ref } from 'lit/directives/ref.js';
 import { BasePersoon, PersoonType } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { capitalize, show } from '../shared/utility.pipes';
+import { show } from '../shared/utility.pipes';
 import { fullName } from './full-name.pipe';
 
 @customElement('kei-personen-list')

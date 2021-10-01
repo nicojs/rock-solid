@@ -4,7 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { router, RouteParams } from './router';
 import { bootstrap } from '../styles';
 import style from './app.component.scss';
-import { PersoonType } from '@kei-crm/shared';
+import { PersoonType, ProjectType } from '@kei-crm/shared';
 
 @customElement('kei-crm-app')
 export class KeiCrmApp extends LitElement {
@@ -46,9 +46,13 @@ export class KeiCrmApp extends LitElement {
 
   private renderMain() {
     switch (this.route?.path[0]) {
-      case 'projecten':
+      case 'cursussen':
+      case 'vakanties':
+        const projectType: ProjectType =
+          this.route.path[0] === 'cursussen' ? 'cursus' : 'vakantie';
         return html`<kei-projecten
           .path="${this.route.path.slice(1)}"
+          .type="${projectType}"
           .query="${this.route.query}"
         ></kei-projecten>`;
       case 'vrijwilligers':

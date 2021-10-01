@@ -8,6 +8,7 @@ export class IconComponent extends LitElement {
   @property()
   public icon!: keyof typeof icons;
 
+  @property()
   public size: 'sm' | 'md' | 'lg' = 'md';
 
   static override styles = [

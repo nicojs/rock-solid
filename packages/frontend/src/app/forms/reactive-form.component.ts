@@ -1,7 +1,8 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { InputType } from '.';
 import { bootstrap } from '../../styles';
-import { InputDescription } from './input-description';
+import { FormControl } from './form-control';
 
 @customElement('kei-reactive-form')
 export class ReactiveFormComponent<TEntity> extends LitElement {
@@ -11,7 +12,7 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
   public entity!: TEntity;
 
   @property({ attribute: false })
-  public controls!: InputDescription<TEntity>[];
+  public controls!: FormControl<TEntity>[];
 
   @property()
   public submitLabel = 'Opslaan';
@@ -25,13 +26,18 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
       class="${this.wasValidated ? 'was-validated' : ''}"
       @submit="${this.submit}"
     >
-      ${this.controls?.map(
-        (control) =>
-          html`<kei-reactive-form-control
-            .control="${control}"
-            .entity="${this.entity}"
-          ></kei-reactive-form-control>`,
-      )}
+      ${this.controls?.map((control) => {
+        if (control.type === InputType.group) {
+          return html`<kei-reactive-form-group
+            .control=${control}
+            .entity=${this.entity}
+          ></kei-reactive-form-group>`;
+        }
+        return html`<kei-reactive-form-control
+          .control="${control}"
+          .entity="${this.entity}"
+        ></kei-reactive-form-control>`;
+      })}
       <button class="btn btn-primary offset-sm-2" type="submit">
         ${this.submitLabel}
       </button>

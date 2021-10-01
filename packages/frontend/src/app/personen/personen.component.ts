@@ -115,8 +115,9 @@ export class PersonenComponent extends LitElement {
                   .personen="${this.personen}"
                 ></kei-personen-list>
                 <kei-link href="/${this.type}s/new" btn btnSuccess
-                  ><kei-icon icon="personPlus" size="lg"></kei-icon>
-                  ${capitalize(this.type)}</kei-link
+                  ><kei-icon icon="personPlus"></kei-icon> ${capitalize(
+                    this.type,
+                  )}</kei-link
                 >`
             : html`<kei-loading></kei-loading>`}`;
       case 'new':

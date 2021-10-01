@@ -47,20 +47,20 @@ model Project {
   naam          String      @db.VarChar(255)
 
   // Cursus
-  bedrijfsonderdeel Bedrijfsonderdeel
-  overnachting      Boolean
+  bedrijfsonderdeel Bedrijfsonderdeel?
+  overnachting      Boolean?
 
   activiteiten Activiteit[]
   @@map("project")
 }
 
 model Activiteit {
-  id           Int       @id @default(autoincrement())
-  project      Project   @relation(fields: [projectId], references: [id])
+  id           Int      @id @default(autoincrement())
+  project      Project  @relation(fields: [projectId], references: [id])
   projectId    Int
-  van          DateTime  @db.Date
-  tot          DateTime? @db.Date
-  vormingsuren Decimal?
+  van          DateTime @db.Date
+  totEnMet     DateTime @db.Date
+  vormingsuren Float?
 
   @@map("activiteit")
 }
