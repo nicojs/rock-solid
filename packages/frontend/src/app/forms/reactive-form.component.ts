@@ -41,7 +41,6 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
   submit(e: SubmitEvent) {
     e.preventDefault();
     if ((e.target as HTMLFormElement).checkValidity()) {
-      console.log('submit', this.entity);
       const submitEvent = new CustomEvent('kei-submit', {
         bubbles: true,
         composed: true,

@@ -1,2 +1,3 @@
 import './personen.component';
-import './personen-edit-component';
+import './persoon-edit.component';
+import './personen-list.component';

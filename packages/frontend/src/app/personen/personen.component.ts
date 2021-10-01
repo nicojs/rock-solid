@@ -1,25 +1,36 @@
 import { html, LitElement, PropertyValues } from 'lit';
-import { createRef, Ref, ref } from 'lit/directives/ref.js';
-import { BasePersoon, PersoonType } from '@kei-crm/shared';
+import {
+  BasePersoon,
+  Persoon,
+  PersoonType,
+  UpsertablePersoon,
+} from '@kei-crm/shared';
 import { persoonService } from './persoon.service';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { capitalize, show } from '../shared/utility.pipes';
+import { router } from '../router';
+import { capitalize } from '../shared';
+import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { fullName } from './full-name.pipe';
 
 @customElement('kei-personen')
 export class PersonenComponent extends LitElement {
   static override styles = [bootstrap];
 
-  constructor(private persoon = persoonService) {
-    super();
-  }
-
   @property({ attribute: false })
   private personen: BasePersoon[] | undefined;
 
+  @property({ attribute: false })
+  private persoonToEdit: Persoon | undefined;
+
   @property()
   public type: PersoonType = 'deelnemer';
+
+  @property({ attribute: false })
+  public path: string[] = [];
+
+  @property({ attribute: false, type: Boolean })
+  public editIsLoading = false;
 
   override connectedCallback() {
     super.connectedCallback();
@@ -27,22 +38,33 @@ export class PersonenComponent extends LitElement {
 
   override updated(changedProperties: PropertyValues<PersonenComponent>) {
     if (changedProperties.has('type')) {
-      this.personen = undefined;
-      this.persoon
-        .getAll({ type: this.type, searchType: 'persoon' })
-        .then((personen) => {
-          this.personen = personen;
-        });
+      this.reloadPersonen();
+    }
+    if (
+      changedProperties.has('path') &&
+      this.path[0] === 'edit' &&
+      this.path[1]
+    ) {
+      persoonService.get(this.path[1]).then((persoon) => {
+        this.persoonToEdit = persoon;
+      });
     }
   }
 
-  private searchRef: Ref<HTMLInputElement> = createRef();
+  private reloadPersonen() {
+    this.personen = undefined;
+    persoonService
+      .getAll({ type: this.type, searchType: 'persoon' })
+      .then((personen) => {
+        this.personen = personen;
+      });
+  }
 
   private searchFormSubmit(event: SubmitEvent) {
     event.preventDefault();
-    if (this.searchRef.value) {
+    if (this.searchRef.value?.value) {
       this.personen = undefined;
-      this.persoon
+      persoonService
         .getAll({
           type: this.type,
           search: this.searchRef.value.value,
@@ -52,70 +74,78 @@ export class PersonenComponent extends LitElement {
     }
   }
 
-  override render() {
-    return html` <div class="row">
-        <h2 class="col-sm-6 col-md-8">${capitalize(this.type)}s</h2>
-        <div class="col">
-          <form @submit="${this.searchFormSubmit}" class="input-group">
-            <input
-              type="text"
-              ${ref(this.searchRef)}
-              class="form-control"
-              placeholder="Zoek op naam"
-            />
-            <button type="submit" class="btn btn-outline-secondary">
-              <kei-icon icon="search"></kei-icon>
-            </button>
-          </form>
-        </div>
-      </div>
-      ${this.personen
-        ? this.personen.length
-          ? this.renderTable()
-          : html`Geen ${this.type}s gevonden 🤷‍♂️`
-        : html`<kei-loading></kei-loading>`}`;
+  private async createNewPersoon(event: CustomEvent<UpsertablePersoon>) {
+    this.editIsLoading = true;
+    await persoonService.create(event.detail);
+    this.editIsLoading = false;
+    this.reloadPersonen();
+    router.navigate(`/${this.type}s/list`);
   }
 
-  private renderTable(): unknown {
-    return html`<table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Naam</th>
-            <th>Type</th>
-            <th>Emailadres</th>
-            <th>Geslacht</th>
-            <th>Telefoonnummer</th>
-            <th>Gsm</th>
-            <th>Communicatievoorkeur</th>
-            <th>Acties</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${this.personen!.map(
-            (persoon) => html`<tr>
-              <td>${fullName(persoon)}</td>
-              <td>${show(persoon.type)}</td>
-              <td>${show(persoon.emailadres)}</td>
-              <td>${show(persoon.geslacht)}</td>
-              <td>${show(persoon.telefoonnummer)}</td>
-              <td>${show(persoon.gsmNummer)}</td>
-              <td>${show(persoon.communicatievoorkeur)}</td>
-              <td>
-                <kei-link
-                  btn
-                  btnSecondary
-                  href="/${this.type}s/edit/${persoon.id}"
-                  ><kei-icon icon="pencil"></kei-icon
-                ></kei-link>
-              </td>
-            </tr>`,
-          )}
-        </tbody>
-      </table>
-      <kei-link href="/${this.type}s/new" btn btnSuccess
-        ><kei-icon icon="personPlus" size="lg"></kei-icon> ${capitalize(
-          this.type,
-        )}</kei-link
-      > `;
+  private async updatePersoon() {
+    this.editIsLoading = true;
+    await persoonService.update(this.persoonToEdit!.id, this.persoonToEdit!);
+    this.editIsLoading = false;
+    this.reloadPersonen();
+    router.navigate(`/${this.type}s/list`);
+  }
+
+  private searchRef: Ref<HTMLInputElement> = createRef();
+  override render() {
+    switch (this.path[0]) {
+      case 'list':
+        return html` <div class="row">
+            <h2 class="col-sm-6 col-md-8">${capitalize(this.type)}s</h2>
+            <div class="col">
+              <form @submit="${this.searchFormSubmit}" class="input-group">
+                <input
+                  type="text"
+                  ${ref(this.searchRef)}
+                  class="form-control"
+                  placeholder="Zoek op naam"
+                />
+                <button type="submit" class="btn btn-outline-secondary">
+                  <kei-icon icon="search"></kei-icon>
+                </button>
+              </form>
+            </div>
+          </div>
+          ${this.personen
+            ? html`<kei-personen-list
+                  .personen="${this.personen}"
+                ></kei-personen-list>
+                <kei-link href="/${this.type}s/new" btn btnSuccess
+                  ><kei-icon icon="personPlus" size="lg"></kei-icon>
+                  ${capitalize(this.type)}</kei-link
+                >`
+            : html`<kei-loading></kei-loading>`}`;
+      case 'new':
+        const persoon: UpsertablePersoon = {
+          type: this.type,
+          achternaam: '',
+        };
+        return html` <h2>${capitalize(this.type)} toevoegen</h2>
+          ${this.editIsLoading
+            ? html`<kei-loading></kei-loading>`
+            : html`<kei-persoon-edit
+                .persoon="${persoon}"
+                @persoon-submitted=${this.createNewPersoon}
+              ></kei-persoon-edit>`}`;
+      case 'edit':
+        return html`${this.persoonToEdit
+          ? html`<h2>
+                ${capitalize(this.type)} ${fullName(this.persoonToEdit)}
+                wijzigen
+              </h2>
+              <kei-persoon-edit
+                .persoon="${this.persoonToEdit}"
+                @persoon-submitted=${this.updatePersoon}
+              ></kei-persoon-edit>`
+          : html`<kei-loading></kei-loading>`}`;
+      default:
+        this.reloadPersonen();
+        router.navigate(`/${this.type}s/list`);
+        return html``;
+    }
   }
 }

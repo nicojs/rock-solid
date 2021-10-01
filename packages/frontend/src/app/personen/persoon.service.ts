@@ -1,25 +1,25 @@
-import { BasePersoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
+import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
 import { restClient, RestClient } from '../shared/rest-client';
 
 export class PersoonService {
   constructor(private restClient: RestClient) {}
 
-  getAll(query?: PersoonFilter): Promise<BasePersoon[]> {
+  getAll(query?: PersoonFilter): Promise<Persoon[]> {
     return this.restClient.getAll(
       'personen',
       query as Record<string, unknown> | undefined,
     );
   }
 
-  get(id: string): Promise<BasePersoon> {
+  get(id: string | number): Promise<Persoon> {
     return this.restClient.getOne('personen', id);
   }
 
-  update(id: string, persoon: UpsertablePersoon): Promise<void> {
+  update(id: string | number, persoon: UpsertablePersoon): Promise<void> {
     return this.restClient.update('personen', id, persoon);
   }
 
-  create(persoon: UpsertablePersoon): Promise<BasePersoon> {
+  create(persoon: UpsertablePersoon): Promise<Persoon> {
     return this.restClient.create('personen', persoon);
   }
 }

@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { bootstrap } from '../../styles';
-import { router } from '../router';
+import { bootstrap } from '../styles';
+import { router } from './router';
 
 @customElement('kei-nav')
 export class NavComponent extends LitElement {

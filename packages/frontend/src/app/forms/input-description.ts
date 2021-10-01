@@ -54,5 +54,7 @@ export interface CheckboxInputDescription<TEntity>
 export interface SelectDescription<TEntity> extends BaseInputDescription {
   type: InputType.select;
   name: KeysOfEnums<TEntity>;
-  items: readonly TEntity[KeysOfEnums<TEntity>][];
+  items: {
+    readonly [K in TEntity[KeysOfEnums<TEntity>] & string]: string;
+  };
 }

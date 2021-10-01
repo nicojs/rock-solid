@@ -8,78 +8,35 @@ import {
   werksituaties,
   BasePersoon,
   Vrijwilliger,
-  PersoonType,
 } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
-import { persoonService } from './persoon.service';
 import { bootstrap } from '../../styles';
 import { InputDescription, InputType } from '../forms';
-import { fullName } from './full-name.pipe';
-import { router } from '../router';
-import { capitalize } from '../shared';
 
-@customElement('kei-personen-edit')
+@customElement('kei-persoon-edit')
 export class PersonenEditComponent extends LitElement {
-  @property()
-  public entityId?: string;
-
-  @property()
-  public type!: PersoonType;
-
   @property({ attribute: false })
-  public isLoading = false;
-
-  @property({ attribute: false })
-  private persoon?: UpsertablePersoon;
+  private persoon!: UpsertablePersoon;
 
   static override styles = [bootstrap];
 
-  override connectedCallback() {
-    super.connectedCallback();
-    if (this.entityId) {
-      this.isLoading = true;
-      persoonService.get(this.entityId).then((persoon) => {
-        this.persoon = persoon;
-        this.type = persoon.type;
-        this.isLoading = false;
-      });
-    } else {
-      this.persoon = {
-        type: this.type,
-        achternaam: '',
-      };
-    }
+  private async submit() {
+    const event = new CustomEvent('persoon-submitted', {
+      bubbles: true,
+      composed: true,
+      detail: this.persoon,
+    });
+    this.dispatchEvent(event);
   }
 
   override render() {
-    return html`${this.isLoading
-      ? html`<kei-loading></kei-loading>`
-      : this.renderForm()}`;
-  }
-
-  private async save() {
-    this.isLoading = true;
-    if (this.entityId) {
-      await persoonService.update(this.entityId, this.persoon!);
-    } else {
-      await persoonService.create(this.persoon!);
-    }
-    router.navigate('/personen');
-  }
-
-  private renderForm() {
-    return html` <h2>
-        ${this.entityId
-          ? `${capitalize(this.type)} ${fullName(this.persoon!)} wijzigen`
-          : `${capitalize(this.type)} toevoegen`}
-      </h2>
-      <kei-reactive-form
-        @kei-submit="${this.save}"
-        .controls="${this.type === 'deelnemer'
-          ? deelnemerFormControls
-          : vrijwilligerFormControls}"
-        .entity="${this.persoon}"
-      ></kei-reactive-form>`;
+    return html`<kei-reactive-form
+      @kei-submit="${this.submit}"
+      .controls="${this.persoon.type === 'deelnemer'
+        ? deelnemerFormControls
+        : vrijwilligerFormControls}"
+      .entity="${this.persoon}"
+    ></kei-reactive-form>`;
   }
 }
 

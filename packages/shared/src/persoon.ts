@@ -1,3 +1,4 @@
+import { Options } from './options';
 import { Upsertable } from './upsertable';
 
 export interface BasePersoon {
@@ -50,10 +51,10 @@ export interface Vrijwilliger extends BasePersoon {
 export type PersoonType = 'deelnemer' | 'vrijwilliger';
 
 export type Voedingswens = 'geen' | 'vegetarisch';
-export const voedingswensen: readonly Voedingswens[] = Object.freeze([
-  'geen',
-  'vegetarisch',
-]);
+export const voedingswensen: Options<Voedingswens> = Object.freeze({
+  geen: 'geen',
+  vegetarisch: 'vegetarisch',
+});
 
 export type Werksituatie =
   | 'onbekend'
@@ -62,30 +63,31 @@ export type Werksituatie =
   | 'maatwerkbedrijf'
   | 'reguliereArbeidscircuit'
   | 'werkzoekend';
-export const werksituaties: readonly Werksituatie[] = Object.freeze([
-  'onbekend',
-  'dagcentrum',
-  'begeleidwerkOfVrijwilligerswerk',
-  'maatwerkbedrijf',
-  'reguliereArbeidscircuit',
-  'werkzoekend',
-]);
+
+export const werksituaties: Options<Werksituatie> = Object.freeze({
+  onbekend: 'onbekend',
+  dagcentrum: 'dagcentrum',
+  begeleidwerkOfVrijwilligerswerk: 'begeleidwerk of vrijwilligerswerk',
+  maatwerkbedrijf: 'maatwerkbedrijf',
+  reguliereArbeidscircuit: 'reguliere arbeidscircuit',
+  werkzoekend: 'werkzoekend',
+});
 
 export type Woonsituatie = 'onbekend' | 'thuis' | 'residentieel';
-export const woonsituaties: readonly Woonsituatie[] = Object.freeze([
-  'onbekend',
-  'thuis',
-  'residentieel',
-]);
-
-export type Geslacht = 'onbekend' | 'man' | 'vrouw';
+export const woonsituaties: Options<Woonsituatie> = Object.freeze({
+  onbekend: 'onbekend',
+  thuis: 'thuis',
+  residentieel: 'residentieel',
+});
 
 export type Communicatievoorkeur = 'post' | 'email';
 
-export const communicatievoorkeuren: readonly Communicatievoorkeur[] =
-  Object.freeze(['post', 'email']);
-export const geslachten: readonly Geslacht[] = Object.freeze([
-  'onbekend',
-  'man',
-  'vrouw',
-]);
+export const communicatievoorkeuren: Options<Communicatievoorkeur> =
+  Object.freeze({ post: 'post', email: 'email' });
+
+export type Geslacht = 'onbekend' | 'man' | 'vrouw';
+export const geslachten: Options<Geslacht> = Object.freeze({
+  onbekend: 'onbekend',
+  man: 'man',
+  vrouw: 'vrouw',
+});

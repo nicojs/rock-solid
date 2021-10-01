@@ -136,15 +136,15 @@ export class ReactiveFormControl<TEntity> extends LitElement {
         (this.entity[control.name] as unknown as string) = selectEl.value;
       }}"
     >
-      ${control.items.map(
-        (item) =>
+      ${Object.entries(control.items).map(
+        ([value, title]) =>
           html`<option
-            value="${item}"
-            ?selected="${(item as unknown as TEntity[keyof TEntity]) ===
+            value="${value}"
+            ?selected="${(value as unknown as TEntity[keyof TEntity]) ===
             this.entity[control.name]}"
             ?required="${control.validators?.required}"
           >
-            ${item}
+            ${title}
           </option>`,
       )}
     </select>`;

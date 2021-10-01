@@ -1,8 +1,8 @@
 import { Subscription } from 'rxjs';
 import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { router, RouteParams } from '../router';
-import { bootstrap } from '../../styles';
+import { router, RouteParams } from './router';
+import { bootstrap } from '../styles';
 import style from './app.component.scss';
 import { PersoonType } from '@kei-crm/shared';
 
@@ -55,19 +55,10 @@ export class KeiCrmApp extends LitElement {
       case 'deelnemers':
         const persoonType: PersoonType =
           this.route?.path[0] === 'deelnemers' ? 'deelnemer' : 'vrijwilliger';
-        switch (this.route.path[1]) {
-          case 'edit':
-            return html`<kei-personen-edit
-              entityId="${this.route.path[2]}"
-              type="${persoonType}"
-            ></kei-personen-edit>`;
-          case 'new':
-            return html`<kei-personen-edit
-              type="${persoonType}"
-            ></kei-personen-edit>`;
-          default:
-            return html`<kei-personen type="${persoonType}"></kei-personen>`;
-        }
+        return html`<kei-personen
+          .type="${persoonType}"
+          .path="${this.route.path.slice(1)}"
+        ></kei-personen>`;
       case '':
         return html`<h2>Home</h2>`;
       default:
