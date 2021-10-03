@@ -38,7 +38,7 @@ export class ProjectenComponent extends LitElement {
   override updated(props: PropertyValues<ProjectenComponent>): void {
     if (props.has('path')) {
       if (
-        this.path.length === 2 &&
+        this.path.length >= 2 &&
         ['edit', 'inschrijvingen'].includes(this.path[0]!)
       ) {
         this.projectInScope = undefined;
@@ -105,6 +105,7 @@ export class ProjectenComponent extends LitElement {
         return this.projectInScope
           ? html`<kei-project-inschrijvingen
               .project="${this.projectInScope}"
+              .path="${this.path.slice(2)}"
             ></kei-project-inschrijvingen>`
           : html`<kei-loading></kei-loading>`;
       default:

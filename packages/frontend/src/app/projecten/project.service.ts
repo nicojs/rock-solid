@@ -38,6 +38,17 @@ export class ProjectService {
       inschrijving,
     );
   }
+
+  updateInschrijving(
+    projectId: number | string,
+    inschrijving: Inschrijving,
+  ): Promise<void> {
+    return this.restClient.update(
+      `projecten/${projectId}/inschrijvingen`,
+      inschrijving.id,
+      inschrijving,
+    );
+  }
 }
 
 export const projectService = new ProjectService(restClient);

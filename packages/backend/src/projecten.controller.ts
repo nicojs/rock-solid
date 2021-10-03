@@ -73,12 +73,14 @@ export class ProjectenController {
     await this.projectMapper.updateProject(+id, project);
   }
 
-  // @Get(':id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() project: UpsertableProject,
-  // ): Promise<void> {
-  //   await this.projectMapper.updateProject(+id, project);
-  // }
+  @Put(':id/inschrijvingen/:inschrijvingId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateInschrijving(
+    @Param('id', ParseIntPipe) projectId: number,
+    @Param('inschrijvingId', ParseIntPipe) inschrijvingId: number,
+    @Body() inschrijving: UpsertableInschrijving,
+  ): Promise<Inschrijving> {
+    inschrijving.projectId = projectId;
+    return this.inschrijvingenMapper.update(inschrijvingId, inschrijving);
+  }
 }

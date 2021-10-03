@@ -116,7 +116,7 @@ function toProject(
       return {
         ...project,
         type,
-        bedrijfsonderdeel: val.bedrijfsonderdeel!,
+        organisatieonderdeel: val.organisatieonderdeel!,
         overnachting: val.overnachting!,
       };
     case 'vakantie':

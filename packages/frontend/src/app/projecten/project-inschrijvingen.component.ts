@@ -1,31 +1,29 @@
 import { Inschrijving, Project } from '@kei-crm/shared';
-import { css, html, LitElement, PropertyValues } from 'lit';
+import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
 import { fullName } from '../personen/full-name.pipe';
-import { showBoolean, showDatum } from '../shared';
+import { pluralize, showBoolean, showDatum } from '../shared';
 import { TypeAheadHint } from '../shared/autocomplete.component';
+import { router } from '../router';
 
 @customElement('kei-project-inschrijvingen')
 export class ProjectInschrijvingenComponent extends LitElement {
-  static override styles = [
-    bootstrap,
-    css`
-      .dropdown-menu {
-        top: 60px;
-        width: 300px;
-        left: 12px;
-      }
-    `,
-  ];
+  static override styles = [bootstrap];
 
   @property({ attribute: false })
   public project!: Project;
 
   @state()
   private inschrijvingen: Inschrijving[] | undefined;
+
+  @property()
+  public path!: string[];
+
+  @state()
+  private inschrijvingInScope: Inschrijving | undefined;
 
   public override updated(
     props: PropertyValues<ProjectInschrijvingenComponent>,
@@ -36,13 +34,52 @@ export class ProjectInschrijvingenComponent extends LitElement {
         .getInschrijvingen(this.project.id)
         .then((inschrijvingen) => {
           this.inschrijvingen = inschrijvingen;
+          this.updateInschrijvingInScope();
         });
+    }
+    if (props.has('path')) {
+      this.updateInschrijvingInScope();
     }
   }
 
+  private updateInschrijvingInScope() {
+    if (this.path[0] === 'edit' && this.path[1]) {
+      this.inschrijvingInScope = this.inschrijvingen?.find(
+        (inschrijving) => inschrijving.id === +this.path[1]!,
+      );
+    }
+  }
+
+  private inschrijvingUpdated = () => {
+    projectService
+      .updateInschrijving(this.project.id, this.inschrijvingInScope!)
+      .then(() => {
+        router.navigate(
+          `/${pluralize(this.project.type)}/inschrijvingen/${this.project.id}`,
+        );
+      });
+  };
+
   override render() {
+    switch (this.path[0]) {
+      case 'edit':
+        return html`${this.inschrijvingInScope
+          ? html`<kei-project-inschrijving-edit
+              @inschrijving-updated=${this.inschrijvingUpdated}
+              .project=${this.project}
+              .inschrijving=${this.inschrijvingInScope}
+            ></kei-project-inschrijving-edit>`
+          : html`<kei-loading></kei-loading>`}`;
+      case undefined:
+        return this.renderProjectInschrijvingen();
+      default:
+        router.navigate(`/${pluralize(this.project.type)}/inschrijvingen`);
+    }
+  }
+
+  private renderProjectInschrijvingen() {
     return html`<h2>
-        Inschrijvingen voor ${this.project.type} ${this.project.naam}
+        Inschrijvingen voor ${this.project.id} ${this.project.naam}
       </h2>
       ${this.renderCreateInschrijvingForm()}
       ${this.inschrijvingen
@@ -58,6 +95,8 @@ export class ProjectInschrijvingenComponent extends LitElement {
               <th>Naam</th>
               <th>Ingeschreven op</th>
               <th>Wachtlijst?</th>
+              <th>Toestemming voor fotos?</th>
+              <th>Acties</th>
             </tr>
           </thead>
           <tbody>
@@ -66,6 +105,16 @@ export class ProjectInschrijvingenComponent extends LitElement {
                 <td>${fullName(inschrijving.persoon!)}</td>
                 <td>${showDatum(inschrijving.tijdstipVanInschrijven)}</td>
                 <td>${showBoolean(inschrijving.wachtlijst)}</td>
+                <td>${showBoolean(inschrijving.toestemmingFotos)}</td>
+                <td>
+                  <kei-link
+                    btn
+                    btnOutlinePrimary
+                    href="/${pluralize(this.project.type)}/inschrijvingen/${this
+                      .project.id}/edit/${inschrijving.id}"
+                    ><kei-icon icon="pencil"></kei-icon
+                  ></kei-link>
+                </td>
               </tr>`,
             )}
           </tbody>

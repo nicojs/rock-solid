@@ -45,8 +45,10 @@ const baseProjectControls: InputControl<BaseProject>[] = [
   {
     name: 'projectnummer',
     type: InputType.text,
+    placeholder: `DK ${new Date().getFullYear().toString().slice(-2)}-123`,
     validators: {
       required: true,
+      pattern: '^(KJ)|(DK) \\d{2}-\\d+$',
     },
   },
   {
@@ -80,7 +82,7 @@ const activiteitenControls: InputControl<Activiteit>[] = [
 const cursusProjectControls: FormControl<Cursus>[] = [
   ...baseProjectControls,
   {
-    name: 'bedrijfsonderdeel',
+    name: 'organisatieonderdeel',
     type: InputType.select,
     items: bedrijfsonderdelen,
     validators: {

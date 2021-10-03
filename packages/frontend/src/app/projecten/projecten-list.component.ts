@@ -22,7 +22,7 @@ export class ProjectenListComponent extends LitElement {
       <thead>
         <tr>
           <th>Projectnummer</th>
-          <th>Bedrijfsonderdeel</th>
+          <th>Organisatieonderdeel</th>
           <th>Aantal activiteiten</th>
           <th>Startdatum eerste activiteit</th>
           <th>Acties</th>
@@ -34,7 +34,7 @@ export class ProjectenListComponent extends LitElement {
             <td>${project.projectnummer}</td>
             <td>
               ${project.type === 'cursus'
-                ? bedrijfsonderdelen[project.bedrijfsonderdeel]
+                ? bedrijfsonderdelen[project.organisatieonderdeel]
                 : notAvailable}
             </td>
             <td>${project.activiteiten.length}</td>

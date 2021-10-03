@@ -15,7 +15,7 @@ export class NavComponent extends LitElement {
   }
 
   public override render() {
-    return html`<ul class="nav flex-column nav-tabs">
+    return html`<ul class="nav flex-column nav-pills">
       <li class="nav-item">
         <a
           class="nav-link ${this.activeClass('')}"

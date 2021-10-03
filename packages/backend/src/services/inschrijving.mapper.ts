@@ -30,6 +30,20 @@ export class InschrijvingMapper {
     });
     return toInschrijving(dbInschrijving);
   }
+
+  public async update(
+    id: number,
+    inschrijving: UpsertableInschrijving,
+  ): Promise<Inschrijving> {
+    const { persoon, ...inschrijvingData } = inschrijving;
+    const dbInschrijving = await this.db.inschrijving.update({
+      data: inschrijvingData,
+      where: {
+        id,
+      },
+    });
+    return toInschrijving(dbInschrijving);
+  }
 }
 
 function toInschrijving(inschrijving: db.Inschrijving): Inschrijving {

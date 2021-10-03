@@ -9,6 +9,7 @@
     "prisma:client:generate": "prisma generate",
     "prisma:migrate:create": "prisma migrate dev --name ",
     "prisma:push": "prisma db push",
+    "prisma:seed": "prisma db seed",
     "start": "nodemon --inspect -r dotenv/config -r source-map-support/register dist/src/main.js",
     "test": "mocha"
   },

@@ -1,4 +1,4 @@
-import { css, html, LitElement, PropertyValues } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { ref, createRef } from 'lit/directives/ref.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -13,7 +13,7 @@ export interface TypeAheadHint {
   value: number | string;
   text: string;
 }
-const minCharacters = 3;
+const minCharacters = 2;
 
 @customElement('kei-autocomplete')
 export class AutocompleteComponent extends LitElement {

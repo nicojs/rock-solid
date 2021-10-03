@@ -48,10 +48,10 @@ model Project {
   naam          String      @db.VarChar(255)
 
   // Cursus
-  bedrijfsonderdeel Bedrijfsonderdeel?
-  overnachting      Boolean?
+  organisatieonderdeel Organisatieonderdeel?
+  overnachting         Boolean?
 
-  activiteiten Activiteit[]
+  activiteiten   Activiteit[]
   inschrijvingen Inschrijving[]
   @@map("project")
 }
@@ -63,11 +63,11 @@ model Inschrijving {
   persoonId Int
   persoon   Persoon @relation(fields: [persoonId], references: [id])
 
-  tijdstipVanInschrijven         DateTime @default(now())
+  tijdstipVanInschrijven         DateTime  @default(now())
   tijdstipVanBevestiging         DateTime?
   tijdstipVerzendenVervoersbrief DateTime?
-  toestemmingFotos               Boolean?
-  wachtlijst                     Boolean @default(false)
+  toestemmingFotos               Boolean   @default(false)
+  wachtlijst                     Boolean   @default(false)
 
   @@map("inschrijving")
 }
@@ -90,10 +90,12 @@ enum ProjectType {
   @@map("project_type")
 }
 
-enum Bedrijfsonderdeel {
+enum Organisatieonderdeel {
   keiJongBuSO
   keiJongNietBuSO
   deKei
+
+  @@map("organisatieonderdeel")
 }
 
 enum PersoonType {

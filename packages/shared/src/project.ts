@@ -14,7 +14,7 @@ export type ProjectType = 'cursus' | 'vakantie';
 
 export interface Cursus extends BaseProject {
   type: 'cursus';
-  bedrijfsonderdeel: Bedrijfsonderdeel;
+  organisatieonderdeel: Organisatieonderdeel;
   overnachting: boolean;
 }
 
@@ -29,9 +29,9 @@ export interface Activiteit {
   vormingsuren?: number;
 }
 
-export type Bedrijfsonderdeel = 'keiJongBuSO' | 'keiJongNietBuSO' | 'deKei';
+export type Organisatieonderdeel = 'keiJongBuSO' | 'keiJongNietBuSO' | 'deKei';
 
-export const bedrijfsonderdelen: Options<Bedrijfsonderdeel> = Object.freeze({
+export const bedrijfsonderdelen: Options<Organisatieonderdeel> = Object.freeze({
   deKei: 'de KEI',
   keiJongBuSO: 'KEI-JONG BuSO',
   keiJongNietBuSO: 'KEI-JONG niet BuSO',
