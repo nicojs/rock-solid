@@ -28,27 +28,27 @@ export class ProjectenComponent extends LitElement {
   @property({ attribute: false })
   private projectInScope: Project | undefined;
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.reload();
-  }
-
-  private reload() {
+  private loadProjecten() {
+    this.projecten = undefined;
     projectService.getAll({ type: this.type }).then((projecten) => {
       this.projecten = projecten;
     });
   }
 
   override updated(props: PropertyValues<ProjectenComponent>): void {
-    if (
-      props.has('path') &&
-      (this.path[0] === 'edit' || this.path[0] === 'inschrijvingen') &&
-      this.path[1]
-    ) {
-      this.projectInScope = undefined;
-      projectService.get(this.path[1]).then((project) => {
-        this.projectInScope = project;
-      });
+    if (props.has('path')) {
+      if (
+        this.path.length === 2 &&
+        ['edit', 'inschrijvingen'].includes(this.path[0]!)
+      ) {
+        this.projectInScope = undefined;
+        projectService.get(this.path[1]!).then((project) => {
+          this.projectInScope = project;
+        });
+      }
+      if (this.path[0] === 'list') {
+        this.loadProjecten();
+      }
     }
   }
 
@@ -56,7 +56,6 @@ export class ProjectenComponent extends LitElement {
     this.loading = true;
     await projectService.create(project);
     this.loading = false;
-    this.reload();
     router.navigate(`/${pluralize(this.type)}/list`);
   }
 
@@ -64,7 +63,6 @@ export class ProjectenComponent extends LitElement {
     this.loading = true;
     await projectService.update(project.id, project);
     this.loading = false;
-    this.reload();
     router.navigate(`/${pluralize(this.type)}/list`);
   }
 

@@ -35,8 +35,9 @@ model Persoon {
 
   // Vrijwilliger
   vrijwilligerOpmerking String?
-  begeleidtVakanties    Boolean @default(false)
-  begeleidtCursus       Boolean @default(false)
+  begeleidtVakanties    Boolean        @default(false)
+  begeleidtCursus       Boolean        @default(false)
+  Inschrijving          Inschrijving[]
   @@map("persoon")
 }
 
@@ -51,7 +52,24 @@ model Project {
   overnachting      Boolean?
 
   activiteiten Activiteit[]
+  inschrijvingen Inschrijving[]
   @@map("project")
+}
+
+model Inschrijving {
+  id        Int     @id @default(autoincrement())
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+  persoonId Int
+  persoon   Persoon @relation(fields: [persoonId], references: [id])
+
+  tijdstipVanInschrijven         DateTime @default(now())
+  tijdstipVanBevestiging         DateTime?
+  tijdstipVerzendenVervoersbrief DateTime?
+  toestemmingFotos               Boolean?
+  wachtlijst                     Boolean @default(false)
+
+  @@map("inschrijving")
 }
 
 model Activiteit {

@@ -9,8 +9,11 @@
     "prisma:client:generate": "prisma generate",
     "prisma:migrate:create": "prisma migrate dev --name ",
     "prisma:push": "prisma db push",
-    "start": "nodemon --inspect -r dotenv/config -r source-map-support/register dist/main.js",
+    "start": "nodemon --inspect -r dotenv/config -r source-map-support/register dist/src/main.js",
     "test": "mocha"
+  },
+  "prisma": {
+    "seed": "node dist/seed/persoon.seed.js"
   },
   "dependencies": {
     "@kei-crm/frontend": "0.1.0",

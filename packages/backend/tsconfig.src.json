@@ -2,10 +2,10 @@
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "types": ["node"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "seed/**/*.ts"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [ { "path": "../shared" } ],
 }

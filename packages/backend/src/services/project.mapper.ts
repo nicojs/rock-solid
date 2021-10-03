@@ -21,7 +21,14 @@ export class ProjectMapper {
 
   public async getAll(): Promise<Project[]> {
     const projecten = await this.db.project.findMany({
-      include: { activiteiten: true },
+      include: {
+        activiteiten: true,
+        _count: {
+          select: {
+            inschrijvingen: true,
+          },
+        },
+      },
     });
     return projecten.map(toProject);
   }
@@ -34,6 +41,9 @@ export class ProjectMapper {
           orderBy: {
             van: 'asc',
           },
+        },
+        _count: {
+          select: { inschrijvingen: true },
         },
       },
     });
@@ -89,6 +99,9 @@ export class ProjectMapper {
 function toProject(
   val: db.Project & {
     activiteiten?: db.Activiteit[];
+    _count?: {
+      inschrijvingen?: number;
+    } | null;
   },
 ): Project {
   const { type } = val;
@@ -96,6 +109,7 @@ function toProject(
     ...val,
     type,
     activiteiten: val.activiteiten?.map(toActiviteit) ?? [],
+    aantalInschrijvingen: val._count?.inschrijvingen,
   });
   switch (type) {
     case 'cursus':

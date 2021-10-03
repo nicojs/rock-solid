@@ -21,6 +21,12 @@ export class Link extends LitElement {
   public btnSecondary = false;
 
   @property({ type: Boolean })
+  public btnOutlineSecondary = false;
+
+  @property({ type: Boolean })
+  public btnOutlinePrimary = false;
+
+  @property({ type: Boolean })
   public lg = false;
 
   @property()
@@ -35,6 +41,8 @@ export class Link extends LitElement {
           'btn-primary': this.btnPrimary,
           'btn-success': this.btnSuccess,
           'btn-secondary': this.btnSecondary,
+          'btn-outline-secondary': this.btnOutlineSecondary,
+          'btn-outline-primary': this.btnOutlinePrimary,
         })}"
         href="${this.href}"
         @click="${this.linkClick}"

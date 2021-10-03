@@ -42,18 +42,25 @@ export class ProjectenListComponent extends LitElement {
             <td>
               <kei-link
                 btn
-                btnSecondary
+                btnOutlinePrimary
                 title="Wijzigen"
                 href="/${pluralize(project.type)}/edit/${project.id}"
                 ><kei-icon icon="pencil"></kei-icon
               ></kei-link>
               <kei-link
                 btn
-                btnSecondary
+                btnOutlinePrimary
                 title="Inschrijvingen"
                 href="/${pluralize(project.type)}/inschrijvingen/${project.id}"
-                ><kei-icon icon="pencilSquare"></kei-icon
-              ></kei-link>
+              >
+                <kei-icon icon="pencilSquare"></kei-icon>
+                <span
+                  class="badge ${(project.aantalInschrijvingen ?? 0) > 0
+                    ? 'bg-success'
+                    : 'bg-secondary'}"
+                  >${project.aantalInschrijvingen}</span
+                >
+              </kei-link>
             </td>
           </tr>`,
         )}

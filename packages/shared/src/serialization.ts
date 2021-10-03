@@ -3,6 +3,9 @@ const dateWhitelist = Object.freeze([
   'tot',
   'totEnMet',
   'geboortedatum',
+  'tijdstipVanInschrijven',
+  'tijdstipVanBevestiging',
+  'tijdstipVerzendenVervoersbrief',
 ]);
 
 const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(:?\.\d+)?Z$/;

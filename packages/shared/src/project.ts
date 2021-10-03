@@ -7,6 +7,7 @@ export interface BaseProject {
   type: ProjectType;
   activiteiten: Activiteit[];
   naam: string;
+  aantalInschrijvingen?: number;
 }
 
 export type ProjectType = 'cursus' | 'vakantie';

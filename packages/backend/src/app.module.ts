@@ -7,9 +7,11 @@ import { PersoonMapper } from './services/persoon.mapper';
 import { DBService } from './services/db.service';
 import { ProjectenController } from './projecten.controller';
 import { ProjectMapper } from './services/project.mapper';
+import { InschrijvingMapper } from './services/inschrijving.mapper';
 
 const rootPath = path.resolve(
   __dirname,
+  '..',
   '..',
   'node_modules',
   '@kei-crm',
@@ -24,6 +26,6 @@ const rootPath = path.resolve(
     }),
   ],
   controllers: [PersonenController, ProjectenController],
-  providers: [PersoonMapper, ProjectMapper, DBService],
+  providers: [PersoonMapper, ProjectMapper, InschrijvingMapper, DBService],
 })
 export class AppModule {}

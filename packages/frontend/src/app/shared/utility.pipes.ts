@@ -8,6 +8,17 @@ export function show(value: unknown) {
   }
 }
 
+export function showBoolean(val: boolean | undefined) {
+  switch (val) {
+    case true:
+      return 'Ja';
+    case false:
+      return 'Nee';
+    default:
+      return notAvailable;
+  }
+}
+
 export function capitalize<T extends string>(value: T): Capitalize<T> {
   const [firstLetter = '', ...rest] = value;
   return `${firstLetter.toUpperCase()}${rest.join('')}` as Capitalize<T>;
