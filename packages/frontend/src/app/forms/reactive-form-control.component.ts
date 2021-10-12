@@ -153,28 +153,42 @@ export class ReactiveFormControl<TEntity> extends LitElement {
   }
 
   private renderSelect(control: SelectControl<TEntity>) {
-    const selected = this.entity[control.name];
+    const isSelected = (value: string) => {
+      if (control.multiple) {
+        return (
+          this.entity[control.name] as unknown as string[] | undefined
+        )?.includes(value);
+      } else {
+        return (
+          (this.entity[control.name] as unknown as string | undefined) === value
+        );
+      }
+    };
+
     return html`<select
       class="form-select"
       name="${control.name}"
+      ?multiple=${control.multiple}
       ?required=${control.validators?.required}
       @change="${(e: Event) => {
         const selectEl = e.target as HTMLSelectElement;
-        (this.entity[control.name] as unknown as string) = selectEl.value;
+        if (control.multiple) {
+          (this.entity[control.name] as unknown as string[]) = [
+            ...selectEl.selectedOptions,
+          ].map((option) => option.value);
+        } else {
+          (this.entity[control.name] as unknown as string) = selectEl.value;
+        }
       }}"
     >
-      ${empty(selected)
+      ${empty(this.entity[control.name])
         ? html`<option value="">
             Selecteer een ${control.label ?? control.name}
           </option>`
         : ''}
       ${Object.entries(control.items).map(
         ([value, title]) =>
-          html`<option
-            value="${value}"
-            ?selected="${(value as unknown as TEntity[keyof TEntity]) ===
-            this.entity[control.name]}"
-          >
+          html`<option value="${value}" ?selected=${isSelected(value)}>
             ${title}
           </option>`,
       )}

@@ -8,6 +8,7 @@ import {
   werksituaties,
   BasePersoon,
   Vrijwilliger,
+  vrijwilligerSelecties,
 } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -116,6 +117,13 @@ const vrijwilligerFormControls: InputControl<Vrijwilliger>[] = [
     name: 'begeleidtCursus',
     label: 'Begeleidt cursussen?',
     type: InputType.checkbox,
+  },
+  {
+    name: 'selectie',
+    label: 'Selectie (gebruik ctrl of shift om meerdere te selecteren)',
+    type: InputType.select,
+    multiple: true,
+    items: vrijwilligerSelecties,
   },
 ];
 

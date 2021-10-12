@@ -61,7 +61,9 @@ export type KeysOfType<TEntity, TValue> = {
 }[keyof TEntity & string];
 
 type KeysOfEnums<TEntity> = {
-  [K in keyof TEntity & string]: TEntity[K] extends string ? K : never;
+  [K in keyof TEntity & string]-?: TEntity[K] extends string | string[]
+    ? K
+    : never;
 }[keyof TEntity & string];
 
 export interface StringInputControl<TEntity> extends BaseInputControl {
@@ -87,6 +89,7 @@ export interface CheckboxInputControl<TEntity> extends BaseInputControl {
 export interface SelectControl<TEntity> extends BaseInputControl {
   type: InputType.select;
   name: KeysOfEnums<TEntity>;
+  multiple?: true;
   items: {
     readonly [K in TEntity[KeysOfEnums<TEntity>] & string]: string;
   };

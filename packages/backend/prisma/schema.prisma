@@ -24,6 +24,7 @@ model Persoon {
   gsmNummer            String?              @db.VarChar(255)
   communicatievoorkeur Communicatievoorkeur @default(post)
   type                 PersoonType          @default(deelnemer)
+  inschrijving         Inschrijving[]
 
   // Deelnemer
   woonsituatie          Woonsituatie @default(onbekend)
@@ -35,9 +36,10 @@ model Persoon {
 
   // Vrijwilliger
   vrijwilligerOpmerking String?
-  begeleidtVakanties    Boolean        @default(false)
-  begeleidtCursus       Boolean        @default(false)
-  Inschrijving          Inschrijving[]
+  begeleidtVakanties    Boolean                @default(false)
+  begeleidtCursus       Boolean                @default(false)
+  selectie              VrijwilligerSelectie[]
+
   @@map("persoon")
 }
 
@@ -88,6 +90,15 @@ enum ProjectType {
   vakantie
 
   @@map("project_type")
+}
+
+enum VrijwilligerSelectie {
+  toeleider
+  vakantieVrijwilliger
+  extraPersoonDeKei
+  extraPersoonKeiJong
+
+  @@map("vrijwilliger_selectie")
 }
 
 enum Organisatieonderdeel {

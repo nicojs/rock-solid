@@ -1,5 +1,5 @@
 {
-  "delay": 100,
+  "delay": 200,
   "verbose": true,
   "watch": ["dist", "node_modules/@key-crm/frontend/dist/app.bundle.js"],
   "ext": "*.js",

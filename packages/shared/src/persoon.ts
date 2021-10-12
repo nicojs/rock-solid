@@ -27,7 +27,9 @@ export interface TextFilter {
   searchType: 'text';
   search: string;
 }
-export type PropertyFilter = Partial<Persoon> & {
+export type PropertyFilter = Partial<
+  Omit<Vrijwilliger, 'type'> & Omit<Deelnemer, 'type'> & { type: PersoonType }
+> & {
   searchType: 'persoon';
 };
 
@@ -46,6 +48,7 @@ export interface Vrijwilliger extends BasePersoon {
   vrijwilligerOpmerking?: string;
   begeleidtVakanties: boolean;
   begeleidtCursus: boolean;
+  selectie: VrijwilligerSelectie[];
 }
 
 export type PersoonType = 'deelnemer' | 'vrijwilliger';
@@ -91,3 +94,16 @@ export const geslachten: Options<Geslacht> = Object.freeze({
   man: 'man',
   vrouw: 'vrouw',
 });
+
+export type VrijwilligerSelectie =
+  | 'toeleider'
+  | 'vakantieVrijwilliger'
+  | 'extraPersoonDeKei'
+  | 'extraPersoonKeiJong';
+export const vrijwilligerSelecties: Options<VrijwilligerSelectie> =
+  Object.freeze({
+    toeleider: 'Toeleider',
+    vakantieVrijwilliger: 'Vakantie vrijwilliger',
+    extraPersoonDeKei: 'Extra persoon de kei',
+    extraPersoonKeiJong: 'Extra persoon kei-jong',
+  });

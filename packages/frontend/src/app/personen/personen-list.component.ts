@@ -1,5 +1,4 @@
 import { html, LitElement } from 'lit';
-import { createRef, Ref } from 'lit/directives/ref.js';
 import { BasePersoon, PersoonType } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -15,22 +14,6 @@ export class PersonenComponent extends LitElement {
 
   @property()
   public type: PersoonType = 'deelnemer';
-
-  private searchRef: Ref<HTMLInputElement> = createRef();
-
-  private searchFormSubmit(event: SubmitEvent) {
-    event.preventDefault();
-    if (this.searchRef.value) {
-      const event = new CustomEvent('search-submitted', {
-        composed: true,
-        bubbles: true,
-        detail: {
-          searchText: this.searchRef.value.value,
-        },
-      });
-      this.dispatchEvent(event);
-    }
-  }
 
   override render() {
     return html` <div class="row">
@@ -70,7 +53,7 @@ export class PersonenComponent extends LitElement {
               <kei-link
                 btn
                 btnSecondary
-                href="/${this.type}s/edit/${persoon.id}"
+                href="/${persoon.type}s/edit/${persoon.id}"
                 ><kei-icon icon="pencil"></kei-icon
               ></kei-link>
             </td>

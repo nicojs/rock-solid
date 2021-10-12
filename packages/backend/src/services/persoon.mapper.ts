@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service';
 import * as db from '@prisma/client';
 import type { Prisma } from '@prisma/client';
-import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
+import {
+  Persoon,
+  PersoonFilter,
+  UpsertablePersoon,
+  VrijwilligerSelectie,
+} from '@kei-crm/shared';
 import { purgeNulls } from './mapper-utils';
 
 /**
@@ -33,8 +38,13 @@ export class PersoonMapper {
         };`;
         break;
       default:
-        const { searchType, ...where } = filter;
-        people = await this.db.persoon.findMany({ where });
+        const { searchType, selectie, ...where } = filter;
+        people = await this.db.persoon.findMany({
+          where: {
+            ...where,
+            ...(selectie ? { AND: { selectie: { hasSome: selectie } } } : {}),
+          },
+        });
         break;
     }
     return people.map(this.toPersoon);

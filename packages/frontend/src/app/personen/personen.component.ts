@@ -9,7 +9,7 @@ import { persoonService } from './persoon.service';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
-import { capitalize } from '../shared';
+import { capitalize, pluralize } from '../shared';
 import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { fullName } from './full-name.pipe';
 
@@ -23,7 +23,7 @@ export class PersonenComponent extends LitElement {
   @property({ attribute: false })
   private persoonToEdit: Persoon | undefined;
 
-  @property()
+  @property({})
   public type: PersoonType = 'deelnemer';
 
   @property({ attribute: false })
@@ -31,10 +31,6 @@ export class PersonenComponent extends LitElement {
 
   @property({ attribute: false, type: Boolean })
   public editIsLoading = false;
-
-  override connectedCallback() {
-    super.connectedCallback();
-  }
 
   override updated(changedProperties: PropertyValues<PersonenComponent>) {
     if (changedProperties.has('type')) {
@@ -112,12 +108,20 @@ export class PersonenComponent extends LitElement {
           </div>
           ${this.personen
             ? html`<kei-personen-list
-                  .personen="${this.personen}"
+                  .type=${this.type}
+                  .personen=${this.personen}
                 ></kei-personen-list>
                 <kei-link href="/${this.type}s/new" btn btnSuccess
                   ><kei-icon icon="personPlus"></kei-icon> ${capitalize(
                     this.type,
                   )}</kei-link
+                >
+                <kei-link
+                  btn
+                  btnOutlineSecondary
+                  href="/${pluralize(this.type)}/zoeken"
+                  ><kei-icon icon="search"></kei-icon> Geavanceerd
+                  zoeken</kei-link
                 >`
             : html`<kei-loading></kei-loading>`}`;
       case 'new':
@@ -143,6 +147,10 @@ export class PersonenComponent extends LitElement {
                 @persoon-submitted=${this.updatePersoon}
               ></kei-persoon-edit>`
           : html`<kei-loading></kei-loading>`}`;
+      case 'zoeken':
+        return html`<kei-advanced-search-personen
+          .type=${this.type}
+        ></kei-advanced-search-personen>`;
       default:
         this.reloadPersonen();
         router.navigate(`/${this.type}s/list`);

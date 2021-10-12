@@ -9,6 +9,8 @@
     "bootstrap": "lerna bootstrap",
     "link-parent-bin": "link-parent-bin",
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts --ignore-path .gitignore",
+    "build": "tsc -b",
+    "prestart": "npm run build",
     "start": "concurrently npm:start:tsc npm:start:backend npm:start:frontend",
     "start:backend": "cd packages/backend && npm start",
     "start:frontend": "cd packages/frontend && npm start",

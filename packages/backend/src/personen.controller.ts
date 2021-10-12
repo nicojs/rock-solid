@@ -11,6 +11,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { PersoonFilterPipe } from './pipes/persoon-filter.pipe';
 import { PersoonMapper } from './services/persoon.mapper';
 
 @Controller({ path: 'personen' })
@@ -18,7 +19,7 @@ export class PersonenController {
   constructor(private readonly persoonService: PersoonMapper) {}
 
   @Get()
-  getAll(@Query() filter: PersoonFilter): Promise<Persoon[]> {
+  getAll(@Query(PersoonFilterPipe) filter: PersoonFilter): Promise<Persoon[]> {
     return this.persoonService.getAll(filter);
   }
 
