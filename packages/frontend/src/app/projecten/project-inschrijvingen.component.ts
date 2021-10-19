@@ -8,10 +8,13 @@ import { fullName } from '../personen/full-name.pipe';
 import { pluralize, showBoolean, showDatum } from '../shared';
 import { TypeAheadHint } from '../shared/autocomplete.component';
 import { router } from '../router';
+import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
 
 @customElement('kei-project-inschrijvingen')
 export class ProjectInschrijvingenComponent extends LitElement {
   static override styles = [bootstrap];
+
+  private inschrijvingen$ = new ReplaySubject<Inschrijving[]>(1);
 
   @property({ attribute: false })
   public project!: Project;
@@ -25,6 +28,20 @@ export class ProjectInschrijvingenComponent extends LitElement {
   @state()
   private inschrijvingInScope: Inschrijving | undefined;
 
+  private subscription: Subscription | undefined;
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.subscription?.unsubscribe();
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.subscription = this.inschrijvingen$.subscribe((inschrijvingen) => {
+      this.inschrijvingen = inschrijvingen;
+    });
+  }
+
   public override updated(
     props: PropertyValues<ProjectInschrijvingenComponent>,
   ) {
@@ -33,20 +50,16 @@ export class ProjectInschrijvingenComponent extends LitElement {
       projectService
         .getInschrijvingen(this.project.id)
         .then((inschrijvingen) => {
-          this.inschrijvingen = inschrijvingen;
-          this.updateInschrijvingInScope();
+          this.inschrijvingen$.next(inschrijvingen);
         });
     }
-    if (props.has('path')) {
-      this.updateInschrijvingInScope();
-    }
-  }
-
-  private updateInschrijvingInScope() {
-    if (this.path[0] === 'edit' && this.path[1]) {
-      this.inschrijvingInScope = this.inschrijvingen?.find(
-        (inschrijving) => inschrijving.id === +this.path[1]!,
-      );
+    if (props.has('path') && this.path[0] === 'edit' && this.path[1]) {
+      const id = +this.path[1];
+      firstValueFrom(this.inschrijvingen$).then((inschrijvingen) => {
+        this.inschrijvingInScope = inschrijvingen.find(
+          (inschrijving) => inschrijving.id === id,
+        );
+      });
     }
   }
 

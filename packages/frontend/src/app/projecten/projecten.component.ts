@@ -1,6 +1,6 @@
 import { Project, ProjectType, UpsertableProject } from '@kei-crm/shared';
 import { html, LitElement, PropertyValues } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { Query, router } from '../router';
 import { capitalize, pluralize } from '../shared';
@@ -16,16 +16,16 @@ export class ProjectenComponent extends LitElement {
   @property()
   public query!: Query;
 
-  @property({ attribute: false })
-  private projecten: Project[] | undefined;
-
   @property()
   public type: ProjectType = 'cursus';
 
-  @property({ attribute: false })
+  @state()
+  private projecten: Project[] | undefined;
+
+  @state()
   private loading = false;
 
-  @property({ attribute: false })
+  @state()
   private projectInScope: Project | undefined;
 
   private loadProjecten() {

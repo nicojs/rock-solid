@@ -1,12 +1,13 @@
 import { bedrijfsonderdelen, Project } from '@kei-crm/shared';
-import { html, LitElement } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { notAvailable, pluralize, showDatum } from '../shared';
+import style from './projecten-list.component.scss';
 
 @customElement('kei-projecten-list')
 export class ProjectenListComponent extends LitElement {
-  static override styles = [bootstrap];
+  static override styles = [bootstrap, unsafeCSS(style)];
 
   @property()
   public projecten!: Project[];
@@ -22,9 +23,9 @@ export class ProjectenListComponent extends LitElement {
       <thead>
         <tr>
           <th>Projectnummer</th>
+          <th>Naam</th>
           <th>Organisatieonderdeel</th>
-          <th>Aantal activiteiten</th>
-          <th>Startdatum eerste activiteit</th>
+          <th>Activiteiten</th>
           <th>Acties</th>
         </tr>
       </thead>
@@ -32,13 +33,38 @@ export class ProjectenListComponent extends LitElement {
         ${this.projecten.map(
           (project) => html`<tr>
             <td>${project.projectnummer}</td>
+            <td>${project.naam}</td>
             <td>
               ${project.type === 'cursus'
                 ? bedrijfsonderdelen[project.organisatieonderdeel]
                 : notAvailable}
             </td>
-            <td>${project.activiteiten.length}</td>
-            <td>${showDatum(project.activiteiten[0]?.van)}</td>
+            <td>
+              ${project.activiteiten.map(
+                (activiteit) =>
+                  html`<div class="mt-2">
+                    ${activiteit.totEnMet < new Date()
+                      ? html`<kei-link
+                          title="Open activiteit"
+                          btn
+                          btnOutlinePrimary
+                          href="/${pluralize(
+                            project.type,
+                          )}/${project.id}/deelnames/${activiteit.id}}"
+                          ><kei-icon icon="calendar"></kei-icon> ${showDatum(
+                            activiteit.van,
+                          )}</kei-link
+                        >`
+                      : html`<span
+                          title="Activiteit vindt plaats in de toekomst"
+                          class="no-button-date"
+                          ><kei-icon icon="calendar"></kei-icon> ${showDatum(
+                            activiteit.van,
+                          )}</span
+                        >`}
+                  </div>`,
+              )}
+            </td>
             <td>
               <kei-link
                 btn

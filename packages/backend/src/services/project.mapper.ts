@@ -22,7 +22,13 @@ export class ProjectMapper {
   public async getAll(): Promise<Project[]> {
     const projecten = await this.db.project.findMany({
       include: {
-        activiteiten: true,
+        activiteiten: {
+          orderBy: [
+            {
+              van: 'asc',
+            },
+          ],
+        },
         _count: {
           select: {
             inschrijvingen: true,
@@ -63,6 +69,7 @@ export class ProjectMapper {
   }
 
   async updateProject(id: number, project: UpsertableProject): Promise<void> {
+    const { aantalInschrijvingen, ...data } = project;
     await this.db.$transaction([
       this.db.activiteit.deleteMany({
         where: {
@@ -75,7 +82,7 @@ export class ProjectMapper {
       this.db.project.update({
         where: { id },
         data: {
-          ...project,
+          ...data,
           activiteiten: {
             create: project.activiteiten.filter((act) => empty(act.id)),
             updateMany: project.activiteiten
@@ -104,12 +111,12 @@ function toProject(
     } | null;
   },
 ): Project {
-  const { type } = val;
+  const { type, _count, ...projectProperties } = val;
   const project: BaseProject = purgeNulls({
-    ...val,
     type,
+    ...projectProperties,
     activiteiten: val.activiteiten?.map(toActiviteit) ?? [],
-    aantalInschrijvingen: val._count?.inschrijvingen,
+    aantalInschrijvingen: _count?.inschrijvingen,
   });
   switch (type) {
     case 'cursus':
