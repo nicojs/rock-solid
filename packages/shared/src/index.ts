@@ -5,3 +5,4 @@ export * from './project';
 export * from './serialization';
 export * from './util';
 export * from './inschrijving';
+export * from './deelname';

@@ -50,7 +50,7 @@ export class ProjectenListComponent extends LitElement {
                           btnOutlinePrimary
                           href="/${pluralize(
                             project.type,
-                          )}/${project.id}/deelnames/${activiteit.id}}"
+                          )}/${project.id}/deelnames/${activiteit.id}"
                           ><kei-icon icon="calendar"></kei-icon> ${showDatum(
                             activiteit.van,
                           )}</kei-link
@@ -70,14 +70,14 @@ export class ProjectenListComponent extends LitElement {
                 btn
                 btnOutlinePrimary
                 title="Wijzigen"
-                href="/${pluralize(project.type)}/edit/${project.id}"
+                href="/${pluralize(project.type)}/${project.id}/edit"
                 ><kei-icon icon="pencil"></kei-icon
               ></kei-link>
               <kei-link
                 btn
                 btnOutlinePrimary
                 title="Inschrijvingen"
-                href="/${pluralize(project.type)}/inschrijvingen/${project.id}"
+                href="/${pluralize(project.type)}/${project.id}/inschrijvingen"
               >
                 <kei-icon icon="pencilSquare"></kei-icon>
                 <span

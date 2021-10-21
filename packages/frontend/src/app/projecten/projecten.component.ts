@@ -37,17 +37,18 @@ export class ProjectenComponent extends LitElement {
 
   override updated(props: PropertyValues<ProjectenComponent>): void {
     if (props.has('path')) {
-      if (
-        this.path.length >= 2 &&
-        ['edit', 'inschrijvingen'].includes(this.path[0]!)
-      ) {
-        this.projectInScope = undefined;
-        projectService.get(this.path[1]!).then((project) => {
-          this.projectInScope = project;
-        });
-      }
       if (this.path[0] === 'list') {
         this.loadProjecten();
+      }
+      const [projectId, page] = this.path;
+      if (
+        projectId &&
+        ['edit', 'inschrijvingen', 'deelnames'].includes(page!)
+      ) {
+        this.projectInScope = undefined;
+        projectService.get(projectId).then((project) => {
+          this.projectInScope = project;
+        });
       }
     }
   }
@@ -93,22 +94,32 @@ export class ProjectenComponent extends LitElement {
               @project-submitted="${(event: CustomEvent<Project>) =>
                 this.addProject(event.detail)}"
             ></kei-project-edit>`;
-      case 'edit':
-        return this.projectInScope
-          ? html`<kei-project-edit
-              .project="${this.projectInScope}"
-              @project-submitted="${(event: CustomEvent<Project>) =>
-                this.editProject(event.detail)}"
-            ></kei-project-edit>`
-          : html`<kei-loading></kei-loading>`;
-      case 'inschrijvingen':
-        return this.projectInScope
-          ? html`<kei-project-inschrijvingen
-              .project="${this.projectInScope}"
-              .path="${this.path.slice(2)}"
-            ></kei-project-inschrijvingen>`
-          : html`<kei-loading></kei-loading>`;
       default:
+        if (this.path[0]?.match(/\d+/)) {
+          const [, page, ...rest] = this.path;
+          if (this.projectInScope) {
+            switch (page) {
+              case 'edit':
+                return html`<kei-project-edit
+                  .project="${this.projectInScope}"
+                  @project-submitted="${(event: CustomEvent<Project>) =>
+                    this.editProject(event.detail)}"
+                ></kei-project-edit>`;
+              case 'inschrijvingen':
+                return html`<kei-project-inschrijvingen
+                  .project="${this.projectInScope}"
+                  .path="${rest}"
+                ></kei-project-inschrijvingen>`;
+              case 'deelnames':
+                return html`<kei-project-deelnames
+                  .project="${this.projectInScope}"
+                  .path="${rest}"
+                ></kei-project-deelnames>`;
+            }
+          } else {
+            return html`<kei-loading></kei-loading>`;
+          }
+        }
         router.navigate(`/${pluralize(this.type)}/list`);
         return html``;
     }

@@ -1,4 +1,5 @@
 import {
+  Deelname,
   Inschrijving,
   Project,
   UpsertableInschrijving,
@@ -16,6 +17,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { DeelnameMapper } from './services/deelname.mapper';
 import { InschrijvingMapper } from './services/inschrijving.mapper';
 import { ProjectMapper } from './services/project.mapper';
 
@@ -24,6 +26,7 @@ export class ProjectenController {
   constructor(
     private readonly projectMapper: ProjectMapper,
     private readonly inschrijvingenMapper: InschrijvingMapper,
+    private readonly deelnameMapper: DeelnameMapper,
   ) {}
 
   @Get(':id')
@@ -46,6 +49,14 @@ export class ProjectenController {
     @Param('id', ParseIntPipe) projectId: number,
   ): Promise<Inschrijving[]> {
     return this.inschrijvingenMapper.getAll({ projectId });
+  }
+
+  @Get(':projectId/activiteiten/:activiteitId/deelnames')
+  getDeelnames(
+    @Param('projectId', ParseIntPipe) projectId: number,
+    @Param('activiteitId', ParseIntPipe) activiteitId: number,
+  ): Promise<Deelname[]> {
+    return this.deelnameMapper.getAll({ projectId, activiteitId });
   }
 
   @Post()

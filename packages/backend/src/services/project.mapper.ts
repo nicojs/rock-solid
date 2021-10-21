@@ -11,6 +11,28 @@ import { DBService } from './db.service';
 import * as db from '@prisma/client';
 import { purgeNulls } from './mapper-utils';
 
+const includeQuery = {
+  activiteiten: {
+    orderBy: [
+      {
+        van: 'asc' as const,
+      },
+    ],
+    include: {
+      _count: {
+        select: {
+          deelnames: true as const,
+        },
+      },
+    },
+  },
+  _count: {
+    select: {
+      inschrijvingen: true as const,
+    },
+  },
+};
+
 /**
  * A data mapper for persoon
  * @see https://martinfowler.com/eaaCatalog/dataMapper.html
@@ -21,20 +43,7 @@ export class ProjectMapper {
 
   public async getAll(): Promise<Project[]> {
     const projecten = await this.db.project.findMany({
-      include: {
-        activiteiten: {
-          orderBy: [
-            {
-              van: 'asc',
-            },
-          ],
-        },
-        _count: {
-          select: {
-            inschrijvingen: true,
-          },
-        },
-      },
+      include: includeQuery,
     });
     return projecten.map(toProject);
   }
@@ -42,16 +51,7 @@ export class ProjectMapper {
   async getOne(where: Partial<Project>): Promise<Project | null> {
     const project = await this.db.project.findUnique({
       where,
-      include: {
-        activiteiten: {
-          orderBy: {
-            van: 'asc',
-          },
-        },
-        _count: {
-          select: { inschrijvingen: true },
-        },
-      },
+      include: includeQuery,
     });
     return project ? toProject(project) : null;
   }
@@ -64,6 +64,7 @@ export class ProjectMapper {
           create: newProject.activiteiten,
         },
       },
+      include: includeQuery,
     });
     return toProject(project);
   }
@@ -103,14 +104,20 @@ export class ProjectMapper {
   }
 }
 
-function toProject(
-  val: db.Project & {
-    activiteiten?: db.Activiteit[];
-    _count?: {
-      inschrijvingen?: number;
-    } | null;
-  },
-): Project {
+type ActiviteitQueryResult = db.Activiteit & {
+  _count?: {
+    deelnames?: number;
+  } | null;
+};
+
+interface ProjectQueryResult extends db.Project {
+  activiteiten: ActiviteitQueryResult[];
+  _count: {
+    inschrijvingen: number;
+  } | null;
+}
+
+function toProject(val: ProjectQueryResult): Project {
   const { type, _count, ...projectProperties } = val;
   const project: BaseProject = purgeNulls({
     type,
@@ -137,7 +144,10 @@ function toProject(
   }
 }
 
-function toActiviteit(val: db.Activiteit): Activiteit {
-  const { projectId, ...act } = purgeNulls(val);
-  return act;
+function toActiviteit(val: ActiviteitQueryResult): Activiteit {
+  const { projectId, _count, ...act } = purgeNulls(val);
+  return {
+    ...act,
+    aantalDeelnames: _count?.deelnames,
+  };
 }

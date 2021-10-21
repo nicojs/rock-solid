@@ -8,6 +8,7 @@ import { DBService } from './services/db.service';
 import { ProjectenController } from './projecten.controller';
 import { ProjectMapper } from './services/project.mapper';
 import { InschrijvingMapper } from './services/inschrijving.mapper';
+import { DeelnameMapper } from './services/deelname.mapper';
 
 const rootPath = path.resolve(
   __dirname,
@@ -26,6 +27,12 @@ const rootPath = path.resolve(
     }),
   ],
   controllers: [PersonenController, ProjectenController],
-  providers: [PersoonMapper, ProjectMapper, InschrijvingMapper, DBService],
+  providers: [
+    PersoonMapper,
+    ProjectMapper,
+    InschrijvingMapper,
+    DeelnameMapper,
+    DBService,
+  ],
 })
 export class AppModule {}

@@ -33,6 +33,7 @@ model Persoon {
   werksituatieOpmerking String?
   voedingswens          Voedingswens @default(geen)
   voedingswensOpmerking String?
+  Deelname              Deelname[]
 
   // Vrijwilliger
   vrijwilligerOpmerking String?
@@ -83,6 +84,18 @@ model Activiteit {
   vormingsuren Float?
 
   @@map("activiteit")
+  deelnames Deelname[]
+}
+
+model Deelname {
+  id                         Int        @id @default(autoincrement())
+  deelnemer                  Persoon    @relation(fields: [deelnemerId], references: [id])
+  deelnemerId                Int
+  activiteit                 Activiteit @relation(fields: [activiteitId], references: [id])
+  activiteitId               Int
+  effectieveDeelnamePerunage Int
+
+  @@map("deelname")
 }
 
 enum ProjectType {

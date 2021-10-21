@@ -47,11 +47,11 @@ export class PersoonMapper {
         });
         break;
     }
-    return people.map(this.toPersoon);
+    return people.map(toPersoon);
   }
 
   async createUser(data: UpsertablePersoon): Promise<Persoon> {
-    return this.toPersoon(
+    return toPersoon(
       await this.db.persoon.create({
         data,
       }),
@@ -62,22 +62,22 @@ export class PersoonMapper {
     where: Prisma.PersoonWhereUniqueInput;
     data: UpsertablePersoon;
   }): Promise<Persoon> {
-    return this.toPersoon(await this.db.persoon.update(params));
+    return toPersoon(await this.db.persoon.update(params));
   }
 
   async deleteUser(where: Prisma.PersoonWhereUniqueInput): Promise<Persoon> {
-    return this.toPersoon(
+    return toPersoon(
       await this.db.persoon.delete({
         where,
       }),
     );
   }
 
-  private toPersoon(p: db.Persoon): Persoon {
-    return purgeNulls(p);
-  }
-
   private maybeToPersoon(maybeP: db.Persoon | null): Persoon | null {
-    return maybeP ? this.toPersoon(maybeP) : null;
+    return maybeP ? toPersoon(maybeP) : null;
   }
+}
+
+export function toPersoon(p: db.Persoon): Persoon {
+  return purgeNulls(p);
 }

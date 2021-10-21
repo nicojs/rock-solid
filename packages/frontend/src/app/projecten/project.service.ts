@@ -1,4 +1,5 @@
 import {
+  Deelname,
   Inschrijving,
   Project,
   UpsertableInschrijving,
@@ -19,6 +20,12 @@ export class ProjectService {
 
   getInschrijvingen(projectId: number | string): Promise<Inschrijving[]> {
     return this.restClient.getAll(`projecten/${projectId}/inschrijvingen`);
+  }
+
+  getDeelnames(projectId: number, activiteitId: number): Promise<Deelname[]> {
+    return this.restClient.getAll(
+      `projecten/${projectId}/activiteiten/${activiteitId}/deelnames`,
+    );
   }
 
   update(id: string | number, project: UpsertableProject): Promise<void> {
