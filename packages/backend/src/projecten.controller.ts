@@ -2,6 +2,7 @@ import {
   Deelname,
   Inschrijving,
   Project,
+  UpsertableDeelname,
   UpsertableInschrijving,
   UpsertableProject,
 } from '@kei-crm/shared';
@@ -57,6 +58,20 @@ export class ProjectenController {
     @Param('activiteitId', ParseIntPipe) activiteitId: number,
   ): Promise<Deelname[]> {
     return this.deelnameMapper.getAll({ projectId, activiteitId });
+  }
+
+  @Put(':projectId/activiteiten/:activiteitId/deelnames')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  updateDeelnames(
+    @Param('projectId', ParseIntPipe) projectId: number,
+    @Param('activiteitId', ParseIntPipe) activiteitId: number,
+    @Body() deelnames: UpsertableDeelname[],
+  ): Promise<void> {
+    return this.deelnameMapper.updateAll({
+      projectId,
+      activiteitId,
+      deelnames,
+    });
   }
 
   @Post()

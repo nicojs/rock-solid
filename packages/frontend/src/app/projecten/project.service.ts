@@ -2,6 +2,7 @@ import {
   Deelname,
   Inschrijving,
   Project,
+  UpsertableDeelname,
   UpsertableInschrijving,
   UpsertableProject,
 } from '@kei-crm/shared';
@@ -20,6 +21,17 @@ export class ProjectService {
 
   getInschrijvingen(projectId: number | string): Promise<Inschrijving[]> {
     return this.restClient.getAll(`projecten/${projectId}/inschrijvingen`);
+  }
+
+  updateDeelnames(
+    projectId: number,
+    activiteitId: number,
+    deelnames: UpsertableDeelname[],
+  ): Promise<void> {
+    return this.restClient.updateAll(
+      `projecten/${projectId}/activiteiten/${activiteitId}/deelnames`,
+      deelnames,
+    );
   }
 
   getDeelnames(projectId: number, activiteitId: number): Promise<Deelname[]> {

@@ -2,30 +2,29 @@ import { parse, RestRoutes } from '@kei-crm/shared';
 import { HttpStatus } from './http-status';
 
 export class RestClient {
-  async getAll<TEntityName extends keyof RestRoutes>(
-    entityName: TEntityName,
+  async getAll<TRoute extends keyof RestRoutes>(
+    route: TRoute,
     query?: Record<string, unknown>,
-  ): Promise<RestRoutes[TEntityName]['entity'][]> {
-    const response = await fetch(`/api/${entityName}${toQueryString(query)}`);
+  ): Promise<RestRoutes[TRoute]['entity'][]> {
+    const response = await fetch(`/api/${route}${toQueryString(query)}`);
     const bodyText = await response.text();
     return parse(bodyText);
   }
 
-  async getOne<TEntityName extends keyof RestRoutes>(
-    entityName: TEntityName,
+  async getOne<TRoute extends keyof RestRoutes>(
+    route: TRoute,
     id: string | number,
-  ): Promise<RestRoutes[TEntityName]['entity']> {
-    const response = await fetch(`/api/${entityName}/${id}`);
+  ): Promise<RestRoutes[TRoute]['entity']> {
+    const response = await fetch(`/api/${route}/${id}`);
     const bodyText = await response.text();
     return parse(bodyText);
   }
 
-  async update<TEntityName extends keyof RestRoutes>(
-    entityName: TEntityName,
-    id: string | number,
-    entity: RestRoutes[TEntityName]['upsertableEntity'],
+  async updateAll<TRoute extends keyof RestRoutes>(
+    route: TRoute,
+    entity: RestRoutes[TRoute]['upsertableEntity'][],
   ): Promise<void> {
-    const response = await fetch(`/api/${entityName}/${id}`, {
+    const response = await fetch(`/api/${route}`, {
       method: 'PUT',
       body: JSON.stringify(entity),
       headers: {
@@ -37,11 +36,28 @@ export class RestClient {
     }
   }
 
-  async create<TEntityName extends keyof RestRoutes>(
-    entityName: TEntityName,
-    entity: RestRoutes[TEntityName]['upsertableEntity'],
-  ): Promise<RestRoutes[TEntityName]['entity']> {
-    const response = await fetch(`/api/${entityName}`, {
+  async update<TRoute extends keyof RestRoutes>(
+    route: TRoute,
+    id: string | number,
+    entity: RestRoutes[TRoute]['upsertableEntity'],
+  ): Promise<void> {
+    const response = await fetch(`/api/${route}/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(entity),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.status !== HttpStatus.NO_CONTENT) {
+      throw new Error(`Update failed (HTTP status code ${response.status})`);
+    }
+  }
+
+  async create<TRoute extends keyof RestRoutes>(
+    route: TRoute,
+    entity: RestRoutes[TRoute]['upsertableEntity'],
+  ): Promise<RestRoutes[TRoute]['entity']> {
+    const response = await fetch(`/api/${route}`, {
       method: 'POST',
       body: JSON.stringify(entity),
       headers: {

@@ -18,6 +18,9 @@ export class Link extends LitElement {
   public btnSuccess = false;
 
   @property({ type: Boolean })
+  public btnWarning = false;
+
+  @property({ type: Boolean })
   public btnSecondary = false;
 
   @property({ type: Boolean })
@@ -40,6 +43,7 @@ export class Link extends LitElement {
           'btn-lg': this.lg,
           'btn-primary': this.btnPrimary,
           'btn-success': this.btnSuccess,
+          'btn-warning': this.btnWarning,
           'btn-secondary': this.btnSecondary,
           'btn-outline-secondary': this.btnOutlineSecondary,
           'btn-outline-primary': this.btnOutlinePrimary,

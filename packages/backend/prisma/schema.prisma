@@ -93,7 +93,7 @@ model Deelname {
   deelnemerId                Int
   activiteit                 Activiteit @relation(fields: [activiteitId], references: [id])
   activiteitId               Int
-  effectieveDeelnamePerunage Int
+  effectieveDeelnamePerunage Float
 
   @@map("deelname")
 }

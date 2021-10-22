@@ -12,8 +12,8 @@ export enum InputType {
 interface Validators {
   required?: boolean;
   minLength?: number;
-  min?: Date;
-  max?: Date;
+  min?: Date | number;
+  max?: Date | number;
   pattern?: string;
 }
 
@@ -74,6 +74,7 @@ export interface StringInputControl<TEntity> extends BaseInputControl {
 export interface NumberInputControl<TEntity> extends BaseInputControl {
   name: KeysOfType<TEntity, number>;
   type: InputType.number;
+  step?: number;
 }
 
 export interface DateControl<TEntity> extends BaseInputControl {

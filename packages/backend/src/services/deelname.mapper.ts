@@ -1,4 +1,4 @@
-import { Deelname, Deelnemer } from '@kei-crm/shared';
+import { Deelname, Deelnemer, UpsertableDeelname } from '@kei-crm/shared';
 import { Injectable } from '@nestjs/common';
 import * as db from '@prisma/client';
 import { DBService } from './db.service';
@@ -11,6 +11,7 @@ import { toPersoon } from './persoon.mapper';
 @Injectable()
 export class DeelnameMapper {
   constructor(private db: DBService) {}
+
   async getAll({
     projectId,
     activiteitId,
@@ -33,10 +34,53 @@ export class DeelnameMapper {
     });
     return deelnames.map(toDeelname);
   }
+
+  async updateAll({
+    activiteitId,
+    deelnames,
+  }: {
+    projectId: number;
+    activiteitId: number;
+    deelnames: UpsertableDeelname[];
+  }): Promise<void> {
+    await this.db.$transaction(
+      deelnames.map((deelname) => {
+        if (deelname.id) {
+          return this.db.deelname.update({
+            where: { id: deelname.id },
+            data: toDBDeelname(activiteitId, deelname),
+          });
+        } else {
+          return this.db.deelname.create({
+            data: toDBDeelname(activiteitId, deelname),
+          });
+        }
+      }),
+    );
+  }
 }
 
 interface DeelnameQueryResult extends db.Deelname {
   deelnemer: db.Persoon;
+}
+
+function toDBDeelname(
+  activiteitId: number,
+  deelname: UpsertableDeelname,
+): db.Prisma.DeelnameCreateInput {
+  return {
+    activiteit: {
+      connect: {
+        id: activiteitId,
+      },
+    },
+    deelnemer: {
+      connect: {
+        id: deelname.deelnemerId,
+      },
+    },
+    effectieveDeelnamePerunage: deelname.effectieveDeelnamePerunage,
+  };
 }
 
 function toDeelname(val: DeelnameQueryResult): Deelname {
@@ -45,5 +89,6 @@ function toDeelname(val: DeelnameQueryResult): Deelname {
     activiteitId: val.activiteitId,
     deelnemer: toPersoon(val.deelnemer) as Deelnemer,
     deelnemerId: val.deelnemerId,
+    effectieveDeelnamePerunage: val.effectieveDeelnamePerunage,
   };
 }

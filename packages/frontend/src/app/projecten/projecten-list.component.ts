@@ -44,17 +44,30 @@ export class ProjectenListComponent extends LitElement {
                 (activiteit) =>
                   html`<div class="mt-2">
                     ${activiteit.totEnMet < new Date()
-                      ? html`<kei-link
-                          title="Open activiteit"
-                          btn
-                          btnOutlinePrimary
-                          href="/${pluralize(
-                            project.type,
-                          )}/${project.id}/deelnames/${activiteit.id}"
-                          ><kei-icon icon="calendar"></kei-icon> ${showDatum(
-                            activiteit.van,
-                          )}</kei-link
-                        >`
+                      ? activiteit.aantalDeelnames! <
+                        project.aantalInschrijvingen!
+                        ? html`<kei-link
+                            title="Open activiteit"
+                            btn
+                            btnWarning
+                            href="/${pluralize(
+                              project.type,
+                            )}/${project.id}/deelnames/${activiteit.id}"
+                            ><kei-icon icon="calendar"></kei-icon> ${showDatum(
+                              activiteit.van,
+                            )}</kei-link
+                          >`
+                        : html`<kei-link
+                            title="Open activiteit"
+                            btn
+                            btnOutlinePrimary
+                            href="/${pluralize(
+                              project.type,
+                            )}/${project.id}/deelnames/${activiteit.id}"
+                            ><kei-icon icon="calendar"></kei-icon> ${showDatum(
+                              activiteit.van,
+                            )}</kei-link
+                          >`
                       : html`<span
                           title="Activiteit vindt plaats in de toekomst"
                           class="no-button-date"

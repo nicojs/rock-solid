@@ -114,9 +114,10 @@ export class ReactiveFormControl<TEntity> extends LitElement {
       name="${control.name}"
       value="${this.entity[control.name]}"
       ?required=${control.validators?.required}
+      step="${ifDefined(control.step)}"
       placeholder=${ifDefined(control.placeholder)}
-      min="${ifDefined(toDateString(control.validators?.min))}"
-      max="${ifDefined(toDateString(control.validators?.max))}"
+      min="${ifDefined(control.validators?.min)}"
+      max="${ifDefined(control.validators?.max)}"
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
         this.updateValidationMessage(e);

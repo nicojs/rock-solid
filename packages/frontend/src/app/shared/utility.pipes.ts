@@ -40,8 +40,10 @@ export function pluralize(val: string) {
   }
 }
 
-export function toDateString(val: Date | undefined): string | undefined {
-  if (val === undefined) {
+export function toDateString(
+  val: Date | number | undefined,
+): string | undefined {
+  if (val === undefined || typeof val === 'number') {
     return;
   }
   function leadingZeroIfNeeded(n: number): string {
