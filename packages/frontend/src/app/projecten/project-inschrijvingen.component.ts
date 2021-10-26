@@ -116,7 +116,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
             ${this.inschrijvingen.map(
               (inschrijving) => html`<tr>
                 <td>${fullName(inschrijving.persoon!)}</td>
-                <td>${showDatum(inschrijving.tijdstipVanInschrijven)}</td>
+                <td>${showDatum(inschrijving.tijdstipVanInschrijving)}</td>
                 <td>${showBoolean(inschrijving.wachtlijst)}</td>
                 <td>${showBoolean(inschrijving.toestemmingFotos)}</td>
                 <td>

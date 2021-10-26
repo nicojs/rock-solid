@@ -5,7 +5,7 @@ export interface Inschrijving {
   id: number;
   projectId: number;
   persoonId: number;
-  tijdstipVanInschrijven: Date;
+  tijdstipVanInschrijving: Date;
   tijdstipVanBevestiging?: Date;
   tijdstipVerzendenVervoersbrief?: Date;
   toestemmingFotos: boolean;

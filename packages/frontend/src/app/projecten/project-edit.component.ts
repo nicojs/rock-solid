@@ -48,7 +48,7 @@ const baseProjectControls: InputControl<BaseProject>[] = [
     placeholder: `DK ${new Date().getFullYear().toString().slice(-2)}-123`,
     validators: {
       required: true,
-      pattern: '^(KJ)|(DK) \\d{2}-\\d+$',
+      pattern: '^((KJ)|(DK)) \\d{2}-\\d+$',
     },
   },
   {

@@ -28,6 +28,7 @@ export interface Activiteit {
   totEnMet: Date;
   vormingsuren?: number;
   aantalDeelnames?: number;
+  aantalDeelnemersuren?: number;
 }
 
 export type Organisatieonderdeel = 'keiJongBuSO' | 'keiJongNietBuSO' | 'deKei';

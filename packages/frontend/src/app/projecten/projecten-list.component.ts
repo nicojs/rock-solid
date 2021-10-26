@@ -25,6 +25,7 @@ export class ProjectenListComponent extends LitElement {
           <th>Projectnummer</th>
           <th>Naam</th>
           <th>Organisatieonderdeel</th>
+          <th>Deelnemersuren</th>
           <th>Activiteiten</th>
           <th>Acties</th>
         </tr>
@@ -40,43 +41,40 @@ export class ProjectenListComponent extends LitElement {
                 : notAvailable}
             </td>
             <td>
-              ${project.activiteiten.map(
-                (activiteit) =>
-                  html`<div class="mt-2">
-                    ${activiteit.totEnMet < new Date()
-                      ? activiteit.aantalDeelnames! <
-                        project.aantalInschrijvingen!
-                        ? html`<kei-link
-                            title="Open activiteit"
-                            btn
-                            btnWarning
-                            href="/${pluralize(
-                              project.type,
-                            )}/${project.id}/deelnames/${activiteit.id}"
-                            ><kei-icon icon="calendar"></kei-icon> ${showDatum(
-                              activiteit.van,
-                            )}</kei-link
-                          >`
-                        : html`<kei-link
-                            title="Open activiteit"
-                            btn
-                            btnOutlinePrimary
-                            href="/${pluralize(
-                              project.type,
-                            )}/${project.id}/deelnames/${activiteit.id}"
-                            ><kei-icon icon="calendar"></kei-icon> ${showDatum(
-                              activiteit.van,
-                            )}</kei-link
-                          >`
-                      : html`<span
-                          title="Activiteit vindt plaats in de toekomst"
-                          class="no-button-date"
-                          ><kei-icon icon="calendar"></kei-icon> ${showDatum(
-                            activiteit.van,
-                          )}</span
-                        >`}
-                  </div>`,
-              )}
+              ${project.type === 'cursus'
+                ? project.activiteiten
+                    .map((act) => act.aantalDeelnemersuren)
+                    .reduce<number>((acc, cur) => acc + (cur ?? 0), 0)
+                : notAvailable}
+            </td>
+            <td>
+              ${project.activiteiten.map((activiteit) => {
+                const inPast = activiteit.totEnMet < new Date();
+                const isComplete =
+                  activiteit.aantalDeelnames! >= project.aantalInschrijvingen!;
+                return html`<div class="mt-2">
+                  ${inPast
+                    ? html`<kei-link
+                        title="Open activiteit"
+                        btn
+                        ?btnWarning=${!isComplete}
+                        ?btnOutlinePrimary=${isComplete}
+                        href="/${pluralize(
+                          project.type,
+                        )}/${project.id}/deelnames/${activiteit.id}"
+                        ><kei-icon icon="calendar"></kei-icon> ${showDatum(
+                          activiteit.van,
+                        )}</kei-link
+                      >`
+                    : html`<span
+                        title="Activiteit vindt plaats in de toekomst"
+                        class="no-button-date"
+                        ><kei-icon icon="calendar"></kei-icon> ${showDatum(
+                          activiteit.van,
+                        )}</span
+                      >`}
+                </div>`;
+              })}
             </td>
             <td>
               <kei-link

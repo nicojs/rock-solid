@@ -42,18 +42,42 @@ export class ProjectMapper {
   constructor(private db: DBService) {}
 
   public async getAll(): Promise<Project[]> {
-    const projecten = await this.db.project.findMany({
+    const dbProjecten = await this.db.project.findMany({
       include: includeQuery,
     });
-    return projecten.map(toProject);
+    const projecten = dbProjecten.map(toProject);
+    await this.enrichWithDeelnemersuren(
+      projecten.flatMap((project) => project.activiteiten),
+    );
+    return projecten;
+  }
+
+  private async enrichWithDeelnemersuren(activiteiten: Activiteit[]) {
+    const deelnemersurenResult = await this.db.$queryRaw<
+      { id: number; deelnemersuren: number }[]
+    >`
+    SELECT activiteit.id, SUM(deelname."effectieveDeelnamePerunage" * vormingsuren) as deelnemersuren
+    FROM activiteit
+    INNER JOIN deelname ON deelname."activiteitId" = activiteit.id
+    GROUP BY activiteit.id`;
+    for (const activiteit of activiteiten) {
+      activiteit.aantalDeelnemersuren = deelnemersurenResult.find(
+        ({ id }) => id === activiteit.id,
+      )?.deelnemersuren;
+    }
   }
 
   async getOne(where: Partial<Project>): Promise<Project | null> {
-    const project = await this.db.project.findUnique({
+    const dbProject = await this.db.project.findUnique({
       where,
       include: includeQuery,
     });
-    return project ? toProject(project) : null;
+    if (dbProject) {
+      const project = toProject(dbProject);
+      await this.enrichWithDeelnemersuren(project.activiteiten);
+      return project;
+    }
+    return null;
   }
 
   async createProject(newProject: UpsertableProject): Promise<Project> {
