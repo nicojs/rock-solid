@@ -113,12 +113,12 @@ export class ProjectMapper {
             updateMany: project.activiteiten
               .filter((act) => notEmpty(act.id))
               .map((act) => {
-                // const { ...data } = act;
+                const { aantalDeelnemersuren, aantalDeelnames, ...data } = act;
                 return {
                   where: {
                     id: act.id!,
                   },
-                  data: act,
+                  data,
                 };
               }),
           },

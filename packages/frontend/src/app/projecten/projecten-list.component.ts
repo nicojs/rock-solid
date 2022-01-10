@@ -19,7 +19,7 @@ export class ProjectenListComponent extends LitElement {
   }
 
   private renderTable() {
-    return html`<table class="table table-hover">
+    return html`<table class="table table-hover table-sm">
       <thead>
         <tr>
           <th>Projectnummer</th>
