@@ -4,6 +4,9 @@ erDiagram
   Adres }O--|| Provincie: bevindt-zich-in
   Cursus ||--O{ Inschrijving: heeft
   Cursus }O--O| Cursuslocatie: "vindt plaats op"
+  Cursus |O--|| Project: "is een"
+  Cursus }O--O| Campagne: "hoort bij"
+  Project ||--|{ Activiteit: "bestaat uit"
   Deelnemer ||--O| IndividueleFiche: heeft
   Deelnemer |O--O| Organisatie: begeleidende-dienst
   Deelnemer |O--|| FolderVoorkeur: voorkeur
@@ -15,13 +18,12 @@ erDiagram
   Deelnemer ||--O| Contactpersoon: heeft
   Contactpersoon }O--O| Organisatie: werkt-in
   Deelnemer |O--|| Persoon: "is een"
+  ExtraPersoon |O--|| Persoon: "is een"
   Deelnemer ||--O{ Deelname: ""
   Activiteit ||--O{ Deelname: "Heeft"
   Vrijwilliger |O--|| Persoon: "is een"
   Organisatie }O--O{ Aanbod: "heeft"
   Vrijwilliger }O--O{ Cursus: "begeleid"
-  Cursus }O--O| Campagne: "hoort bij"
-  Cursus ||--|{ Activiteit: "bestaat uit"
 
   IndividueleFiche {
     boolean medicatie
@@ -113,7 +115,10 @@ erDiagram
   }
 
   Cursus {
-    tekst cursusnummer
+  }
+
+  Project {
+    tekst projectnummer
     tekst naam
     enum organisatieonderdeel
     enum soort
