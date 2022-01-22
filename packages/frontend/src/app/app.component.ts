@@ -34,12 +34,12 @@ export class KeiCrmApp extends LitElement {
   public override render() {
     return html` <div class="container-fluid">
       <h1 class="display-1">KEI CRM 🤘</h1>
-      <div class="d-flex align-items-start">
+      <div class="row">
         <kei-nav
-          class="flex-column me-3"
+          class="col-xs-5 col-sm-4 col-md-3 col-lg-2"
           .active="${this.route?.path[0]}"
         ></kei-nav>
-        <main style="flex-basis: 100%">${this.renderMain()}</main>
+        <main class="col">${this.renderMain()}</main>
       </div>
     </div>`;
   }
@@ -55,10 +55,10 @@ export class KeiCrmApp extends LitElement {
           .type="${projectType}"
           .query="${this.route.query}"
         ></kei-projecten>`;
-      case 'vrijwilligers':
+      case 'overige-personen':
       case 'deelnemers':
         const persoonType: PersoonType =
-          this.route?.path[0] === 'deelnemers' ? 'deelnemer' : 'vrijwilliger';
+          this.route?.path[0] === 'deelnemers' ? 'deelnemer' : 'overigPersoon';
         return html`<kei-personen
           .type="${persoonType}"
           .path="${this.route.path.slice(1)}"

@@ -6,3 +6,4 @@ export * from './serialization';
 export * from './util';
 export * from './inschrijving';
 export * from './deelname';
+export * from './paging';

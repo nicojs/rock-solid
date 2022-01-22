@@ -2,8 +2,8 @@ import {
   Persoon,
   PersoonType,
   PropertyFilter,
-  Vrijwilliger,
-  vrijwilligerSelecties,
+  OverigPersoon,
+  overigPersoonSelecties,
 } from '@kei-crm/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -17,7 +17,7 @@ function toCsv(personen: Persoon[]): string {
   personen.forEach(
     (persoon) =>
       (csv += `${fullName(persoon)},${persoon.type},${
-        persoon.type === 'vrijwilliger' ? String(persoon.selectie) : ''
+        persoon.type === 'overigPersoon' ? String(persoon.selectie) : ''
       }`),
   );
   return csv;
@@ -83,12 +83,12 @@ export class AdvancedSearchPersonenComponent extends LitElement {
   }
 }
 
-const searchControls: InputControl<Vrijwilliger>[] = [
+const searchControls: InputControl<OverigPersoon>[] = [
   {
     name: 'selectie',
     label: 'Selectie',
     type: InputType.select,
     multiple: true,
-    items: vrijwilligerSelecties,
+    items: overigPersoonSelecties,
   },
 ];

@@ -11,37 +11,46 @@ generator client {
 }
 
 model Persoon {
-  id                   Int                  @id @default(autoincrement())
-  voornaam             String?              @db.VarChar(255)
-  achternaam           String               @db.VarChar(255)
-  emailadres           String?              @db.VarChar(255)
-  geboortedatum        DateTime?            @db.Date
-  geboorteplaats       String?              @db.VarChar(255)
-  geslacht             Geslacht             @default(onbekend)
-  rekeningnummer       String?              @db.VarChar(255)
-  rijksregisternummer  String?              @db.VarChar(255)
-  telefoonnummer       String?              @db.VarChar(255)
-  gsmNummer            String?              @db.VarChar(255)
-  communicatievoorkeur Communicatievoorkeur @default(post)
-  type                 PersoonType          @default(deelnemer)
-  inschrijving         Inschrijving[]
+  id                  Int            @id @default(autoincrement())
+  voornaam            String?        @db.VarChar(255)
+  achternaam          String         @db.VarChar(255)
+  emailadres          String?        @db.VarChar(255)
+  geboortedatum       DateTime?      @db.Date
+  geboorteplaats      String?        @db.VarChar(255)
+  geslacht            Geslacht       @default(onbekend)
+  rekeningnummer      String?        @db.VarChar(255)
+  rijksregisternummer String?        @db.VarChar(255)
+  telefoonnummer      String?        @db.VarChar(255)
+  gsmNummer           String?        @db.VarChar(255)
+  // communicatievoorkeur Communicatievoorkeur @default(post)
+  type                PersoonType    @default(deelnemer)
+  inschrijving        Inschrijving[]
 
   // Deelnemer
-  woonsituatie          Woonsituatie @default(onbekend)
+  woonsituatie          Woonsituatie     @default(onbekend)
   woonsituatieOpmerking String?
-  werksituatie          Werksituatie @default(onbekend)
+  werksituatie          Werksituatie     @default(onbekend)
+  opleidingsvorm        Opleidingsvorm?
   werksituatieOpmerking String?
-  voedingswens          Voedingswens @default(geen)
+  voedingswens          Voedingswens     @default(geen)
   voedingswensOpmerking String?
-  Deelname              Deelname[]
+  Contactpersonen       Contactpersoon[]
+  Deelnames             Deelname[]
 
-  // Vrijwilliger
+  // OverigePersonen
   vrijwilligerOpmerking String?
-  begeleidtVakanties    Boolean                @default(false)
-  begeleidtCursus       Boolean                @default(false)
-  selectie              VrijwilligerSelectie[]
+  selectie              OverigPersoonSelectie[]
 
   @@map("persoon")
+}
+
+model Contactpersoon {
+  id             Int     @id @default(autoincrement())
+  deelnemer      Persoon @relation(fields: [deelnemerId], references: [id])
+  deelnemerId    Int
+  naam           String
+  telefoonnummer String?
+  emailadres     String?
 }
 
 model Project {
@@ -65,8 +74,10 @@ model Inschrijving {
   project   Project @relation(fields: [projectId], references: [id])
   persoonId Int
   persoon   Persoon @relation(fields: [persoonId], references: [id])
+  opmerking String? @db.VarChar(255)
 
-  tijdstipVanInschrijving         DateTime  @default(now())
+  tijdstipVanInschrijving        DateTime  @default(now())
+  tijdstipVanAnnuleren           DateTime?
   tijdstipVanBevestiging         DateTime?
   tijdstipVerzendenVervoersbrief DateTime?
   toestemmingFotos               Boolean   @default(false)
@@ -105,13 +116,14 @@ enum ProjectType {
   @@map("project_type")
 }
 
-enum VrijwilligerSelectie {
-  toeleider
+enum OverigPersoonSelectie {
+  algemeneVergaderingKeiJong
+  algemeneVergaderingDeKei
+  overheid
+  personeel
   vakantieVrijwilliger
-  extraPersoonDeKei
-  extraPersoonKeiJong
 
-  @@map("vrijwilliger_selectie")
+  @@map("overig_persoon_selectie")
 }
 
 enum Organisatieonderdeel {
@@ -124,7 +136,7 @@ enum Organisatieonderdeel {
 
 enum PersoonType {
   deelnemer
-  vrijwilliger
+  overigPersoon
 
   @@map("persoon_type")
 }
@@ -137,27 +149,38 @@ enum Geslacht {
   @@map("geslacht")
 }
 
-enum Communicatievoorkeur {
-  post
-  email
-
-  @@map("communicatievoorkeur")
-}
-
 enum Woonsituatie {
   onbekend
-  thuis
-  residentieel
+  thuisZonderProfessioneleBegeleiding
+  thuisMetProfessioneleBegeleiding
+  residentieleWoonondersteuning
+  zelfstandigZonderProfessioneleBegeleiding
+  zelfstandigMetProfessioneleBegeleiding
 
   @@map("woonsituatie")
 }
 
+enum Opleidingsvorm {
+  onbekend
+  opleidingsvorm1
+  opleidingsvorm2
+  opleidingsvorm3
+  alternerendeBeroepsopleiding
+  regulierOnderwijsMetExtraOndersteuning
+
+  @@map("opleidingsvorm")
+}
+
 enum Werksituatie {
   onbekend
-  dagcentrum
-  begeleidwerkOfVrijwilligerswerk
+  school
+  dagbesteding
+  vrijwilligerswerk
   maatwerkbedrijf
+  arbeidszorg
+  arbeidstrajectbegeleiding
   reguliereArbeidscircuit
+  pensioen
   werkzoekend
 
   @@map("werksituatie")
@@ -166,6 +189,8 @@ enum Werksituatie {
 enum Voedingswens {
   geen
   vegetarisch
+  halal
+  andere
 
   @@map("voedingswens")
 }

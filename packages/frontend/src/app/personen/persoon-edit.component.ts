@@ -1,14 +1,13 @@
 import { html, LitElement } from 'lit';
 import {
-  communicatievoorkeuren,
   geslachten,
   UpsertablePersoon,
   Deelnemer,
   woonsituaties,
   werksituaties,
   BasePersoon,
-  Vrijwilliger,
-  vrijwilligerSelecties,
+  OverigPersoon,
+  overigPersoonSelecties,
 } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -35,7 +34,7 @@ export class PersonenEditComponent extends LitElement {
       @kei-submit="${this.submit}"
       .controls="${this.persoon.type === 'deelnemer'
         ? deelnemerFormControls
-        : vrijwilligerFormControls}"
+        : overigPersoonFormControls}"
       .entity="${this.persoon}"
     ></kei-reactive-form>`;
   }
@@ -53,11 +52,6 @@ const basePersoonFormControls: InputControl<BasePersoon>[] = [
   },
   { name: 'voornaam', type: InputType.text },
   { name: 'emailadres', type: InputType.email },
-  {
-    name: 'communicatievoorkeur',
-    type: InputType.select,
-    items: communicatievoorkeuren,
-  },
   {
     name: 'geslacht',
     type: InputType.select,
@@ -101,7 +95,7 @@ const basePersoonFormControls: InputControl<BasePersoon>[] = [
   },
 ];
 
-const vrijwilligerFormControls: InputControl<Vrijwilliger>[] = [
+const overigPersoonFormControls: InputControl<OverigPersoon>[] = [
   ...basePersoonFormControls,
   {
     name: 'vrijwilligerOpmerking',
@@ -109,21 +103,11 @@ const vrijwilligerFormControls: InputControl<Vrijwilliger>[] = [
     type: InputType.text,
   },
   {
-    name: 'begeleidtVakanties',
-    label: 'Begeleidt vakanties?',
-    type: InputType.checkbox,
-  },
-  {
-    name: 'begeleidtCursus',
-    label: 'Begeleidt cursussen?',
-    type: InputType.checkbox,
-  },
-  {
     name: 'selectie',
     label: 'Selectie (gebruik ctrl of shift om meerdere te selecteren)',
     type: InputType.select,
     multiple: true,
-    items: vrijwilligerSelecties,
+    items: overigPersoonSelecties,
   },
 ];
 

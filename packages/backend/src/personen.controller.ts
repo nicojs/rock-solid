@@ -1,4 +1,9 @@
-import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
+import {
+  Persoon,
+  PersoonFilter,
+  UpsertablePersoon,
+  TOTAL_COUNT_HEADER,
+} from '@kei-crm/shared';
 import {
   Body,
   Controller,
@@ -10,17 +15,30 @@ import {
   Post,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
+import { PagePipe } from './pipes/page.pipe';
 import { PersoonFilterPipe } from './pipes/persoon-filter.pipe';
 import { PersoonMapper } from './services/persoon.mapper';
+import { Response } from 'express';
 
 @Controller({ path: 'personen' })
 export class PersonenController {
   constructor(private readonly persoonService: PersoonMapper) {}
 
   @Get()
-  getAll(@Query(PersoonFilterPipe) filter: PersoonFilter): Promise<Persoon[]> {
-    return this.persoonService.getAll(filter);
+  async getAll(
+    @Res({ passthrough: true }) resp: Response,
+    @Query(PersoonFilterPipe) filter: PersoonFilter,
+    @Query('_page', PagePipe)
+    page?: number,
+  ): Promise<Persoon[]> {
+    const [people, count] = await Promise.all([
+      this.persoonService.getAll(filter, page),
+      this.persoonService.count(filter),
+    ]);
+    resp.set(TOTAL_COUNT_HEADER, count.toString());
+    return people;
   }
 
   @Get(':id')
@@ -47,4 +65,7 @@ export class PersonenController {
   ): Promise<void> {
     await this.persoonService.updateUser({ where: { id: +id }, data: persoon });
   }
+}
+function Resp() {
+  throw new Error('Function not implemented.');
 }

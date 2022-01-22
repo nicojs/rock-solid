@@ -9,6 +9,7 @@ export interface Inschrijving {
   tijdstipVanBevestiging?: Date;
   tijdstipVerzendenVervoersbrief?: Date;
   toestemmingFotos: boolean;
+  opmerking?: string;
   persoon?: Persoon;
   wachtlijst: boolean;
 }

@@ -14,13 +14,12 @@ export interface BasePersoon {
   rijksregisternummer?: string;
   telefoonnummer?: string;
   gsmNummer?: string;
-  communicatievoorkeur: Communicatievoorkeur;
 }
 
 export type UpsertablePersoon = UpsertableDeelnemer | UpsertableVrijwilliger;
 export type UpsertableDeelnemer = Upsertable<Deelnemer, 'achternaam'>;
-export type UpsertableVrijwilliger = Upsertable<Vrijwilliger, 'achternaam'>;
-export type Persoon = Deelnemer | Vrijwilliger;
+export type UpsertableVrijwilliger = Upsertable<OverigPersoon, 'achternaam'>;
+export type Persoon = Deelnemer | OverigPersoon;
 
 export interface TextFilter {
   type: PersoonType;
@@ -28,7 +27,7 @@ export interface TextFilter {
   search: string;
 }
 export type PropertyFilter = Partial<
-  Omit<Vrijwilliger, 'type'> & Omit<Deelnemer, 'type'> & { type: PersoonType }
+  Omit<OverigPersoon, 'type'> & Omit<Deelnemer, 'type'> & { type: PersoonType }
 > & {
   searchType: 'persoon';
 };
@@ -43,50 +42,72 @@ export interface Deelnemer extends BasePersoon {
   werksituatieOpmerking?: string;
 }
 
-export interface Vrijwilliger extends BasePersoon {
-  type: 'vrijwilliger';
+export interface OverigPersoon extends BasePersoon {
+  type: 'overigPersoon';
   vrijwilligerOpmerking?: string;
-  begeleidtVakanties: boolean;
-  begeleidtCursus: boolean;
-  selectie: VrijwilligerSelectie[];
+  selectie: OverigPersoonSelectie[];
 }
 
-export type PersoonType = 'deelnemer' | 'vrijwilliger';
+export type PersoonType = 'deelnemer' | 'overigPersoon';
+export const persoonTypeToPath: Options<PersoonType> = Object.freeze({
+  deelnemer: 'deelnemers',
+  overigPersoon: 'overige-personen',
+});
+export const persoonTypes: Options<PersoonType> = Object.freeze({
+  deelnemer: 'deelnemer',
+  overigPersoon: 'overig persoon',
+});
 
-export type Voedingswens = 'geen' | 'vegetarisch';
+export type Voedingswens = 'geen' | 'vegetarisch' | 'halal' | 'andere';
 export const voedingswensen: Options<Voedingswens> = Object.freeze({
-  geen: 'geen',
-  vegetarisch: 'vegetarisch',
+  geen: 'Geen speciale voedingswensen',
+  vegetarisch: 'Vegetarisch',
+  halal: 'Halal',
+  andere: 'Andere voedingswensen',
 });
 
 export type Werksituatie =
   | 'onbekend'
-  | 'dagcentrum'
-  | 'begeleidwerkOfVrijwilligerswerk'
+  | 'school'
+  | 'dagbesteding'
+  | 'vrijwilligerswerk'
   | 'maatwerkbedrijf'
+  | 'arbeidszorg'
+  | 'arbeidstrajectbegeleiding'
   | 'reguliereArbeidscircuit'
+  | 'pensioen'
   | 'werkzoekend';
 
 export const werksituaties: Options<Werksituatie> = Object.freeze({
   onbekend: 'onbekend',
-  dagcentrum: 'dagcentrum',
-  begeleidwerkOfVrijwilligerswerk: 'begeleidwerk of vrijwilligerswerk',
+  school: 'school',
+  dagbesteding: 'dagbesteding',
+  vrijwilligerswerk: 'vrijwilligerswerk',
   maatwerkbedrijf: 'maatwerkbedrijf',
+  arbeidszorg: 'arbeidszorg',
+  arbeidstrajectbegeleiding: 'arbeidstrajectbegeleiding',
   reguliereArbeidscircuit: 'reguliere arbeidscircuit',
+  pensioen: 'pensioen',
   werkzoekend: 'werkzoekend',
 });
 
-export type Woonsituatie = 'onbekend' | 'thuis' | 'residentieel';
+export type Woonsituatie =
+  | 'onbekend'
+  | 'thuisZonderProfessioneleBegeleiding'
+  | 'thuisMetProfessioneleBegeleiding'
+  | 'residentieleWoonondersteuning'
+  | 'zelfstandigZonderProfessioneleBegeleiding'
+  | 'zelfstandigMetProfessioneleBegeleiding';
 export const woonsituaties: Options<Woonsituatie> = Object.freeze({
   onbekend: 'onbekend',
-  thuis: 'thuis',
-  residentieel: 'residentieel',
+  thuisZonderProfessioneleBegeleiding: 'thuis zonder professionele begeleiding',
+  thuisMetProfessioneleBegeleiding: 'thuis met professionele begeleiding',
+  residentieleWoonondersteuning: 'residentiele woonondersteuning',
+  zelfstandigZonderProfessioneleBegeleiding:
+    'zelfstandig zonder professionele begeleiding',
+  zelfstandigMetProfessioneleBegeleiding:
+    'zelfstandig met professionele begeleiding',
 });
-
-export type Communicatievoorkeur = 'post' | 'email';
-
-export const communicatievoorkeuren: Options<Communicatievoorkeur> =
-  Object.freeze({ post: 'post', email: 'email' });
 
 export type Geslacht = 'onbekend' | 'man' | 'vrouw';
 export const geslachten: Options<Geslacht> = Object.freeze({
@@ -95,15 +116,18 @@ export const geslachten: Options<Geslacht> = Object.freeze({
   vrouw: 'vrouw',
 });
 
-export type VrijwilligerSelectie =
-  | 'toeleider'
-  | 'vakantieVrijwilliger'
-  | 'extraPersoonDeKei'
-  | 'extraPersoonKeiJong';
-export const vrijwilligerSelecties: Options<VrijwilligerSelectie> =
+export type OverigPersoonSelectie =
+  | 'algemeneVergaderingKeiJong'
+  | 'algemeneVergaderingDeKei'
+  | 'overheid'
+  | 'personeel'
+  | 'vakantieVrijwilliger';
+
+export const overigPersoonSelecties: Options<OverigPersoonSelectie> =
   Object.freeze({
-    toeleider: 'Toeleider',
-    vakantieVrijwilliger: 'Vakantie vrijwilliger',
-    extraPersoonDeKei: 'Extra persoon de kei',
-    extraPersoonKeiJong: 'Extra persoon kei-jong',
+    vakantieVrijwilliger: 'vakantie vrijwilliger',
+    personeel: 'personeel',
+    algemeneVergaderingKeiJong: 'kei-jong algemene vergadering',
+    algemeneVergaderingDeKei: 'de kei algemene vergadering',
+    overheid: 'overheid',
   });

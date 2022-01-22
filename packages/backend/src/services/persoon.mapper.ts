@@ -2,13 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service';
 import * as db from '@prisma/client';
 import type { Prisma } from '@prisma/client';
-import {
-  Persoon,
-  PersoonFilter,
-  UpsertablePersoon,
-  VrijwilligerSelectie,
-} from '@kei-crm/shared';
+import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
 import { purgeNulls } from './mapper-utils';
+import { toPage } from './paging';
 
 /**
  * A data mapper for persoon
@@ -27,7 +23,10 @@ export class PersoonMapper {
     return this.maybeToPersoon(persoon);
   }
 
-  async getAll(filter: PersoonFilter): Promise<Persoon[]> {
+  async getAll(
+    filter: PersoonFilter,
+    pageNumber: number | undefined,
+  ): Promise<Persoon[]> {
     let people;
     switch (filter.searchType) {
       case 'text':
@@ -44,10 +43,39 @@ export class PersoonMapper {
             ...where,
             ...(selectie ? { AND: { selectie: { hasSome: selectie } } } : {}),
           },
+          orderBy: [
+            {
+              achternaam: 'asc',
+            },
+            { voornaam: 'asc' },
+          ],
+          ...toPage(pageNumber),
         });
         break;
     }
     return people.map(toPersoon);
+  }
+
+  async count(filter: PersoonFilter): Promise<number> {
+    let count;
+    switch (filter.searchType) {
+      case 'text':
+        count = await this.db
+          .$queryRaw<number>`SELECT COUNT(*) FROM persoon WHERE concat(voornaam, ' ', achternaam) ILIKE ${`%${filter.search}%`} AND type = ${
+          filter.type
+        };`;
+        break;
+      default:
+        const { searchType, selectie, ...where } = filter;
+        count = await this.db.persoon.count({
+          where: {
+            ...where,
+            ...(selectie ? { AND: { selectie: { hasSome: selectie } } } : {}),
+          },
+        });
+        break;
+    }
+    return count;
   }
 
   async createUser(data: UpsertablePersoon): Promise<Persoon> {

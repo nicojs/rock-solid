@@ -3,10 +3,11 @@ import {
   BasePersoon,
   Persoon,
   PersoonType,
+  persoonTypes,
   UpsertablePersoon,
 } from '@kei-crm/shared';
 import { persoonService } from './persoon.service';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
 import { capitalize, pluralize } from '../shared';
@@ -47,12 +48,20 @@ export class PersonenComponent extends LitElement {
     }
   }
 
+  @state()
+  private page = 0;
+  @state()
+  private totalCount = 0;
+
   private reloadPersonen() {
     this.personen = undefined;
+    console.log('loading ', this.page);
     persoonService
-      .getAll({ type: this.type, searchType: 'persoon' })
-      .then((personen) => {
-        this.personen = personen;
+      .getPage(this.page, { type: this.type, searchType: 'persoon' })
+      .then(({ items, totalCount }) => {
+        this.personen = items;
+        this.totalCount = totalCount;
+        console.log(this.totalCount, 'total');
       });
   }
 
@@ -66,7 +75,11 @@ export class PersonenComponent extends LitElement {
           search: this.searchRef.value.value,
           searchType: 'text',
         })
-        .then((personen) => (this.personen = personen));
+        .then((personen) => {
+          this.personen = personen;
+          this.page = 0;
+          this.totalCount = personen.length; // remove paging
+        });
     }
   }
 
@@ -75,7 +88,7 @@ export class PersonenComponent extends LitElement {
     await persoonService.create(event.detail);
     this.editIsLoading = false;
     this.reloadPersonen();
-    router.navigate(`/${this.type}s/list`);
+    router.navigate('../list');
   }
 
   private async updatePersoon() {
@@ -83,7 +96,12 @@ export class PersonenComponent extends LitElement {
     await persoonService.update(this.persoonToEdit!.id, this.persoonToEdit!);
     this.editIsLoading = false;
     this.reloadPersonen();
-    router.navigate(`/${this.type}s/list`);
+    router.navigate('../../list');
+  }
+
+  public navigatePage(page: number) {
+    this.page = page;
+    this.reloadPersonen();
   }
 
   private searchRef: Ref<HTMLInputElement> = createRef();
@@ -91,7 +109,11 @@ export class PersonenComponent extends LitElement {
     switch (this.path[0]) {
       case 'list':
         return html` <div class="row">
-            <h2 class="col-sm-6 col-md-8">${capitalize(this.type)}s</h2>
+            <h2 class="col-sm-6 col-md-8">
+              ${capitalize(pluralize(this.type))}${this.personen
+                ? html` (${this.totalCount})`
+                : ''}
+            </h2>
             <div class="col">
               <form @submit="${this.searchFormSubmit}" class="input-group">
                 <input
@@ -111,15 +133,18 @@ export class PersonenComponent extends LitElement {
                   .type=${this.type}
                   .personen=${this.personen}
                 ></kei-personen-list>
-                <kei-link href="/${this.type}s/new" btn btnSuccess
+                <kei-paging
+                  @navigate-page=${(event: CustomEvent<number>) =>
+                    this.navigatePage(event.detail)}
+                  .currentPage=${this.page}
+                  .totalCount=${this.totalCount}
+                ></kei-paging>
+                <kei-link href="../new" btn btnSuccess
                   ><kei-icon icon="personPlus"></kei-icon> ${capitalize(
-                    this.type,
+                    persoonTypes[this.type],
                   )}</kei-link
                 >
-                <kei-link
-                  btn
-                  btnOutlineSecondary
-                  href="/${pluralize(this.type)}/zoeken"
+                <kei-link btn btnOutlineSecondary href="../zoeken"
                   ><kei-icon icon="search"></kei-icon> Geavanceerd
                   zoeken</kei-link
                 >`
@@ -129,7 +154,7 @@ export class PersonenComponent extends LitElement {
           type: this.type,
           achternaam: '',
         };
-        return html` <h2>${capitalize(this.type)} toevoegen</h2>
+        return html` <h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading
             ? html`<kei-loading></kei-loading>`
             : html`<kei-persoon-edit
@@ -153,7 +178,7 @@ export class PersonenComponent extends LitElement {
         ></kei-advanced-search-personen>`;
       default:
         this.reloadPersonen();
-        router.navigate(`/${this.type}s/list`);
+        router.navigate('./list');
         return html``;
     }
   }

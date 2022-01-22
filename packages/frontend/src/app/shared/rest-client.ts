@@ -1,5 +1,10 @@
-import { parse, RestRoutes } from '@kei-crm/shared';
+import { parse, RestRoutes, TOTAL_COUNT_HEADER } from '@kei-crm/shared';
 import { HttpStatus } from './http-status';
+
+export interface Page<TRoute extends keyof RestRoutes> {
+  totalCount: number;
+  items: RestRoutes[TRoute]['entity'][];
+}
 
 export class RestClient {
   async getAll<TRoute extends keyof RestRoutes>(
@@ -9,6 +14,24 @@ export class RestClient {
     const response = await fetch(`/api/${route}${toQueryString(query)}`);
     const bodyText = await response.text();
     return parse(bodyText);
+  }
+
+  async getPage<TRoute extends keyof RestRoutes>(
+    route: TRoute,
+    page = 0,
+    query: Record<string, unknown> = {},
+  ): Promise<Page<TRoute>> {
+    query['_page'] = page;
+    const response = await fetch(`/api/${route}${toQueryString(query)}`);
+    const bodyText = await response.text();
+    const totalCount = response.headers.get(TOTAL_COUNT_HEADER);
+    if (totalCount === null) {
+      throw new Error(`${TOTAL_COUNT_HEADER} header was missing from ${route}`);
+    }
+    return {
+      items: parse(bodyText),
+      totalCount: +totalCount,
+    };
   }
 
   async getOne<TRoute extends keyof RestRoutes>(

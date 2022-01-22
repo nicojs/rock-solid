@@ -5,25 +5,23 @@ erDiagram
   Cursus ||--O{ Inschrijving: heeft
   Cursus }O--O| Cursuslocatie: "vindt plaats op"
   Cursus |O--|| Project: "is een"
-  Cursus }O--O| Campagne: "hoort bij"
+  Vakantie |O--|| Project: "is een"
   Project ||--|{ Activiteit: "bestaat uit"
   Deelnemer ||--O| IndividueleFiche: heeft
   Deelnemer |O--O| Organisatie: begeleidende-dienst
   Deelnemer |O--|| FolderVoorkeur: voorkeur
-  Deelnemer ||--|| Adres: woont
-  Vrijwilliger |O--O| Adres: woont
+  Persoon ||--|| Adres: "verblijft in"
+  Persoon ||--|| Adres: "is gedomicilieerd"
   Organisatie |O--|| FolderVoorkeur: voorkeur
   Organisatie |O--|| Adres: bevind-zich-in
-  ExtraPersoon |O--|| Adres: woont
   Deelnemer ||--O| Contactpersoon: heeft
-  Contactpersoon }O--O| Organisatie: werkt-in
   Deelnemer |O--|| Persoon: "is een"
   ExtraPersoon |O--|| Persoon: "is een"
   Deelnemer ||--O{ Deelname: ""
   Activiteit ||--O{ Deelname: "Heeft"
-  Vrijwilliger |O--|| Persoon: "is een"
+  OverigPersoon |O--|| Persoon: "is een"
   Organisatie }O--O{ Aanbod: "heeft"
-  Vrijwilliger }O--O{ Cursus: "begeleid"
+  OverigPersoon }O--O{ Project: "begeleid"
 
   IndividueleFiche {
     boolean medicatie
@@ -32,17 +30,24 @@ erDiagram
     tekst omgaanMetGeld
     tekst hygiene
     tekst vervoersmogelijkheden
+    tekst vakantieErvaringen
+    tekst cursusErvaringen
     boolean migratieachtergrond
     tekst migratieachtergrondOpmerking
     boolean armoedeAchtergrond
     tekst financieleBijzonderheden
     tekst verbaalVermogen
     tekst inzichtVermogen
+    tekst orienterendVermogen
+    tekst socialeVaardigheden
+    tekst zwemmen
+    tekst kloklezen
     tekst lezenEnSchrijven
     tekst praktischVermogen
     tekst opmerking
     boolean gerechterlijkToezicht
     boolean gerechterlijkToelichting
+    tekst extraAandachtVoor
   }
 
   ExtraPersoon {
@@ -52,8 +57,9 @@ erDiagram
   }
 
   Adres {
-    tekst naam
-    tekst adres
+    tekst straat
+    tekst nummer
+    tekst bus
     tekst gemeente
     tekst postcode
     tekst plaats
@@ -83,10 +89,12 @@ erDiagram
 
   Organisatie {
     tekst naam
+    tekst terAttentieVan
     tekst emailadres
     tekst opmerking
     tekst doelgroep
-    tekst soort
+    tekst website
+    enum  soort
   }
 
   Aanbod {
@@ -100,6 +108,7 @@ erDiagram
     boolean keiJongBuso
     boolean zomervakantie
     boolean wintervakantie
+    boolean andereFolders
   }
 
   Contactpersoon {
@@ -132,7 +141,7 @@ erDiagram
     enum seizoen
     enum land
     nummer prijs
-    nummer vosal
+    nummer voorschotOpSaldo
     nummer saldo
     enum verblijf
     enum vervoer
@@ -144,15 +153,13 @@ erDiagram
     nummer vormingsuren
   }
 
-  Campagne {
-    naam
-  }
 
-  Vrijwilliger {
+  OverigPersoon {
     tekst opmerking
     boolean begeleidtVakanties
     boolean begeleidtCursus
     enum communicatie
+    enum selectie
   }
 
   Persoon {
@@ -162,10 +169,8 @@ erDiagram
     datum geboortedatum
     tekst geboorteplaats
     enum geslacht
-    tekst rekeningnummer
     tekst rijksregisternummer
     tekst telefoonnummer
     tekst gsmNummer
-    tekst emailadres
     enum communicatievoorkeur
   }

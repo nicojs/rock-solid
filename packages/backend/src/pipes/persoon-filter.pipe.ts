@@ -1,4 +1,4 @@
-import { PersoonFilter, VrijwilligerSelectie } from '@kei-crm/shared';
+import { PersoonFilter, OverigPersoonSelectie } from '@kei-crm/shared';
 import { PipeTransform, Injectable } from '@nestjs/common';
 
 type Flat<T> = {
@@ -11,9 +11,14 @@ export class PersoonFilterPipe implements PipeTransform {
     if (value.searchType === 'persoon') {
       const { selectie, ...filter } = value;
       return {
-        ...filter,
-        selectie: selectie?.split(',') as VrijwilligerSelectie[],
-      };
+        ...Object.entries(filter)
+          .filter(([key]) => !key.startsWith('_'))
+          .reduce((acc, [k, v]) => {
+            acc[k] = v;
+            return acc;
+          }, {} as Record<string, string>),
+        selectie: selectie?.split(',') as OverigPersoonSelectie[],
+      } as PersoonFilter;
     }
     return value;
   }

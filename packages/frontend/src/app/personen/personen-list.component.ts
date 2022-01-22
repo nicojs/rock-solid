@@ -1,8 +1,13 @@
-import { html, LitElement } from 'lit';
-import { BasePersoon, PersoonType } from '@kei-crm/shared';
+import { html, LitElement, nothing } from 'lit';
+import {
+  overigPersoonSelecties,
+  Persoon,
+  PersoonType,
+  persoonTypes,
+} from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { show } from '../shared/utility.pipes';
+import { pluralize, show } from '../shared/utility.pipes';
 import { fullName } from './full-name.pipe';
 
 @customElement('kei-personen-list')
@@ -10,7 +15,7 @@ export class PersonenComponent extends LitElement {
   static override styles = [bootstrap];
 
   @property({ attribute: false })
-  private personen: BasePersoon[] | undefined;
+  private personen: Persoon[] | undefined;
 
   @property()
   public type: PersoonType = 'deelnemer';
@@ -20,7 +25,7 @@ export class PersonenComponent extends LitElement {
       ${this.personen
         ? html`${this.personen.length
             ? this.renderTable()
-            : html`<div>Geen ${this.type}s gevonden 🤷‍♂️</div>`}`
+            : html`<div>Geen ${pluralize(this.type)} gevonden 🤷‍♂️</div>`}`
         : html`<kei-loading></kei-loading>`}
     </div>`;
   }
@@ -31,11 +36,11 @@ export class PersonenComponent extends LitElement {
         <tr>
           <th>Naam</th>
           <th>Type</th>
+          ${this.type === 'overigPersoon' ? html`<th>Selectie</th>` : nothing}
           <th>Emailadres</th>
           <th>Geslacht</th>
           <th>Telefoonnummer</th>
           <th>Gsm</th>
-          <th>Communicatievoorkeur</th>
           <th>Acties</th>
         </tr>
       </thead>
@@ -43,17 +48,20 @@ export class PersonenComponent extends LitElement {
         ${this.personen!.map(
           (persoon) => html`<tr>
             <td>${fullName(persoon)}</td>
-            <td>${show(persoon.type)}</td>
+            <td>${persoonTypes[persoon.type]}</td>
+            ${persoon.type === 'overigPersoon'
+              ? html`<td>
+                  ${persoon.selectie
+                    .map((item) => overigPersoonSelecties[item])
+                    .join(', ')}
+                </td>`
+              : nothing}
             <td>${show(persoon.emailadres)}</td>
             <td>${show(persoon.geslacht)}</td>
             <td>${show(persoon.telefoonnummer)}</td>
             <td>${show(persoon.gsmNummer)}</td>
-            <td>${show(persoon.communicatievoorkeur)}</td>
             <td>
-              <kei-link
-                btn
-                btnSecondary
-                href="/${persoon.type}s/edit/${persoon.id}"
+              <kei-link btn btnSecondary href="../edit/${persoon.id}"
                 ><kei-icon icon="pencil"></kei-icon
               ></kei-link>
             </td>

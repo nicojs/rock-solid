@@ -17,6 +17,7 @@
     "Acties",
     "activiteit",
     "activiteiten",
+    "Andere",
     "Arbeidscircuit",
     "bedrijfsonderdelen",
     "begeleidt",
@@ -75,6 +76,7 @@
     "Selecteer",
     "Selectie",
     "Selecties",
+    "speciale",
     "Startdatum",
     "telefoonnummer",
     "thuis",
@@ -107,6 +109,8 @@
     "woonsituatie",
     "woonsituaties",
     "Zoek",
-    "Zoeken"
+    "Zoeken",
+    "Zonder"
   ],
+  "cSpell.language": "en,nl",
 }
