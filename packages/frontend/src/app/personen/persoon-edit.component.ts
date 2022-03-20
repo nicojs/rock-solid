@@ -108,6 +108,7 @@ const overigPersoonFormControls: InputControl<OverigPersoon>[] = [
     type: InputType.select,
     multiple: true,
     items: overigPersoonSelecties,
+    size: Object.keys(overigPersoonSelecties).length,
   },
 ];
 

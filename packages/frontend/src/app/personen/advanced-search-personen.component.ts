@@ -1,33 +1,27 @@
 import {
   Persoon,
   PersoonType,
-  PropertyFilter,
+  PersoonDetailsFilter,
+  Deelnemer,
+  deelnemerLabels,
   OverigPersoon,
   overigPersoonSelecties,
+  geslachten,
+  werksituaties,
+  overigPersoonLabels,
 } from '@kei-crm/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
-import { fullName } from './full-name.pipe';
+import { pluralize, toCsvDownloadUrl, uncapitalize } from '../shared';
 import { persoonService } from './persoon.service';
-
-function toCsv(personen: Persoon[]): string {
-  let csv = 'Naam,Type,Selectie\n';
-  personen.forEach(
-    (persoon) =>
-      (csv += `${fullName(persoon)},${persoon.type},${
-        persoon.type === 'overigPersoon' ? String(persoon.selectie) : ''
-      }`),
-  );
-  return csv;
-}
 
 @customElement('kei-advanced-search-personen')
 export class AdvancedSearchPersonenComponent extends LitElement {
   public static override styles = [bootstrap];
 
-  private filter: PropertyFilter = {
+  private filter: PersoonDetailsFilter = {
     searchType: 'persoon',
     type: 'deelnemer',
   };
@@ -43,7 +37,38 @@ export class AdvancedSearchPersonenComponent extends LitElement {
 
   get csvDataUrl(): string | undefined {
     if (this.personen) {
-      return `data:text/csv;base64,${btoa(toCsv(this.personen))}`;
+      const persoonColumns = [
+        'voornaam',
+        'achternaam',
+        'emailadres',
+        'geboortedatum',
+        'geslacht',
+        'gsmNummer',
+        'telefoonnummer',
+        'rekeningnummer',
+        'rijksregisternummer',
+      ] as const;
+      if (this.type === 'deelnemer') {
+        return toCsvDownloadUrl<Deelnemer>(
+          this.personen as Deelnemer[],
+          [
+            ...persoonColumns,
+            'werksituatie',
+            'werksituatieOpmerking',
+            'woonsituatie',
+            'woonsituatieOpmerking',
+          ],
+          deelnemerLabels,
+          {},
+        );
+      } else {
+        return toCsvDownloadUrl<OverigPersoon>(
+          this.personen as OverigPersoon[],
+          [...persoonColumns, 'selectie', 'vrijwilligerOpmerking'],
+          overigPersoonLabels,
+          {},
+        );
+      }
     }
     return undefined;
   }
@@ -64,7 +89,9 @@ export class AdvancedSearchPersonenComponent extends LitElement {
 
   override render() {
     return html`<kei-reactive-form
-        .controls=${searchControls}
+        .controls=${this.type === 'deelnemer'
+          ? deelnemerSearchControls
+          : overigPersoonSearchControls}
         .entity=${this.filter}
         submitLabel="Zoeken"
         @kei-submit=${this.search}
@@ -72,23 +99,47 @@ export class AdvancedSearchPersonenComponent extends LitElement {
       ${this.isLoading
         ? html`<kei-loading></kei-loading>`
         : this.personen
-        ? html`<kei-personen-list
-              .type=${this.type}
-              .personen=${this.personen}
-            ></kei-personen-list>
-            <a href="${this.csvDataUrl}" class="btn btn-outline-secondary" download="personen.csv">
+        ? html`
+        <a href="${
+          this.csvDataUrl
+        }" class="btn btn-outline-secondary" download="${pluralize(
+            this.type,
+          )}.csv">
               <kei-icon icon="download"></kei-icon> Export
-            </button>`
+            </button>
+            </a>
+        <kei-personen-list
+            .type=${this.type}
+            .personen=${this.personen}
+          ></kei-personen-list>`
         : ''}`;
   }
 }
 
-const searchControls: InputControl<OverigPersoon>[] = [
+const overigPersoonSearchControls: InputControl<OverigPersoon>[] = [
   {
     name: 'selectie',
-    label: 'Selectie',
+    label: overigPersoonLabels.selectie,
     type: InputType.select,
     multiple: true,
     items: overigPersoonSelecties,
+    size: Object.keys(overigPersoonSelecties).length,
+  },
+];
+
+const deelnemerSearchControls: InputControl<Deelnemer>[] = [
+  {
+    name: 'geslacht',
+    label: deelnemerLabels.geslacht,
+    type: InputType.select,
+    items: geslachten,
+    placeholder: 'Geen filter',
+  },
+  {
+    name: 'werksituatie',
+    label: deelnemerLabels.werksituatie,
+    type: InputType.select,
+    items: werksituaties,
+    placeholder: 'Geen filter',
   },
 ];

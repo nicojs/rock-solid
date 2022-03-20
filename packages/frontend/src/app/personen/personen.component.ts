@@ -35,7 +35,7 @@ export class PersonenComponent extends LitElement {
 
   override updated(changedProperties: PropertyValues<PersonenComponent>) {
     if (changedProperties.has('type')) {
-      this.reloadPersonen();
+      this.loadPersonen();
     }
     if (
       changedProperties.has('path') &&
@@ -53,15 +53,13 @@ export class PersonenComponent extends LitElement {
   @state()
   private totalCount = 0;
 
-  private reloadPersonen() {
+  private loadPersonen() {
     this.personen = undefined;
-    console.log('loading ', this.page);
     persoonService
       .getPage(this.page, { type: this.type, searchType: 'persoon' })
       .then(({ items, totalCount }) => {
         this.personen = items;
         this.totalCount = totalCount;
-        console.log(this.totalCount, 'total');
       });
   }
 
@@ -87,7 +85,7 @@ export class PersonenComponent extends LitElement {
     this.editIsLoading = true;
     await persoonService.create(event.detail);
     this.editIsLoading = false;
-    this.reloadPersonen();
+    this.loadPersonen();
     router.navigate('../list');
   }
 
@@ -95,13 +93,13 @@ export class PersonenComponent extends LitElement {
     this.editIsLoading = true;
     await persoonService.update(this.persoonToEdit!.id, this.persoonToEdit!);
     this.editIsLoading = false;
-    this.reloadPersonen();
+    this.loadPersonen();
     router.navigate('../../list');
   }
 
   public navigatePage(page: number) {
     this.page = page;
-    this.reloadPersonen();
+    this.loadPersonen();
   }
 
   private searchRef: Ref<HTMLInputElement> = createRef();
@@ -128,6 +126,19 @@ export class PersonenComponent extends LitElement {
               </form>
             </div>
           </div>
+          <div class="row">
+            <div class="col">
+              <kei-link href="../new" btn btnSuccess
+                ><kei-icon icon="personPlus"></kei-icon> ${capitalize(
+                  persoonTypes[this.type],
+                )}</kei-link
+              >
+              <kei-link btn btnOutlineSecondary href="../zoeken"
+                ><kei-icon icon="search"></kei-icon> Geavanceerd
+                zoeken</kei-link
+              >
+            </div>
+          </div>
           ${this.personen
             ? html`<kei-personen-list
                   .type=${this.type}
@@ -138,16 +149,7 @@ export class PersonenComponent extends LitElement {
                     this.navigatePage(event.detail)}
                   .currentPage=${this.page}
                   .totalCount=${this.totalCount}
-                ></kei-paging>
-                <kei-link href="../new" btn btnSuccess
-                  ><kei-icon icon="personPlus"></kei-icon> ${capitalize(
-                    persoonTypes[this.type],
-                  )}</kei-link
-                >
-                <kei-link btn btnOutlineSecondary href="../zoeken"
-                  ><kei-icon icon="search"></kei-icon> Geavanceerd
-                  zoeken</kei-link
-                >`
+                ></kei-paging> `
             : html`<kei-loading></kei-loading>`}`;
       case 'new':
         const persoon: UpsertablePersoon = {
@@ -177,7 +179,7 @@ export class PersonenComponent extends LitElement {
           .type=${this.type}
         ></kei-advanced-search-personen>`;
       default:
-        this.reloadPersonen();
+        this.loadPersonen();
         router.navigate('./list');
         return html``;
     }
