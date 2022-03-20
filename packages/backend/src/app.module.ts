@@ -9,6 +9,8 @@ import { ProjectenController } from './projecten.controller';
 import { ProjectMapper } from './services/project.mapper';
 import { InschrijvingMapper } from './services/inschrijving.mapper';
 import { DeelnameMapper } from './services/deelname.mapper';
+import { OrganisatieMapper } from './services/organisatie.mapper';
+import { OrganisatiesController } from './organisaties.controller';
 
 const rootPath = path.resolve(
   __dirname,
@@ -26,11 +28,16 @@ const rootPath = path.resolve(
       exclude: ['/api*'],
     }),
   ],
-  controllers: [PersonenController, ProjectenController],
+  controllers: [
+    PersonenController,
+    ProjectenController,
+    OrganisatiesController,
+  ],
   providers: [
     PersoonMapper,
     ProjectMapper,
     InschrijvingMapper,
+    OrganisatieMapper,
     DeelnameMapper,
     DBService,
   ],

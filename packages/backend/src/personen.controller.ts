@@ -66,6 +66,3 @@ export class PersonenController {
     await this.persoonService.updateUser({ where: { id: +id }, data: persoon });
   }
 }
-function Resp() {
-  throw new Error('Function not implemented.');
-}

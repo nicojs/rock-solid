@@ -3,10 +3,25 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "types": ["node"],
+    "types": [],
+    "lib": [
+      "ES2019",
+      "ES2020.String",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "emitDecoratorMetadata": false,
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
-  "references": [ { "path": "../shared" } ],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ],
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ],
 }

@@ -1,5 +1,5 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { html, LitElement, TemplateResult } from 'lit';
+import { html, LitElement, nothing, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
   DateControl,
@@ -13,7 +13,6 @@ import {
   StringInputControl,
 } from './form-control';
 import { capitalize, toDateString } from '../shared';
-import { empty } from '@kei-crm/shared';
 
 @customElement('kei-reactive-form-control')
 export class ReactiveFormControl<TEntity> extends LitElement {
@@ -54,6 +53,7 @@ export class ReactiveFormControl<TEntity> extends LitElement {
       case InputType.text:
       case InputType.email:
       case InputType.tel:
+      case InputType.url:
         return this.renderStringInput(control);
       case InputType.number:
         return this.renderNumberInput(control);
@@ -171,6 +171,7 @@ export class ReactiveFormControl<TEntity> extends LitElement {
       name="${control.name}"
       ?multiple=${control.multiple}
       ?required=${control.validators?.required}
+      size=${ifDefined(control.size)}
       @change="${(e: Event) => {
         const selectEl = e.target as HTMLSelectElement;
         if (control.multiple) {
@@ -182,11 +183,9 @@ export class ReactiveFormControl<TEntity> extends LitElement {
         }
       }}"
     >
-      ${empty(this.entity[control.name])
-        ? html`<option value="">
-            Selecteer een ${control.label ?? control.name}
-          </option>`
-        : ''}
+      ${control.placeholder
+        ? html`<option value="">${control.placeholder}</option>`
+        : nothing}
       ${Object.entries(control.items).map(
         ([value, title]) =>
           html`<option value="${value}" ?selected=${isSelected(value)}>

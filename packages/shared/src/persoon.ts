@@ -21,18 +21,18 @@ export type UpsertableDeelnemer = Upsertable<Deelnemer, 'achternaam'>;
 export type UpsertableVrijwilliger = Upsertable<OverigPersoon, 'achternaam'>;
 export type Persoon = Deelnemer | OverigPersoon;
 
-export interface TextFilter {
+export interface PersoonTextFilter {
   type: PersoonType;
   searchType: 'text';
   search: string;
 }
-export type PropertyFilter = Partial<
+export type PersoonDetailsFilter = Partial<
   Omit<OverigPersoon, 'type'> & Omit<Deelnemer, 'type'> & { type: PersoonType }
 > & {
   searchType: 'persoon';
 };
 
-export type PersoonFilter = PropertyFilter | TextFilter;
+export type PersoonFilter = PersoonDetailsFilter | PersoonTextFilter;
 
 export interface Deelnemer extends BasePersoon {
   type: 'deelnemer';
@@ -57,6 +57,34 @@ export const persoonTypes: Options<PersoonType> = Object.freeze({
   deelnemer: 'deelnemer',
   overigPersoon: 'overig persoon',
 });
+
+export const persoonLabels: Record<keyof Persoon, string> = {
+  id: 'id',
+  achternaam: 'Achternaam',
+  emailadres: 'Emailadres',
+  geboortedatum: 'Geboortedatum',
+  geboorteplaats: 'Geboorteplaats',
+  geslacht: 'Geslacht',
+  gsmNummer: 'GSM nummer',
+  rekeningnummer: 'Rekeningnummer',
+  rijksregisternummer: 'Rijksregisternummer',
+  telefoonnummer: 'Telefoonnummer',
+  type: 'type',
+  voornaam: 'Voornaam',
+};
+
+export const deelnemerLabels: Record<keyof Deelnemer, string> = {
+  ...persoonLabels,
+  woonsituatie: 'Woonsituatie',
+  woonsituatieOpmerking: 'Woonsituatie opmerking',
+  werksituatie: 'Werksituatie',
+  werksituatieOpmerking: 'Werksituatie opmerking',
+};
+export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
+  ...persoonLabels,
+  vrijwilligerOpmerking: 'Vrijwilliger opmerking',
+  selectie: 'Selectie',
+};
 
 export type Voedingswens = 'geen' | 'vegetarisch' | 'halal' | 'andere';
 export const voedingswensen: Options<Voedingswens> = Object.freeze({

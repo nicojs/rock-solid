@@ -38,9 +38,13 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
           .entity="${this.entity}"
         ></kei-reactive-form-control>`;
       })}
-      <button class="btn btn-primary offset-sm-2" type="submit">
-        ${this.submitLabel}
-      </button>
+      <div class="row">
+        <div class=" offset-lg-2 offset-md-4">
+          <button class="btn btn-primary" type="submit">
+            ${this.submitLabel}
+          </button>
+        </div>
+      </div>
     </form>`;
   }
 

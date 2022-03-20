@@ -13,7 +13,11 @@
     "noUncheckedIndexedAccess": true,
     // "exactOptionalPropertyTypes": true,
     "composite": true,
-    "target": "es2019",
+    "target": "ES2019",
+    "lib": [
+      "ES2019",
+      "ES2020.String"
+    ],
     "sourceMap": true,
   }
 }

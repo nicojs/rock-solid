@@ -3,6 +3,7 @@ export enum InputType {
   number = 'number',
   email = 'email',
   tel = 'tel',
+  url = 'url',
   checkbox = 'checkbox',
   select = 'select',
   date = 'date',
@@ -16,6 +17,11 @@ interface Validators {
   max?: Date | number;
   pattern?: string;
 }
+
+export const patterns = Object.freeze({
+  email: '.+@.+\\..+',
+  tel: '^\\+d+$',
+});
 
 export type FormControl<TEntity> =
   | InputControl<TEntity>
@@ -44,7 +50,10 @@ export interface FormGroup<
 }
 
 export type InputControl<TEntity> =
-  | StringInputControl<TEntity>
+  | TextInputControl<TEntity>
+  | EmailInputControl<TEntity>
+  | TelInputControl<TEntity>
+  | UrlInputControl<TEntity>
   | NumberInputControl<TEntity>
   | CheckboxInputControl<TEntity>
   | SelectControl<TEntity>
@@ -61,14 +70,30 @@ export type KeysOfType<TEntity, TValue> = {
 }[keyof TEntity & string];
 
 type KeysOfEnums<TEntity> = {
-  [K in keyof TEntity & string]-?: TEntity[K] extends string | string[]
+  [K in keyof Required<TEntity> & string]: Required<TEntity>[K] extends
+    | string
+    | string[]
     ? K
     : never;
 }[keyof TEntity & string];
 
 export interface StringInputControl<TEntity> extends BaseInputControl {
   name: KeysOfType<TEntity, string>;
-  type: InputType.text | InputType.email | InputType.tel;
+  type: InputType.text | InputType.email | InputType.tel | InputType.url;
+}
+
+export interface TextInputControl<TEntity> extends StringInputControl<TEntity> {
+  type: InputType.text;
+}
+export interface EmailInputControl<TEntity>
+  extends StringInputControl<TEntity> {
+  type: InputType.email;
+}
+export interface TelInputControl<TEntity> extends StringInputControl<TEntity> {
+  type: InputType.tel;
+}
+export interface UrlInputControl<TEntity> extends StringInputControl<TEntity> {
+  type: InputType.url;
 }
 
 export interface NumberInputControl<TEntity> extends BaseInputControl {
@@ -94,4 +119,5 @@ export interface SelectControl<TEntity> extends BaseInputControl {
   items: {
     readonly [K in TEntity[KeysOfEnums<TEntity>] & string]: string;
   };
+  size?: number;
 }

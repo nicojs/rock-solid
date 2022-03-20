@@ -63,6 +63,10 @@ export class KeiCrmApp extends LitElement {
           .type="${persoonType}"
           .path="${this.route.path.slice(1)}"
         ></kei-personen>`;
+      case 'organisaties':
+        return html`<kei-organisaties
+          .path=${this.route.path.slice(1)}
+        ></kei-organisaties>`;
       case '':
         return html`<h2>Home</h2>`;
       default:

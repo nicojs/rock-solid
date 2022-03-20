@@ -109,6 +109,34 @@ model Deelname {
   @@map("deelname")
 }
 
+model Organisatie {
+  id                   Int                   @id @default(autoincrement())
+  naam                 String                @unique @db.VarChar(255)
+  terAttentieVan       String?               @db.VarChar(255)
+  emailadres           String?               @db.VarChar(255)
+  opmerking            String?               @db.VarChar(255)
+  doelgroep            Doelgroep
+  telefoonnummer       String?
+  website              String?               @db.VarChar(255)
+  folderVoorkeur       FolderSelectie[]
+  communicatieVoorkeur CommunicatieVoorkeur?
+}
+
+enum CommunicatieVoorkeur {
+  post
+  email
+
+  @@map("communicatie_voorkeur")
+}
+
+enum FolderSelectie {
+  deKeiCursussen
+  deKeiZomervakanties
+  deKeiWintervakanties
+  KeiJongNietBuso
+  KeiJongBuso
+}
+
 enum ProjectType {
   cursus
   vakantie
@@ -196,6 +224,8 @@ enum Voedingswens {
 }
 
 enum Doelgroep {
-  werkende
-  buzo
+  deKei
+  keiJong
+
+  @@map("doelgroep")
 }

@@ -1,8 +1,15 @@
 export const notAvailable = 'n/a';
+export const none = 'geen';
 
 export function show(value: unknown) {
   if (value === undefined || value === null) {
     return notAvailable;
+  } else if (Array.isArray(value)) {
+    if (value.length) {
+      return value.join(', ');
+    } else {
+      return none;
+    }
   } else {
     return value;
   }
@@ -22,6 +29,13 @@ export function showBoolean(val: boolean | undefined) {
 export function capitalize<T extends string>(value: T): Capitalize<T> {
   const [firstLetter = '', ...rest] = value;
   return `${firstLetter.toUpperCase()}${rest.join('')}` as Capitalize<T>;
+}
+
+export function uncapitalize<T extends string>(value: T): Uncapitalize<T> {
+  const [firstLetter = '', ...rest] = value;
+  return `${firstLetter.toLocaleLowerCase()}${rest.join(
+    '',
+  )}` as Uncapitalize<T>;
 }
 
 export function singularize(value: string): string {

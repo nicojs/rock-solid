@@ -1,9 +1,6 @@
 import { PersoonFilter, OverigPersoonSelectie } from '@kei-crm/shared';
 import { PipeTransform, Injectable } from '@nestjs/common';
-
-type Flat<T> = {
-  [K in keyof T]: any[] extends T[K] ? string : T[K];
-};
+import { Flat } from './pipe-utils';
 
 @Injectable()
 export class PersoonFilterPipe implements PipeTransform {

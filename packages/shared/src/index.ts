@@ -1,3 +1,4 @@
+export * from './options';
 export * from './persoon';
 export * from './upsertable';
 export * from './rest-routes';
@@ -7,3 +8,4 @@ export * from './util';
 export * from './inschrijving';
 export * from './deelname';
 export * from './paging';
+export * from './organisatie';

@@ -1,4 +1,4 @@
 import { restClient } from '../shared/rest-client';
 import { RestService } from '../shared/rest-service';
 
-export const persoonService = new RestService(restClient, 'personen');
+export const organisatieService = new RestService(restClient, 'organisaties');
