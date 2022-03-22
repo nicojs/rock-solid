@@ -77,10 +77,9 @@ export interface FormGroup<TEntity, TKey extends keyof TEntity> {
   controls: FormControl<TEntity[TKey]>[];
 }
 
-export interface PlaatsControl<TEntity> {
+export interface PlaatsControl<TEntity> extends BaseInputControl {
   name: KeysOfType<TEntity, Plaats>;
   type: InputType.plaats;
-  label?: string;
 }
 
 export type InputControl<TEntity> =

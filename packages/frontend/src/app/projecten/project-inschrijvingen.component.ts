@@ -14,6 +14,7 @@ import {
 } from '../shared';
 import { router } from '../router';
 import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
+import { createRef, ref } from 'lit/directives/ref.js';
 
 @customElement('kei-project-inschrijvingen')
 export class ProjectInschrijvingenComponent extends LitElement {
@@ -32,6 +33,8 @@ export class ProjectInschrijvingenComponent extends LitElement {
 
   @state()
   private inschrijvingInScope: Inschrijving | undefined;
+
+  private searchInput = createRef<HTMLInputElement>();
 
   private subscription: Subscription | undefined;
 
@@ -73,7 +76,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
       .updateInschrijving(this.project.id, this.inschrijvingInScope!)
       .then(() => {
         router.navigate(
-          `/${pluralize(this.project.type)}/inschrijvingen/${this.project.id}`,
+          `/${pluralize(this.project.type)}/${this.project.id}/inschrijvingen/`,
         );
       });
   };
@@ -128,8 +131,8 @@ export class ProjectInschrijvingenComponent extends LitElement {
                   <kei-link
                     btn
                     btnOutlinePrimary
-                    href="/${pluralize(this.project.type)}/inschrijvingen/${this
-                      .project.id}/edit/${inschrijving.id}"
+                    href="/${pluralize(this.project.type)}/${this.project
+                      .id}/inschrijvingen/edit/${inschrijving.id}"
                     ><kei-icon icon="pencil"></kei-icon
                   ></kei-link>
                 </td>
@@ -141,33 +144,47 @@ export class ProjectInschrijvingenComponent extends LitElement {
   }
 
   private renderCreateInschrijvingForm() {
-    return html`<kei-autocomplete
-      placeholder="Persoon inschrijven"
-      .searchAction="${(val: string): Promise<TypeAheadHint[]> =>
-        persoonService
-          .getAll({
-            type: 'deelnemer',
-            searchType: 'text',
-            search: val,
-          })
-          .then((personen) =>
-            personen.map((persoon) => ({
-              text: fullName(persoon),
-              value: persoon.id,
-            })),
-          )}"
-      @submit="${async (event: CustomEvent<TypeAheadHint>) => {
-        const target = event.target as AutocompleteComponent;
-        const inschrijving = await projectService.createInschrijving(
-          this.project.id,
-          {
-            persoonId: +event.detail.value,
-            projectId: this.project.id,
-          },
-        );
-        this.inschrijvingen = [...(this.inschrijvingen ?? []), inschrijving];
-        target.clear();
-      }}"
-    ></kei-autocomplete>`;
+    return html`<div class="row mb-3 dropdown">
+      <div class="col">
+        <div class="form-floating flex-grow-1">
+          <input
+            type="email"
+            class="form-control"
+            id="searchPersoonInput"
+            placeholder="Persoon inschrijven"
+            ${ref(this.searchInput)}
+          />
+          <label for="searchPersoonInput">Persoon inschrijven</label>
+        </div>
+      </div>
+
+      <kei-autocomplete
+        .searchAction="${(val: string): Promise<TypeAheadHint[]> =>
+          persoonService
+            .getAll({
+              type: 'deelnemer',
+              searchType: 'text',
+              search: val,
+            })
+            .then((personen) =>
+              personen.map((persoon) => ({
+                text: fullName(persoon),
+                value: persoon.id,
+              })),
+            )}"
+        @selected="${async (event: CustomEvent<TypeAheadHint>) => {
+          const inschrijving = await projectService.createInschrijving(
+            this.project.id,
+            {
+              persoonId: +event.detail.value,
+              projectId: this.project.id,
+            },
+          );
+          this.inschrijvingen = [...(this.inschrijvingen ?? []), inschrijving];
+          this.searchInput.value!.value = '';
+          this.searchInput.value!.dispatchEvent(new InputEvent('input'));
+        }}"
+      ></kei-autocomplete>
+    </div>`;
   }
 }
