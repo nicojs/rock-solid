@@ -1,0 +1,8038 @@
+[
+  {
+    "postcode": "1000",
+    "deelgemeente": "Brussel",
+    "gemeente": "Brussel",
+    "volledigeNaam": "1000 Brussel (Brussel)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1020",
+    "deelgemeente": "Laken",
+    "gemeente": "Brussel",
+    "volledigeNaam": "1020 Laken (Brussel)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1030",
+    "deelgemeente": "Schaarbeek",
+    "gemeente": "Schaarbeek",
+    "volledigeNaam": "1030 Schaarbeek (Schaarbeek)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1031",
+    "deelgemeente": "Christelijke Sociale Organisaties",
+    "gemeente": "Brussel",
+    "volledigeNaam": "1031 Christelijke Sociale Organisaties (Brussel)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1040",
+    "deelgemeente": "Etterbeek",
+    "gemeente": "Etterbeek",
+    "volledigeNaam": "1040 Etterbeek (Etterbeek)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1041",
+    "deelgemeente": "International press center",
+    "gemeente": "Brussel",
+    "volledigeNaam": "1041 International press center (Brussel)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1050",
+    "deelgemeente": "Elsene",
+    "gemeente": "Elsene",
+    "volledigeNaam": "1050 Elsene (Elsene)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1060",
+    "deelgemeente": "Sint-Gillis",
+    "gemeente": "Sint-Gillis",
+    "volledigeNaam": "1060 Sint-Gillis (Sint-Gillis)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1070",
+    "deelgemeente": "Anderlecht",
+    "gemeente": "Anderlecht",
+    "volledigeNaam": "1070 Anderlecht (Anderlecht)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1080",
+    "deelgemeente": "Sint-Jans-Molenbeek",
+    "gemeente": "Sint-Jans-Molenbeek",
+    "volledigeNaam": "1080 Sint-Jans-Molenbeek (Sint-Jans-Molenbeek)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1081",
+    "deelgemeente": "Koekelberg",
+    "gemeente": "Koekelberg",
+    "volledigeNaam": "1081 Koekelberg (Koekelberg)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1082",
+    "deelgemeente": "Sint-Agatha-Berchem",
+    "gemeente": "Sint-Agatha-Berchem",
+    "volledigeNaam": "1082 Sint-Agatha-Berchem (Sint-Agatha-Berchem)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1083",
+    "deelgemeente": "Ganshoren",
+    "gemeente": "Ganshoren",
+    "volledigeNaam": "1083 Ganshoren (Ganshoren)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1090",
+    "deelgemeente": "Jette",
+    "gemeente": "Jette",
+    "volledigeNaam": "1090 Jette (Jette)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1120",
+    "deelgemeente": "Neder-Over-Heembeek",
+    "gemeente": "Brussel",
+    "volledigeNaam": "1120 Neder-Over-Heembeek (Brussel)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1130",
+    "deelgemeente": "Haren",
+    "gemeente": "Brussel",
+    "volledigeNaam": "1130 Haren (Brussel)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1140",
+    "deelgemeente": "Evere",
+    "gemeente": "Evere",
+    "volledigeNaam": "1140 Evere (Evere)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1150",
+    "deelgemeente": "Sint-Pieters-Woluwe",
+    "gemeente": "Sint-Pieters-Woluwe",
+    "volledigeNaam": "1150 Sint-Pieters-Woluwe (Sint-Pieters-Woluwe)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1160",
+    "deelgemeente": "Oudergem",
+    "gemeente": "Oudergem",
+    "volledigeNaam": "1160 Oudergem (Oudergem)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1170",
+    "deelgemeente": "Watermaal-Bosvoorde",
+    "gemeente": "Watermaal-Bosvoorde",
+    "volledigeNaam": "1170 Watermaal-Bosvoorde (Watermaal-Bosvoorde)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1180",
+    "deelgemeente": "Ukkel",
+    "gemeente": "Ukkel",
+    "volledigeNaam": "1180 Ukkel (Ukkel)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1190",
+    "deelgemeente": "Vorst",
+    "gemeente": "Vorst",
+    "volledigeNaam": "1190 Vorst (Vorst)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1200",
+    "deelgemeente": "Sint-Lambrechts-Woluwe",
+    "gemeente": "Sint-Lambrechts-Woluwe",
+    "volledigeNaam": "1200 Sint-Lambrechts-Woluwe (Sint-Lambrechts-Woluwe)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1210",
+    "deelgemeente": "SINT-JOOST-TEN-NOODE",
+    "gemeente": "Sint-Joost-ten-Node",
+    "volledigeNaam": "1210 SINT-JOOST-TEN-NOODE (Sint-Joost-ten-Node)",
+    "provincieId": 1
+  },
+  {
+    "postcode": "1300",
+    "deelgemeente": "Limal",
+    "gemeente": "Wavre",
+    "volledigeNaam": "1300 Limal (Wavre)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1301",
+    "deelgemeente": "Bierges",
+    "gemeente": "Wavre",
+    "volledigeNaam": "1301 Bierges (Wavre)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1310",
+    "deelgemeente": "La Hulpe",
+    "gemeente": "La Hulpe",
+    "volledigeNaam": "1310 La Hulpe (La Hulpe)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1315",
+    "deelgemeente": "Glimes",
+    "gemeente": "Incourt",
+    "volledigeNaam": "1315 Glimes (Incourt)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1320",
+    "deelgemeente": "Beauvechain",
+    "gemeente": "Beauvechain",
+    "volledigeNaam": "1320 Beauvechain (Beauvechain)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1325",
+    "deelgemeente": "Bonlez",
+    "gemeente": "Chaumont-Gistoux",
+    "volledigeNaam": "1325 Bonlez (Chaumont-Gistoux)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1330",
+    "deelgemeente": "Rixensart",
+    "gemeente": "Rixensart",
+    "volledigeNaam": "1330 Rixensart (Rixensart)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1331",
+    "deelgemeente": "Rosières",
+    "gemeente": "Rixensart",
+    "volledigeNaam": "1331 Rosières (Rixensart)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1332",
+    "deelgemeente": "Genval",
+    "gemeente": "Rixensart",
+    "volledigeNaam": "1332 Genval (Rixensart)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1340",
+    "deelgemeente": "Ottignies",
+    "gemeente": "Ottignies-Louvain-la-Neuve",
+    "volledigeNaam": "1340 Ottignies (Ottignies-Louvain-la-Neuve)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1341",
+    "deelgemeente": "Céroux-Mousty",
+    "gemeente": "Ottignies-Louvain-la-Neuve",
+    "volledigeNaam": "1341 Céroux-Mousty (Ottignies-Louvain-la-Neuve)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1342",
+    "deelgemeente": "Limelette",
+    "gemeente": "Ottignies-Louvain-la-Neuve",
+    "volledigeNaam": "1342 Limelette (Ottignies-Louvain-la-Neuve)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1348",
+    "deelgemeente": "Louvain-La-Neuve",
+    "gemeente": "Ottignies-Louvain-la-Neuve",
+    "volledigeNaam": "1348 Louvain-La-Neuve (Ottignies-Louvain-la-Neuve)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1350",
+    "deelgemeente": "Enines",
+    "gemeente": "Orp-Jauche",
+    "volledigeNaam": "1350 Enines (Orp-Jauche)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1357",
+    "deelgemeente": "Hélécine",
+    "gemeente": "Hélécine",
+    "volledigeNaam": "1357 Hélécine (Hélécine)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1360",
+    "deelgemeente": "Malèves-Sainte-Marie-Wastinnes",
+    "gemeente": "Perwez",
+    "volledigeNaam": "1360 Malèves-Sainte-Marie-Wastinnes (Perwez)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1367",
+    "deelgemeente": "Autre-Eglise",
+    "gemeente": "Ramillies",
+    "volledigeNaam": "1367 Autre-Eglise (Ramillies)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1370",
+    "deelgemeente": "Dongelberg",
+    "gemeente": "Jodoigne",
+    "volledigeNaam": "1370 Dongelberg (Jodoigne)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1380",
+    "deelgemeente": "Couture-Saint-Germain",
+    "gemeente": "Lasne",
+    "volledigeNaam": "1380 Couture-Saint-Germain (Lasne)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1390",
+    "deelgemeente": "Archennes",
+    "gemeente": "Grez-Doiceau",
+    "volledigeNaam": "1390 Archennes (Grez-Doiceau)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1400",
+    "deelgemeente": "Monstreux",
+    "gemeente": "Nivelles",
+    "volledigeNaam": "1400 Monstreux (Nivelles)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1401",
+    "deelgemeente": "Baulers",
+    "gemeente": "Nivelles",
+    "volledigeNaam": "1401 Baulers (Nivelles)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1402",
+    "deelgemeente": "Thines",
+    "gemeente": "Nivelles",
+    "volledigeNaam": "1402 Thines (Nivelles)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1404",
+    "deelgemeente": "Bornival",
+    "gemeente": "Nivelles",
+    "volledigeNaam": "1404 Bornival (Nivelles)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1410",
+    "deelgemeente": "Waterloo",
+    "gemeente": "Waterloo",
+    "volledigeNaam": "1410 Waterloo (Waterloo)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1420",
+    "deelgemeente": "Braine-l'Alleud",
+    "gemeente": "Braine-l'Alleud",
+    "volledigeNaam": "1420 Braine-l'Alleud (Braine-l'Alleud)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1421",
+    "deelgemeente": "Ophain-Bois-Seigneur-Isaac",
+    "gemeente": "Braine-l'Alleud",
+    "volledigeNaam": "1421 Ophain-Bois-Seigneur-Isaac (Braine-l'Alleud)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1428",
+    "deelgemeente": "Lillois-Witterzée",
+    "gemeente": "Braine-l'Alleud",
+    "volledigeNaam": "1428 Lillois-Witterzée (Braine-l'Alleud)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1430",
+    "deelgemeente": "Bierghes",
+    "gemeente": "Rebecq",
+    "volledigeNaam": "1430 Bierghes (Rebecq)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1435",
+    "deelgemeente": "Corbais",
+    "gemeente": "Mont-Saint-Guibert",
+    "volledigeNaam": "1435 Corbais (Mont-Saint-Guibert)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1440",
+    "deelgemeente": "Braine-le-Château",
+    "gemeente": "Braine-le-Château",
+    "volledigeNaam": "1440 Braine-le-Château (Braine-le-Château)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1450",
+    "deelgemeente": "Chastre",
+    "gemeente": "Chastre",
+    "volledigeNaam": "1450 Chastre (Chastre)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1457",
+    "deelgemeente": "Nil-Saint-Vincent-Saint-Martin",
+    "gemeente": "Walhain",
+    "volledigeNaam": "1457 Nil-Saint-Vincent-Saint-Martin (Walhain)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1460",
+    "deelgemeente": "Ittre",
+    "gemeente": "Ittre",
+    "volledigeNaam": "1460 Ittre (Ittre)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1461",
+    "deelgemeente": "Haut-Ittre",
+    "gemeente": "Ittre",
+    "volledigeNaam": "1461 Haut-Ittre (Ittre)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1470",
+    "deelgemeente": "Baisy-Thy",
+    "gemeente": "Genappe",
+    "volledigeNaam": "1470 Baisy-Thy (Genappe)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1471",
+    "deelgemeente": "Loupoigne",
+    "gemeente": "Genappe",
+    "volledigeNaam": "1471 Loupoigne (Genappe)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1472",
+    "deelgemeente": "Vieux-Genappe",
+    "gemeente": "Genappe",
+    "volledigeNaam": "1472 Vieux-Genappe (Genappe)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1473",
+    "deelgemeente": "Glabais",
+    "gemeente": "Genappe",
+    "volledigeNaam": "1473 Glabais (Genappe)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1474",
+    "deelgemeente": "Ways",
+    "gemeente": "Genappe",
+    "volledigeNaam": "1474 Ways (Genappe)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1476",
+    "deelgemeente": "Houtain-Le-Val",
+    "gemeente": "Genappe",
+    "volledigeNaam": "1476 Houtain-Le-Val (Genappe)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1480",
+    "deelgemeente": "Clabecq",
+    "gemeente": "Tubize",
+    "volledigeNaam": "1480 Clabecq (Tubize)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1490",
+    "deelgemeente": "Court-Saint-Etienne",
+    "gemeente": "Court-Saint-Etienne",
+    "volledigeNaam": "1490 Court-Saint-Etienne (Court-Saint-Etienne)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1495",
+    "deelgemeente": "Marbais",
+    "gemeente": "Villers-la-Ville",
+    "volledigeNaam": "1495 Marbais (Villers-la-Ville)",
+    "provincieId": 2
+  },
+  {
+    "postcode": "1500",
+    "deelgemeente": "Halle",
+    "gemeente": "Halle",
+    "volledigeNaam": "1500 Halle (Halle)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1501",
+    "deelgemeente": "Buizingen",
+    "gemeente": "Halle",
+    "volledigeNaam": "1501 Buizingen (Halle)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1502",
+    "deelgemeente": "Lembeek",
+    "gemeente": "Halle",
+    "volledigeNaam": "1502 Lembeek (Halle)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1540",
+    "deelgemeente": "Herfelingen",
+    "gemeente": "Herne",
+    "volledigeNaam": "1540 Herfelingen (Herne)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1541",
+    "deelgemeente": "Sint-Pieters-Kapelle",
+    "gemeente": "Herne",
+    "volledigeNaam": "1541 Sint-Pieters-Kapelle (Herne)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1547",
+    "deelgemeente": "Bever",
+    "gemeente": "Bever",
+    "volledigeNaam": "1547 Bever (Bever)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1560",
+    "deelgemeente": "Hoeilaart",
+    "gemeente": "Hoeilaart",
+    "volledigeNaam": "1560 Hoeilaart (Hoeilaart)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1570",
+    "deelgemeente": "Galmaarden",
+    "gemeente": "Galmaarden",
+    "volledigeNaam": "1570 Galmaarden (Galmaarden)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1600",
+    "deelgemeente": "Oudenaken",
+    "gemeente": "Sint-Pieters-Leeuw",
+    "volledigeNaam": "1600 Oudenaken (Sint-Pieters-Leeuw)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1601",
+    "deelgemeente": "Ruisbroek",
+    "gemeente": "Sint-Pieters-Leeuw",
+    "volledigeNaam": "1601 Ruisbroek (Sint-Pieters-Leeuw)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1602",
+    "deelgemeente": "Vlezenbeek",
+    "gemeente": "Sint-Pieters-Leeuw",
+    "volledigeNaam": "1602 Vlezenbeek (Sint-Pieters-Leeuw)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1620",
+    "deelgemeente": "Drogenbos",
+    "gemeente": "Drogenbos",
+    "volledigeNaam": "1620 Drogenbos (Drogenbos)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1630",
+    "deelgemeente": "Linkebeek",
+    "gemeente": "Linkebeek",
+    "volledigeNaam": "1630 Linkebeek (Linkebeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1640",
+    "deelgemeente": "Sint-Genesius-Rode",
+    "gemeente": "Sint-Genesius-Rode",
+    "volledigeNaam": "1640 Sint-Genesius-Rode (Sint-Genesius-Rode)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1650",
+    "deelgemeente": "Beersel",
+    "gemeente": "Beersel",
+    "volledigeNaam": "1650 Beersel (Beersel)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1651",
+    "deelgemeente": "Lot",
+    "gemeente": "Beersel",
+    "volledigeNaam": "1651 Lot (Beersel)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1652",
+    "deelgemeente": "Alsemberg",
+    "gemeente": "Beersel",
+    "volledigeNaam": "1652 Alsemberg (Beersel)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1653",
+    "deelgemeente": "Dworp",
+    "gemeente": "Beersel",
+    "volledigeNaam": "1653 Dworp (Beersel)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1654",
+    "deelgemeente": "Huizingen",
+    "gemeente": "Beersel",
+    "volledigeNaam": "1654 Huizingen (Beersel)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1670",
+    "deelgemeente": "Bogaarden",
+    "gemeente": "Pepingen",
+    "volledigeNaam": "1670 Bogaarden (Pepingen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1671",
+    "deelgemeente": "Elingen",
+    "gemeente": "Pepingen",
+    "volledigeNaam": "1671 Elingen (Pepingen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1673",
+    "deelgemeente": "Beert",
+    "gemeente": "Pepingen",
+    "volledigeNaam": "1673 Beert (Pepingen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1674",
+    "deelgemeente": "Bellingen",
+    "gemeente": "Pepingen",
+    "volledigeNaam": "1674 Bellingen (Pepingen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1700",
+    "deelgemeente": "Dilbeek",
+    "gemeente": "Dilbeek",
+    "volledigeNaam": "1700 Dilbeek (Dilbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1701",
+    "deelgemeente": "Itterbeek",
+    "gemeente": "Dilbeek",
+    "volledigeNaam": "1701 Itterbeek (Dilbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1702",
+    "deelgemeente": "Groot-Bijgaarden",
+    "gemeente": "Dilbeek",
+    "volledigeNaam": "1702 Groot-Bijgaarden (Dilbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1703",
+    "deelgemeente": "Schepdaal",
+    "gemeente": "Dilbeek",
+    "volledigeNaam": "1703 Schepdaal (Dilbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1730",
+    "deelgemeente": "Asse",
+    "gemeente": "Asse",
+    "volledigeNaam": "1730 Asse (Asse)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1731",
+    "deelgemeente": "Relegem",
+    "gemeente": "Asse",
+    "volledigeNaam": "1731 Relegem (Asse)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1740",
+    "deelgemeente": "Ternat",
+    "gemeente": "Ternat",
+    "volledigeNaam": "1740 Ternat (Ternat)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1741",
+    "deelgemeente": "Wambeek",
+    "gemeente": "Ternat",
+    "volledigeNaam": "1741 Wambeek (Ternat)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1742",
+    "deelgemeente": "Sint-Katherina-Lombeek",
+    "gemeente": "Ternat",
+    "volledigeNaam": "1742 Sint-Katherina-Lombeek (Ternat)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1745",
+    "deelgemeente": "Mazenzele",
+    "gemeente": "Opwijk",
+    "volledigeNaam": "1745 Mazenzele (Opwijk)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1750",
+    "deelgemeente": "Gaasbeek",
+    "gemeente": "Lennik",
+    "volledigeNaam": "1750 Gaasbeek (Lennik)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1755",
+    "deelgemeente": "Gooik",
+    "gemeente": "Gooik",
+    "volledigeNaam": "1755 Gooik (Gooik)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1760",
+    "deelgemeente": "Onze-Lieve-Vrouw-Lombeek",
+    "gemeente": "Roosdaal",
+    "volledigeNaam": "1760 Onze-Lieve-Vrouw-Lombeek (Roosdaal)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1761",
+    "deelgemeente": "Borchtlombeek",
+    "gemeente": "Roosdaal",
+    "volledigeNaam": "1761 Borchtlombeek (Roosdaal)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1770",
+    "deelgemeente": "Liedekerke",
+    "gemeente": "Liedekerke",
+    "volledigeNaam": "1770 Liedekerke (Liedekerke)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1780",
+    "deelgemeente": "Wemmel",
+    "gemeente": "Wemmel",
+    "volledigeNaam": "1780 Wemmel (Wemmel)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1785",
+    "deelgemeente": "Brussegem",
+    "gemeente": "Merchtem",
+    "volledigeNaam": "1785 Brussegem (Merchtem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1790",
+    "deelgemeente": "Affligem",
+    "gemeente": "Affligem",
+    "volledigeNaam": "1790 Affligem (Affligem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1800",
+    "deelgemeente": "Peutie",
+    "gemeente": "Vilvoorde",
+    "volledigeNaam": "1800 Peutie (Vilvoorde)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1820",
+    "deelgemeente": "Melsbroek",
+    "gemeente": "Steenokkerzeel",
+    "volledigeNaam": "1820 Melsbroek (Steenokkerzeel)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1830",
+    "deelgemeente": "Machelen",
+    "gemeente": "Machelen",
+    "volledigeNaam": "1830 Machelen (Machelen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1831",
+    "deelgemeente": "Diegem",
+    "gemeente": "Machelen",
+    "volledigeNaam": "1831 Diegem (Machelen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1840",
+    "deelgemeente": "Londerzeel",
+    "gemeente": "Londerzeel",
+    "volledigeNaam": "1840 Londerzeel (Londerzeel)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1850",
+    "deelgemeente": "Grimbergen",
+    "gemeente": "Grimbergen",
+    "volledigeNaam": "1850 Grimbergen (Grimbergen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1851",
+    "deelgemeente": "Humbeek",
+    "gemeente": "Grimbergen",
+    "volledigeNaam": "1851 Humbeek (Grimbergen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1852",
+    "deelgemeente": "Beigem",
+    "gemeente": "Grimbergen",
+    "volledigeNaam": "1852 Beigem (Grimbergen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1853",
+    "deelgemeente": "Strombeek-Bever",
+    "gemeente": "Grimbergen",
+    "volledigeNaam": "1853 Strombeek-Bever (Grimbergen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1860",
+    "deelgemeente": "Meise",
+    "gemeente": "Meise",
+    "volledigeNaam": "1860 Meise (Meise)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1861",
+    "deelgemeente": "Wolvertem",
+    "gemeente": "Meise",
+    "volledigeNaam": "1861 Wolvertem (Meise)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1880",
+    "deelgemeente": "Kapelle-op-den-Bos",
+    "gemeente": "Kapelle-op-den-Bos",
+    "volledigeNaam": "1880 Kapelle-op-den-Bos (Kapelle-op-den-Bos)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1910",
+    "deelgemeente": "Berg",
+    "gemeente": "Kampenhout",
+    "volledigeNaam": "1910 Berg (Kampenhout)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1930",
+    "deelgemeente": "Nossegem",
+    "gemeente": "Zaventem",
+    "volledigeNaam": "1930 Nossegem (Zaventem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1932",
+    "deelgemeente": "Sint-Stevens-Woluwe",
+    "gemeente": "Zaventem",
+    "volledigeNaam": "1932 Sint-Stevens-Woluwe (Zaventem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1933",
+    "deelgemeente": "Sterrebeek",
+    "gemeente": "Zaventem",
+    "volledigeNaam": "1933 Sterrebeek (Zaventem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1950",
+    "deelgemeente": "Kraainem",
+    "gemeente": "Kraainem",
+    "volledigeNaam": "1950 Kraainem (Kraainem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1970",
+    "deelgemeente": "Wezembeek-Oppem",
+    "gemeente": "Wezembeek-Oppem",
+    "volledigeNaam": "1970 Wezembeek-Oppem (Wezembeek-Oppem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1980",
+    "deelgemeente": "Eppegem",
+    "gemeente": "Zemst",
+    "volledigeNaam": "1980 Eppegem (Zemst)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1981",
+    "deelgemeente": "Hofstade",
+    "gemeente": "Zemst",
+    "volledigeNaam": "1981 Hofstade (Zemst)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "1982",
+    "deelgemeente": "Elewijt",
+    "gemeente": "Zemst",
+    "volledigeNaam": "1982 Elewijt (Zemst)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "2000",
+    "deelgemeente": "Antwerpen",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2000 Antwerpen (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2018",
+    "deelgemeente": "Antwerpen",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2018 Antwerpen (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2020",
+    "deelgemeente": "Antwerpen",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2020 Antwerpen (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2030",
+    "deelgemeente": "Antwerpen",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2030 Antwerpen (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2040",
+    "deelgemeente": "Antwerpen",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2040 Antwerpen (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2050",
+    "deelgemeente": "Antwerpen",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2050 Antwerpen (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2060",
+    "deelgemeente": "Antwerpen",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2060 Antwerpen (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2070",
+    "deelgemeente": "Burcht",
+    "gemeente": "Zwijndrecht",
+    "volledigeNaam": "2070 Burcht (Zwijndrecht)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2100",
+    "deelgemeente": "Deurne",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2100 Deurne (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2110",
+    "deelgemeente": "Wijnegem",
+    "gemeente": "Wijnegem",
+    "volledigeNaam": "2110 Wijnegem (Wijnegem)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2140",
+    "deelgemeente": "Borgerhout",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2140 Borgerhout (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2150",
+    "deelgemeente": "Borsbeek",
+    "gemeente": "Borsbeek",
+    "volledigeNaam": "2150 Borsbeek (Borsbeek)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2160",
+    "deelgemeente": "Wommelgem",
+    "gemeente": "Wommelgem",
+    "volledigeNaam": "2160 Wommelgem (Wommelgem)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2170",
+    "deelgemeente": "Merksem",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2170 Merksem (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2180",
+    "deelgemeente": "Ekeren",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2180 Ekeren (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2200",
+    "deelgemeente": "Herentals",
+    "gemeente": "Herentals",
+    "volledigeNaam": "2200 Herentals (Herentals)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2220",
+    "deelgemeente": "Hallaar",
+    "gemeente": "Heist-op-den-Berg",
+    "volledigeNaam": "2220 Hallaar (Heist-op-den-Berg)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2221",
+    "deelgemeente": "Booischot",
+    "gemeente": "Heist-op-den-Berg",
+    "volledigeNaam": "2221 Booischot (Heist-op-den-Berg)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2222",
+    "deelgemeente": "Itegem",
+    "gemeente": "Heist-op-den-Berg",
+    "volledigeNaam": "2222 Itegem (Heist-op-den-Berg)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2223",
+    "deelgemeente": "Schriek",
+    "gemeente": "Heist-op-den-Berg",
+    "volledigeNaam": "2223 Schriek (Heist-op-den-Berg)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2230",
+    "deelgemeente": "Herselt",
+    "gemeente": "Herselt",
+    "volledigeNaam": "2230 Herselt (Herselt)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2235",
+    "deelgemeente": "Houtvenne",
+    "gemeente": "Hulshout",
+    "volledigeNaam": "2235 Houtvenne (Hulshout)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2240",
+    "deelgemeente": "Massenhoven",
+    "gemeente": "Zandhoven",
+    "volledigeNaam": "2240 Massenhoven (Zandhoven)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2242",
+    "deelgemeente": "Pulderbos",
+    "gemeente": "Zandhoven",
+    "volledigeNaam": "2242 Pulderbos (Zandhoven)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2243",
+    "deelgemeente": "Pulle",
+    "gemeente": "Zandhoven",
+    "volledigeNaam": "2243 Pulle (Zandhoven)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2250",
+    "deelgemeente": "Olen",
+    "gemeente": "Olen",
+    "volledigeNaam": "2250 Olen (Olen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2260",
+    "deelgemeente": "Oevel",
+    "gemeente": "Westerlo",
+    "volledigeNaam": "2260 Oevel (Westerlo)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2270",
+    "deelgemeente": "Herenthout",
+    "gemeente": "Herenthout",
+    "volledigeNaam": "2270 Herenthout (Herenthout)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2275",
+    "deelgemeente": "Gierle",
+    "gemeente": "Lille",
+    "volledigeNaam": "2275 Gierle (Lille)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2280",
+    "deelgemeente": "Grobbendonk",
+    "gemeente": "Grobbendonk",
+    "volledigeNaam": "2280 Grobbendonk (Grobbendonk)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2288",
+    "deelgemeente": "Bouwel",
+    "gemeente": "Grobbendonk",
+    "volledigeNaam": "2288 Bouwel (Grobbendonk)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2290",
+    "deelgemeente": "Vorselaar",
+    "gemeente": "Vorselaar",
+    "volledigeNaam": "2290 Vorselaar (Vorselaar)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2300",
+    "deelgemeente": "Turnhout",
+    "gemeente": "Turnhout",
+    "volledigeNaam": "2300 Turnhout (Turnhout)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2310",
+    "deelgemeente": "Rijkevorsel",
+    "gemeente": "Rijkevorsel",
+    "volledigeNaam": "2310 Rijkevorsel (Rijkevorsel)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2320",
+    "deelgemeente": "Hoogstraten",
+    "gemeente": "Hoogstraten",
+    "volledigeNaam": "2320 Hoogstraten (Hoogstraten)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2321",
+    "deelgemeente": "Meer",
+    "gemeente": "Hoogstraten",
+    "volledigeNaam": "2321 Meer (Hoogstraten)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2322",
+    "deelgemeente": "Minderhout",
+    "gemeente": "Hoogstraten",
+    "volledigeNaam": "2322 Minderhout (Hoogstraten)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2323",
+    "deelgemeente": "Wortel",
+    "gemeente": "Hoogstraten",
+    "volledigeNaam": "2323 Wortel (Hoogstraten)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2328",
+    "deelgemeente": "Meerle",
+    "gemeente": "Hoogstraten",
+    "volledigeNaam": "2328 Meerle (Hoogstraten)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2330",
+    "deelgemeente": "Merksplas",
+    "gemeente": "Merksplas",
+    "volledigeNaam": "2330 Merksplas (Merksplas)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2340",
+    "deelgemeente": "Beerse",
+    "gemeente": "Beerse",
+    "volledigeNaam": "2340 Beerse (Beerse)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2350",
+    "deelgemeente": "Vosselaar",
+    "gemeente": "Vosselaar",
+    "volledigeNaam": "2350 Vosselaar (Vosselaar)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2360",
+    "deelgemeente": "Oud-Turnhout",
+    "gemeente": "Oud-Turnhout",
+    "volledigeNaam": "2360 Oud-Turnhout (Oud-Turnhout)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2370",
+    "deelgemeente": "Arendonk",
+    "gemeente": "Arendonk",
+    "volledigeNaam": "2370 Arendonk (Arendonk)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2380",
+    "deelgemeente": "Ravels",
+    "gemeente": "Ravels",
+    "volledigeNaam": "2380 Ravels (Ravels)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2381",
+    "deelgemeente": "Weelde",
+    "gemeente": "Ravels",
+    "volledigeNaam": "2381 Weelde (Ravels)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2382",
+    "deelgemeente": "Poppel",
+    "gemeente": "Ravels",
+    "volledigeNaam": "2382 Poppel (Ravels)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2387",
+    "deelgemeente": "Baarle-Hertog",
+    "gemeente": "Baarle-Hertog",
+    "volledigeNaam": "2387 Baarle-Hertog (Baarle-Hertog)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2390",
+    "deelgemeente": "Malle",
+    "gemeente": "Malle",
+    "volledigeNaam": "2390 Malle (Malle)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2400",
+    "deelgemeente": "Mol",
+    "gemeente": "Mol",
+    "volledigeNaam": "2400 Mol (Mol)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2430",
+    "deelgemeente": "Eindhout",
+    "gemeente": "Laakdal",
+    "volledigeNaam": "2430 Eindhout (Laakdal)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2431",
+    "deelgemeente": "Varendonk",
+    "gemeente": "Laakdal",
+    "volledigeNaam": "2431 Varendonk (Laakdal)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2440",
+    "deelgemeente": "Geel",
+    "gemeente": "Geel",
+    "volledigeNaam": "2440 Geel (Geel)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2450",
+    "deelgemeente": "Meerhout",
+    "gemeente": "Meerhout",
+    "volledigeNaam": "2450 Meerhout (Meerhout)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2460",
+    "deelgemeente": "Kasterlee",
+    "gemeente": "Kasterlee",
+    "volledigeNaam": "2460 Kasterlee (Kasterlee)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2470",
+    "deelgemeente": "Retie",
+    "gemeente": "Retie",
+    "volledigeNaam": "2470 Retie (Retie)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2480",
+    "deelgemeente": "Dessel",
+    "gemeente": "Dessel",
+    "volledigeNaam": "2480 Dessel (Dessel)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2490",
+    "deelgemeente": "Balen",
+    "gemeente": "Balen",
+    "volledigeNaam": "2490 Balen (Balen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2491",
+    "deelgemeente": "Olmen",
+    "gemeente": "Balen",
+    "volledigeNaam": "2491 Olmen (Balen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2500",
+    "deelgemeente": "Koningshooikt",
+    "gemeente": "Lier",
+    "volledigeNaam": "2500 Koningshooikt (Lier)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2520",
+    "deelgemeente": "Broechem",
+    "gemeente": "Ranst",
+    "volledigeNaam": "2520 Broechem (Ranst)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2530",
+    "deelgemeente": "Boechout",
+    "gemeente": "Boechout",
+    "volledigeNaam": "2530 Boechout (Boechout)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2531",
+    "deelgemeente": "Vremde",
+    "gemeente": "Boechout",
+    "volledigeNaam": "2531 Vremde (Boechout)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2540",
+    "deelgemeente": "Hove",
+    "gemeente": "Hove",
+    "volledigeNaam": "2540 Hove (Hove)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2547",
+    "deelgemeente": "Lint",
+    "gemeente": "Lint",
+    "volledigeNaam": "2547 Lint (Lint)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2550",
+    "deelgemeente": "Kontich",
+    "gemeente": "Kontich",
+    "volledigeNaam": "2550 Kontich (Kontich)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2560",
+    "deelgemeente": "Bevel",
+    "gemeente": "Nijlen",
+    "volledigeNaam": "2560 Bevel (Nijlen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2570",
+    "deelgemeente": "Duffel",
+    "gemeente": "Duffel",
+    "volledigeNaam": "2570 Duffel (Duffel)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2580",
+    "deelgemeente": "Beerzel",
+    "gemeente": "Putte",
+    "volledigeNaam": "2580 Beerzel (Putte)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2590",
+    "deelgemeente": "Berlaar",
+    "gemeente": "Berlaar",
+    "volledigeNaam": "2590 Berlaar (Berlaar)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2600",
+    "deelgemeente": "Berchem",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2600 Berchem (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2610",
+    "deelgemeente": "Wilrijk",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2610 Wilrijk (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2620",
+    "deelgemeente": "Hemiksem",
+    "gemeente": "Hemiksem",
+    "volledigeNaam": "2620 Hemiksem (Hemiksem)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2627",
+    "deelgemeente": "Schelle",
+    "gemeente": "Schelle",
+    "volledigeNaam": "2627 Schelle (Schelle)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2630",
+    "deelgemeente": "Aartselaar",
+    "gemeente": "Aartselaar",
+    "volledigeNaam": "2630 Aartselaar (Aartselaar)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2640",
+    "deelgemeente": "Mortsel",
+    "gemeente": "Mortsel",
+    "volledigeNaam": "2640 Mortsel (Mortsel)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2650",
+    "deelgemeente": "Edegem",
+    "gemeente": "Edegem",
+    "volledigeNaam": "2650 Edegem (Edegem)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2660",
+    "deelgemeente": "Hoboken",
+    "gemeente": "Antwerpen",
+    "volledigeNaam": "2660 Hoboken (Antwerpen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2800",
+    "deelgemeente": "Mechelen",
+    "gemeente": "Mechelen",
+    "volledigeNaam": "2800 Mechelen (Mechelen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2801",
+    "deelgemeente": "Heffen",
+    "gemeente": "Mechelen",
+    "volledigeNaam": "2801 Heffen (Mechelen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2811",
+    "deelgemeente": "Hombeek",
+    "gemeente": "Mechelen",
+    "volledigeNaam": "2811 Hombeek (Mechelen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2812",
+    "deelgemeente": "Muizen",
+    "gemeente": "Mechelen",
+    "volledigeNaam": "2812 Muizen (Mechelen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2820",
+    "deelgemeente": "Bonheiden",
+    "gemeente": "Bonheiden",
+    "volledigeNaam": "2820 Bonheiden (Bonheiden)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2830",
+    "deelgemeente": "Blaasveld",
+    "gemeente": "Willebroek",
+    "volledigeNaam": "2830 Blaasveld (Willebroek)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2840",
+    "deelgemeente": "Reet",
+    "gemeente": "Rumst",
+    "volledigeNaam": "2840 Reet (Rumst)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2845",
+    "deelgemeente": "Niel",
+    "gemeente": "Niel",
+    "volledigeNaam": "2845 Niel (Niel)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2850",
+    "deelgemeente": "Boom",
+    "gemeente": "Boom",
+    "volledigeNaam": "2850 Boom (Boom)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2860",
+    "deelgemeente": "Sint-Katelijne-Waver",
+    "gemeente": "Sint-Katelijne-Waver",
+    "volledigeNaam": "2860 Sint-Katelijne-Waver (Sint-Katelijne-Waver)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2861",
+    "deelgemeente": "Onze-Lieve-Vrouw-Waver",
+    "gemeente": "Sint-Katelijne-Waver",
+    "volledigeNaam": "2861 Onze-Lieve-Vrouw-Waver (Sint-Katelijne-Waver)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2870",
+    "deelgemeente": "Breendonk",
+    "gemeente": "Puurs-Sint-Amands",
+    "volledigeNaam": "2870 Breendonk (Puurs-Sint-Amands)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2880",
+    "deelgemeente": "Bornem",
+    "gemeente": "Bornem",
+    "volledigeNaam": "2880 Bornem (Bornem)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2890",
+    "deelgemeente": "Lippelo",
+    "gemeente": "Puurs-Sint-Amands",
+    "volledigeNaam": "2890 Lippelo (Puurs-Sint-Amands)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2900",
+    "deelgemeente": "Schoten",
+    "gemeente": "Schoten",
+    "volledigeNaam": "2900 Schoten (Schoten)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2910",
+    "deelgemeente": "Essen",
+    "gemeente": "Essen",
+    "volledigeNaam": "2910 Essen (Essen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2920",
+    "deelgemeente": "Kalmthout",
+    "gemeente": "Kalmthout",
+    "volledigeNaam": "2920 Kalmthout (Kalmthout)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2930",
+    "deelgemeente": "Brasschaat",
+    "gemeente": "Brasschaat",
+    "volledigeNaam": "2930 Brasschaat (Brasschaat)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2940",
+    "deelgemeente": "Hoevenen",
+    "gemeente": "Stabroek",
+    "volledigeNaam": "2940 Hoevenen (Stabroek)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2950",
+    "deelgemeente": "Kapellen",
+    "gemeente": "Kapellen",
+    "volledigeNaam": "2950 Kapellen (Kapellen)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2960",
+    "deelgemeente": "Brecht",
+    "gemeente": "Brecht",
+    "volledigeNaam": "2960 Brecht (Brecht)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2970",
+    "deelgemeente": "'S Gravenwezel",
+    "gemeente": "Schilde",
+    "volledigeNaam": "2970 'S Gravenwezel (Schilde)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2980",
+    "deelgemeente": "Halle",
+    "gemeente": "Zoersel",
+    "volledigeNaam": "2980 Halle (Zoersel)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "2990",
+    "deelgemeente": "Loenhout",
+    "gemeente": "Wuustwezel",
+    "volledigeNaam": "2990 Loenhout (Wuustwezel)",
+    "provincieId": 4
+  },
+  {
+    "postcode": "3000",
+    "deelgemeente": "Leuven",
+    "gemeente": "Leuven",
+    "volledigeNaam": "3000 Leuven (Leuven)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3001",
+    "deelgemeente": "Heverlee",
+    "gemeente": "Leuven",
+    "volledigeNaam": "3001 Heverlee (Leuven)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3010",
+    "deelgemeente": "Kessel Lo",
+    "gemeente": "Leuven",
+    "volledigeNaam": "3010 Kessel Lo (Leuven)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3012",
+    "deelgemeente": "Wilsele",
+    "gemeente": "Leuven",
+    "volledigeNaam": "3012 Wilsele (Leuven)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3018",
+    "deelgemeente": "Wijgmaal",
+    "gemeente": "Leuven",
+    "volledigeNaam": "3018 Wijgmaal (Leuven)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3020",
+    "deelgemeente": "Herent",
+    "gemeente": "Herent",
+    "volledigeNaam": "3020 Herent (Herent)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3040",
+    "deelgemeente": "Huldenberg",
+    "gemeente": "Huldenberg",
+    "volledigeNaam": "3040 Huldenberg (Huldenberg)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3050",
+    "deelgemeente": "Oud-Heverlee",
+    "gemeente": "Oud-Heverlee",
+    "volledigeNaam": "3050 Oud-Heverlee (Oud-Heverlee)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3051",
+    "deelgemeente": "Sint-Joris-Weert",
+    "gemeente": "Oud-Heverlee",
+    "volledigeNaam": "3051 Sint-Joris-Weert (Oud-Heverlee)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3052",
+    "deelgemeente": "Blanden",
+    "gemeente": "Oud-Heverlee",
+    "volledigeNaam": "3052 Blanden (Oud-Heverlee)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3053",
+    "deelgemeente": "Haasrode",
+    "gemeente": "Oud-Heverlee",
+    "volledigeNaam": "3053 Haasrode (Oud-Heverlee)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3054",
+    "deelgemeente": "Vaalbeek",
+    "gemeente": "Oud-Heverlee",
+    "volledigeNaam": "3054 Vaalbeek (Oud-Heverlee)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3060",
+    "deelgemeente": "Bertem",
+    "gemeente": "Bertem",
+    "volledigeNaam": "3060 Bertem (Bertem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3061",
+    "deelgemeente": "Leefdaal",
+    "gemeente": "Bertem",
+    "volledigeNaam": "3061 Leefdaal (Bertem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3070",
+    "deelgemeente": "Kortenberg",
+    "gemeente": "Kortenberg",
+    "volledigeNaam": "3070 Kortenberg (Kortenberg)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3071",
+    "deelgemeente": "Erps-Kwerps",
+    "gemeente": "Kortenberg",
+    "volledigeNaam": "3071 Erps-Kwerps (Kortenberg)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3078",
+    "deelgemeente": "Everberg",
+    "gemeente": "Kortenberg",
+    "volledigeNaam": "3078 Everberg (Kortenberg)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3080",
+    "deelgemeente": "Duisburg",
+    "gemeente": "Tervuren",
+    "volledigeNaam": "3080 Duisburg (Tervuren)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3090",
+    "deelgemeente": "Overijse",
+    "gemeente": "Overijse",
+    "volledigeNaam": "3090 Overijse (Overijse)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3110",
+    "deelgemeente": "Rotselaar",
+    "gemeente": "Rotselaar",
+    "volledigeNaam": "3110 Rotselaar (Rotselaar)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3111",
+    "deelgemeente": "Wezemaal",
+    "gemeente": "Rotselaar",
+    "volledigeNaam": "3111 Wezemaal (Rotselaar)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3118",
+    "deelgemeente": "Werchter",
+    "gemeente": "Rotselaar",
+    "volledigeNaam": "3118 Werchter (Rotselaar)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3120",
+    "deelgemeente": "Tremelo",
+    "gemeente": "Tremelo",
+    "volledigeNaam": "3120 Tremelo (Tremelo)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3128",
+    "deelgemeente": "Baal",
+    "gemeente": "Tremelo",
+    "volledigeNaam": "3128 Baal (Tremelo)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3130",
+    "deelgemeente": "Begijnendijk",
+    "gemeente": "Begijnendijk",
+    "volledigeNaam": "3130 Begijnendijk (Begijnendijk)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3140",
+    "deelgemeente": "Keerbergen",
+    "gemeente": "Keerbergen",
+    "volledigeNaam": "3140 Keerbergen (Keerbergen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3150",
+    "deelgemeente": "Haacht",
+    "gemeente": "Haacht",
+    "volledigeNaam": "3150 Haacht (Haacht)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3190",
+    "deelgemeente": "Boortmeerbeek",
+    "gemeente": "Boortmeerbeek",
+    "volledigeNaam": "3190 Boortmeerbeek (Boortmeerbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3191",
+    "deelgemeente": "Hever",
+    "gemeente": "Boortmeerbeek",
+    "volledigeNaam": "3191 Hever (Boortmeerbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3200",
+    "deelgemeente": "Aarschot",
+    "gemeente": "Aarschot",
+    "volledigeNaam": "3200 Aarschot (Aarschot)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3201",
+    "deelgemeente": "Langdorp",
+    "gemeente": "Aarschot",
+    "volledigeNaam": "3201 Langdorp (Aarschot)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3202",
+    "deelgemeente": "Rillaar",
+    "gemeente": "Aarschot",
+    "volledigeNaam": "3202 Rillaar (Aarschot)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3210",
+    "deelgemeente": "Linden",
+    "gemeente": "Lubbeek",
+    "volledigeNaam": "3210 Linden (Lubbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3211",
+    "deelgemeente": "Binkom",
+    "gemeente": "Lubbeek",
+    "volledigeNaam": "3211 Binkom (Lubbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3212",
+    "deelgemeente": "Pellenberg",
+    "gemeente": "Lubbeek",
+    "volledigeNaam": "3212 Pellenberg (Lubbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3220",
+    "deelgemeente": "Holsbeek",
+    "gemeente": "Holsbeek",
+    "volledigeNaam": "3220 Holsbeek (Holsbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3221",
+    "deelgemeente": "Nieuwrode",
+    "gemeente": "Holsbeek",
+    "volledigeNaam": "3221 Nieuwrode (Holsbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3270",
+    "deelgemeente": "Scherpenheuvel",
+    "gemeente": "Scherpenheuvel-Zichem",
+    "volledigeNaam": "3270 Scherpenheuvel (Scherpenheuvel-Zichem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3271",
+    "deelgemeente": "Averbode",
+    "gemeente": "Scherpenheuvel-Zichem",
+    "volledigeNaam": "3271 Averbode (Scherpenheuvel-Zichem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3272",
+    "deelgemeente": "Messelbroek",
+    "gemeente": "Scherpenheuvel-Zichem",
+    "volledigeNaam": "3272 Messelbroek (Scherpenheuvel-Zichem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3290",
+    "deelgemeente": "Deurne",
+    "gemeente": "Diest",
+    "volledigeNaam": "3290 Deurne (Diest)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3293",
+    "deelgemeente": "Kaggevinne",
+    "gemeente": "Diest",
+    "volledigeNaam": "3293 Kaggevinne (Diest)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3294",
+    "deelgemeente": "Molenstede",
+    "gemeente": "Diest",
+    "volledigeNaam": "3294 Molenstede (Diest)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3300",
+    "deelgemeente": "Bost",
+    "gemeente": "Tienen",
+    "volledigeNaam": "3300 Bost (Tienen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3320",
+    "deelgemeente": "Hoegaarden",
+    "gemeente": "Hoegaarden",
+    "volledigeNaam": "3320 Hoegaarden (Hoegaarden)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3321",
+    "deelgemeente": "Outgaarden",
+    "gemeente": "Hoegaarden",
+    "volledigeNaam": "3321 Outgaarden (Hoegaarden)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3350",
+    "deelgemeente": "Drieslinter",
+    "gemeente": "Linter",
+    "volledigeNaam": "3350 Drieslinter (Linter)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3360",
+    "deelgemeente": "Bierbeek",
+    "gemeente": "Bierbeek",
+    "volledigeNaam": "3360 Bierbeek (Bierbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3370",
+    "deelgemeente": "Boutersem",
+    "gemeente": "Boutersem",
+    "volledigeNaam": "3370 Boutersem (Boutersem)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3380",
+    "deelgemeente": "Bunsbeek",
+    "gemeente": "Glabbeek",
+    "volledigeNaam": "3380 Bunsbeek (Glabbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3381",
+    "deelgemeente": "Kapellen",
+    "gemeente": "Glabbeek",
+    "volledigeNaam": "3381 Kapellen (Glabbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3384",
+    "deelgemeente": "Attenrode",
+    "gemeente": "Glabbeek",
+    "volledigeNaam": "3384 Attenrode (Glabbeek)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3390",
+    "deelgemeente": "Houwaart",
+    "gemeente": "Tielt-Winge",
+    "volledigeNaam": "3390 Houwaart (Tielt-Winge)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3391",
+    "deelgemeente": "Meensel-Kiezegem",
+    "gemeente": "Tielt-Winge",
+    "volledigeNaam": "3391 Meensel-Kiezegem (Tielt-Winge)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3400",
+    "deelgemeente": "Eliksem",
+    "gemeente": "Landen",
+    "volledigeNaam": "3400 Eliksem (Landen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3401",
+    "deelgemeente": "Waasmont",
+    "gemeente": "Landen",
+    "volledigeNaam": "3401 Waasmont (Landen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3404",
+    "deelgemeente": "Attenhoven",
+    "gemeente": "Landen",
+    "volledigeNaam": "3404 Attenhoven (Landen)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3440",
+    "deelgemeente": "Budingen",
+    "gemeente": "Zoutleeuw",
+    "volledigeNaam": "3440 Budingen (Zoutleeuw)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3450",
+    "deelgemeente": "Geetbets",
+    "gemeente": "Geetbets",
+    "volledigeNaam": "3450 Geetbets (Geetbets)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3454",
+    "deelgemeente": "Rummen",
+    "gemeente": "Geetbets",
+    "volledigeNaam": "3454 Rummen (Geetbets)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3460",
+    "deelgemeente": "Assent",
+    "gemeente": "Bekkevoort",
+    "volledigeNaam": "3460 Assent (Bekkevoort)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3461",
+    "deelgemeente": "Molenbeek-Wersbeek",
+    "gemeente": "Bekkevoort",
+    "volledigeNaam": "3461 Molenbeek-Wersbeek (Bekkevoort)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3470",
+    "deelgemeente": "Kortenaken",
+    "gemeente": "Kortenaken",
+    "volledigeNaam": "3470 Kortenaken (Kortenaken)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3471",
+    "deelgemeente": "Hoeleden",
+    "gemeente": "Kortenaken",
+    "volledigeNaam": "3471 Hoeleden (Kortenaken)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3472",
+    "deelgemeente": "Kersbeek-Miskom",
+    "gemeente": "Kortenaken",
+    "volledigeNaam": "3472 Kersbeek-Miskom (Kortenaken)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3473",
+    "deelgemeente": "Waanrode",
+    "gemeente": "Kortenaken",
+    "volledigeNaam": "3473 Waanrode (Kortenaken)",
+    "provincieId": 3
+  },
+  {
+    "postcode": "3500",
+    "deelgemeente": "Hasselt",
+    "gemeente": "Hasselt",
+    "volledigeNaam": "3500 Hasselt (Hasselt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3501",
+    "deelgemeente": "Wimmertingen",
+    "gemeente": "Hasselt",
+    "volledigeNaam": "3501 Wimmertingen (Hasselt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3510",
+    "deelgemeente": "Kermt",
+    "gemeente": "Hasselt",
+    "volledigeNaam": "3510 Kermt (Hasselt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3511",
+    "deelgemeente": "Kuringen",
+    "gemeente": "Hasselt",
+    "volledigeNaam": "3511 Kuringen (Hasselt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3512",
+    "deelgemeente": "Stevoort",
+    "gemeente": "Hasselt",
+    "volledigeNaam": "3512 Stevoort (Hasselt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3520",
+    "deelgemeente": "Zonhoven",
+    "gemeente": "Zonhoven",
+    "volledigeNaam": "3520 Zonhoven (Zonhoven)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3530",
+    "deelgemeente": "Helchteren",
+    "gemeente": "Houthalen-Helchteren",
+    "volledigeNaam": "3530 Helchteren (Houthalen-Helchteren)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3540",
+    "deelgemeente": "Berbroek",
+    "gemeente": "Herk-de-Stad",
+    "volledigeNaam": "3540 Berbroek (Herk-de-Stad)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3545",
+    "deelgemeente": "Halen",
+    "gemeente": "Halen",
+    "volledigeNaam": "3545 Halen (Halen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3550",
+    "deelgemeente": "Heusden",
+    "gemeente": "Heusden-Zolder",
+    "volledigeNaam": "3550 Heusden (Heusden-Zolder)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3560",
+    "deelgemeente": "Linkhout",
+    "gemeente": "Lummen",
+    "volledigeNaam": "3560 Linkhout (Lummen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3570",
+    "deelgemeente": "Alken",
+    "gemeente": "Alken",
+    "volledigeNaam": "3570 Alken (Alken)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3580",
+    "deelgemeente": "Beringen",
+    "gemeente": "Beringen",
+    "volledigeNaam": "3580 Beringen (Beringen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3581",
+    "deelgemeente": "Beverlo",
+    "gemeente": "Beringen",
+    "volledigeNaam": "3581 Beverlo (Beringen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3582",
+    "deelgemeente": "Koersel",
+    "gemeente": "Beringen",
+    "volledigeNaam": "3582 Koersel (Beringen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3583",
+    "deelgemeente": "Paal",
+    "gemeente": "Beringen",
+    "volledigeNaam": "3583 Paal (Beringen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3590",
+    "deelgemeente": "Diepenbeek",
+    "gemeente": "Diepenbeek",
+    "volledigeNaam": "3590 Diepenbeek (Diepenbeek)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3600",
+    "deelgemeente": "Genk",
+    "gemeente": "Genk",
+    "volledigeNaam": "3600 Genk (Genk)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3620",
+    "deelgemeente": "Gellik",
+    "gemeente": "Lanaken",
+    "volledigeNaam": "3620 Gellik (Lanaken)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3621",
+    "deelgemeente": "Rekem",
+    "gemeente": "Lanaken",
+    "volledigeNaam": "3621 Rekem (Lanaken)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3630",
+    "deelgemeente": "Eisden",
+    "gemeente": "Maasmechelen",
+    "volledigeNaam": "3630 Eisden (Maasmechelen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3631",
+    "deelgemeente": "Boorsem",
+    "gemeente": "Maasmechelen",
+    "volledigeNaam": "3631 Boorsem (Maasmechelen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3640",
+    "deelgemeente": "Kessenich",
+    "gemeente": "Kinrooi",
+    "volledigeNaam": "3640 Kessenich (Kinrooi)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3650",
+    "deelgemeente": "Dilsen",
+    "gemeente": "Dilsen-Stokkem",
+    "volledigeNaam": "3650 Dilsen (Dilsen-Stokkem)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3660",
+    "deelgemeente": "Opglabbeek",
+    "gemeente": "Oudsbergen",
+    "volledigeNaam": "3660 Opglabbeek (Oudsbergen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3665",
+    "deelgemeente": "As",
+    "gemeente": "As",
+    "volledigeNaam": "3665 As (As)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3668",
+    "deelgemeente": "Niel-Bij-As",
+    "gemeente": "As",
+    "volledigeNaam": "3668 Niel-Bij-As (As)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3670",
+    "deelgemeente": "Ellikom",
+    "gemeente": "Oudsbergen",
+    "volledigeNaam": "3670 Ellikom (Oudsbergen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3680",
+    "deelgemeente": "Maaseik",
+    "gemeente": "Maaseik",
+    "volledigeNaam": "3680 Maaseik (Maaseik)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3690",
+    "deelgemeente": "Zutendaal",
+    "gemeente": "Zutendaal",
+    "volledigeNaam": "3690 Zutendaal (Zutendaal)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3700",
+    "deelgemeente": "'S Herenelderen",
+    "gemeente": "Tongeren",
+    "volledigeNaam": "3700 'S Herenelderen (Tongeren)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3717",
+    "deelgemeente": "Herstappe",
+    "gemeente": "Herstappe",
+    "volledigeNaam": "3717 Herstappe (Herstappe)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3720",
+    "deelgemeente": "Kortessem",
+    "gemeente": "Kortessem",
+    "volledigeNaam": "3720 Kortessem (Kortessem)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3721",
+    "deelgemeente": "Vliermaalroot",
+    "gemeente": "Kortessem",
+    "volledigeNaam": "3721 Vliermaalroot (Kortessem)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3722",
+    "deelgemeente": "Wintershoven",
+    "gemeente": "Kortessem",
+    "volledigeNaam": "3722 Wintershoven (Kortessem)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3723",
+    "deelgemeente": "Guigoven",
+    "gemeente": "Kortessem",
+    "volledigeNaam": "3723 Guigoven (Kortessem)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3724",
+    "deelgemeente": "Vliermaal",
+    "gemeente": "Kortessem",
+    "volledigeNaam": "3724 Vliermaal (Kortessem)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3730",
+    "deelgemeente": "Hoeselt",
+    "gemeente": "Hoeselt",
+    "volledigeNaam": "3730 Hoeselt (Hoeselt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3732",
+    "deelgemeente": "Schalkhoven",
+    "gemeente": "Hoeselt",
+    "volledigeNaam": "3732 Schalkhoven (Hoeselt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3740",
+    "deelgemeente": "Beverst",
+    "gemeente": "Bilzen",
+    "volledigeNaam": "3740 Beverst (Bilzen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3742",
+    "deelgemeente": "Martenslinde",
+    "gemeente": "Bilzen",
+    "volledigeNaam": "3742 Martenslinde (Bilzen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3746",
+    "deelgemeente": "Hoelbeek",
+    "gemeente": "Bilzen",
+    "volledigeNaam": "3746 Hoelbeek (Bilzen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3770",
+    "deelgemeente": "Genoelselderen",
+    "gemeente": "Riemst",
+    "volledigeNaam": "3770 Genoelselderen (Riemst)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3790",
+    "deelgemeente": "Moelingen",
+    "gemeente": "Voeren",
+    "volledigeNaam": "3790 Moelingen (Voeren)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3791",
+    "deelgemeente": "Remersdaal",
+    "gemeente": "Voeren",
+    "volledigeNaam": "3791 Remersdaal (Voeren)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3792",
+    "deelgemeente": "Sint-Pieters-Voeren",
+    "gemeente": "Voeren",
+    "volledigeNaam": "3792 Sint-Pieters-Voeren (Voeren)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3793",
+    "deelgemeente": "Teuven",
+    "gemeente": "Voeren",
+    "volledigeNaam": "3793 Teuven (Voeren)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3798",
+    "deelgemeente": "S Gravenvoeren",
+    "gemeente": "Voeren",
+    "volledigeNaam": "3798 S Gravenvoeren (Voeren)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3800",
+    "deelgemeente": "Aalst",
+    "gemeente": "Sint-Truiden",
+    "volledigeNaam": "3800 Aalst (Sint-Truiden)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3803",
+    "deelgemeente": "Duras",
+    "gemeente": "Sint-Truiden",
+    "volledigeNaam": "3803 Duras (Sint-Truiden)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3806",
+    "deelgemeente": "Velm",
+    "gemeente": "Sint-Truiden",
+    "volledigeNaam": "3806 Velm (Sint-Truiden)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3830",
+    "deelgemeente": "Berlingen",
+    "gemeente": "Wellen",
+    "volledigeNaam": "3830 Berlingen (Wellen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3831",
+    "deelgemeente": "Herten",
+    "gemeente": "Wellen",
+    "volledigeNaam": "3831 Herten (Wellen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3832",
+    "deelgemeente": "Ulbeek",
+    "gemeente": "Wellen",
+    "volledigeNaam": "3832 Ulbeek (Wellen)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3840",
+    "deelgemeente": "Bommershoven",
+    "gemeente": "Borgloon",
+    "volledigeNaam": "3840 Bommershoven (Borgloon)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3850",
+    "deelgemeente": "Binderveld",
+    "gemeente": "Nieuwerkerken",
+    "volledigeNaam": "3850 Binderveld (Nieuwerkerken)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3870",
+    "deelgemeente": "Batsheers",
+    "gemeente": "Heers",
+    "volledigeNaam": "3870 Batsheers (Heers)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3890",
+    "deelgemeente": "Boekhout",
+    "gemeente": "Gingelom",
+    "volledigeNaam": "3890 Boekhout (Gingelom)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3891",
+    "deelgemeente": "Borlo",
+    "gemeente": "Gingelom",
+    "volledigeNaam": "3891 Borlo (Gingelom)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3900",
+    "deelgemeente": "Overpelt",
+    "gemeente": "Pelt",
+    "volledigeNaam": "3900 Overpelt (Pelt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3910",
+    "deelgemeente": "Neerpelt",
+    "gemeente": "Pelt",
+    "volledigeNaam": "3910 Neerpelt (Pelt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3920",
+    "deelgemeente": "Lommel",
+    "gemeente": "Lommel",
+    "volledigeNaam": "3920 Lommel (Lommel)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3930",
+    "deelgemeente": "Achel",
+    "gemeente": "Hamont-Achel",
+    "volledigeNaam": "3930 Achel (Hamont-Achel)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3940",
+    "deelgemeente": "Hechtel",
+    "gemeente": "Hechtel-Eksel",
+    "volledigeNaam": "3940 Hechtel (Hechtel-Eksel)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3941",
+    "deelgemeente": "Eksel",
+    "gemeente": "Hechtel-Eksel",
+    "volledigeNaam": "3941 Eksel (Hechtel-Eksel)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3945",
+    "deelgemeente": "Ham",
+    "gemeente": "Ham",
+    "volledigeNaam": "3945 Ham (Ham)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3950",
+    "deelgemeente": "Bocholt",
+    "gemeente": "Bocholt",
+    "volledigeNaam": "3950 Bocholt (Bocholt)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3960",
+    "deelgemeente": "Beek",
+    "gemeente": "Bree",
+    "volledigeNaam": "3960 Beek (Bree)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3970",
+    "deelgemeente": "Leopoldsburg",
+    "gemeente": "Leopoldsburg",
+    "volledigeNaam": "3970 Leopoldsburg (Leopoldsburg)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3971",
+    "deelgemeente": "Heppen",
+    "gemeente": "Leopoldsburg",
+    "volledigeNaam": "3971 Heppen (Leopoldsburg)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3980",
+    "deelgemeente": "Tessenderlo",
+    "gemeente": "Tessenderlo",
+    "volledigeNaam": "3980 Tessenderlo (Tessenderlo)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "3990",
+    "deelgemeente": "Grote-Brogel",
+    "gemeente": "Peer",
+    "volledigeNaam": "3990 Grote-Brogel (Peer)",
+    "provincieId": 5
+  },
+  {
+    "postcode": "4000",
+    "deelgemeente": "Glain",
+    "gemeente": "Liège",
+    "volledigeNaam": "4000 Glain (Liège)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4020",
+    "deelgemeente": "Bressoux",
+    "gemeente": "Liège",
+    "volledigeNaam": "4020 Bressoux (Liège)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4030",
+    "deelgemeente": "Grivegnée",
+    "gemeente": "Liège",
+    "volledigeNaam": "4030 Grivegnée (Liège)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4031",
+    "deelgemeente": "Angleur",
+    "gemeente": "Liège",
+    "volledigeNaam": "4031 Angleur (Liège)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4032",
+    "deelgemeente": "Chênée",
+    "gemeente": "Liège",
+    "volledigeNaam": "4032 Chênée (Liège)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4040",
+    "deelgemeente": "Herstal",
+    "gemeente": "Herstal",
+    "volledigeNaam": "4040 Herstal (Herstal)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4041",
+    "deelgemeente": "Milmort",
+    "gemeente": "Herstal",
+    "volledigeNaam": "4041 Milmort (Herstal)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4042",
+    "deelgemeente": "Liers",
+    "gemeente": "Herstal",
+    "volledigeNaam": "4042 Liers (Herstal)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4050",
+    "deelgemeente": "Chaudfontaine",
+    "gemeente": "Chaudfontaine",
+    "volledigeNaam": "4050 Chaudfontaine (Chaudfontaine)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4051",
+    "deelgemeente": "Vaux-Sous-Chèvremont",
+    "gemeente": "Chaudfontaine",
+    "volledigeNaam": "4051 Vaux-Sous-Chèvremont (Chaudfontaine)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4052",
+    "deelgemeente": "Beaufays",
+    "gemeente": "Chaudfontaine",
+    "volledigeNaam": "4052 Beaufays (Chaudfontaine)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4053",
+    "deelgemeente": "Embourg",
+    "gemeente": "Chaudfontaine",
+    "volledigeNaam": "4053 Embourg (Chaudfontaine)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4100",
+    "deelgemeente": "Boncelles",
+    "gemeente": "Seraing",
+    "volledigeNaam": "4100 Boncelles (Seraing)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4101",
+    "deelgemeente": "Jemeppe-Sur-Meuse",
+    "gemeente": "Seraing",
+    "volledigeNaam": "4101 Jemeppe-Sur-Meuse (Seraing)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4102",
+    "deelgemeente": "Ougrée",
+    "gemeente": "Seraing",
+    "volledigeNaam": "4102 Ougrée (Seraing)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4120",
+    "deelgemeente": "Ehein",
+    "gemeente": "Neupré",
+    "volledigeNaam": "4120 Ehein (Neupré)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4121",
+    "deelgemeente": "Neuville-En-Condroz",
+    "gemeente": "Neupré",
+    "volledigeNaam": "4121 Neuville-En-Condroz (Neupré)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4122",
+    "deelgemeente": "Plainevaux",
+    "gemeente": "Neupré",
+    "volledigeNaam": "4122 Plainevaux (Neupré)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4130",
+    "deelgemeente": "Esneux",
+    "gemeente": "Esneux",
+    "volledigeNaam": "4130 Esneux (Esneux)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4140",
+    "deelgemeente": "Dolembreux",
+    "gemeente": "Sprimont",
+    "volledigeNaam": "4140 Dolembreux (Sprimont)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4141",
+    "deelgemeente": "Louveigné",
+    "gemeente": "Sprimont",
+    "volledigeNaam": "4141 Louveigné (Sprimont)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4160",
+    "deelgemeente": "Anthisnes",
+    "gemeente": "Anthisnes",
+    "volledigeNaam": "4160 Anthisnes (Anthisnes)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4161",
+    "deelgemeente": "Villers-Aux-Tours",
+    "gemeente": "Anthisnes",
+    "volledigeNaam": "4161 Villers-Aux-Tours (Anthisnes)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4162",
+    "deelgemeente": "Hody",
+    "gemeente": "Anthisnes",
+    "volledigeNaam": "4162 Hody (Anthisnes)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4163",
+    "deelgemeente": "Tavier",
+    "gemeente": "Anthisnes",
+    "volledigeNaam": "4163 Tavier (Anthisnes)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4170",
+    "deelgemeente": "Comblain-au-Pont",
+    "gemeente": "Comblain-au-Pont",
+    "volledigeNaam": "4170 Comblain-au-Pont (Comblain-au-Pont)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4171",
+    "deelgemeente": "Poulseur",
+    "gemeente": "Comblain-au-Pont",
+    "volledigeNaam": "4171 Poulseur (Comblain-au-Pont)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4180",
+    "deelgemeente": "Comblain-Fairon",
+    "gemeente": "Hamoir",
+    "volledigeNaam": "4180 Comblain-Fairon (Hamoir)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4181",
+    "deelgemeente": "Filot",
+    "gemeente": "Hamoir",
+    "volledigeNaam": "4181 Filot (Hamoir)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4190",
+    "deelgemeente": "Ferrières",
+    "gemeente": "Ferrières",
+    "volledigeNaam": "4190 Ferrières (Ferrières)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4210",
+    "deelgemeente": "Burdinne",
+    "gemeente": "Burdinne",
+    "volledigeNaam": "4210 Burdinne (Burdinne)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4217",
+    "deelgemeente": "Héron",
+    "gemeente": "Héron",
+    "volledigeNaam": "4217 Héron (Héron)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4218",
+    "deelgemeente": "Couthuin",
+    "gemeente": "Héron",
+    "volledigeNaam": "4218 Couthuin (Héron)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4219",
+    "deelgemeente": "Acosse",
+    "gemeente": "Wasseiges",
+    "volledigeNaam": "4219 Acosse (Wasseiges)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4250",
+    "deelgemeente": "Boëlhe",
+    "gemeente": "Geer",
+    "volledigeNaam": "4250 Boëlhe (Geer)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4252",
+    "deelgemeente": "Omal",
+    "gemeente": "Geer",
+    "volledigeNaam": "4252 Omal (Geer)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4253",
+    "deelgemeente": "Darion",
+    "gemeente": "Geer",
+    "volledigeNaam": "4253 Darion (Geer)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4254",
+    "deelgemeente": "Ligney",
+    "gemeente": "Geer",
+    "volledigeNaam": "4254 Ligney (Geer)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4257",
+    "deelgemeente": "Berloz",
+    "gemeente": "Berloz",
+    "volledigeNaam": "4257 Berloz (Berloz)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4260",
+    "deelgemeente": "Avennes",
+    "gemeente": "Braives",
+    "volledigeNaam": "4260 Avennes (Braives)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4261",
+    "deelgemeente": "Latinne",
+    "gemeente": "Braives",
+    "volledigeNaam": "4261 Latinne (Braives)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4263",
+    "deelgemeente": "Tourinne",
+    "gemeente": "Braives",
+    "volledigeNaam": "4263 Tourinne (Braives)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4280",
+    "deelgemeente": "Abolens",
+    "gemeente": "Hannut",
+    "volledigeNaam": "4280 Abolens (Hannut)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4287",
+    "deelgemeente": "Lincent",
+    "gemeente": "Lincent",
+    "volledigeNaam": "4287 Lincent (Lincent)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4300",
+    "deelgemeente": "Bettincourt",
+    "gemeente": "Waremme",
+    "volledigeNaam": "4300 Bettincourt (Waremme)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4317",
+    "deelgemeente": "Aineffe",
+    "gemeente": "Faimes",
+    "volledigeNaam": "4317 Aineffe (Faimes)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4340",
+    "deelgemeente": "Awans",
+    "gemeente": "Awans",
+    "volledigeNaam": "4340 Awans (Awans)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4342",
+    "deelgemeente": "Hognoul",
+    "gemeente": "Awans",
+    "volledigeNaam": "4342 Hognoul (Awans)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4347",
+    "deelgemeente": "Fexhe-le-Haut-Clocher",
+    "gemeente": "Fexhe-le-Haut-Clocher",
+    "volledigeNaam": "4347 Fexhe-le-Haut-Clocher (Fexhe-le-Haut-Clocher)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4350",
+    "deelgemeente": "Lamine",
+    "gemeente": "Remicourt",
+    "volledigeNaam": "4350 Lamine (Remicourt)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4351",
+    "deelgemeente": "Hodeige",
+    "gemeente": "Remicourt",
+    "volledigeNaam": "4351 Hodeige (Remicourt)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4357",
+    "deelgemeente": "Donceel",
+    "gemeente": "Donceel",
+    "volledigeNaam": "4357 Donceel (Donceel)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4360",
+    "deelgemeente": "Bergilers",
+    "gemeente": "Oreye",
+    "volledigeNaam": "4360 Bergilers (Oreye)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4367",
+    "deelgemeente": "Crisnée",
+    "gemeente": "Crisnée",
+    "volledigeNaam": "4367 Crisnée (Crisnée)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4400",
+    "deelgemeente": "Awirs",
+    "gemeente": "Flémalle",
+    "volledigeNaam": "4400 Awirs (Flémalle)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4420",
+    "deelgemeente": "Montegnée",
+    "gemeente": "Saint-Nicolas",
+    "volledigeNaam": "4420 Montegnée (Saint-Nicolas)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4430",
+    "deelgemeente": "Ans",
+    "gemeente": "Ans",
+    "volledigeNaam": "4430 Ans (Ans)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4431",
+    "deelgemeente": "Loncin",
+    "gemeente": "Ans",
+    "volledigeNaam": "4431 Loncin (Ans)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4432",
+    "deelgemeente": "Alleur",
+    "gemeente": "Ans",
+    "volledigeNaam": "4432 Alleur (Ans)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4450",
+    "deelgemeente": "Juprelle",
+    "gemeente": "Juprelle",
+    "volledigeNaam": "4450 Juprelle (Juprelle)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4451",
+    "deelgemeente": "Voroux-Lez-Liers",
+    "gemeente": "Juprelle",
+    "volledigeNaam": "4451 Voroux-Lez-Liers (Juprelle)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4452",
+    "deelgemeente": "Paifve",
+    "gemeente": "Juprelle",
+    "volledigeNaam": "4452 Paifve (Juprelle)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4453",
+    "deelgemeente": "Villers-Saint-Siméon",
+    "gemeente": "Juprelle",
+    "volledigeNaam": "4453 Villers-Saint-Siméon (Juprelle)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4458",
+    "deelgemeente": "Fexhe-Slins",
+    "gemeente": "Juprelle",
+    "volledigeNaam": "4458 Fexhe-Slins (Juprelle)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4460",
+    "deelgemeente": "Bierset",
+    "gemeente": "Grâce-Hollogne",
+    "volledigeNaam": "4460 Bierset (Grâce-Hollogne)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4470",
+    "deelgemeente": "Saint-Georges-sur-Meuse",
+    "gemeente": "Saint-Georges-sur-Meuse",
+    "volledigeNaam": "4470 Saint-Georges-sur-Meuse (Saint-Georges-sur-Meuse)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4480",
+    "deelgemeente": "Clermont-Sous-Huy",
+    "gemeente": "Engis",
+    "volledigeNaam": "4480 Clermont-Sous-Huy (Engis)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4500",
+    "deelgemeente": "Ben-Ahin",
+    "gemeente": "Huy",
+    "volledigeNaam": "4500 Ben-Ahin (Huy)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4520",
+    "deelgemeente": "Antheit",
+    "gemeente": "Wanze",
+    "volledigeNaam": "4520 Antheit (Wanze)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4530",
+    "deelgemeente": "Fize-Fontaine",
+    "gemeente": "Villers-le-Bouillet",
+    "volledigeNaam": "4530 Fize-Fontaine (Villers-le-Bouillet)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4537",
+    "deelgemeente": "Bodegnée",
+    "gemeente": "Verlaine",
+    "volledigeNaam": "4537 Bodegnée (Verlaine)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4540",
+    "deelgemeente": "Amay",
+    "gemeente": "Amay",
+    "volledigeNaam": "4540 Amay (Amay)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4550",
+    "deelgemeente": "Nandrin",
+    "gemeente": "Nandrin",
+    "volledigeNaam": "4550 Nandrin (Nandrin)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4557",
+    "deelgemeente": "Abée",
+    "gemeente": "Tinlot",
+    "volledigeNaam": "4557 Abée (Tinlot)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4560",
+    "deelgemeente": "Bois-Et-Borsu",
+    "gemeente": "Clavier",
+    "volledigeNaam": "4560 Bois-Et-Borsu (Clavier)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4570",
+    "deelgemeente": "Marchin",
+    "gemeente": "Marchin",
+    "volledigeNaam": "4570 Marchin (Marchin)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4577",
+    "deelgemeente": "Modave",
+    "gemeente": "Modave",
+    "volledigeNaam": "4577 Modave (Modave)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4590",
+    "deelgemeente": "Ellemelle",
+    "gemeente": "Ouffet",
+    "volledigeNaam": "4590 Ellemelle (Ouffet)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4600",
+    "deelgemeente": "Lanaye",
+    "gemeente": "Visé",
+    "volledigeNaam": "4600 Lanaye (Visé)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4601",
+    "deelgemeente": "Argenteau",
+    "gemeente": "Visé",
+    "volledigeNaam": "4601 Argenteau (Visé)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4602",
+    "deelgemeente": "Cheratte",
+    "gemeente": "Visé",
+    "volledigeNaam": "4602 Cheratte (Visé)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4606",
+    "deelgemeente": "Saint-André",
+    "gemeente": "Dalhem",
+    "volledigeNaam": "4606 Saint-André (Dalhem)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4607",
+    "deelgemeente": "Berneau",
+    "gemeente": "Dalhem",
+    "volledigeNaam": "4607 Berneau (Dalhem)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4608",
+    "deelgemeente": "Neufchâteau",
+    "gemeente": "Dalhem",
+    "volledigeNaam": "4608 Neufchâteau (Dalhem)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4610",
+    "deelgemeente": "Bellaire",
+    "gemeente": "Beyne-Heusay",
+    "volledigeNaam": "4610 Bellaire (Beyne-Heusay)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4620",
+    "deelgemeente": "Fléron",
+    "gemeente": "Fléron",
+    "volledigeNaam": "4620 Fléron (Fléron)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4621",
+    "deelgemeente": "Retinne",
+    "gemeente": "Fléron",
+    "volledigeNaam": "4621 Retinne (Fléron)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4623",
+    "deelgemeente": "Magnée",
+    "gemeente": "Fléron",
+    "volledigeNaam": "4623 Magnée (Fléron)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4624",
+    "deelgemeente": "Romsée",
+    "gemeente": "Fléron",
+    "volledigeNaam": "4624 Romsée (Fléron)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4630",
+    "deelgemeente": "Ayeneux",
+    "gemeente": "Soumagne",
+    "volledigeNaam": "4630 Ayeneux (Soumagne)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4631",
+    "deelgemeente": "Evegnée",
+    "gemeente": "Soumagne",
+    "volledigeNaam": "4631 Evegnée (Soumagne)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4632",
+    "deelgemeente": "Cérexhe-Heuseux",
+    "gemeente": "Soumagne",
+    "volledigeNaam": "4632 Cérexhe-Heuseux (Soumagne)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4633",
+    "deelgemeente": "Melen",
+    "gemeente": "Soumagne",
+    "volledigeNaam": "4633 Melen (Soumagne)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4650",
+    "deelgemeente": "Chaineux",
+    "gemeente": "Herve",
+    "volledigeNaam": "4650 Chaineux (Herve)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4651",
+    "deelgemeente": "Battice",
+    "gemeente": "Herve",
+    "volledigeNaam": "4651 Battice (Herve)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4652",
+    "deelgemeente": "Xhendelesse",
+    "gemeente": "Herve",
+    "volledigeNaam": "4652 Xhendelesse (Herve)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4653",
+    "deelgemeente": "Bolland",
+    "gemeente": "Herve",
+    "volledigeNaam": "4653 Bolland (Herve)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4654",
+    "deelgemeente": "Charneux",
+    "gemeente": "Herve",
+    "volledigeNaam": "4654 Charneux (Herve)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4670",
+    "deelgemeente": "Blégny",
+    "gemeente": "Blégny",
+    "volledigeNaam": "4670 Blégny (Blégny)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4671",
+    "deelgemeente": "Barchon",
+    "gemeente": "Blégny",
+    "volledigeNaam": "4671 Barchon (Blégny)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4672",
+    "deelgemeente": "Saint-Remy",
+    "gemeente": "Blégny",
+    "volledigeNaam": "4672 Saint-Remy (Blégny)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4680",
+    "deelgemeente": "Hermée",
+    "gemeente": "Oupeye",
+    "volledigeNaam": "4680 Hermée (Oupeye)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4681",
+    "deelgemeente": "Hermalle-Sous-Argenteau",
+    "gemeente": "Oupeye",
+    "volledigeNaam": "4681 Hermalle-Sous-Argenteau (Oupeye)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4682",
+    "deelgemeente": "Heure-Le-Romain",
+    "gemeente": "Oupeye",
+    "volledigeNaam": "4682 Heure-Le-Romain (Oupeye)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4683",
+    "deelgemeente": "Vivegnis",
+    "gemeente": "Oupeye",
+    "volledigeNaam": "4683 Vivegnis (Oupeye)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4684",
+    "deelgemeente": "Haccourt",
+    "gemeente": "Oupeye",
+    "volledigeNaam": "4684 Haccourt (Oupeye)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4690",
+    "deelgemeente": "Bassenge",
+    "gemeente": "Bassenge",
+    "volledigeNaam": "4690 Bassenge (Bassenge)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4700",
+    "deelgemeente": "Eupen",
+    "gemeente": "Eupen",
+    "volledigeNaam": "4700 Eupen (Eupen)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4701",
+    "deelgemeente": "Kettenis",
+    "gemeente": "Eupen",
+    "volledigeNaam": "4701 Kettenis (Eupen)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4710",
+    "deelgemeente": "Lontzen",
+    "gemeente": "Lontzen",
+    "volledigeNaam": "4710 Lontzen (Lontzen)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4711",
+    "deelgemeente": "Walhorn",
+    "gemeente": "Lontzen",
+    "volledigeNaam": "4711 Walhorn (Lontzen)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4720",
+    "deelgemeente": "Kelmis",
+    "gemeente": "Kelmis",
+    "volledigeNaam": "4720 Kelmis (Kelmis)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4721",
+    "deelgemeente": "Neu-Moresnet",
+    "gemeente": "Kelmis",
+    "volledigeNaam": "4721 Neu-Moresnet (Kelmis)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4728",
+    "deelgemeente": "Hergenrath",
+    "gemeente": "Kelmis",
+    "volledigeNaam": "4728 Hergenrath (Kelmis)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4730",
+    "deelgemeente": "Hauset",
+    "gemeente": "Raeren",
+    "volledigeNaam": "4730 Hauset (Raeren)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4731",
+    "deelgemeente": "Eynatten",
+    "gemeente": "Raeren",
+    "volledigeNaam": "4731 Eynatten (Raeren)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4750",
+    "deelgemeente": "BUTGENBACH",
+    "gemeente": "Bütgenbach",
+    "volledigeNaam": "4750 BUTGENBACH (Bütgenbach)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4760",
+    "deelgemeente": "Büllingen",
+    "gemeente": "Büllingen",
+    "volledigeNaam": "4760 Büllingen (Büllingen)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4761",
+    "deelgemeente": "Rocherath",
+    "gemeente": "Büllingen",
+    "volledigeNaam": "4761 Rocherath (Büllingen)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4770",
+    "deelgemeente": "Amel",
+    "gemeente": "Amel",
+    "volledigeNaam": "4770 Amel (Amel)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4771",
+    "deelgemeente": "Heppenbach",
+    "gemeente": "Amel",
+    "volledigeNaam": "4771 Heppenbach (Amel)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4780",
+    "deelgemeente": "Recht",
+    "gemeente": "Sankt Vith",
+    "volledigeNaam": "4780 Recht (Sankt Vith)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4782",
+    "deelgemeente": "Schönberg",
+    "gemeente": "Sankt Vith",
+    "volledigeNaam": "4782 Schönberg (Sankt Vith)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4783",
+    "deelgemeente": "Lommersweiler",
+    "gemeente": "Sankt Vith",
+    "volledigeNaam": "4783 Lommersweiler (Sankt Vith)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4784",
+    "deelgemeente": "Crombach",
+    "gemeente": "Sankt Vith",
+    "volledigeNaam": "4784 Crombach (Sankt Vith)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4790",
+    "deelgemeente": "Burg-Reuland",
+    "gemeente": "Burg-Reuland",
+    "volledigeNaam": "4790 Burg-Reuland (Burg-Reuland)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4791",
+    "deelgemeente": "Thommen",
+    "gemeente": "Burg-Reuland",
+    "volledigeNaam": "4791 Thommen (Burg-Reuland)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4800",
+    "deelgemeente": "Ensival",
+    "gemeente": "Verviers",
+    "volledigeNaam": "4800 Ensival (Verviers)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4801",
+    "deelgemeente": "Stembert",
+    "gemeente": "Verviers",
+    "volledigeNaam": "4801 Stembert (Verviers)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4802",
+    "deelgemeente": "Heusy",
+    "gemeente": "Verviers",
+    "volledigeNaam": "4802 Heusy (Verviers)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4820",
+    "deelgemeente": "Dison",
+    "gemeente": "Dison",
+    "volledigeNaam": "4820 Dison (Dison)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4821",
+    "deelgemeente": "Andrimont",
+    "gemeente": "Dison",
+    "volledigeNaam": "4821 Andrimont (Dison)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4830",
+    "deelgemeente": "Limbourg",
+    "gemeente": "Limbourg",
+    "volledigeNaam": "4830 Limbourg (Limbourg)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4831",
+    "deelgemeente": "Bilstain",
+    "gemeente": "Limbourg",
+    "volledigeNaam": "4831 Bilstain (Limbourg)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4834",
+    "deelgemeente": "Goé",
+    "gemeente": "Limbourg",
+    "volledigeNaam": "4834 Goé (Limbourg)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4837",
+    "deelgemeente": "Baelen",
+    "gemeente": "Baelen",
+    "volledigeNaam": "4837 Baelen (Baelen)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4840",
+    "deelgemeente": "Welkenraedt",
+    "gemeente": "Welkenraedt",
+    "volledigeNaam": "4840 Welkenraedt (Welkenraedt)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4841",
+    "deelgemeente": "Henri-Chapelle",
+    "gemeente": "Welkenraedt",
+    "volledigeNaam": "4841 Henri-Chapelle (Welkenraedt)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4845",
+    "deelgemeente": "Jalhay",
+    "gemeente": "Jalhay",
+    "volledigeNaam": "4845 Jalhay (Jalhay)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4850",
+    "deelgemeente": "Montzen",
+    "gemeente": "Plombières",
+    "volledigeNaam": "4850 Montzen (Plombières)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4851",
+    "deelgemeente": "Gemmenich",
+    "gemeente": "Plombières",
+    "volledigeNaam": "4851 Gemmenich (Plombières)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4852",
+    "deelgemeente": "Hombourg",
+    "gemeente": "Plombières",
+    "volledigeNaam": "4852 Hombourg (Plombières)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4860",
+    "deelgemeente": "Cornesse",
+    "gemeente": "Pepinster",
+    "volledigeNaam": "4860 Cornesse (Pepinster)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4861",
+    "deelgemeente": "Soiron",
+    "gemeente": "Pepinster",
+    "volledigeNaam": "4861 Soiron (Pepinster)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4870",
+    "deelgemeente": "Forêt",
+    "gemeente": "Trooz",
+    "volledigeNaam": "4870 Forêt (Trooz)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4877",
+    "deelgemeente": "Olne",
+    "gemeente": "Olne",
+    "volledigeNaam": "4877 Olne (Olne)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4880",
+    "deelgemeente": "Aubel",
+    "gemeente": "Aubel",
+    "volledigeNaam": "4880 Aubel (Aubel)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4890",
+    "deelgemeente": "Clermont",
+    "gemeente": "Thimister-Clermont",
+    "volledigeNaam": "4890 Clermont (Thimister-Clermont)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4900",
+    "deelgemeente": "Spa",
+    "gemeente": "Spa",
+    "volledigeNaam": "4900 Spa (Spa)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4910",
+    "deelgemeente": "La Reid",
+    "gemeente": "Theux",
+    "volledigeNaam": "4910 La Reid (Theux)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4920",
+    "deelgemeente": "Aywaille",
+    "gemeente": "Aywaille",
+    "volledigeNaam": "4920 Aywaille (Aywaille)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4950",
+    "deelgemeente": "Faymonville",
+    "gemeente": "Waimes",
+    "volledigeNaam": "4950 Faymonville (Waimes)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4960",
+    "deelgemeente": "Bellevaux-Ligneuville",
+    "gemeente": "Malmedy",
+    "volledigeNaam": "4960 Bellevaux-Ligneuville (Malmedy)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4970",
+    "deelgemeente": "Francorchamps",
+    "gemeente": "Stavelot",
+    "volledigeNaam": "4970 Francorchamps (Stavelot)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4980",
+    "deelgemeente": "Fosse",
+    "gemeente": "Trois-Ponts",
+    "volledigeNaam": "4980 Fosse (Trois-Ponts)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4983",
+    "deelgemeente": "Basse-Bodeux",
+    "gemeente": "Trois-Ponts",
+    "volledigeNaam": "4983 Basse-Bodeux (Trois-Ponts)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4987",
+    "deelgemeente": "Chevron",
+    "gemeente": "Stoumont",
+    "volledigeNaam": "4987 Chevron (Stoumont)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "4990",
+    "deelgemeente": "Arbrefontaine",
+    "gemeente": "Lierneux",
+    "volledigeNaam": "4990 Arbrefontaine (Lierneux)",
+    "provincieId": 6
+  },
+  {
+    "postcode": "5000",
+    "deelgemeente": "Beez",
+    "gemeente": "Namur",
+    "volledigeNaam": "5000 Beez (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5001",
+    "deelgemeente": "Belgrade",
+    "gemeente": "Namur",
+    "volledigeNaam": "5001 Belgrade (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5002",
+    "deelgemeente": "Saint-Servais",
+    "gemeente": "Namur",
+    "volledigeNaam": "5002 Saint-Servais (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5003",
+    "deelgemeente": "Saint-Marc",
+    "gemeente": "Namur",
+    "volledigeNaam": "5003 Saint-Marc (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5004",
+    "deelgemeente": "Bouge",
+    "gemeente": "Namur",
+    "volledigeNaam": "5004 Bouge (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5020",
+    "deelgemeente": "Champion",
+    "gemeente": "Namur",
+    "volledigeNaam": "5020 Champion (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5021",
+    "deelgemeente": "Boninne",
+    "gemeente": "Namur",
+    "volledigeNaam": "5021 Boninne (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5022",
+    "deelgemeente": "Cognelée",
+    "gemeente": "Namur",
+    "volledigeNaam": "5022 Cognelée (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5024",
+    "deelgemeente": "Gelbressée",
+    "gemeente": "Namur",
+    "volledigeNaam": "5024 Gelbressée (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5030",
+    "deelgemeente": "Beuzet",
+    "gemeente": "Gembloux",
+    "volledigeNaam": "5030 Beuzet (Gembloux)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5031",
+    "deelgemeente": "Grand-Leez",
+    "gemeente": "Gembloux",
+    "volledigeNaam": "5031 Grand-Leez (Gembloux)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5032",
+    "deelgemeente": "Bossière",
+    "gemeente": "Gembloux",
+    "volledigeNaam": "5032 Bossière (Gembloux)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5060",
+    "deelgemeente": "Arsimont",
+    "gemeente": "Sambreville",
+    "volledigeNaam": "5060 Arsimont (Sambreville)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5070",
+    "deelgemeente": "Aisemont",
+    "gemeente": "Fosses-la-Ville",
+    "volledigeNaam": "5070 Aisemont (Fosses-la-Ville)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5080",
+    "deelgemeente": "Emines",
+    "gemeente": "La Bruyère",
+    "volledigeNaam": "5080 Emines (La Bruyère)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5081",
+    "deelgemeente": "Bovesse",
+    "gemeente": "La Bruyère",
+    "volledigeNaam": "5081 Bovesse (La Bruyère)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5100",
+    "deelgemeente": "Dave",
+    "gemeente": "Namur",
+    "volledigeNaam": "5100 Dave (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5101",
+    "deelgemeente": "Erpent",
+    "gemeente": "Namur",
+    "volledigeNaam": "5101 Erpent (Namur)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5140",
+    "deelgemeente": "Boignée",
+    "gemeente": "Sombreffe",
+    "volledigeNaam": "5140 Boignée (Sombreffe)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5150",
+    "deelgemeente": "Floreffe",
+    "gemeente": "Floreffe",
+    "volledigeNaam": "5150 Floreffe (Floreffe)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5170",
+    "deelgemeente": "Arbre",
+    "gemeente": "Profondeville",
+    "volledigeNaam": "5170 Arbre (Profondeville)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5190",
+    "deelgemeente": "Balâtre",
+    "gemeente": "Jemeppe-sur-Sambre",
+    "volledigeNaam": "5190 Balâtre (Jemeppe-sur-Sambre)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5300",
+    "deelgemeente": "Andenne",
+    "gemeente": "Andenne",
+    "volledigeNaam": "5300 Andenne (Andenne)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5310",
+    "deelgemeente": "Aische-En-Refail",
+    "gemeente": "Eghezée",
+    "volledigeNaam": "5310 Aische-En-Refail (Eghezée)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5330",
+    "deelgemeente": "Assesse",
+    "gemeente": "Assesse",
+    "volledigeNaam": "5330 Assesse (Assesse)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5332",
+    "deelgemeente": "Crupet",
+    "gemeente": "Assesse",
+    "volledigeNaam": "5332 Crupet (Assesse)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5333",
+    "deelgemeente": "Sorinne-La-Longue",
+    "gemeente": "Assesse",
+    "volledigeNaam": "5333 Sorinne-La-Longue (Assesse)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5334",
+    "deelgemeente": "Florée",
+    "gemeente": "Assesse",
+    "volledigeNaam": "5334 Florée (Assesse)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5336",
+    "deelgemeente": "Courrière",
+    "gemeente": "Assesse",
+    "volledigeNaam": "5336 Courrière (Assesse)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5340",
+    "deelgemeente": "Faulx-Les-Tombes",
+    "gemeente": "Gesves",
+    "volledigeNaam": "5340 Faulx-Les-Tombes (Gesves)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5350",
+    "deelgemeente": "Evelette",
+    "gemeente": "Ohey",
+    "volledigeNaam": "5350 Evelette (Ohey)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5351",
+    "deelgemeente": "Haillot",
+    "gemeente": "Ohey",
+    "volledigeNaam": "5351 Haillot (Ohey)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5352",
+    "deelgemeente": "Perwez-Haillot",
+    "gemeente": "Ohey",
+    "volledigeNaam": "5352 Perwez-Haillot (Ohey)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5353",
+    "deelgemeente": "Goesnes",
+    "gemeente": "Ohey",
+    "volledigeNaam": "5353 Goesnes (Ohey)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5354",
+    "deelgemeente": "Jallet",
+    "gemeente": "Ohey",
+    "volledigeNaam": "5354 Jallet (Ohey)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5360",
+    "deelgemeente": "Hamois",
+    "gemeente": "Hamois",
+    "volledigeNaam": "5360 Hamois (Hamois)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5361",
+    "deelgemeente": "Mohiville",
+    "gemeente": "Hamois",
+    "volledigeNaam": "5361 Mohiville (Hamois)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5362",
+    "deelgemeente": "Achet",
+    "gemeente": "Hamois",
+    "volledigeNaam": "5362 Achet (Hamois)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5363",
+    "deelgemeente": "Emptinne",
+    "gemeente": "Hamois",
+    "volledigeNaam": "5363 Emptinne (Hamois)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5364",
+    "deelgemeente": "Schaltin",
+    "gemeente": "Hamois",
+    "volledigeNaam": "5364 Schaltin (Hamois)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5370",
+    "deelgemeente": "Barvaux-Condroz",
+    "gemeente": "Havelange",
+    "volledigeNaam": "5370 Barvaux-Condroz (Havelange)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5372",
+    "deelgemeente": "Méan",
+    "gemeente": "Havelange",
+    "volledigeNaam": "5372 Méan (Havelange)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5374",
+    "deelgemeente": "Maffe",
+    "gemeente": "Havelange",
+    "volledigeNaam": "5374 Maffe (Havelange)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5376",
+    "deelgemeente": "Miécret",
+    "gemeente": "Havelange",
+    "volledigeNaam": "5376 Miécret (Havelange)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5377",
+    "deelgemeente": "Baillonville",
+    "gemeente": "Somme-Leuze",
+    "volledigeNaam": "5377 Baillonville (Somme-Leuze)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5380",
+    "deelgemeente": "Bierwart",
+    "gemeente": "Fernelmont",
+    "volledigeNaam": "5380 Bierwart (Fernelmont)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5500",
+    "deelgemeente": "Anseremme",
+    "gemeente": "Dinant",
+    "volledigeNaam": "5500 Anseremme (Dinant)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5501",
+    "deelgemeente": "Lisogne",
+    "gemeente": "Dinant",
+    "volledigeNaam": "5501 Lisogne (Dinant)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5502",
+    "deelgemeente": "Thynes",
+    "gemeente": "Dinant",
+    "volledigeNaam": "5502 Thynes (Dinant)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5503",
+    "deelgemeente": "Sorinnes",
+    "gemeente": "Dinant",
+    "volledigeNaam": "5503 Sorinnes (Dinant)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5504",
+    "deelgemeente": "Foy-Notre-Dame",
+    "gemeente": "Dinant",
+    "volledigeNaam": "5504 Foy-Notre-Dame (Dinant)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5520",
+    "deelgemeente": "Anthée",
+    "gemeente": "Onhaye",
+    "volledigeNaam": "5520 Anthée (Onhaye)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5521",
+    "deelgemeente": "Serville",
+    "gemeente": "Onhaye",
+    "volledigeNaam": "5521 Serville (Onhaye)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5522",
+    "deelgemeente": "Falaën",
+    "gemeente": "Onhaye",
+    "volledigeNaam": "5522 Falaën (Onhaye)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5523",
+    "deelgemeente": "Sommière",
+    "gemeente": "Onhaye",
+    "volledigeNaam": "5523 Sommière (Onhaye)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5524",
+    "deelgemeente": "Gérin",
+    "gemeente": "Onhaye",
+    "volledigeNaam": "5524 Gérin (Onhaye)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5530",
+    "deelgemeente": "Dorinne",
+    "gemeente": "Yvoir",
+    "volledigeNaam": "5530 Dorinne (Yvoir)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5537",
+    "deelgemeente": "Anhée",
+    "gemeente": "Anhée",
+    "volledigeNaam": "5537 Anhée (Anhée)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5540",
+    "deelgemeente": "Hastière",
+    "gemeente": "Hastière",
+    "volledigeNaam": "5540 Hastière (Hastière)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5541",
+    "deelgemeente": "Hastière-Par-Delà",
+    "gemeente": "Hastière",
+    "volledigeNaam": "5541 Hastière-Par-Delà (Hastière)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5542",
+    "deelgemeente": "Blaimont",
+    "gemeente": "Hastière",
+    "volledigeNaam": "5542 Blaimont (Hastière)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5543",
+    "deelgemeente": "Heer",
+    "gemeente": "Hastière",
+    "volledigeNaam": "5543 Heer (Hastière)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5544",
+    "deelgemeente": "Agimont",
+    "gemeente": "Hastière",
+    "volledigeNaam": "5544 Agimont (Hastière)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5550",
+    "deelgemeente": "Alle",
+    "gemeente": "Vresse-sur-Semois",
+    "volledigeNaam": "5550 Alle (Vresse-sur-Semois)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5555",
+    "deelgemeente": "Baillamont",
+    "gemeente": "Bièvre",
+    "volledigeNaam": "5555 Baillamont (Bièvre)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5560",
+    "deelgemeente": "Ciergnon",
+    "gemeente": "Houyet",
+    "volledigeNaam": "5560 Ciergnon (Houyet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5561",
+    "deelgemeente": "Celles",
+    "gemeente": "Houyet",
+    "volledigeNaam": "5561 Celles (Houyet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5562",
+    "deelgemeente": "Custinne",
+    "gemeente": "Houyet",
+    "volledigeNaam": "5562 Custinne (Houyet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5563",
+    "deelgemeente": "Hour",
+    "gemeente": "Houyet",
+    "volledigeNaam": "5563 Hour (Houyet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5564",
+    "deelgemeente": "Wanlin",
+    "gemeente": "Houyet",
+    "volledigeNaam": "5564 Wanlin (Houyet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5570",
+    "deelgemeente": "Baronville",
+    "gemeente": "Beauraing",
+    "volledigeNaam": "5570 Baronville (Beauraing)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5571",
+    "deelgemeente": "Wiesme",
+    "gemeente": "Beauraing",
+    "volledigeNaam": "5571 Wiesme (Beauraing)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5572",
+    "deelgemeente": "Focant",
+    "gemeente": "Beauraing",
+    "volledigeNaam": "5572 Focant (Beauraing)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5573",
+    "deelgemeente": "Martouzin-Neuville",
+    "gemeente": "Beauraing",
+    "volledigeNaam": "5573 Martouzin-Neuville (Beauraing)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5574",
+    "deelgemeente": "Pondrôme",
+    "gemeente": "Beauraing",
+    "volledigeNaam": "5574 Pondrôme (Beauraing)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5575",
+    "deelgemeente": "Bourseigne-Neuve",
+    "gemeente": "Gedinne",
+    "volledigeNaam": "5575 Bourseigne-Neuve (Gedinne)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5576",
+    "deelgemeente": "Froidfontaine",
+    "gemeente": "Beauraing",
+    "volledigeNaam": "5576 Froidfontaine (Beauraing)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5580",
+    "deelgemeente": "Ave-Et-Auffe",
+    "gemeente": "Rochefort",
+    "volledigeNaam": "5580 Ave-Et-Auffe (Rochefort)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5590",
+    "deelgemeente": "Achêne",
+    "gemeente": "Ciney",
+    "volledigeNaam": "5590 Achêne (Ciney)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5600",
+    "deelgemeente": "Fagnolle",
+    "gemeente": "Philippeville",
+    "volledigeNaam": "5600 Fagnolle (Philippeville)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5620",
+    "deelgemeente": "Corenne",
+    "gemeente": "Florennes",
+    "volledigeNaam": "5620 Corenne (Florennes)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5621",
+    "deelgemeente": "Hanzinelle",
+    "gemeente": "Florennes",
+    "volledigeNaam": "5621 Hanzinelle (Florennes)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5630",
+    "deelgemeente": "Cerfontaine",
+    "gemeente": "Cerfontaine",
+    "volledigeNaam": "5630 Cerfontaine (Cerfontaine)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5640",
+    "deelgemeente": "Biesme",
+    "gemeente": "Mettet",
+    "volledigeNaam": "5640 Biesme (Mettet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5641",
+    "deelgemeente": "Furnaux",
+    "gemeente": "Mettet",
+    "volledigeNaam": "5641 Furnaux (Mettet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5644",
+    "deelgemeente": "Ermeton-Sur-Biert",
+    "gemeente": "Mettet",
+    "volledigeNaam": "5644 Ermeton-Sur-Biert (Mettet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5646",
+    "deelgemeente": "Stave",
+    "gemeente": "Mettet",
+    "volledigeNaam": "5646 Stave (Mettet)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5650",
+    "deelgemeente": "Castillon",
+    "gemeente": "Walcourt",
+    "volledigeNaam": "5650 Castillon (Walcourt)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5651",
+    "deelgemeente": "Berzée",
+    "gemeente": "Walcourt",
+    "volledigeNaam": "5651 Berzée (Walcourt)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5660",
+    "deelgemeente": "Aublain",
+    "gemeente": "Couvin",
+    "volledigeNaam": "5660 Aublain (Couvin)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5670",
+    "deelgemeente": "Dourbes",
+    "gemeente": "Viroinval",
+    "volledigeNaam": "5670 Dourbes (Viroinval)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "5680",
+    "deelgemeente": "Doische",
+    "gemeente": "Doische",
+    "volledigeNaam": "5680 Doische (Doische)",
+    "provincieId": 7
+  },
+  {
+    "postcode": "6000",
+    "deelgemeente": "Charleroi",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6000 Charleroi (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6001",
+    "deelgemeente": "Marcinelle",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6001 Marcinelle (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6010",
+    "deelgemeente": "Couillet",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6010 Couillet (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6020",
+    "deelgemeente": "Dampremy",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6020 Dampremy (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6030",
+    "deelgemeente": "Goutroux",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6030 Goutroux (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6031",
+    "deelgemeente": "Monceau-Sur-Sambre",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6031 Monceau-Sur-Sambre (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6032",
+    "deelgemeente": "Mont-Sur-Marchienne",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6032 Mont-Sur-Marchienne (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6040",
+    "deelgemeente": "Jumet",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6040 Jumet (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6041",
+    "deelgemeente": "Gosselies",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6041 Gosselies (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6042",
+    "deelgemeente": "Lodelinsart",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6042 Lodelinsart (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6043",
+    "deelgemeente": "Ransart",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6043 Ransart (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6044",
+    "deelgemeente": "Roux",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6044 Roux (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6060",
+    "deelgemeente": "Gilly",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6060 Gilly (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6061",
+    "deelgemeente": "Montignies-Sur-Sambre",
+    "gemeente": "Charleroi",
+    "volledigeNaam": "6061 Montignies-Sur-Sambre (Charleroi)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6110",
+    "deelgemeente": "Montigny-le-Tilleul",
+    "gemeente": "Montigny-le-Tilleul",
+    "volledigeNaam": "6110 Montigny-le-Tilleul (Montigny-le-Tilleul)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6111",
+    "deelgemeente": "Landelies",
+    "gemeente": "Montigny-le-Tilleul",
+    "volledigeNaam": "6111 Landelies (Montigny-le-Tilleul)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6120",
+    "deelgemeente": "Cour-Sur-Heure",
+    "gemeente": "Ham-sur-Heure-Nalinnes",
+    "volledigeNaam": "6120 Cour-Sur-Heure (Ham-sur-Heure-Nalinnes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6140",
+    "deelgemeente": "Fontaine-l'Evêque",
+    "gemeente": "Fontaine-l'Evêque",
+    "volledigeNaam": "6140 Fontaine-l'Evêque (Fontaine-l'Evêque)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6141",
+    "deelgemeente": "Forchies-La-Marche",
+    "gemeente": "Fontaine-l'Evêque",
+    "volledigeNaam": "6141 Forchies-La-Marche (Fontaine-l'Evêque)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6142",
+    "deelgemeente": "Leernes",
+    "gemeente": "Fontaine-l'Evêque",
+    "volledigeNaam": "6142 Leernes (Fontaine-l'Evêque)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6150",
+    "deelgemeente": "Anderlues",
+    "gemeente": "Anderlues",
+    "volledigeNaam": "6150 Anderlues (Anderlues)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6180",
+    "deelgemeente": "Courcelles",
+    "gemeente": "Courcelles",
+    "volledigeNaam": "6180 Courcelles (Courcelles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6181",
+    "deelgemeente": "Gouy-Lez-Piéton",
+    "gemeente": "Courcelles",
+    "volledigeNaam": "6181 Gouy-Lez-Piéton (Courcelles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6182",
+    "deelgemeente": "Souvret",
+    "gemeente": "Courcelles",
+    "volledigeNaam": "6182 Souvret (Courcelles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6183",
+    "deelgemeente": "Trazegnies",
+    "gemeente": "Courcelles",
+    "volledigeNaam": "6183 Trazegnies (Courcelles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6200",
+    "deelgemeente": "Bouffioulx",
+    "gemeente": "Châtelet",
+    "volledigeNaam": "6200 Bouffioulx (Châtelet)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6210",
+    "deelgemeente": "Frasnes-Lez-Gosselies",
+    "gemeente": "Les Bons Villers",
+    "volledigeNaam": "6210 Frasnes-Lez-Gosselies (Les Bons Villers)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6211",
+    "deelgemeente": "Mellet",
+    "gemeente": "Les Bons Villers",
+    "volledigeNaam": "6211 Mellet (Les Bons Villers)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6220",
+    "deelgemeente": "Fleurus",
+    "gemeente": "Fleurus",
+    "volledigeNaam": "6220 Fleurus (Fleurus)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6221",
+    "deelgemeente": "Saint-Amand",
+    "gemeente": "Fleurus",
+    "volledigeNaam": "6221 Saint-Amand (Fleurus)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6222",
+    "deelgemeente": "Brye",
+    "gemeente": "Fleurus",
+    "volledigeNaam": "6222 Brye (Fleurus)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6223",
+    "deelgemeente": "Wagnelée",
+    "gemeente": "Fleurus",
+    "volledigeNaam": "6223 Wagnelée (Fleurus)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6224",
+    "deelgemeente": "Wanfercée-Baulet",
+    "gemeente": "Fleurus",
+    "volledigeNaam": "6224 Wanfercée-Baulet (Fleurus)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6230",
+    "deelgemeente": "Buzet",
+    "gemeente": "Pont-à-Celles",
+    "volledigeNaam": "6230 Buzet (Pont-à-Celles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6238",
+    "deelgemeente": "Liberchies",
+    "gemeente": "Pont-à-Celles",
+    "volledigeNaam": "6238 Liberchies (Pont-à-Celles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6240",
+    "deelgemeente": "Farciennes",
+    "gemeente": "Farciennes",
+    "volledigeNaam": "6240 Farciennes (Farciennes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6250",
+    "deelgemeente": "Aiseau",
+    "gemeente": "Aiseau-Presles",
+    "volledigeNaam": "6250 Aiseau (Aiseau-Presles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6280",
+    "deelgemeente": "Acoz",
+    "gemeente": "Gerpinnes",
+    "volledigeNaam": "6280 Acoz (Gerpinnes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6440",
+    "deelgemeente": "Boussu-Lez-Walcourt",
+    "gemeente": "Froidchapelle",
+    "volledigeNaam": "6440 Boussu-Lez-Walcourt (Froidchapelle)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6441",
+    "deelgemeente": "Erpion",
+    "gemeente": "Froidchapelle",
+    "volledigeNaam": "6441 Erpion (Froidchapelle)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6460",
+    "deelgemeente": "Bailièvre",
+    "gemeente": "Chimay",
+    "volledigeNaam": "6460 Bailièvre (Chimay)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6461",
+    "deelgemeente": "Virelles",
+    "gemeente": "Chimay",
+    "volledigeNaam": "6461 Virelles (Chimay)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6462",
+    "deelgemeente": "Vaulx-Lez-Chimay",
+    "gemeente": "Chimay",
+    "volledigeNaam": "6462 Vaulx-Lez-Chimay (Chimay)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6463",
+    "deelgemeente": "Lompret",
+    "gemeente": "Chimay",
+    "volledigeNaam": "6463 Lompret (Chimay)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6464",
+    "deelgemeente": "Baileux",
+    "gemeente": "Chimay",
+    "volledigeNaam": "6464 Baileux (Chimay)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6470",
+    "deelgemeente": "Grandrieu",
+    "gemeente": "Sivry-Rance",
+    "volledigeNaam": "6470 Grandrieu (Sivry-Rance)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6500",
+    "deelgemeente": "Barbençon",
+    "gemeente": "Beaumont",
+    "volledigeNaam": "6500 Barbençon (Beaumont)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6511",
+    "deelgemeente": "Strée",
+    "gemeente": "Beaumont",
+    "volledigeNaam": "6511 Strée (Beaumont)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6530",
+    "deelgemeente": "Leers-Et-Fosteau",
+    "gemeente": "Thuin",
+    "volledigeNaam": "6530 Leers-Et-Fosteau (Thuin)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6531",
+    "deelgemeente": "Biesme-Sous-Thuin",
+    "gemeente": "Thuin",
+    "volledigeNaam": "6531 Biesme-Sous-Thuin (Thuin)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6532",
+    "deelgemeente": "Ragnies",
+    "gemeente": "Thuin",
+    "volledigeNaam": "6532 Ragnies (Thuin)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6533",
+    "deelgemeente": "Biercée",
+    "gemeente": "Thuin",
+    "volledigeNaam": "6533 Biercée (Thuin)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6534",
+    "deelgemeente": "Gozée",
+    "gemeente": "Thuin",
+    "volledigeNaam": "6534 Gozée (Thuin)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6536",
+    "deelgemeente": "Donstiennes",
+    "gemeente": "Thuin",
+    "volledigeNaam": "6536 Donstiennes (Thuin)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6540",
+    "deelgemeente": "Lobbes",
+    "gemeente": "Lobbes",
+    "volledigeNaam": "6540 Lobbes (Lobbes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6542",
+    "deelgemeente": "Sars-La-Buissière",
+    "gemeente": "Lobbes",
+    "volledigeNaam": "6542 Sars-La-Buissière (Lobbes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6543",
+    "deelgemeente": "Bienne-Lez-Happart",
+    "gemeente": "Lobbes",
+    "volledigeNaam": "6543 Bienne-Lez-Happart (Lobbes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6560",
+    "deelgemeente": "Bersillies-L'Abbaye",
+    "gemeente": "Erquelinnes",
+    "volledigeNaam": "6560 Bersillies-L'Abbaye (Erquelinnes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6567",
+    "deelgemeente": "Fontaine-Valmont",
+    "gemeente": "Merbes-le-Château",
+    "volledigeNaam": "6567 Fontaine-Valmont (Merbes-le-Château)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6590",
+    "deelgemeente": "Momignies",
+    "gemeente": "Momignies",
+    "volledigeNaam": "6590 Momignies (Momignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6591",
+    "deelgemeente": "Macon",
+    "gemeente": "Momignies",
+    "volledigeNaam": "6591 Macon (Momignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6592",
+    "deelgemeente": "Monceau-Imbrechies",
+    "gemeente": "Momignies",
+    "volledigeNaam": "6592 Monceau-Imbrechies (Momignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6593",
+    "deelgemeente": "Macquenoise",
+    "gemeente": "Momignies",
+    "volledigeNaam": "6593 Macquenoise (Momignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6594",
+    "deelgemeente": "Beauwelz",
+    "gemeente": "Momignies",
+    "volledigeNaam": "6594 Beauwelz (Momignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6596",
+    "deelgemeente": "Forge-Philippe",
+    "gemeente": "Momignies",
+    "volledigeNaam": "6596 Forge-Philippe (Momignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "6600",
+    "deelgemeente": "Bastogne",
+    "gemeente": "Bastogne",
+    "volledigeNaam": "6600 Bastogne (Bastogne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6630",
+    "deelgemeente": "Martelange",
+    "gemeente": "Martelange",
+    "volledigeNaam": "6630 Martelange (Martelange)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6637",
+    "deelgemeente": "Fauvillers",
+    "gemeente": "Fauvillers",
+    "volledigeNaam": "6637 Fauvillers (Fauvillers)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6640",
+    "deelgemeente": "Hompré",
+    "gemeente": "Vaux-sur-Sûre",
+    "volledigeNaam": "6640 Hompré (Vaux-sur-Sûre)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6642",
+    "deelgemeente": "Juseret",
+    "gemeente": "Vaux-sur-Sûre",
+    "volledigeNaam": "6642 Juseret (Vaux-sur-Sûre)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6660",
+    "deelgemeente": "Houffalize",
+    "gemeente": "Houffalize",
+    "volledigeNaam": "6660 Houffalize (Houffalize)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6661",
+    "deelgemeente": "Mont",
+    "gemeente": "Houffalize",
+    "volledigeNaam": "6661 Mont (Houffalize)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6662",
+    "deelgemeente": "Tavigny",
+    "gemeente": "Houffalize",
+    "volledigeNaam": "6662 Tavigny (Houffalize)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6663",
+    "deelgemeente": "Mabompré",
+    "gemeente": "Houffalize",
+    "volledigeNaam": "6663 Mabompré (Houffalize)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6666",
+    "deelgemeente": "Wibrin",
+    "gemeente": "Houffalize",
+    "volledigeNaam": "6666 Wibrin (Houffalize)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6670",
+    "deelgemeente": "Gouvy",
+    "gemeente": "Gouvy",
+    "volledigeNaam": "6670 Gouvy (Gouvy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6671",
+    "deelgemeente": "Bovigny",
+    "gemeente": "Gouvy",
+    "volledigeNaam": "6671 Bovigny (Gouvy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6672",
+    "deelgemeente": "Beho",
+    "gemeente": "Gouvy",
+    "volledigeNaam": "6672 Beho (Gouvy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6673",
+    "deelgemeente": "Cherain",
+    "gemeente": "Gouvy",
+    "volledigeNaam": "6673 Cherain (Gouvy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6674",
+    "deelgemeente": "Montleban",
+    "gemeente": "Gouvy",
+    "volledigeNaam": "6674 Montleban (Gouvy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6680",
+    "deelgemeente": "Amberloup",
+    "gemeente": "Sainte-Ode",
+    "volledigeNaam": "6680 Amberloup (Sainte-Ode)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6681",
+    "deelgemeente": "Lavacherie",
+    "gemeente": "Sainte-Ode",
+    "volledigeNaam": "6681 Lavacherie (Sainte-Ode)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6686",
+    "deelgemeente": "Flamierge",
+    "gemeente": "Bertogne",
+    "volledigeNaam": "6686 Flamierge (Bertogne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6687",
+    "deelgemeente": "Bertogne",
+    "gemeente": "Bertogne",
+    "volledigeNaam": "6687 Bertogne (Bertogne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6688",
+    "deelgemeente": "Longchamps",
+    "gemeente": "Bertogne",
+    "volledigeNaam": "6688 Longchamps (Bertogne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6690",
+    "deelgemeente": "Bihain",
+    "gemeente": "Vielsalm",
+    "volledigeNaam": "6690 Bihain (Vielsalm)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6692",
+    "deelgemeente": "Petit-Thier",
+    "gemeente": "Vielsalm",
+    "volledigeNaam": "6692 Petit-Thier (Vielsalm)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6698",
+    "deelgemeente": "Grand-Halleux",
+    "gemeente": "Vielsalm",
+    "volledigeNaam": "6698 Grand-Halleux (Vielsalm)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6700",
+    "deelgemeente": "Arlon",
+    "gemeente": "Arlon",
+    "volledigeNaam": "6700 Arlon (Arlon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6704",
+    "deelgemeente": "Guirsch",
+    "gemeente": "Arlon",
+    "volledigeNaam": "6704 Guirsch (Arlon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6706",
+    "deelgemeente": "Autelbas",
+    "gemeente": "Arlon",
+    "volledigeNaam": "6706 Autelbas (Arlon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6717",
+    "deelgemeente": "Attert",
+    "gemeente": "Attert",
+    "volledigeNaam": "6717 Attert (Attert)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6720",
+    "deelgemeente": "Habay",
+    "gemeente": "Habay",
+    "volledigeNaam": "6720 Habay (Habay)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6721",
+    "deelgemeente": "Anlier",
+    "gemeente": "Habay",
+    "volledigeNaam": "6721 Anlier (Habay)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6723",
+    "deelgemeente": "Habay-La-Vieille",
+    "gemeente": "Habay",
+    "volledigeNaam": "6723 Habay-La-Vieille (Habay)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6724",
+    "deelgemeente": "Houdemont",
+    "gemeente": "Habay",
+    "volledigeNaam": "6724 Houdemont (Habay)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6730",
+    "deelgemeente": "Bellefontaine",
+    "gemeente": "Tintigny",
+    "volledigeNaam": "6730 Bellefontaine (Tintigny)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6740",
+    "deelgemeente": "Etalle",
+    "gemeente": "Etalle",
+    "volledigeNaam": "6740 Etalle (Etalle)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6741",
+    "deelgemeente": "Vance",
+    "gemeente": "Etalle",
+    "volledigeNaam": "6741 Vance (Etalle)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6742",
+    "deelgemeente": "Chantemelle",
+    "gemeente": "Etalle",
+    "volledigeNaam": "6742 Chantemelle (Etalle)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6743",
+    "deelgemeente": "Buzenol",
+    "gemeente": "Etalle",
+    "volledigeNaam": "6743 Buzenol (Etalle)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6747",
+    "deelgemeente": "Châtillon",
+    "gemeente": "Saint-Léger",
+    "volledigeNaam": "6747 Châtillon (Saint-Léger)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6750",
+    "deelgemeente": "Musson",
+    "gemeente": "Musson",
+    "volledigeNaam": "6750 Musson (Musson)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6760",
+    "deelgemeente": "Bleid",
+    "gemeente": "Virton",
+    "volledigeNaam": "6760 Bleid (Virton)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6761",
+    "deelgemeente": "Latour",
+    "gemeente": "Virton",
+    "volledigeNaam": "6761 Latour (Virton)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6762",
+    "deelgemeente": "Saint-Mard",
+    "gemeente": "Virton",
+    "volledigeNaam": "6762 Saint-Mard (Virton)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6767",
+    "deelgemeente": "Dampicourt",
+    "gemeente": "Rouvroy",
+    "volledigeNaam": "6767 Dampicourt (Rouvroy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6769",
+    "deelgemeente": "Gérouville",
+    "gemeente": "Meix-devant-Virton",
+    "volledigeNaam": "6769 Gérouville (Meix-devant-Virton)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6780",
+    "deelgemeente": "Hondelange",
+    "gemeente": "Messancy",
+    "volledigeNaam": "6780 Hondelange (Messancy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6781",
+    "deelgemeente": "Sélange",
+    "gemeente": "Messancy",
+    "volledigeNaam": "6781 Sélange (Messancy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6782",
+    "deelgemeente": "Habergy",
+    "gemeente": "Messancy",
+    "volledigeNaam": "6782 Habergy (Messancy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6790",
+    "deelgemeente": "Aubange",
+    "gemeente": "Aubange",
+    "volledigeNaam": "6790 Aubange (Aubange)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6791",
+    "deelgemeente": "Athus",
+    "gemeente": "Aubange",
+    "volledigeNaam": "6791 Athus (Aubange)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6792",
+    "deelgemeente": "Halanzy",
+    "gemeente": "Aubange",
+    "volledigeNaam": "6792 Halanzy (Aubange)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6800",
+    "deelgemeente": "Bras",
+    "gemeente": "Libramont-Chevigny",
+    "volledigeNaam": "6800 Bras (Libramont-Chevigny)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6810",
+    "deelgemeente": "Chiny",
+    "gemeente": "Chiny",
+    "volledigeNaam": "6810 Chiny (Chiny)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6811",
+    "deelgemeente": "Les Bulles",
+    "gemeente": "Chiny",
+    "volledigeNaam": "6811 Les Bulles (Chiny)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6812",
+    "deelgemeente": "Suxy",
+    "gemeente": "Chiny",
+    "volledigeNaam": "6812 Suxy (Chiny)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6813",
+    "deelgemeente": "Termes",
+    "gemeente": "Chiny",
+    "volledigeNaam": "6813 Termes (Chiny)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6820",
+    "deelgemeente": "Florenville",
+    "gemeente": "Florenville",
+    "volledigeNaam": "6820 Florenville (Florenville)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6821",
+    "deelgemeente": "Lacuisine",
+    "gemeente": "Florenville",
+    "volledigeNaam": "6821 Lacuisine (Florenville)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6823",
+    "deelgemeente": "Villers-Devant-Orval",
+    "gemeente": "Florenville",
+    "volledigeNaam": "6823 Villers-Devant-Orval (Florenville)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6824",
+    "deelgemeente": "Chassepierre",
+    "gemeente": "Florenville",
+    "volledigeNaam": "6824 Chassepierre (Florenville)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6830",
+    "deelgemeente": "Bouillon",
+    "gemeente": "Bouillon",
+    "volledigeNaam": "6830 Bouillon (Bouillon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6831",
+    "deelgemeente": "Noirfontaine",
+    "gemeente": "Bouillon",
+    "volledigeNaam": "6831 Noirfontaine (Bouillon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6832",
+    "deelgemeente": "Sensenruth",
+    "gemeente": "Bouillon",
+    "volledigeNaam": "6832 Sensenruth (Bouillon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6833",
+    "deelgemeente": "Ucimont",
+    "gemeente": "Bouillon",
+    "volledigeNaam": "6833 Ucimont (Bouillon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6834",
+    "deelgemeente": "Bellevaux",
+    "gemeente": "Bouillon",
+    "volledigeNaam": "6834 Bellevaux (Bouillon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6836",
+    "deelgemeente": "Dohan",
+    "gemeente": "Bouillon",
+    "volledigeNaam": "6836 Dohan (Bouillon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6838",
+    "deelgemeente": "Corbion",
+    "gemeente": "Bouillon",
+    "volledigeNaam": "6838 Corbion (Bouillon)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6840",
+    "deelgemeente": "Grandvoir",
+    "gemeente": "Neufchâteau",
+    "volledigeNaam": "6840 Grandvoir (Neufchâteau)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6850",
+    "deelgemeente": "Carlsbourg",
+    "gemeente": "Paliseul",
+    "volledigeNaam": "6850 Carlsbourg (Paliseul)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6851",
+    "deelgemeente": "Nollevaux",
+    "gemeente": "Paliseul",
+    "volledigeNaam": "6851 Nollevaux (Paliseul)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6852",
+    "deelgemeente": "Maissin",
+    "gemeente": "Paliseul",
+    "volledigeNaam": "6852 Maissin (Paliseul)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6853",
+    "deelgemeente": "Framont",
+    "gemeente": "Paliseul",
+    "volledigeNaam": "6853 Framont (Paliseul)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6856",
+    "deelgemeente": "Fays-Les-Veneurs",
+    "gemeente": "Paliseul",
+    "volledigeNaam": "6856 Fays-Les-Veneurs (Paliseul)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6860",
+    "deelgemeente": "Assenois",
+    "gemeente": "Léglise",
+    "volledigeNaam": "6860 Assenois (Léglise)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6870",
+    "deelgemeente": "Arville",
+    "gemeente": "Saint-Hubert",
+    "volledigeNaam": "6870 Arville (Saint-Hubert)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6880",
+    "deelgemeente": "Auby-Sur-Semois",
+    "gemeente": "Bertrix",
+    "volledigeNaam": "6880 Auby-Sur-Semois (Bertrix)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6887",
+    "deelgemeente": "Herbeumont",
+    "gemeente": "Herbeumont",
+    "volledigeNaam": "6887 Herbeumont (Herbeumont)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6890",
+    "deelgemeente": "Anloy",
+    "gemeente": "Libin",
+    "volledigeNaam": "6890 Anloy (Libin)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6900",
+    "deelgemeente": "Aye",
+    "gemeente": "Marche-en-Famenne",
+    "volledigeNaam": "6900 Aye (Marche-en-Famenne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6920",
+    "deelgemeente": "Sohier",
+    "gemeente": "Wellin",
+    "volledigeNaam": "6920 Sohier (Wellin)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6921",
+    "deelgemeente": "Chanly",
+    "gemeente": "Wellin",
+    "volledigeNaam": "6921 Chanly (Wellin)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6922",
+    "deelgemeente": "Halma",
+    "gemeente": "Wellin",
+    "volledigeNaam": "6922 Halma (Wellin)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6924",
+    "deelgemeente": "Lomprez",
+    "gemeente": "Wellin",
+    "volledigeNaam": "6924 Lomprez (Wellin)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6927",
+    "deelgemeente": "Bure",
+    "gemeente": "Tellin",
+    "volledigeNaam": "6927 Bure (Tellin)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6929",
+    "deelgemeente": "Daverdisse",
+    "gemeente": "Daverdisse",
+    "volledigeNaam": "6929 Daverdisse (Daverdisse)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6940",
+    "deelgemeente": "Barvaux-Sur-Ourthe",
+    "gemeente": "Durbuy",
+    "volledigeNaam": "6940 Barvaux-Sur-Ourthe (Durbuy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6941",
+    "deelgemeente": "Bende",
+    "gemeente": "Durbuy",
+    "volledigeNaam": "6941 Bende (Durbuy)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6950",
+    "deelgemeente": "Harsin",
+    "gemeente": "Nassogne",
+    "volledigeNaam": "6950 Harsin (Nassogne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6951",
+    "deelgemeente": "Bande",
+    "gemeente": "Nassogne",
+    "volledigeNaam": "6951 Bande (Nassogne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6952",
+    "deelgemeente": "Grune",
+    "gemeente": "Nassogne",
+    "volledigeNaam": "6952 Grune (Nassogne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6953",
+    "deelgemeente": "Ambly",
+    "gemeente": "Nassogne",
+    "volledigeNaam": "6953 Ambly (Nassogne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6960",
+    "deelgemeente": "Dochamps",
+    "gemeente": "Manhay",
+    "volledigeNaam": "6960 Dochamps (Manhay)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6970",
+    "deelgemeente": "Tenneville",
+    "gemeente": "Tenneville",
+    "volledigeNaam": "6970 Tenneville (Tenneville)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6971",
+    "deelgemeente": "Champlon",
+    "gemeente": "Tenneville",
+    "volledigeNaam": "6971 Champlon (Tenneville)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6972",
+    "deelgemeente": "Erneuville",
+    "gemeente": "Tenneville",
+    "volledigeNaam": "6972 Erneuville (Tenneville)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6980",
+    "deelgemeente": "Beausaint",
+    "gemeente": "La Roche-en-Ardenne",
+    "volledigeNaam": "6980 Beausaint (La Roche-en-Ardenne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6982",
+    "deelgemeente": "Samrée",
+    "gemeente": "La Roche-en-Ardenne",
+    "volledigeNaam": "6982 Samrée (La Roche-en-Ardenne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6983",
+    "deelgemeente": "Ortho",
+    "gemeente": "La Roche-en-Ardenne",
+    "volledigeNaam": "6983 Ortho (La Roche-en-Ardenne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6984",
+    "deelgemeente": "Hives",
+    "gemeente": "La Roche-en-Ardenne",
+    "volledigeNaam": "6984 Hives (La Roche-en-Ardenne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6986",
+    "deelgemeente": "Halleux",
+    "gemeente": "La Roche-en-Ardenne",
+    "volledigeNaam": "6986 Halleux (La Roche-en-Ardenne)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6987",
+    "deelgemeente": "Beffe",
+    "gemeente": "Rendeux",
+    "volledigeNaam": "6987 Beffe (Rendeux)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6990",
+    "deelgemeente": "Fronville",
+    "gemeente": "Hotton",
+    "volledigeNaam": "6990 Fronville (Hotton)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "6997",
+    "deelgemeente": "Amonines",
+    "gemeente": "Erezée",
+    "volledigeNaam": "6997 Amonines (Erezée)",
+    "provincieId": 9
+  },
+  {
+    "postcode": "7000",
+    "deelgemeente": "Mons",
+    "gemeente": "Mons",
+    "volledigeNaam": "7000 Mons (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7011",
+    "deelgemeente": "Ghlin",
+    "gemeente": "Mons",
+    "volledigeNaam": "7011 Ghlin (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7012",
+    "deelgemeente": "Flénu",
+    "gemeente": "Mons",
+    "volledigeNaam": "7012 Flénu (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7020",
+    "deelgemeente": "Maisières",
+    "gemeente": "Mons",
+    "volledigeNaam": "7020 Maisières (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7021",
+    "deelgemeente": "Havré",
+    "gemeente": "Mons",
+    "volledigeNaam": "7021 Havré (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7022",
+    "deelgemeente": "Harmignies",
+    "gemeente": "Mons",
+    "volledigeNaam": "7022 Harmignies (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7024",
+    "deelgemeente": "Ciply",
+    "gemeente": "Mons",
+    "volledigeNaam": "7024 Ciply (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7030",
+    "deelgemeente": "Saint-Symphorien",
+    "gemeente": "Mons",
+    "volledigeNaam": "7030 Saint-Symphorien (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7031",
+    "deelgemeente": "Villers-Saint-Ghislain",
+    "gemeente": "Mons",
+    "volledigeNaam": "7031 Villers-Saint-Ghislain (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7032",
+    "deelgemeente": "Spiennes",
+    "gemeente": "Mons",
+    "volledigeNaam": "7032 Spiennes (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7033",
+    "deelgemeente": "Cuesmes",
+    "gemeente": "Mons",
+    "volledigeNaam": "7033 Cuesmes (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7034",
+    "deelgemeente": "Obourg",
+    "gemeente": "Mons",
+    "volledigeNaam": "7034 Obourg (Mons)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7040",
+    "deelgemeente": "Asquillies",
+    "gemeente": "Quévy",
+    "volledigeNaam": "7040 Asquillies (Quévy)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7041",
+    "deelgemeente": "Givry",
+    "gemeente": "Quévy",
+    "volledigeNaam": "7041 Givry (Quévy)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7050",
+    "deelgemeente": "Erbaut",
+    "gemeente": "Jurbise",
+    "volledigeNaam": "7050 Erbaut (Jurbise)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7060",
+    "deelgemeente": "Horrues",
+    "gemeente": "Soignies",
+    "volledigeNaam": "7060 Horrues (Soignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7061",
+    "deelgemeente": "Casteau",
+    "gemeente": "Soignies",
+    "volledigeNaam": "7061 Casteau (Soignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7062",
+    "deelgemeente": "Naast",
+    "gemeente": "Soignies",
+    "volledigeNaam": "7062 Naast (Soignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7063",
+    "deelgemeente": "Chaussée-Notre-Dame-Louvignies",
+    "gemeente": "Soignies",
+    "volledigeNaam": "7063 Chaussée-Notre-Dame-Louvignies (Soignies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7070",
+    "deelgemeente": "Gottignies",
+    "gemeente": "Le Roeulx",
+    "volledigeNaam": "7070 Gottignies (Le Roeulx)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7080",
+    "deelgemeente": "Eugies",
+    "gemeente": "Frameries",
+    "volledigeNaam": "7080 Eugies (Frameries)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7090",
+    "deelgemeente": "Braine-le-Comte",
+    "gemeente": "Braine-le-Comte",
+    "volledigeNaam": "7090 Braine-le-Comte (Braine-le-Comte)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7100",
+    "deelgemeente": "Haine-Saint-Paul",
+    "gemeente": "La Louvière",
+    "volledigeNaam": "7100 Haine-Saint-Paul (La Louvière)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7110",
+    "deelgemeente": "Boussoit",
+    "gemeente": "La Louvière",
+    "volledigeNaam": "7110 Boussoit (La Louvière)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7120",
+    "deelgemeente": "Croix-Lez-Rouveroy",
+    "gemeente": "Estinnes",
+    "volledigeNaam": "7120 Croix-Lez-Rouveroy (Estinnes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7130",
+    "deelgemeente": "Battignies",
+    "gemeente": "Binche",
+    "volledigeNaam": "7130 Battignies (Binche)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7131",
+    "deelgemeente": "Waudrez",
+    "gemeente": "Binche",
+    "volledigeNaam": "7131 Waudrez (Binche)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7133",
+    "deelgemeente": "Buvrinnes",
+    "gemeente": "Binche",
+    "volledigeNaam": "7133 Buvrinnes (Binche)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7134",
+    "deelgemeente": "Epinois",
+    "gemeente": "Binche",
+    "volledigeNaam": "7134 Epinois (Binche)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7140",
+    "deelgemeente": "Morlanwelz",
+    "gemeente": "Morlanwelz",
+    "volledigeNaam": "7140 Morlanwelz (Morlanwelz)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7141",
+    "deelgemeente": "Carnières",
+    "gemeente": "Morlanwelz",
+    "volledigeNaam": "7141 Carnières (Morlanwelz)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7160",
+    "deelgemeente": "Chapelle-lez-Herlaimont",
+    "gemeente": "Chapelle-lez-Herlaimont",
+    "volledigeNaam": "7160 Chapelle-lez-Herlaimont (Chapelle-lez-Herlaimont)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7170",
+    "deelgemeente": "Bellecourt",
+    "gemeente": "Manage",
+    "volledigeNaam": "7170 Bellecourt (Manage)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7180",
+    "deelgemeente": "Seneffe",
+    "gemeente": "Seneffe",
+    "volledigeNaam": "7180 Seneffe (Seneffe)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7181",
+    "deelgemeente": "Arquennes",
+    "gemeente": "Seneffe",
+    "volledigeNaam": "7181 Arquennes (Seneffe)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7190",
+    "deelgemeente": "Ecaussinnes",
+    "gemeente": "Ecaussinnes",
+    "volledigeNaam": "7190 Ecaussinnes (Ecaussinnes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7191",
+    "deelgemeente": "Ecaussinnes-Lalaing",
+    "gemeente": "Ecaussinnes",
+    "volledigeNaam": "7191 Ecaussinnes-Lalaing (Ecaussinnes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7300",
+    "deelgemeente": "Boussu",
+    "gemeente": "Boussu",
+    "volledigeNaam": "7300 Boussu (Boussu)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7301",
+    "deelgemeente": "Hornu",
+    "gemeente": "Boussu",
+    "volledigeNaam": "7301 Hornu (Boussu)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7320",
+    "deelgemeente": "Bernissart",
+    "gemeente": "Bernissart",
+    "volledigeNaam": "7320 Bernissart (Bernissart)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7321",
+    "deelgemeente": "Blaton",
+    "gemeente": "Bernissart",
+    "volledigeNaam": "7321 Blaton (Bernissart)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7322",
+    "deelgemeente": "Pommeroeul",
+    "gemeente": "Bernissart",
+    "volledigeNaam": "7322 Pommeroeul (Bernissart)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7330",
+    "deelgemeente": "Saint-Ghislain",
+    "gemeente": "Saint-Ghislain",
+    "volledigeNaam": "7330 Saint-Ghislain (Saint-Ghislain)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7331",
+    "deelgemeente": "Baudour",
+    "gemeente": "Saint-Ghislain",
+    "volledigeNaam": "7331 Baudour (Saint-Ghislain)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7332",
+    "deelgemeente": "Neufmaison",
+    "gemeente": "Saint-Ghislain",
+    "volledigeNaam": "7332 Neufmaison (Saint-Ghislain)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7333",
+    "deelgemeente": "Tertre",
+    "gemeente": "Saint-Ghislain",
+    "volledigeNaam": "7333 Tertre (Saint-Ghislain)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7334",
+    "deelgemeente": "Hautrage",
+    "gemeente": "Saint-Ghislain",
+    "volledigeNaam": "7334 Hautrage (Saint-Ghislain)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7340",
+    "deelgemeente": "Colfontaine",
+    "gemeente": "Colfontaine",
+    "volledigeNaam": "7340 Colfontaine (Colfontaine)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7350",
+    "deelgemeente": "Hainin",
+    "gemeente": "Hensies",
+    "volledigeNaam": "7350 Hainin (Hensies)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7370",
+    "deelgemeente": "Blaugies",
+    "gemeente": "Dour",
+    "volledigeNaam": "7370 Blaugies (Dour)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7380",
+    "deelgemeente": "Baisieux",
+    "gemeente": "Quiévrain",
+    "volledigeNaam": "7380 Baisieux (Quiévrain)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7382",
+    "deelgemeente": "Audregnies",
+    "gemeente": "Quiévrain",
+    "volledigeNaam": "7382 Audregnies (Quiévrain)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7387",
+    "deelgemeente": "Angre",
+    "gemeente": "Honnelles",
+    "volledigeNaam": "7387 Angre (Honnelles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7390",
+    "deelgemeente": "Quaregnon",
+    "gemeente": "Quaregnon",
+    "volledigeNaam": "7390 Quaregnon (Quaregnon)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7500",
+    "deelgemeente": "Ere",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7500 Ere (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7501",
+    "deelgemeente": "Orcq",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7501 Orcq (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7502",
+    "deelgemeente": "Esplechin",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7502 Esplechin (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7503",
+    "deelgemeente": "Froyennes",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7503 Froyennes (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7504",
+    "deelgemeente": "Froidmont",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7504 Froidmont (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7506",
+    "deelgemeente": "Willemeau",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7506 Willemeau (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7520",
+    "deelgemeente": "Ramegnies-Chin",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7520 Ramegnies-Chin (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7521",
+    "deelgemeente": "Chercq",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7521 Chercq (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7522",
+    "deelgemeente": "Blandain",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7522 Blandain (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7530",
+    "deelgemeente": "Gaurain-Ramecroix",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7530 Gaurain-Ramecroix (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7531",
+    "deelgemeente": "Havinnes",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7531 Havinnes (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7532",
+    "deelgemeente": "Béclers",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7532 Béclers (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7533",
+    "deelgemeente": "Thimougies",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7533 Thimougies (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7534",
+    "deelgemeente": "Barry",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7534 Barry (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7536",
+    "deelgemeente": "Vaulx",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7536 Vaulx (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7538",
+    "deelgemeente": "Vezon",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7538 Vezon (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7540",
+    "deelgemeente": "Kain",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7540 Kain (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7542",
+    "deelgemeente": "Mont-Saint-Aubert",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7542 Mont-Saint-Aubert (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7543",
+    "deelgemeente": "Mourcourt",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7543 Mourcourt (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7548",
+    "deelgemeente": "Warchin",
+    "gemeente": "Tournai",
+    "volledigeNaam": "7548 Warchin (Tournai)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7600",
+    "deelgemeente": "Péruwelz",
+    "gemeente": "Péruwelz",
+    "volledigeNaam": "7600 Péruwelz (Péruwelz)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7601",
+    "deelgemeente": "Roucourt",
+    "gemeente": "Péruwelz",
+    "volledigeNaam": "7601 Roucourt (Péruwelz)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7602",
+    "deelgemeente": "Bury",
+    "gemeente": "Péruwelz",
+    "volledigeNaam": "7602 Bury (Péruwelz)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7603",
+    "deelgemeente": "Bon-Secours",
+    "gemeente": "Péruwelz",
+    "volledigeNaam": "7603 Bon-Secours (Péruwelz)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7604",
+    "deelgemeente": "Baugnies",
+    "gemeente": "Péruwelz",
+    "volledigeNaam": "7604 Baugnies (Péruwelz)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7608",
+    "deelgemeente": "Wiers",
+    "gemeente": "Péruwelz",
+    "volledigeNaam": "7608 Wiers (Péruwelz)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7610",
+    "deelgemeente": "Rumes",
+    "gemeente": "Rumes",
+    "volledigeNaam": "7610 Rumes (Rumes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7611",
+    "deelgemeente": "La Glanerie",
+    "gemeente": "Rumes",
+    "volledigeNaam": "7611 La Glanerie (Rumes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7618",
+    "deelgemeente": "Taintignies",
+    "gemeente": "Rumes",
+    "volledigeNaam": "7618 Taintignies (Rumes)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7620",
+    "deelgemeente": "Bléharies",
+    "gemeente": "Brunehaut",
+    "volledigeNaam": "7620 Bléharies (Brunehaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7621",
+    "deelgemeente": "Lesdain",
+    "gemeente": "Brunehaut",
+    "volledigeNaam": "7621 Lesdain (Brunehaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7622",
+    "deelgemeente": "Laplaigne",
+    "gemeente": "Brunehaut",
+    "volledigeNaam": "7622 Laplaigne (Brunehaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7623",
+    "deelgemeente": "Rongy",
+    "gemeente": "Brunehaut",
+    "volledigeNaam": "7623 Rongy (Brunehaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7624",
+    "deelgemeente": "Howardries",
+    "gemeente": "Brunehaut",
+    "volledigeNaam": "7624 Howardries (Brunehaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7640",
+    "deelgemeente": "Antoing",
+    "gemeente": "Antoing",
+    "volledigeNaam": "7640 Antoing (Antoing)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7641",
+    "deelgemeente": "Bruyelle",
+    "gemeente": "Antoing",
+    "volledigeNaam": "7641 Bruyelle (Antoing)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7642",
+    "deelgemeente": "Calonne",
+    "gemeente": "Antoing",
+    "volledigeNaam": "7642 Calonne (Antoing)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7643",
+    "deelgemeente": "Fontenoy",
+    "gemeente": "Antoing",
+    "volledigeNaam": "7643 Fontenoy (Antoing)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7700",
+    "deelgemeente": "Luingne",
+    "gemeente": "Mouscron",
+    "volledigeNaam": "7700 Luingne (Mouscron)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7711",
+    "deelgemeente": "Dottenijs",
+    "gemeente": "Mouscron",
+    "volledigeNaam": "7711 Dottenijs (Mouscron)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7712",
+    "deelgemeente": "Herseaux",
+    "gemeente": "Mouscron",
+    "volledigeNaam": "7712 Herseaux (Mouscron)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7730",
+    "deelgemeente": "Bailleul",
+    "gemeente": "Estaimpuis",
+    "volledigeNaam": "7730 Bailleul (Estaimpuis)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7740",
+    "deelgemeente": "Pecq",
+    "gemeente": "Pecq",
+    "volledigeNaam": "7740 Pecq (Pecq)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7742",
+    "deelgemeente": "Hérinnes-Lez-Pecq",
+    "gemeente": "Pecq",
+    "volledigeNaam": "7742 Hérinnes-Lez-Pecq (Pecq)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7743",
+    "deelgemeente": "Esquelmes",
+    "gemeente": "Pecq",
+    "volledigeNaam": "7743 Esquelmes (Pecq)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7750",
+    "deelgemeente": "Amougies",
+    "gemeente": "Mont-de-l'Enclus",
+    "volledigeNaam": "7750 Amougies (Mont-de-l'Enclus)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7760",
+    "deelgemeente": "Celles",
+    "gemeente": "Celles",
+    "volledigeNaam": "7760 Celles (Celles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7780",
+    "deelgemeente": "Komen",
+    "gemeente": "Comines-Warneton",
+    "volledigeNaam": "7780 Komen (Comines-Warneton)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7781",
+    "deelgemeente": "Houthem",
+    "gemeente": "Comines-Warneton",
+    "volledigeNaam": "7781 Houthem (Comines-Warneton)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7782",
+    "deelgemeente": "Ploegsteert",
+    "gemeente": "Comines-Warneton",
+    "volledigeNaam": "7782 Ploegsteert (Comines-Warneton)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7783",
+    "deelgemeente": "Bizet",
+    "gemeente": "Comines-Warneton",
+    "volledigeNaam": "7783 Bizet (Comines-Warneton)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7784",
+    "deelgemeente": "Neerwaasten",
+    "gemeente": "Comines-Warneton",
+    "volledigeNaam": "7784 Neerwaasten (Comines-Warneton)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7800",
+    "deelgemeente": "Ath",
+    "gemeente": "Ath",
+    "volledigeNaam": "7800 Ath (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7801",
+    "deelgemeente": "Irchonwelz",
+    "gemeente": "Ath",
+    "volledigeNaam": "7801 Irchonwelz (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7802",
+    "deelgemeente": "Ormeignies",
+    "gemeente": "Ath",
+    "volledigeNaam": "7802 Ormeignies (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7803",
+    "deelgemeente": "Bouvignies",
+    "gemeente": "Ath",
+    "volledigeNaam": "7803 Bouvignies (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7804",
+    "deelgemeente": "Ostiches",
+    "gemeente": "Ath",
+    "volledigeNaam": "7804 Ostiches (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7810",
+    "deelgemeente": "Maffle",
+    "gemeente": "Ath",
+    "volledigeNaam": "7810 Maffle (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7811",
+    "deelgemeente": "Arbre",
+    "gemeente": "Ath",
+    "volledigeNaam": "7811 Arbre (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7812",
+    "deelgemeente": "Houtaing",
+    "gemeente": "Ath",
+    "volledigeNaam": "7812 Houtaing (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7822",
+    "deelgemeente": "Ghislenghien",
+    "gemeente": "Ath",
+    "volledigeNaam": "7822 Ghislenghien (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7823",
+    "deelgemeente": "Gibecq",
+    "gemeente": "Ath",
+    "volledigeNaam": "7823 Gibecq (Ath)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7830",
+    "deelgemeente": "Bassilly",
+    "gemeente": "Silly",
+    "volledigeNaam": "7830 Bassilly (Silly)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7850",
+    "deelgemeente": "EDINGEN",
+    "gemeente": "Enghien",
+    "volledigeNaam": "7850 EDINGEN (Enghien)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7860",
+    "deelgemeente": "Lessines",
+    "gemeente": "Lessines",
+    "volledigeNaam": "7860 Lessines (Lessines)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7861",
+    "deelgemeente": "Papignies",
+    "gemeente": "Lessines",
+    "volledigeNaam": "7861 Papignies (Lessines)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7862",
+    "deelgemeente": "Ogy",
+    "gemeente": "Lessines",
+    "volledigeNaam": "7862 Ogy (Lessines)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7863",
+    "deelgemeente": "Ghoy",
+    "gemeente": "Lessines",
+    "volledigeNaam": "7863 Ghoy (Lessines)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7864",
+    "deelgemeente": "Deux-Acren",
+    "gemeente": "Lessines",
+    "volledigeNaam": "7864 Deux-Acren (Lessines)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7866",
+    "deelgemeente": "Bois-De-Lessines",
+    "gemeente": "Lessines",
+    "volledigeNaam": "7866 Bois-De-Lessines (Lessines)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7870",
+    "deelgemeente": "Bauffe",
+    "gemeente": "Lens",
+    "volledigeNaam": "7870 Bauffe (Lens)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7880",
+    "deelgemeente": "VLOESBERG",
+    "gemeente": "Flobecq",
+    "volledigeNaam": "7880 VLOESBERG (Flobecq)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7890",
+    "deelgemeente": "Ellezelles",
+    "gemeente": "Ellezelles",
+    "volledigeNaam": "7890 Ellezelles (Ellezelles)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7900",
+    "deelgemeente": "Grandmetz",
+    "gemeente": "Leuze-en-Hainaut",
+    "volledigeNaam": "7900 Grandmetz (Leuze-en-Hainaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7901",
+    "deelgemeente": "Thieulain",
+    "gemeente": "Leuze-en-Hainaut",
+    "volledigeNaam": "7901 Thieulain (Leuze-en-Hainaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7903",
+    "deelgemeente": "Blicquy",
+    "gemeente": "Leuze-en-Hainaut",
+    "volledigeNaam": "7903 Blicquy (Leuze-en-Hainaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7904",
+    "deelgemeente": "Pipaix",
+    "gemeente": "Leuze-en-Hainaut",
+    "volledigeNaam": "7904 Pipaix (Leuze-en-Hainaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7906",
+    "deelgemeente": "Gallaix",
+    "gemeente": "Leuze-en-Hainaut",
+    "volledigeNaam": "7906 Gallaix (Leuze-en-Hainaut)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7910",
+    "deelgemeente": "Anvaing",
+    "gemeente": "Frasnes-lez-Anvaing",
+    "volledigeNaam": "7910 Anvaing (Frasnes-lez-Anvaing)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7911",
+    "deelgemeente": "Buissenal",
+    "gemeente": "Frasnes-lez-Anvaing",
+    "volledigeNaam": "7911 Buissenal (Frasnes-lez-Anvaing)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7912",
+    "deelgemeente": "Dergneau",
+    "gemeente": "Frasnes-lez-Anvaing",
+    "volledigeNaam": "7912 Dergneau (Frasnes-lez-Anvaing)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7940",
+    "deelgemeente": "Brugelette",
+    "gemeente": "Brugelette",
+    "volledigeNaam": "7940 Brugelette (Brugelette)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7941",
+    "deelgemeente": "Attre",
+    "gemeente": "Brugelette",
+    "volledigeNaam": "7941 Attre (Brugelette)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7942",
+    "deelgemeente": "Mévergnies-Lez-Lens",
+    "gemeente": "Brugelette",
+    "volledigeNaam": "7942 Mévergnies-Lez-Lens (Brugelette)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7943",
+    "deelgemeente": "Gages",
+    "gemeente": "Brugelette",
+    "volledigeNaam": "7943 Gages (Brugelette)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7950",
+    "deelgemeente": "Chièvres",
+    "gemeente": "Chièvres",
+    "volledigeNaam": "7950 Chièvres (Chièvres)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7951",
+    "deelgemeente": "Tongre-Notre-Dame",
+    "gemeente": "Chièvres",
+    "volledigeNaam": "7951 Tongre-Notre-Dame (Chièvres)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7970",
+    "deelgemeente": "Beloeil",
+    "gemeente": "Beloeil",
+    "volledigeNaam": "7970 Beloeil (Beloeil)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7971",
+    "deelgemeente": "Basècles",
+    "gemeente": "Beloeil",
+    "volledigeNaam": "7971 Basècles (Beloeil)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7972",
+    "deelgemeente": "Aubechies",
+    "gemeente": "Beloeil",
+    "volledigeNaam": "7972 Aubechies (Beloeil)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "7973",
+    "deelgemeente": "Grandglise",
+    "gemeente": "Beloeil",
+    "volledigeNaam": "7973 Grandglise (Beloeil)",
+    "provincieId": 8
+  },
+  {
+    "postcode": "8000",
+    "deelgemeente": "Brugge",
+    "gemeente": "Brugge",
+    "volledigeNaam": "8000 Brugge (Brugge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8020",
+    "deelgemeente": "Hertsberge",
+    "gemeente": "Oostkamp",
+    "volledigeNaam": "8020 Hertsberge (Oostkamp)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8200",
+    "deelgemeente": "Sint-Andries",
+    "gemeente": "Brugge",
+    "volledigeNaam": "8200 Sint-Andries (Brugge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8210",
+    "deelgemeente": "Loppem",
+    "gemeente": "Zedelgem",
+    "volledigeNaam": "8210 Loppem (Zedelgem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8211",
+    "deelgemeente": "Aartrijke",
+    "gemeente": "Zedelgem",
+    "volledigeNaam": "8211 Aartrijke (Zedelgem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8300",
+    "deelgemeente": "Knokke",
+    "gemeente": "Knokke-Heist",
+    "volledigeNaam": "8300 Knokke (Knokke-Heist)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8301",
+    "deelgemeente": "Heist-Aan-Zee",
+    "gemeente": "Knokke-Heist",
+    "volledigeNaam": "8301 Heist-Aan-Zee (Knokke-Heist)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8310",
+    "deelgemeente": "Assebroek",
+    "gemeente": "Brugge",
+    "volledigeNaam": "8310 Assebroek (Brugge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8340",
+    "deelgemeente": "Damme",
+    "gemeente": "Damme",
+    "volledigeNaam": "8340 Damme (Damme)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8370",
+    "deelgemeente": "Blankenberge",
+    "gemeente": "Blankenberge",
+    "volledigeNaam": "8370 Blankenberge (Blankenberge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8377",
+    "deelgemeente": "Houtave",
+    "gemeente": "Zuienkerke",
+    "volledigeNaam": "8377 Houtave (Zuienkerke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8380",
+    "deelgemeente": "Dudzele",
+    "gemeente": "Brugge",
+    "volledigeNaam": "8380 Dudzele (Brugge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8400",
+    "deelgemeente": "Oostende",
+    "gemeente": "Oostende",
+    "volledigeNaam": "8400 Oostende (Oostende)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8420",
+    "deelgemeente": "De Haan",
+    "gemeente": "De Haan",
+    "volledigeNaam": "8420 De Haan (De Haan)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8421",
+    "deelgemeente": "Vlissegem",
+    "gemeente": "De Haan",
+    "volledigeNaam": "8421 Vlissegem (De Haan)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8430",
+    "deelgemeente": "Middelkerke",
+    "gemeente": "Middelkerke",
+    "volledigeNaam": "8430 Middelkerke (Middelkerke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8431",
+    "deelgemeente": "Wilskerke",
+    "gemeente": "Middelkerke",
+    "volledigeNaam": "8431 Wilskerke (Middelkerke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8432",
+    "deelgemeente": "Leffinge",
+    "gemeente": "Middelkerke",
+    "volledigeNaam": "8432 Leffinge (Middelkerke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8433",
+    "deelgemeente": "Mannekensvere",
+    "gemeente": "Middelkerke",
+    "volledigeNaam": "8433 Mannekensvere (Middelkerke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8434",
+    "deelgemeente": "Lombardsijde",
+    "gemeente": "Middelkerke",
+    "volledigeNaam": "8434 Lombardsijde (Middelkerke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8450",
+    "deelgemeente": "Bredene",
+    "gemeente": "Bredene",
+    "volledigeNaam": "8450 Bredene (Bredene)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8460",
+    "deelgemeente": "Ettelgem",
+    "gemeente": "Oudenburg",
+    "volledigeNaam": "8460 Ettelgem (Oudenburg)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8470",
+    "deelgemeente": "Gistel",
+    "gemeente": "Gistel",
+    "volledigeNaam": "8470 Gistel (Gistel)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8480",
+    "deelgemeente": "Bekegem",
+    "gemeente": "Ichtegem",
+    "volledigeNaam": "8480 Bekegem (Ichtegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8490",
+    "deelgemeente": "Jabbeke",
+    "gemeente": "Jabbeke",
+    "volledigeNaam": "8490 Jabbeke (Jabbeke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8500",
+    "deelgemeente": "Kortrijk",
+    "gemeente": "Kortrijk",
+    "volledigeNaam": "8500 Kortrijk (Kortrijk)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8501",
+    "deelgemeente": "Bissegem",
+    "gemeente": "Kortrijk",
+    "volledigeNaam": "8501 Bissegem (Kortrijk)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8510",
+    "deelgemeente": "Bellegem",
+    "gemeente": "Kortrijk",
+    "volledigeNaam": "8510 Bellegem (Kortrijk)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8511",
+    "deelgemeente": "Aalbeke",
+    "gemeente": "Kortrijk",
+    "volledigeNaam": "8511 Aalbeke (Kortrijk)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8520",
+    "deelgemeente": "Kuurne",
+    "gemeente": "Kuurne",
+    "volledigeNaam": "8520 Kuurne (Kuurne)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8530",
+    "deelgemeente": "Harelbeke",
+    "gemeente": "Harelbeke",
+    "volledigeNaam": "8530 Harelbeke (Harelbeke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8531",
+    "deelgemeente": "Bavikhove",
+    "gemeente": "Harelbeke",
+    "volledigeNaam": "8531 Bavikhove (Harelbeke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8540",
+    "deelgemeente": "Deerlijk",
+    "gemeente": "Deerlijk",
+    "volledigeNaam": "8540 Deerlijk (Deerlijk)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8550",
+    "deelgemeente": "Zwevegem",
+    "gemeente": "Zwevegem",
+    "volledigeNaam": "8550 Zwevegem (Zwevegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8551",
+    "deelgemeente": "Heestert",
+    "gemeente": "Zwevegem",
+    "volledigeNaam": "8551 Heestert (Zwevegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8552",
+    "deelgemeente": "Moen",
+    "gemeente": "Zwevegem",
+    "volledigeNaam": "8552 Moen (Zwevegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8553",
+    "deelgemeente": "Otegem",
+    "gemeente": "Zwevegem",
+    "volledigeNaam": "8553 Otegem (Zwevegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8554",
+    "deelgemeente": "Sint-Denijs",
+    "gemeente": "Zwevegem",
+    "volledigeNaam": "8554 Sint-Denijs (Zwevegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8560",
+    "deelgemeente": "Gullegem",
+    "gemeente": "Wevelgem",
+    "volledigeNaam": "8560 Gullegem (Wevelgem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8570",
+    "deelgemeente": "Anzegem",
+    "gemeente": "Anzegem",
+    "volledigeNaam": "8570 Anzegem (Anzegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8572",
+    "deelgemeente": "Kaster",
+    "gemeente": "Anzegem",
+    "volledigeNaam": "8572 Kaster (Anzegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8573",
+    "deelgemeente": "Tiegem",
+    "gemeente": "Anzegem",
+    "volledigeNaam": "8573 Tiegem (Anzegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8580",
+    "deelgemeente": "Avelgem",
+    "gemeente": "Avelgem",
+    "volledigeNaam": "8580 Avelgem (Avelgem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8581",
+    "deelgemeente": "Kerkhove",
+    "gemeente": "Avelgem",
+    "volledigeNaam": "8581 Kerkhove (Avelgem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8582",
+    "deelgemeente": "Outrijve",
+    "gemeente": "Avelgem",
+    "volledigeNaam": "8582 Outrijve (Avelgem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8583",
+    "deelgemeente": "Bossuit",
+    "gemeente": "Avelgem",
+    "volledigeNaam": "8583 Bossuit (Avelgem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8587",
+    "deelgemeente": "Helkijn",
+    "gemeente": "Spiere-Helkijn",
+    "volledigeNaam": "8587 Helkijn (Spiere-Helkijn)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8600",
+    "deelgemeente": "Beerst",
+    "gemeente": "Diksmuide",
+    "volledigeNaam": "8600 Beerst (Diksmuide)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8610",
+    "deelgemeente": "Handzame",
+    "gemeente": "Kortemark",
+    "volledigeNaam": "8610 Handzame (Kortemark)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8620",
+    "deelgemeente": "Nieuwpoort",
+    "gemeente": "Nieuwpoort",
+    "volledigeNaam": "8620 Nieuwpoort (Nieuwpoort)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8630",
+    "deelgemeente": "Avekapelle",
+    "gemeente": "Veurne",
+    "volledigeNaam": "8630 Avekapelle (Veurne)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8640",
+    "deelgemeente": "Oostvleteren",
+    "gemeente": "Vleteren",
+    "volledigeNaam": "8640 Oostvleteren (Vleteren)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8647",
+    "deelgemeente": "Lo",
+    "gemeente": "Lo-Reninge",
+    "volledigeNaam": "8647 Lo (Lo-Reninge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8650",
+    "deelgemeente": "Houthulst",
+    "gemeente": "Houthulst",
+    "volledigeNaam": "8650 Houthulst (Houthulst)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8660",
+    "deelgemeente": "Adinkerke",
+    "gemeente": "De Panne",
+    "volledigeNaam": "8660 Adinkerke (De Panne)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8670",
+    "deelgemeente": "Koksijde",
+    "gemeente": "Koksijde",
+    "volledigeNaam": "8670 Koksijde (Koksijde)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8680",
+    "deelgemeente": "Bovekerke",
+    "gemeente": "Koekelare",
+    "volledigeNaam": "8680 Bovekerke (Koekelare)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8690",
+    "deelgemeente": "Alveringem",
+    "gemeente": "Alveringem",
+    "volledigeNaam": "8690 Alveringem (Alveringem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8691",
+    "deelgemeente": "Beveren-Aan-De-Ijzer",
+    "gemeente": "Alveringem",
+    "volledigeNaam": "8691 Beveren-Aan-De-Ijzer (Alveringem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8700",
+    "deelgemeente": "Aarsele",
+    "gemeente": "Tielt",
+    "volledigeNaam": "8700 Aarsele (Tielt)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8710",
+    "deelgemeente": "Ooigem",
+    "gemeente": "Wielsbeke",
+    "volledigeNaam": "8710 Ooigem (Wielsbeke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8720",
+    "deelgemeente": "Dentergem",
+    "gemeente": "Dentergem",
+    "volledigeNaam": "8720 Dentergem (Dentergem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8730",
+    "deelgemeente": "Beernem",
+    "gemeente": "Beernem",
+    "volledigeNaam": "8730 Beernem (Beernem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8740",
+    "deelgemeente": "Egem",
+    "gemeente": "Pittem",
+    "volledigeNaam": "8740 Egem (Pittem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8750",
+    "deelgemeente": "Wingene",
+    "gemeente": "Wingene",
+    "volledigeNaam": "8750 Wingene (Wingene)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8755",
+    "deelgemeente": "Ruiselede",
+    "gemeente": "Ruiselede",
+    "volledigeNaam": "8755 Ruiselede (Ruiselede)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8760",
+    "deelgemeente": "Meulebeke",
+    "gemeente": "Meulebeke",
+    "volledigeNaam": "8760 Meulebeke (Meulebeke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8770",
+    "deelgemeente": "Ingelmunster",
+    "gemeente": "Ingelmunster",
+    "volledigeNaam": "8770 Ingelmunster (Ingelmunster)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8780",
+    "deelgemeente": "Oostrozebeke",
+    "gemeente": "Oostrozebeke",
+    "volledigeNaam": "8780 Oostrozebeke (Oostrozebeke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8790",
+    "deelgemeente": "Waregem",
+    "gemeente": "Waregem",
+    "volledigeNaam": "8790 Waregem (Waregem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8791",
+    "deelgemeente": "Beveren",
+    "gemeente": "Waregem",
+    "volledigeNaam": "8791 Beveren (Waregem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8792",
+    "deelgemeente": "Desselgem",
+    "gemeente": "Waregem",
+    "volledigeNaam": "8792 Desselgem (Waregem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8793",
+    "deelgemeente": "Sint-Eloois-Vijve",
+    "gemeente": "Waregem",
+    "volledigeNaam": "8793 Sint-Eloois-Vijve (Waregem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8800",
+    "deelgemeente": "Beveren",
+    "gemeente": "Roeselare",
+    "volledigeNaam": "8800 Beveren (Roeselare)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8810",
+    "deelgemeente": "Lichtervelde",
+    "gemeente": "Lichtervelde",
+    "volledigeNaam": "8810 Lichtervelde (Lichtervelde)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8820",
+    "deelgemeente": "Torhout",
+    "gemeente": "Torhout",
+    "volledigeNaam": "8820 Torhout (Torhout)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8830",
+    "deelgemeente": "Gits",
+    "gemeente": "Hooglede",
+    "volledigeNaam": "8830 Gits (Hooglede)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8840",
+    "deelgemeente": "Oostnieuwkerke",
+    "gemeente": "Staden",
+    "volledigeNaam": "8840 Oostnieuwkerke (Staden)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8850",
+    "deelgemeente": "Ardooie",
+    "gemeente": "Ardooie",
+    "volledigeNaam": "8850 Ardooie (Ardooie)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8851",
+    "deelgemeente": "Koolskamp",
+    "gemeente": "Ardooie",
+    "volledigeNaam": "8851 Koolskamp (Ardooie)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8860",
+    "deelgemeente": "Lendelede",
+    "gemeente": "Lendelede",
+    "volledigeNaam": "8860 Lendelede (Lendelede)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8870",
+    "deelgemeente": "Emelgem",
+    "gemeente": "Izegem",
+    "volledigeNaam": "8870 Emelgem (Izegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8880",
+    "deelgemeente": "Ledegem",
+    "gemeente": "Ledegem",
+    "volledigeNaam": "8880 Ledegem (Ledegem)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8890",
+    "deelgemeente": "Dadizele",
+    "gemeente": "Moorslede",
+    "volledigeNaam": "8890 Dadizele (Moorslede)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8900",
+    "deelgemeente": "Brielen",
+    "gemeente": "Ieper",
+    "volledigeNaam": "8900 Brielen (Ieper)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8902",
+    "deelgemeente": "Hollebeke",
+    "gemeente": "Ieper",
+    "volledigeNaam": "8902 Hollebeke (Ieper)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8904",
+    "deelgemeente": "Boezinge",
+    "gemeente": "Ieper",
+    "volledigeNaam": "8904 Boezinge (Ieper)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8906",
+    "deelgemeente": "Elverdinge",
+    "gemeente": "Ieper",
+    "volledigeNaam": "8906 Elverdinge (Ieper)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8908",
+    "deelgemeente": "Vlamertinge",
+    "gemeente": "Ieper",
+    "volledigeNaam": "8908 Vlamertinge (Ieper)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8920",
+    "deelgemeente": "Bikschote",
+    "gemeente": "Langemark-Poelkapelle",
+    "volledigeNaam": "8920 Bikschote (Langemark-Poelkapelle)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8930",
+    "deelgemeente": "Lauwe",
+    "gemeente": "Menen",
+    "volledigeNaam": "8930 Lauwe (Menen)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8940",
+    "deelgemeente": "Geluwe",
+    "gemeente": "Wervik",
+    "volledigeNaam": "8940 Geluwe (Wervik)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8950",
+    "deelgemeente": "Heuvelland",
+    "gemeente": "Heuvelland",
+    "volledigeNaam": "8950 Heuvelland (Heuvelland)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8951",
+    "deelgemeente": "Dranouter",
+    "gemeente": "Heuvelland",
+    "volledigeNaam": "8951 Dranouter (Heuvelland)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8952",
+    "deelgemeente": "Wulvergem",
+    "gemeente": "Heuvelland",
+    "volledigeNaam": "8952 Wulvergem (Heuvelland)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8953",
+    "deelgemeente": "Wijtschate",
+    "gemeente": "Heuvelland",
+    "volledigeNaam": "8953 Wijtschate (Heuvelland)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8954",
+    "deelgemeente": "Westouter",
+    "gemeente": "Heuvelland",
+    "volledigeNaam": "8954 Westouter (Heuvelland)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8956",
+    "deelgemeente": "Kemmel",
+    "gemeente": "Heuvelland",
+    "volledigeNaam": "8956 Kemmel (Heuvelland)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8957",
+    "deelgemeente": "Mesen",
+    "gemeente": "Mesen",
+    "volledigeNaam": "8957 Mesen (Mesen)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8958",
+    "deelgemeente": "Loker",
+    "gemeente": "Heuvelland",
+    "volledigeNaam": "8958 Loker (Heuvelland)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8970",
+    "deelgemeente": "Poperinge",
+    "gemeente": "Poperinge",
+    "volledigeNaam": "8970 Poperinge (Poperinge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8972",
+    "deelgemeente": "Krombeke",
+    "gemeente": "Poperinge",
+    "volledigeNaam": "8972 Krombeke (Poperinge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8978",
+    "deelgemeente": "Watou",
+    "gemeente": "Poperinge",
+    "volledigeNaam": "8978 Watou (Poperinge)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "8980",
+    "deelgemeente": "Beselare",
+    "gemeente": "Zonnebeke",
+    "volledigeNaam": "8980 Beselare (Zonnebeke)",
+    "provincieId": 10
+  },
+  {
+    "postcode": "9000",
+    "deelgemeente": "Gent",
+    "gemeente": "Gent",
+    "volledigeNaam": "9000 Gent (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9030",
+    "deelgemeente": "Mariakerke",
+    "gemeente": "Gent",
+    "volledigeNaam": "9030 Mariakerke (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9031",
+    "deelgemeente": "Drongen",
+    "gemeente": "Gent",
+    "volledigeNaam": "9031 Drongen (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9032",
+    "deelgemeente": "Wondelgem",
+    "gemeente": "Gent",
+    "volledigeNaam": "9032 Wondelgem (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9040",
+    "deelgemeente": "Sint-Amandsberg",
+    "gemeente": "Gent",
+    "volledigeNaam": "9040 Sint-Amandsberg (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9041",
+    "deelgemeente": "Oostakker",
+    "gemeente": "Gent",
+    "volledigeNaam": "9041 Oostakker (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9042",
+    "deelgemeente": "Desteldonk",
+    "gemeente": "Gent",
+    "volledigeNaam": "9042 Desteldonk (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9050",
+    "deelgemeente": "Gentbrugge",
+    "gemeente": "Gent",
+    "volledigeNaam": "9050 Gentbrugge (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9051",
+    "deelgemeente": "Afsnee",
+    "gemeente": "Gent",
+    "volledigeNaam": "9051 Afsnee (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9052",
+    "deelgemeente": "Zwijnaarde",
+    "gemeente": "Gent",
+    "volledigeNaam": "9052 Zwijnaarde (Gent)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9060",
+    "deelgemeente": "Zelzate",
+    "gemeente": "Zelzate",
+    "volledigeNaam": "9060 Zelzate (Zelzate)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9070",
+    "deelgemeente": "Destelbergen",
+    "gemeente": "Destelbergen",
+    "volledigeNaam": "9070 Destelbergen (Destelbergen)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9080",
+    "deelgemeente": "Beervelde",
+    "gemeente": "Lochristi",
+    "volledigeNaam": "9080 Beervelde (Lochristi)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9090",
+    "deelgemeente": "Gontrode",
+    "gemeente": "Melle",
+    "volledigeNaam": "9090 Gontrode (Melle)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9100",
+    "deelgemeente": "Nieuwkerken-Waas",
+    "gemeente": "Sint-Niklaas",
+    "volledigeNaam": "9100 Nieuwkerken-Waas (Sint-Niklaas)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9111",
+    "deelgemeente": "Belsele",
+    "gemeente": "Sint-Niklaas",
+    "volledigeNaam": "9111 Belsele (Sint-Niklaas)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9112",
+    "deelgemeente": "Sinaai-Waas",
+    "gemeente": "Sint-Niklaas",
+    "volledigeNaam": "9112 Sinaai-Waas (Sint-Niklaas)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9120",
+    "deelgemeente": "BEVEREN-WAAS",
+    "gemeente": "Beveren",
+    "volledigeNaam": "9120 BEVEREN-WAAS (Beveren)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9130",
+    "deelgemeente": "Doel",
+    "gemeente": "Beveren",
+    "volledigeNaam": "9130 Doel (Beveren)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9140",
+    "deelgemeente": "Elversele",
+    "gemeente": "Temse",
+    "volledigeNaam": "9140 Elversele (Temse)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9150",
+    "deelgemeente": "Bazel",
+    "gemeente": "Kruibeke",
+    "volledigeNaam": "9150 Bazel (Kruibeke)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9160",
+    "deelgemeente": "Daknam",
+    "gemeente": "Lokeren",
+    "volledigeNaam": "9160 Daknam (Lokeren)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9170",
+    "deelgemeente": "De Klinge",
+    "gemeente": "Sint-Gillis-Waas",
+    "volledigeNaam": "9170 De Klinge (Sint-Gillis-Waas)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9180",
+    "deelgemeente": "MOERBEKE-WAAS",
+    "gemeente": "Moerbeke",
+    "volledigeNaam": "9180 MOERBEKE-WAAS (Moerbeke)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9185",
+    "deelgemeente": "Wachtebeke",
+    "gemeente": "Wachtebeke",
+    "volledigeNaam": "9185 Wachtebeke (Wachtebeke)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9190",
+    "deelgemeente": "Kemzeke",
+    "gemeente": "Stekene",
+    "volledigeNaam": "9190 Kemzeke (Stekene)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9200",
+    "deelgemeente": "Appels",
+    "gemeente": "Dendermonde",
+    "volledigeNaam": "9200 Appels (Dendermonde)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9220",
+    "deelgemeente": "Hamme",
+    "gemeente": "Hamme",
+    "volledigeNaam": "9220 Hamme (Hamme)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9230",
+    "deelgemeente": "Massemen",
+    "gemeente": "Wetteren",
+    "volledigeNaam": "9230 Massemen (Wetteren)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9240",
+    "deelgemeente": "Zele",
+    "gemeente": "Zele",
+    "volledigeNaam": "9240 Zele (Zele)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9250",
+    "deelgemeente": "Waasmunster",
+    "gemeente": "Waasmunster",
+    "volledigeNaam": "9250 Waasmunster (Waasmunster)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9255",
+    "deelgemeente": "Buggenhout",
+    "gemeente": "Buggenhout",
+    "volledigeNaam": "9255 Buggenhout (Buggenhout)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9260",
+    "deelgemeente": "Schellebelle",
+    "gemeente": "Wichelen",
+    "volledigeNaam": "9260 Schellebelle (Wichelen)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9270",
+    "deelgemeente": "Kalken",
+    "gemeente": "Laarne",
+    "volledigeNaam": "9270 Kalken (Laarne)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9280",
+    "deelgemeente": "Denderbelle",
+    "gemeente": "Lebbeke",
+    "volledigeNaam": "9280 Denderbelle (Lebbeke)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9290",
+    "deelgemeente": "Berlare",
+    "gemeente": "Berlare",
+    "volledigeNaam": "9290 Berlare (Berlare)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9300",
+    "deelgemeente": "Aalst",
+    "gemeente": "Aalst",
+    "volledigeNaam": "9300 Aalst (Aalst)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9308",
+    "deelgemeente": "Gijzegem",
+    "gemeente": "Aalst",
+    "volledigeNaam": "9308 Gijzegem (Aalst)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9310",
+    "deelgemeente": "Baardegem",
+    "gemeente": "Aalst",
+    "volledigeNaam": "9310 Baardegem (Aalst)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9320",
+    "deelgemeente": "Erembodegem",
+    "gemeente": "Aalst",
+    "volledigeNaam": "9320 Erembodegem (Aalst)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9340",
+    "deelgemeente": "Impe",
+    "gemeente": "Lede",
+    "volledigeNaam": "9340 Impe (Lede)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9400",
+    "deelgemeente": "Appelterre-Eichem",
+    "gemeente": "Ninove",
+    "volledigeNaam": "9400 Appelterre-Eichem (Ninove)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9401",
+    "deelgemeente": "Pollare",
+    "gemeente": "Ninove",
+    "volledigeNaam": "9401 Pollare (Ninove)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9402",
+    "deelgemeente": "Meerbeke",
+    "gemeente": "Ninove",
+    "volledigeNaam": "9402 Meerbeke (Ninove)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9403",
+    "deelgemeente": "Neigem",
+    "gemeente": "Ninove",
+    "volledigeNaam": "9403 Neigem (Ninove)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9404",
+    "deelgemeente": "Aspelare",
+    "gemeente": "Ninove",
+    "volledigeNaam": "9404 Aspelare (Ninove)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9406",
+    "deelgemeente": "Outer",
+    "gemeente": "Ninove",
+    "volledigeNaam": "9406 Outer (Ninove)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9420",
+    "deelgemeente": "Aaigem",
+    "gemeente": "Erpe-Mere",
+    "volledigeNaam": "9420 Aaigem (Erpe-Mere)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9450",
+    "deelgemeente": "Denderhoutem",
+    "gemeente": "Haaltert",
+    "volledigeNaam": "9450 Denderhoutem (Haaltert)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9451",
+    "deelgemeente": "Kerksken",
+    "gemeente": "Haaltert",
+    "volledigeNaam": "9451 Kerksken (Haaltert)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9470",
+    "deelgemeente": "Denderleeuw",
+    "gemeente": "Denderleeuw",
+    "volledigeNaam": "9470 Denderleeuw (Denderleeuw)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9472",
+    "deelgemeente": "Iddergem",
+    "gemeente": "Denderleeuw",
+    "volledigeNaam": "9472 Iddergem (Denderleeuw)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9473",
+    "deelgemeente": "Welle",
+    "gemeente": "Denderleeuw",
+    "volledigeNaam": "9473 Welle (Denderleeuw)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9500",
+    "deelgemeente": "Geraardsbergen",
+    "gemeente": "Geraardsbergen",
+    "volledigeNaam": "9500 Geraardsbergen (Geraardsbergen)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9506",
+    "deelgemeente": "Grimminge",
+    "gemeente": "Geraardsbergen",
+    "volledigeNaam": "9506 Grimminge (Geraardsbergen)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9520",
+    "deelgemeente": "Bavegem",
+    "gemeente": "Sint-Lievens-Houtem",
+    "volledigeNaam": "9520 Bavegem (Sint-Lievens-Houtem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9521",
+    "deelgemeente": "Letterhoutem",
+    "gemeente": "Sint-Lievens-Houtem",
+    "volledigeNaam": "9521 Letterhoutem (Sint-Lievens-Houtem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9550",
+    "deelgemeente": "Herzele",
+    "gemeente": "Herzele",
+    "volledigeNaam": "9550 Herzele (Herzele)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9551",
+    "deelgemeente": "Ressegem",
+    "gemeente": "Herzele",
+    "volledigeNaam": "9551 Ressegem (Herzele)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9552",
+    "deelgemeente": "Borsbeke",
+    "gemeente": "Herzele",
+    "volledigeNaam": "9552 Borsbeke (Herzele)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9570",
+    "deelgemeente": "Deftinge",
+    "gemeente": "Lierde",
+    "volledigeNaam": "9570 Deftinge (Lierde)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9571",
+    "deelgemeente": "Hemelveerdegem",
+    "gemeente": "Lierde",
+    "volledigeNaam": "9571 Hemelveerdegem (Lierde)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9572",
+    "deelgemeente": "Sint-Martens-Lierde",
+    "gemeente": "Lierde",
+    "volledigeNaam": "9572 Sint-Martens-Lierde (Lierde)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9600",
+    "deelgemeente": "Ronse",
+    "gemeente": "Ronse",
+    "volledigeNaam": "9600 Ronse (Ronse)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9620",
+    "deelgemeente": "Elene",
+    "gemeente": "Zottegem",
+    "volledigeNaam": "9620 Elene (Zottegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9630",
+    "deelgemeente": "Beerlegem",
+    "gemeente": "Zwalm",
+    "volledigeNaam": "9630 Beerlegem (Zwalm)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9636",
+    "deelgemeente": "Nederzwalm-Hermelgem",
+    "gemeente": "Zwalm",
+    "volledigeNaam": "9636 Nederzwalm-Hermelgem (Zwalm)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9660",
+    "deelgemeente": "Brakel",
+    "gemeente": "Brakel",
+    "volledigeNaam": "9660 Brakel (Brakel)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9661",
+    "deelgemeente": "Parike",
+    "gemeente": "Brakel",
+    "volledigeNaam": "9661 Parike (Brakel)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9667",
+    "deelgemeente": "Horebeke",
+    "gemeente": "Horebeke",
+    "volledigeNaam": "9667 Horebeke (Horebeke)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9680",
+    "deelgemeente": "Etikhove",
+    "gemeente": "Maarkedal",
+    "volledigeNaam": "9680 Etikhove (Maarkedal)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9681",
+    "deelgemeente": "Nukerke",
+    "gemeente": "Maarkedal",
+    "volledigeNaam": "9681 Nukerke (Maarkedal)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9688",
+    "deelgemeente": "Schorisse",
+    "gemeente": "Maarkedal",
+    "volledigeNaam": "9688 Schorisse (Maarkedal)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9690",
+    "deelgemeente": "Berchem",
+    "gemeente": "Kluisbergen",
+    "volledigeNaam": "9690 Berchem (Kluisbergen)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9700",
+    "deelgemeente": "Bevere",
+    "gemeente": "Oudenaarde",
+    "volledigeNaam": "9700 Bevere (Oudenaarde)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9750",
+    "deelgemeente": "Huise",
+    "gemeente": "Kruisem",
+    "volledigeNaam": "9750 Huise (Kruisem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9770",
+    "deelgemeente": "Kruisem",
+    "gemeente": "Kruisem",
+    "volledigeNaam": "9770 Kruisem (Kruisem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9771",
+    "deelgemeente": "Nokere",
+    "gemeente": "Kruisem",
+    "volledigeNaam": "9771 Nokere (Kruisem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9772",
+    "deelgemeente": "Wannegem-Lede",
+    "gemeente": "Kruisem",
+    "volledigeNaam": "9772 Wannegem-Lede (Kruisem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9790",
+    "deelgemeente": "Elsegem",
+    "gemeente": "Wortegem-Petegem",
+    "volledigeNaam": "9790 Elsegem (Wortegem-Petegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9800",
+    "deelgemeente": "Astene",
+    "gemeente": "Deinze",
+    "volledigeNaam": "9800 Astene (Deinze)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9810",
+    "deelgemeente": "Eke",
+    "gemeente": "Nazareth",
+    "volledigeNaam": "9810 Eke (Nazareth)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9820",
+    "deelgemeente": "Bottelare",
+    "gemeente": "Merelbeke",
+    "volledigeNaam": "9820 Bottelare (Merelbeke)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9830",
+    "deelgemeente": "Sint-Martens-Latem",
+    "gemeente": "Sint-Martens-Latem",
+    "volledigeNaam": "9830 Sint-Martens-Latem (Sint-Martens-Latem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9831",
+    "deelgemeente": "Deurle",
+    "gemeente": "Sint-Martens-Latem",
+    "volledigeNaam": "9831 Deurle (Sint-Martens-Latem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9840",
+    "deelgemeente": "De Pinte",
+    "gemeente": "De Pinte",
+    "volledigeNaam": "9840 De Pinte (De Pinte)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9850",
+    "deelgemeente": "Hansbeke",
+    "gemeente": "Deinze",
+    "volledigeNaam": "9850 Hansbeke (Deinze)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9860",
+    "deelgemeente": "Balegem",
+    "gemeente": "Oosterzele",
+    "volledigeNaam": "9860 Balegem (Oosterzele)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9870",
+    "deelgemeente": "Machelen",
+    "gemeente": "Zulte",
+    "volledigeNaam": "9870 Machelen (Zulte)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9880",
+    "deelgemeente": "Aalter",
+    "gemeente": "Aalter",
+    "volledigeNaam": "9880 Aalter (Aalter)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9881",
+    "deelgemeente": "Bellem",
+    "gemeente": "Aalter",
+    "volledigeNaam": "9881 Bellem (Aalter)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9890",
+    "deelgemeente": "Asper",
+    "gemeente": "Gavere",
+    "volledigeNaam": "9890 Asper (Gavere)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9900",
+    "deelgemeente": "Eeklo",
+    "gemeente": "Eeklo",
+    "volledigeNaam": "9900 Eeklo (Eeklo)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9910",
+    "deelgemeente": "Knesselare",
+    "gemeente": "Aalter",
+    "volledigeNaam": "9910 Knesselare (Aalter)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9920",
+    "deelgemeente": "Lovendegem",
+    "gemeente": "Lievegem",
+    "volledigeNaam": "9920 Lovendegem (Lievegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9921",
+    "deelgemeente": "Vinderhoute",
+    "gemeente": "Lievegem",
+    "volledigeNaam": "9921 Vinderhoute (Lievegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9930",
+    "deelgemeente": "Lievegem",
+    "gemeente": "Lievegem",
+    "volledigeNaam": "9930 Lievegem (Lievegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9931",
+    "deelgemeente": "Oostwinkel",
+    "gemeente": "Lievegem",
+    "volledigeNaam": "9931 Oostwinkel (Lievegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9932",
+    "deelgemeente": "Ronsele",
+    "gemeente": "Lievegem",
+    "volledigeNaam": "9932 Ronsele (Lievegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9940",
+    "deelgemeente": "Ertvelde",
+    "gemeente": "Evergem",
+    "volledigeNaam": "9940 Ertvelde (Evergem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9950",
+    "deelgemeente": "Waarschoot",
+    "gemeente": "Lievegem",
+    "volledigeNaam": "9950 Waarschoot (Lievegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9960",
+    "deelgemeente": "Assenede",
+    "gemeente": "Assenede",
+    "volledigeNaam": "9960 Assenede (Assenede)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9961",
+    "deelgemeente": "Boekhoute",
+    "gemeente": "Assenede",
+    "volledigeNaam": "9961 Boekhoute (Assenede)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9968",
+    "deelgemeente": "Bassevelde",
+    "gemeente": "Assenede",
+    "volledigeNaam": "9968 Bassevelde (Assenede)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9970",
+    "deelgemeente": "Kaprijke",
+    "gemeente": "Kaprijke",
+    "volledigeNaam": "9970 Kaprijke (Kaprijke)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9971",
+    "deelgemeente": "Lembeke",
+    "gemeente": "Kaprijke",
+    "volledigeNaam": "9971 Lembeke (Kaprijke)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9980",
+    "deelgemeente": "Sint-Laureins",
+    "gemeente": "Sint-Laureins",
+    "volledigeNaam": "9980 Sint-Laureins (Sint-Laureins)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9981",
+    "deelgemeente": "Sint-Margriete",
+    "gemeente": "Sint-Laureins",
+    "volledigeNaam": "9981 Sint-Margriete (Sint-Laureins)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9982",
+    "deelgemeente": "Sint-Jan-In-Eremo",
+    "gemeente": "Sint-Laureins",
+    "volledigeNaam": "9982 Sint-Jan-In-Eremo (Sint-Laureins)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9988",
+    "deelgemeente": "Waterland-Oudeman",
+    "gemeente": "Sint-Laureins",
+    "volledigeNaam": "9988 Waterland-Oudeman (Sint-Laureins)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9990",
+    "deelgemeente": "Maldegem",
+    "gemeente": "Maldegem",
+    "volledigeNaam": "9990 Maldegem (Maldegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9991",
+    "deelgemeente": "Adegem",
+    "gemeente": "Maldegem",
+    "volledigeNaam": "9991 Adegem (Maldegem)",
+    "provincieId": 11
+  },
+  {
+    "postcode": "9992",
+    "deelgemeente": "Middelburg",
+    "gemeente": "Maldegem",
+    "volledigeNaam": "9992 Middelburg (Maldegem)",
+    "provincieId": 11
+  }
+]

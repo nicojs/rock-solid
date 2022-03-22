@@ -8,13 +8,14 @@
   "scripts": {
     "prisma:client:generate": "prisma generate",
     "prisma:migrate:create": "prisma migrate dev --name ",
+    "prisma:push:force": "npm run prisma:push -- --force-reset",
     "prisma:push": "prisma db push",
     "prisma:seed": "prisma db seed",
     "start": "nodemon --inspect -r dotenv/config -r source-map-support/register dist/src/main.js",
     "test": "mocha"
   },
   "prisma": {
-    "seed": "node dist/seed/persoon.seed.js"
+    "seed": "node dist/seed/all.seed.js"
   },
   "dependencies": {
     "@kei-crm/frontend": "0.1.0",

@@ -9,6 +9,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { pluralize, show } from '../shared/utility.pipes';
 import { fullName } from './full-name.pipe';
+import { plaatsName } from '../forms/plaats.pipes';
 
 @customElement('kei-personen-list')
 export class PersonenComponent extends LitElement {
@@ -41,6 +42,7 @@ export class PersonenComponent extends LitElement {
           <th>Geslacht</th>
           <th>Telefoonnummer</th>
           <th>Gsm</th>
+          <th>Woonplaats</th>
           <th>Acties</th>
         </tr>
       </thead>
@@ -60,6 +62,7 @@ export class PersonenComponent extends LitElement {
             <td>${show(persoon.geslacht)}</td>
             <td>${show(persoon.telefoonnummer)}</td>
             <td>${show(persoon.gsmNummer)}</td>
+            <td>${plaatsName(persoon.adres.plaats)}</td>
             <td>
               <kei-link btn btnSecondary href="../edit/${persoon.id}"
                 ><kei-icon icon="pencil"></kei-icon

@@ -1,26 +1,52 @@
 import * as db from '@prisma/client';
+import { Adres } from '@prisma/client';
 
-async function main() {
-  const client = new db.PrismaClient();
-  try {
-    await client.$connect();
-    await client.persoon.createMany({
-      data: manVoornamen.map((firstName, index) => ({
-        achternaam: achternamen[index % achternamen.length]!,
-        voornaam: firstName,
-        geslacht: 'man' as const,
-      })),
-    });
-    await client.persoon.createMany({
-      data: vrouwVoornamen.map((firstName, index) => ({
-        achternaam: achternamen[index % achternamen.length]!,
-        voornaam: firstName,
-        geslacht: 'man' as const,
-      })),
-    });
-  } finally {
-    await client.$disconnect();
+export async function seedPersonen(client: db.PrismaClient) {
+  const adressen: Adres[] = [];
+
+  const plaatsenCount = await client.plaats.count();
+
+  for (let i = 0; i < 100; i++) {
+    for (const straatnaam of straatnamen) {
+      adressen.push(
+        await client.adres.create({
+          data: {
+            huisnummer: Math.floor(Math.random() * 123).toString(),
+            straatnaam,
+            plaats: {
+              connect: { id: Math.floor(Math.random() * plaatsenCount) },
+            },
+          },
+        }),
+      );
+    }
   }
+
+  await client.persoon.createMany({
+    data: manVoornamen.map((voornaam, index) => {
+      const achternaam = achternamen[index % achternamen.length]!;
+      return {
+        achternaam,
+        voornaam,
+        volledigeNaam: `${voornaam} ${achternaam}`,
+        geslacht: 'man' as const,
+        adresId: adressen[index % adressen.length]!.id,
+      };
+    }),
+  });
+  await client.persoon.createMany({
+    data: vrouwVoornamen.map((voornaam, index) => {
+      const achternaam = achternamen[index % achternamen.length]!;
+      return {
+        achternaam,
+        voornaam,
+        volledigeNaam: `${voornaam} ${achternaam}`,
+        geslacht: 'man' as const,
+        adresId: adressen[index % adressen.length]!.id,
+      };
+    }),
+  });
+  console.log(`Seeded ${manVoornamen.length + vrouwVoornamen.length} personen`);
 }
 
 const manVoornamen = [
@@ -330,7 +356,4 @@ const achternamen = [
   'Verbeek',
 ];
 
-main().catch((err) => {
-  console.error(err);
-  process.exitCode = 1;
-});
+const straatnamen = ['Veldstraat', 'Loverslane', 'Steenweg', 'Fakestreet'];

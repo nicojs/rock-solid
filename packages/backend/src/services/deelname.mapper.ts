@@ -29,7 +29,7 @@ export class DeelnameMapper {
         },
       },
       include: {
-        deelnemer: true,
+        deelnemer: { include: { adres: { include: { plaats: true } } } },
       },
     });
     return deelnames.map(toDeelname);
@@ -61,7 +61,11 @@ export class DeelnameMapper {
 }
 
 interface DeelnameQueryResult extends db.Deelname {
-  deelnemer: db.Persoon;
+  deelnemer: db.Persoon & {
+    adres: db.Adres & {
+      plaats: db.Plaats;
+    };
+  };
 }
 
 function toDBDeelname(

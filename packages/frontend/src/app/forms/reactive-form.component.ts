@@ -1,6 +1,5 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { InputType } from '.';
 import { bootstrap } from '../../styles';
 import { FormControl } from './form-control';
 
@@ -27,16 +26,10 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
       @submit="${this.submit}"
     >
       ${this.controls?.map((control) => {
-        if (control.type === InputType.group) {
-          return html`<kei-reactive-form-group
-            .control=${control}
-            .entity=${this.entity}
-          ></kei-reactive-form-group>`;
-        }
         return html`<kei-reactive-form-control
-          .control="${control}"
-          .entity="${this.entity}"
-        ></kei-reactive-form-control>`;
+              .control=${control}
+              .entity=${this.entity}
+            ></kei-reactive-form-array>`;
       })}
       <div class="row">
         <div class=" offset-lg-2 offset-md-4">

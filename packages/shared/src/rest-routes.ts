@@ -8,6 +8,7 @@ import {
 import { Inschrijving } from './inschrijving';
 import { Organisatie, UpsertableOrganisatie } from './organisatie';
 import { Persoon, UpsertablePersoon } from './persoon';
+import { Plaats, PlaatsFilter } from './adres';
 import { Project, UpsertableProject } from './project';
 
 export type EntityFrom<TRoute extends keyof RestRoutes> =
@@ -36,6 +37,11 @@ type TopRoutes = {
     entity: Organisatie;
     upsertableEntity: UpsertableOrganisatie;
     filter: OrganisatieFilter;
+  };
+  plaatsen: {
+    entity: Plaats;
+    upsertableEntity: Plaats;
+    filter: PlaatsFilter;
   };
 };
 

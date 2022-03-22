@@ -11,6 +11,8 @@ import { InschrijvingMapper } from './services/inschrijving.mapper';
 import { DeelnameMapper } from './services/deelname.mapper';
 import { OrganisatieMapper } from './services/organisatie.mapper';
 import { OrganisatiesController } from './organisaties.controller';
+import { PlaatsMapper } from './services/plaats.mapper';
+import { PlaatsenController } from './plaatsen.controller';
 
 const rootPath = path.resolve(
   __dirname,
@@ -32,11 +34,13 @@ const rootPath = path.resolve(
     PersonenController,
     ProjectenController,
     OrganisatiesController,
+    PlaatsenController,
   ],
   providers: [
     PersoonMapper,
     ProjectMapper,
     InschrijvingMapper,
+    PlaatsMapper,
     OrganisatieMapper,
     DeelnameMapper,
     DBService,

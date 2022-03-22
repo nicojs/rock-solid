@@ -8,7 +8,7 @@ import {
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { FormControl, formGroup, InputControl, InputType } from '../forms';
+import { FormControl, formArray, InputControl, InputType } from '../forms';
 import { printProject } from './project.pipes';
 
 @customElement('kei-project-edit')
@@ -94,5 +94,5 @@ const cursusProjectControls: FormControl<Cursus>[] = [
     type: InputType.checkbox,
     label: 'Met overnachting',
   },
-  formGroup('activiteiten', activiteitenControls),
+  formArray('activiteiten', activiteitenControls),
 ];

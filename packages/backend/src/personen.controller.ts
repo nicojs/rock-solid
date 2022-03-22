@@ -54,14 +54,14 @@ export class PersonenController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() persoon: UpsertablePersoon) {
-    return this.persoonService.createUser(persoon);
+    return this.persoonService.createPersoon(persoon);
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param('id') id: string,
-    @Body() persoon: UpsertablePersoon,
+    @Body() persoon: Persoon,
   ): Promise<void> {
     await this.persoonService.updateUser({ where: { id: +id }, data: persoon });
   }

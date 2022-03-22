@@ -5,8 +5,13 @@ import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
 import { fullName } from '../personen/full-name.pipe';
-import { pluralize, showBoolean, showDatum } from '../shared';
-import { TypeAheadHint } from '../shared/autocomplete.component';
+import {
+  TypeAheadHint,
+  AutocompleteComponent,
+  pluralize,
+  showBoolean,
+  showDatum,
+} from '../shared';
 import { router } from '../router';
 import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
 
@@ -151,18 +156,17 @@ export class ProjectInschrijvingenComponent extends LitElement {
               value: persoon.id,
             })),
           )}"
-      .submitAction="${(hint: TypeAheadHint) => {
-        return projectService
-          .createInschrijving(this.project.id, {
-            persoonId: +hint.value,
+      @submit="${async (event: CustomEvent<TypeAheadHint>) => {
+        const target = event.target as AutocompleteComponent;
+        const inschrijving = await projectService.createInschrijving(
+          this.project.id,
+          {
+            persoonId: +event.detail.value,
             projectId: this.project.id,
-          })
-          .then((inschrijving) => {
-            this.inschrijvingen = [
-              ...(this.inschrijvingen ?? []),
-              inschrijving,
-            ];
-          });
+          },
+        );
+        this.inschrijvingen = [...(this.inschrijvingen ?? []), inschrijving];
+        target.clear();
       }}"
     ></kei-autocomplete>`;
   }

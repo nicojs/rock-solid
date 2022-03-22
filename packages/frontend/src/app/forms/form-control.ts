@@ -1,4 +1,7 @@
+import { Plaats } from '@kei-crm/shared';
+
 export enum InputType {
+  // Native input types:
   text = 'text',
   number = 'number',
   email = 'email',
@@ -7,7 +10,13 @@ export enum InputType {
   checkbox = 'checkbox',
   select = 'select',
   date = 'date',
+
+  // Grouping types:
+  array = 'array',
   group = 'group',
+
+  // Custom types:
+  plaats = 'plaats',
 }
 
 interface Validators {
@@ -25,13 +34,14 @@ export const patterns = Object.freeze({
 
 export type FormControl<TEntity> =
   | InputControl<TEntity>
-  | FormGroup<TEntity, any, any>;
+  | FormArray<TEntity, any, any>
+  | FormGroup<TEntity, any>
+  | PlaatsControl<TEntity>;
 
-export function formGroup<
-  TEntity,
-  TItem,
-  TKey extends KeysOfType<TEntity, Array<TItem>>,
->(name: TKey, controls: FormControl<TItem>[]): FormGroup<TEntity, TItem, TKey> {
+export function formGroup<TEntity, TKey extends keyof TEntity & string>(
+  name: TKey,
+  controls: FormControl<TEntity[TKey]>[],
+): FormGroup<TEntity, TKey> {
   return {
     name,
     type: InputType.group,
@@ -39,14 +49,38 @@ export function formGroup<
   };
 }
 
-export interface FormGroup<
+export function formArray<
+  TEntity,
+  TItem,
+  TKey extends KeysOfType<TEntity, Array<TItem>>,
+>(name: TKey, controls: FormControl<TItem>[]): FormArray<TEntity, TItem, TKey> {
+  return {
+    name,
+    type: InputType.array,
+    controls,
+  };
+}
+
+export interface FormArray<
   TEntity,
   TItem,
   TKey extends KeysOfType<TEntity, TItem[]>,
 > {
-  type: InputType.group;
+  type: InputType.array;
   name: TKey;
   controls: FormControl<TItem>[];
+}
+
+export interface FormGroup<TEntity, TKey extends keyof TEntity> {
+  type: InputType.group;
+  name: TKey;
+  controls: FormControl<TEntity[TKey]>[];
+}
+
+export interface PlaatsControl<TEntity> {
+  name: KeysOfType<TEntity, Plaats>;
+  type: InputType.plaats;
+  label?: string;
 }
 
 export type InputControl<TEntity> =
@@ -65,9 +99,12 @@ export interface BaseInputControl {
   placeholder?: string;
 }
 
-export type KeysOfType<TEntity, TValue> = {
-  [K in keyof TEntity & string]-?: TValue extends TEntity[K] ? K : never;
-}[keyof TEntity & string];
+export type KeysOfType<TEntity, TValue> = keyof {
+  [K in keyof TEntity & string as NonNullable<TEntity[K]> extends TValue
+    ? K
+    : never]: TEntity[K];
+} &
+  string;
 
 type KeysOfEnums<TEntity> = {
   [K in keyof Required<TEntity> & string]: Required<TEntity>[K] extends

@@ -51,6 +51,8 @@ export function pluralize(val: string) {
       return 'cursussen';
     case 'overigPersoon':
       return 'overige personen';
+    case 'plaats':
+      return 'plaatsen';
     default:
       return `${val}s`;
   }

@@ -4,9 +4,10 @@
     "outDir": "./dist",
     "lib": ["ES2020"],
     "rootDir": ".",
-    "types": ["node"]
+    "types": ["node"],
+    "resolveJsonModule": true,
   },
-  "include": ["src/**/*.ts", "seed/**/*.ts"],
+  "include": ["src/**/*.ts", "seed/**/*.ts", "seed/**/*.json"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [ { "path": "../shared" } ],
 }

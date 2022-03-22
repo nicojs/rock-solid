@@ -1,9 +1,11 @@
+import { Adres, UpsertableAdres } from './adres';
 import { Options } from './options';
 import { Upsertable } from './upsertable';
 
 export interface BasePersoon {
   id: number;
   type: PersoonType;
+  adres: Adres;
   voornaam?: string;
   achternaam: string;
   emailadres?: string;
@@ -16,9 +18,19 @@ export interface BasePersoon {
   gsmNummer?: string;
 }
 
-export type UpsertablePersoon = UpsertableDeelnemer | UpsertableVrijwilliger;
-export type UpsertableDeelnemer = Upsertable<Deelnemer, 'achternaam'>;
-export type UpsertableVrijwilliger = Upsertable<OverigPersoon, 'achternaam'>;
+export type UpsertablePersoon = UpsertableDeelnemer | UpsertableOverigPersoon;
+export type UpsertableDeelnemer = Omit<
+  Upsertable<Deelnemer, 'achternaam'>,
+  'adres'
+> & {
+  adres: UpsertableAdres;
+};
+export type UpsertableOverigPersoon = Omit<
+  Upsertable<OverigPersoon, 'achternaam'>,
+  'adres'
+> & {
+  adres: UpsertableAdres;
+};
 export type Persoon = Deelnemer | OverigPersoon;
 
 export interface PersoonTextFilter {
@@ -62,6 +74,7 @@ export const persoonLabels: Record<keyof Persoon, string> = {
   id: 'id',
   achternaam: 'Achternaam',
   emailadres: 'Emailadres',
+  adres: 'Adres',
   geboortedatum: 'Geboortedatum',
   geboorteplaats: 'Geboorteplaats',
   geslacht: 'Geslacht',

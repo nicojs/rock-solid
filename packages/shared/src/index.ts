@@ -9,3 +9,4 @@ export * from './inschrijving';
 export * from './deelname';
 export * from './paging';
 export * from './organisatie';
+export * from './adres';

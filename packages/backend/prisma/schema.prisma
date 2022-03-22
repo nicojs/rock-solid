@@ -12,19 +12,23 @@ generator client {
 
 model Persoon {
   id                  Int            @id @default(autoincrement())
-  voornaam            String?        @db.VarChar(255)
-  achternaam          String         @db.VarChar(255)
-  emailadres          String?        @db.VarChar(255)
+  voornaam            String?        @db.VarChar(128)
+  achternaam          String         @db.VarChar(128)
+  volledigeNaam       String         @db.VarChar(256)
+  emailadres          String?        @db.VarChar(256)
+  adresId             Int
+  adres               Adres          @relation(fields: [adresId], references: [id])
   geboortedatum       DateTime?      @db.Date
-  geboorteplaats      String?        @db.VarChar(255)
+  geboorteplaats      String?        @db.VarChar(256)
   geslacht            Geslacht       @default(onbekend)
-  rekeningnummer      String?        @db.VarChar(255)
-  rijksregisternummer String?        @db.VarChar(255)
-  telefoonnummer      String?        @db.VarChar(255)
-  gsmNummer           String?        @db.VarChar(255)
+  rekeningnummer      String?        @db.VarChar(256)
+  rijksregisternummer String?        @db.VarChar(256)
+  telefoonnummer      String?        @db.VarChar(256)
+  gsmNummer           String?        @db.VarChar(256)
   // communicatievoorkeur Communicatievoorkeur @default(post)
   type                PersoonType    @default(deelnemer)
   inschrijving        Inschrijving[]
+
 
   // Deelnemer
   woonsituatie          Woonsituatie     @default(onbekend)
@@ -44,6 +48,33 @@ model Persoon {
   @@map("persoon")
 }
 
+model Adres {
+  id         Int     @id @default(autoincrement())
+  plaats     Plaats  @relation(fields: [plaatsId], references: [id])
+  straatnaam String  @db.VarChar(64)
+  huisnummer String  @db.VarChar(10)
+  busnummer  String? @db.VarChar(10)
+  plaatsId   Int
+
+  Persoon Persoon[]
+  @@map("adres")
+}
+
+model Plaats {
+  id            Int    @id @default(autoincrement())
+  deelgemeente  String @db.VarChar(256)
+  gemeente      String @db.VarChar(256)
+  postcode      String @unique @db.VarChar(10)
+  volledigeNaam String @db.VarChar(256)
+  provincieId   Int
+
+  Adres Adres[]
+  @@index(deelgemeente)
+  @@index(gemeente)
+  @@index(provincieId)
+  @@map("plaats")
+}
+
 model Contactpersoon {
   id             Int     @id @default(autoincrement())
   deelnemer      Persoon @relation(fields: [deelnemerId], references: [id])
@@ -55,9 +86,9 @@ model Contactpersoon {
 
 model Project {
   id            Int         @id @default(autoincrement())
-  projectnummer String      @unique @db.VarChar(255)
+  projectnummer String      @unique @db.VarChar(256)
   type          ProjectType
-  naam          String      @db.VarChar(255)
+  naam          String      @db.VarChar(256)
 
   // Cursus
   organisatieonderdeel Organisatieonderdeel?
@@ -74,7 +105,7 @@ model Inschrijving {
   project   Project @relation(fields: [projectId], references: [id])
   persoonId Int
   persoon   Persoon @relation(fields: [persoonId], references: [id])
-  opmerking String? @db.VarChar(255)
+  opmerking String? @db.VarChar(256)
 
   tijdstipVanInschrijving        DateTime  @default(now())
   tijdstipVanAnnuleren           DateTime?
@@ -111,13 +142,13 @@ model Deelname {
 
 model Organisatie {
   id                   Int                   @id @default(autoincrement())
-  naam                 String                @unique @db.VarChar(255)
-  terAttentieVan       String?               @db.VarChar(255)
-  emailadres           String?               @db.VarChar(255)
-  opmerking            String?               @db.VarChar(255)
+  naam                 String                @unique @db.VarChar(256)
+  terAttentieVan       String?               @db.VarChar(256)
+  emailadres           String?               @db.VarChar(256)
+  opmerking            String?               @db.VarChar(256)
   doelgroep            Doelgroep
   telefoonnummer       String?
-  website              String?               @db.VarChar(255)
+  website              String?               @db.VarChar(256)
   folderVoorkeur       FolderSelectie[]
   communicatieVoorkeur CommunicatieVoorkeur?
 }

@@ -152,9 +152,9 @@ export class PersonenComponent extends LitElement {
                 ></kei-paging> `
             : html`<kei-loading></kei-loading>`}`;
       case 'new':
-        const persoon: UpsertablePersoon = {
+        const persoon = {
           type: this.type,
-          achternaam: '',
+          adres: {},
         };
         return html` <h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading

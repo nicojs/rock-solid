@@ -2,15 +2,16 @@ import { css, html, LitElement } from 'lit';
 import { ref, createRef } from 'lit/directives/ref.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { debounceTime, filter, fromEvent, map, switchMap, tap } from 'rxjs';
+import { debounceTime, fromEvent, map, switchMap, tap } from 'rxjs';
 import { escapeRegExp } from '@kei-crm/shared';
+import { pluralize } from './utility.pipes';
 
 interface TypeAheadTextPart {
   text: string;
   highlighted: boolean;
 }
-export interface TypeAheadHint {
-  value: number | string;
+export interface TypeAheadHint<TValue = number | string> {
+  value: TValue;
   text: string;
 }
 const minCharacters = 2;
@@ -18,6 +19,10 @@ const minCharacters = 2;
 @customElement('kei-autocomplete')
 export class AutocompleteComponent extends LitElement {
   private searchRef = createRef<HTMLInputElement>();
+
+  get searchInput(): HTMLInputElement {
+    return this.searchRef.value!;
+  }
 
   static override styles = [
     bootstrap,
@@ -36,8 +41,11 @@ export class AutocompleteComponent extends LitElement {
   @property({ attribute: false })
   public searchAction!: (text: string) => Promise<TypeAheadHint[]>;
 
-  @property({ attribute: false })
-  public submitAction!: (selected: TypeAheadHint) => Promise<void>;
+  @property()
+  public textValue = '';
+
+  @property()
+  public entityName?: string;
 
   @state()
   private isLoading = false;
@@ -55,7 +63,6 @@ export class AutocompleteComponent extends LitElement {
   }
 
   override firstUpdated() {
-    const input = this.searchRef.value as HTMLInputElement;
     fromEvent(this, 'focus').subscribe(() => {
       this.typeAheadShow = true;
     });
@@ -68,46 +75,52 @@ export class AutocompleteComponent extends LitElement {
         this.charactersRemaining = undefined;
       }
     };
-    updateTypeAheadState(input.value);
+    updateTypeAheadState(this.searchInput.value);
 
-    fromEvent<KeyboardEvent>(input, 'keydown').subscribe((keydown) => {
-      if (this.hints) {
+    fromEvent<KeyboardEvent>(this.searchInput, 'keydown').subscribe(
+      (keydown) => {
         switch (keydown.key) {
           case 'ArrowUp':
-            this.hintSelectedIndex--;
+            if (this.hints) {
+              this.hintSelectedIndex--;
+            }
             break;
           case 'ArrowDown':
-            this.hintSelectedIndex++;
+            if (this.hints) {
+              this.hintSelectedIndex++;
+            }
             break;
           case 'Enter':
             this.submit(this.selectedHint);
             break;
           case 'Escape':
-            input.blur();
+            console.log('blur');
+            this.searchInput.blur();
             break;
           default:
             console.log('key', keydown.key);
             break;
         }
-      }
-      if (this.hintSelectedIndex < 0) {
-        this.hintSelectedIndex = -1;
-      }
-      if (this.hints) {
-        if (this.hintSelectedIndex > this.hints.length) {
-          this.hintSelectedIndex = this.hints.length;
+        if (this.hintSelectedIndex < 0) {
+          this.hintSelectedIndex = -1;
         }
-      }
-    });
+        if (this.hints) {
+          if (this.hintSelectedIndex > this.hints.length) {
+            this.hintSelectedIndex = this.hints.length;
+          }
+        }
+      },
+    );
 
-    fromEvent(input, 'input')
+    fromEvent(this.searchInput, 'input')
       .pipe(
-        map(() => input.value),
+        map(() => this.searchInput.value),
         tap(updateTypeAheadState),
-        filter((search) => search.length >= minCharacters),
-        tap(() => (this.isLoading = true)),
+        tap((search) => (this.isLoading = search.length >= minCharacters)),
         debounceTime(200),
-        switchMap((val) => this.searchAction(val)),
+        switchMap(async (val) =>
+          val.length >= minCharacters ? this.searchAction(val) : undefined,
+        ),
         tap(() => (this.isLoading = false)),
       )
       .subscribe((hints) => (this.hints = hints));
@@ -115,17 +128,33 @@ export class AutocompleteComponent extends LitElement {
 
   private async hintClicked(event: MouseEvent, hint: TypeAheadHint) {
     event.preventDefault();
-    await this.submit(hint);
-    this.searchRef.value?.focus();
+    this.searchInput.focus();
+    this.submit(hint);
   }
 
-  private async submit(hint: TypeAheadHint | undefined) {
+  private submit(hint: TypeAheadHint | undefined) {
     if (hint) {
-      await this.submitAction(hint);
-      this.searchRef.value!.value = '';
-      const event = new InputEvent('input');
-      this.searchRef.value!.dispatchEvent(event);
+      const submitEvent = new CustomEvent('submit', {
+        bubbles: true,
+        composed: true,
+        detail: hint,
+      });
+      this.dispatchEvent(submitEvent);
     }
+  }
+
+  public override blur() {
+    this.searchInput.blur();
+  }
+
+  public clear() {
+    this.setSearchValue('');
+  }
+
+  public setSearchValue(value: string) {
+    this.searchInput.value = value;
+    const event = new InputEvent('input');
+    this.searchInput.dispatchEvent(event);
   }
 
   override render() {
@@ -135,6 +164,7 @@ export class AutocompleteComponent extends LitElement {
           <input
             type="email"
             class="form-control"
+            .value="${this.textValue}"
             id="searchPersoonInput"
             placeholder="${this.placeholder}"
             ${ref(this.searchRef)}
@@ -166,7 +196,10 @@ export class AutocompleteComponent extends LitElement {
         ${this.hints?.length === 0
           ? html`<li>
               <a class="dropdown-item disabled" href="#"
-                >Geen deelnemers gevonden</a
+                >Geen
+                ${this.entityName
+                  ? ` ${pluralize(this.entityName)}`
+                  : ''}gevonden</a
               >
             </li>`
           : ''}
@@ -188,7 +221,7 @@ export class AutocompleteComponent extends LitElement {
 
   private getHintParts(hint: TypeAheadHint): TypeAheadTextPart[] {
     const textParts: TypeAheadTextPart[] = [];
-    const re = new RegExp(escapeRegExp(this.searchRef.value!.value), 'ig');
+    const re = new RegExp(escapeRegExp(this.searchInput.value), 'ig');
     const matches = hint.text.matchAll(re);
     let offset = 0;
     if (matches) {

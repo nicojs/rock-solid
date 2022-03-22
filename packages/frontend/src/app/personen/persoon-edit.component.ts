@@ -11,7 +11,7 @@ import {
 } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { InputControl, InputType } from '../forms';
+import { FormControl, InputType, formGroup } from '../forms';
 
 @customElement('kei-persoon-edit')
 export class PersonenEditComponent extends LitElement {
@@ -40,7 +40,7 @@ export class PersonenEditComponent extends LitElement {
   }
 }
 
-const basePersoonFormControls: InputControl<BasePersoon>[] = [
+const basePersoonFormControls: FormControl<BasePersoon>[] = [
   {
     name: 'achternaam',
     label: 'Naam',
@@ -65,6 +65,20 @@ const basePersoonFormControls: InputControl<BasePersoon>[] = [
       max: new Date(new Date().getFullYear() - 5, 1, 1),
     },
   },
+  formGroup('adres', [
+    {
+      name: 'straatnaam',
+      type: InputType.text,
+      validators: { required: true },
+    },
+    {
+      name: 'huisnummer',
+      type: InputType.text,
+      validators: { required: true },
+    },
+    { name: 'plaats', type: InputType.plaats, label: 'Woonplaats' },
+    { name: 'busnummer', type: InputType.text },
+  ]),
   {
     name: 'gsmNummer',
     label: 'GSM',
@@ -95,7 +109,7 @@ const basePersoonFormControls: InputControl<BasePersoon>[] = [
   },
 ];
 
-const overigPersoonFormControls: InputControl<OverigPersoon>[] = [
+const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
   ...basePersoonFormControls,
   {
     name: 'vrijwilligerOpmerking',
@@ -112,7 +126,7 @@ const overigPersoonFormControls: InputControl<OverigPersoon>[] = [
   },
 ];
 
-const deelnemerFormControls: InputControl<Deelnemer>[] = [
+const deelnemerFormControls: FormControl<Deelnemer>[] = [
   ...basePersoonFormControls,
   {
     name: 'woonsituatie',
