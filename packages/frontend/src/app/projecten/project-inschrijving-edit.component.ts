@@ -17,7 +17,7 @@ export class ProjectInschrijvingEditComponent extends LitElement {
 
   public override render() {
     return html`<h2>
-        Inschrijving van ${fullName(this.inschrijving.persoon!)} voor
+        Inschrijving van ${fullName(this.inschrijving.deelnemer!)} voor
         ${this.project.id}
       </h2>
       <kei-reactive-form

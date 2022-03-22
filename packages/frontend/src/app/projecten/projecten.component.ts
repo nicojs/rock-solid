@@ -1,4 +1,9 @@
-import { Project, ProjectType, UpsertableProject } from '@kei-crm/shared';
+import {
+  Project,
+  ProjectType,
+  UpsertableProject,
+  Cursus,
+} from '@kei-crm/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -87,6 +92,9 @@ export class ProjectenComponent extends LitElement {
           type: 'cursus',
           activiteiten: [],
         };
+        if (this.type === 'cursus') {
+          (project as Cursus).organisatieonderdeel = 'deKei';
+        }
         return this.loading
           ? html`<kei-loading></kei-loading>`
           : html`<kei-project-edit

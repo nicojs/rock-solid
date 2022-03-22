@@ -49,3 +49,5 @@ export type UpsertableProject = Upsertable<
 > & {
   activiteiten: UpsertableActiviteit[];
 };
+
+export type ProjectFilter = Partial<Project>;

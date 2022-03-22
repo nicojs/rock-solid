@@ -2,6 +2,7 @@ import {
   Deelname,
   Inschrijving,
   Project,
+  ProjectFilter,
   UpsertableDeelname,
   UpsertableInschrijving,
   UpsertableProject,
@@ -11,7 +12,7 @@ import { restClient, RestClient } from '../shared/rest-client';
 export class ProjectService {
   constructor(private restClient: RestClient) {}
 
-  getAll(query: Partial<Project>): Promise<Project[]> {
+  getAll(query: ProjectFilter): Promise<Project[]> {
     return this.restClient.getAll('projecten', query);
   }
 

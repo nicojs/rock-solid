@@ -1,13 +1,142 @@
 import * as db from '@prisma/client';
 import { Adres } from '@prisma/client';
+import fs from 'fs/promises';
+import path from 'path';
+
+interface RawDeelnemer {
+  achternaam: string;
+  naam: string;
+  adres: string;
+  postcode: string;
+  gemeente: string;
+  geboortedatum: string;
+  'e-mail': string;
+  opmerkingen: string;
+  'laatste deelname': string;
+  instelling: string;
+}
+
+interface ImportError {
+  deelnemer: RawDeelnemer;
+  detail: string;
+}
+
+class ImportErrors {
+  errorsByCategory = new Map<string, ImportError[]>();
+  private _length = 0;
+  add(category: string, error: ImportError) {
+    const errors = this.errorsByCategory.get(category) ?? [];
+    this.errorsByCategory.set(category, errors);
+    errors.push(error);
+    this._length++;
+  }
+
+  get length() {
+    return this._length;
+  }
+
+  toJSON() {
+    return Object.fromEntries(this.errorsByCategory.entries());
+  }
+}
+
+const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
+const importErrors = new ImportErrors();
+
+function notEmpty<T>(item: T | null | undefined): item is T {
+  return item !== null && item !== undefined;
+}
 
 export async function seedPersonen(client: db.PrismaClient) {
+  const deelnemersRaw: RawDeelnemer[] = JSON.parse(
+    await fs.readFile(
+      path.resolve(__dirname, '../../../../import/json/deelnemers.json'),
+      'utf-8',
+    ),
+  );
+
+  const postcodes = new Set(
+    (
+      await client.plaats.findMany({
+        select: { postcode: true },
+      })
+    ).map(({ postcode }) => postcode),
+  );
+  const deelnemers = deelnemersRaw.map(fromRaw).filter(notEmpty);
+
+  for (const deelnemer of deelnemers) {
+    await client.persoon.create({
+      data: deelnemer,
+    });
+  }
+
+  console.log(`Seeded ${deelnemers.length} deelnemers`);
+  console.log(`(${importErrors.length} errors)`);
+  fs.writeFile(
+    path.resolve(__dirname, '../../../../import/deelnemers-import-errors.json'),
+    JSON.stringify(importErrors, null, 2),
+    'utf-8',
+  );
+
+  function fromRaw(
+    raw: RawDeelnemer,
+  ): db.Prisma.PersoonCreateInput | undefined {
+    const volledigeNaam = `${raw.naam} ${raw.achternaam}`;
+    const [dag, maand, jaar] = raw.geboortedatum
+      .split('-')
+      .map((i) => parseInt(i));
+    const adresMatch = adresRegex.exec(raw.adres);
+
+    if (!adresMatch) {
+      importErrors.add('adres_parse_error', {
+        deelnemer: raw,
+        detail: `Adres is empty doesn\'t match pattern`,
+      });
+    } else {
+      const [, straatnaam, huisnummer, busnummer] = adresMatch as unknown as [
+        string,
+        string,
+        string,
+        string | undefined,
+      ];
+      if (!postcodes.has(raw.postcode)) {
+        importErrors.add('postcode_doesnt_exist', {
+          detail: `Cannot find postcode "${raw.postcode}"`,
+          deelnemer: raw,
+        });
+      } else {
+        return {
+          achternaam: raw.achternaam,
+          voornaam: raw.naam,
+          volledigeNaam,
+          emailadres: raw['e-mail'],
+          geboortedatum: new Date(jaar ?? 0, (maand ?? 1) - 1, dag),
+          adres: {
+            create: {
+              straatnaam,
+              huisnummer,
+              busnummer,
+              plaats: {
+                connect: {
+                  postcode: raw.postcode,
+                },
+              },
+            },
+          },
+        };
+      }
+    }
+    return;
+  }
+}
+
+export async function seedFakePersonen(client: db.PrismaClient) {
   const adressen: Adres[] = [];
 
   const plaatsenCount = await client.plaats.count();
 
   for (let i = 0; i < 100; i++) {
-    for (const straatnaam of straatnamen) {
+    for (const straatnaam of fakeStraatnamen) {
       adressen.push(
         await client.adres.create({
           data: {
@@ -23,8 +152,8 @@ export async function seedPersonen(client: db.PrismaClient) {
   }
 
   await client.persoon.createMany({
-    data: manVoornamen.map((voornaam, index) => {
-      const achternaam = achternamen[index % achternamen.length]!;
+    data: fakeManVoornamen.map((voornaam, index) => {
+      const achternaam = fakeAchternamen[index % fakeAchternamen.length]!;
       return {
         achternaam,
         voornaam,
@@ -35,8 +164,8 @@ export async function seedPersonen(client: db.PrismaClient) {
     }),
   });
   await client.persoon.createMany({
-    data: vrouwVoornamen.map((voornaam, index) => {
-      const achternaam = achternamen[index % achternamen.length]!;
+    data: fakeVrouwVoornamen.map((voornaam, index) => {
+      const achternaam = fakeAchternamen[index % fakeAchternamen.length]!;
       return {
         achternaam,
         voornaam,
@@ -46,10 +175,12 @@ export async function seedPersonen(client: db.PrismaClient) {
       };
     }),
   });
-  console.log(`Seeded ${manVoornamen.length + vrouwVoornamen.length} personen`);
+  console.log(
+    `Seeded ${fakeManVoornamen.length + fakeVrouwVoornamen.length} deelnemers`,
+  );
 }
 
-const manVoornamen = [
+const fakeManVoornamen = [
   'Noah',
   'Sem',
   'Liam',
@@ -151,7 +282,7 @@ const manVoornamen = [
   'Joshua',
   'Niek',
 ];
-const vrouwVoornamen = [
+const fakeVrouwVoornamen = [
   'Emma',
   'Julia',
   'Mila',
@@ -253,7 +384,7 @@ const vrouwVoornamen = [
   'Nola',
   'Fay',
 ];
-const achternamen = [
+const fakeAchternamen = [
   'de Jong',
   'Jansen',
   'de Vries',
@@ -356,4 +487,4 @@ const achternamen = [
   'Verbeek',
 ];
 
-const straatnamen = ['Veldstraat', 'Loverslane', 'Steenweg', 'Fakestreet'];
+const fakeStraatnamen = ['Veldstraat', 'Loverslane', 'Steenweg', 'Fakestreet'];

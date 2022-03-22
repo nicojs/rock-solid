@@ -4,6 +4,7 @@ import {
   empty,
   notEmpty,
   Project,
+  ProjectFilter,
   UpsertableProject,
 } from '@kei-crm/shared';
 import { Injectable } from '@nestjs/common';
@@ -41,9 +42,10 @@ const includeQuery = {
 export class ProjectMapper {
   constructor(private db: DBService) {}
 
-  public async getAll(): Promise<Project[]> {
+  public async getAll(filter: ProjectFilter): Promise<Project[]> {
     const dbProjecten = await this.db.project.findMany({
       include: includeQuery,
+      where: where(filter),
     });
     const projecten = dbProjecten.map(toProject);
     await this.enrichWithDeelnemersuren(
@@ -174,4 +176,9 @@ function toActiviteit(val: ActiviteitQueryResult): Activiteit {
     ...act,
     aantalDeelnames: _count?.deelnames,
   };
+}
+
+function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
+  const { activiteiten, ...whereQuery } = filter;
+  return whereQuery;
 }

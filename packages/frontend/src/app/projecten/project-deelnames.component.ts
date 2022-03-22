@@ -51,15 +51,15 @@ export class ProjectDeelnamesComponent extends LitElement {
             .filter(
               (inschrijving) =>
                 !deelnames.find(
-                  (deelname) => deelname.deelnemerId === inschrijving.persoonId,
+                  (deelname) => deelname.deelnemerId === inschrijving.deelnemerId,
                 ),
             )
             .map(
               (inschrijving): DeelnameRow => ({
                 activiteitId,
-                deelnemerId: inschrijving.persoonId,
+                deelnemerId: inschrijving.deelnemerId,
                 effectieveDeelnamePerunage: 1,
-                deelnemer: inschrijving.persoon as Deelnemer,
+                deelnemer: inschrijving.deelnemer as Deelnemer,
               }),
             ),
         ];

@@ -68,7 +68,8 @@ model Plaats {
   volledigeNaam String @db.VarChar(256)
   provincieId   Int
 
-  Adres Adres[]
+  Adres        Adres[]
+  Inschrijving Inschrijving[]
   @@index(deelgemeente)
   @@index(gemeente)
   @@index(provincieId)
@@ -85,28 +86,29 @@ model Contactpersoon {
 }
 
 model Project {
-  id            Int         @id @default(autoincrement())
-  projectnummer String      @unique @db.VarChar(256)
-  type          ProjectType
-  naam          String      @db.VarChar(256)
+  id             Int            @id @default(autoincrement())
+  projectnummer  String         @unique @db.VarChar(256)
+  type           ProjectType
+  naam           String         @db.VarChar(256)
+  activiteiten   Activiteit[]
+  inschrijvingen Inschrijving[]
 
   // Cursus
   organisatieonderdeel Organisatieonderdeel?
   overnachting         Boolean?
 
-  activiteiten   Activiteit[]
-  inschrijvingen Inschrijving[]
   @@map("project")
 }
 
 model Inschrijving {
-  id        Int     @id @default(autoincrement())
-  projectId Int
-  project   Project @relation(fields: [projectId], references: [id])
-  persoonId Int
-  persoon   Persoon @relation(fields: [persoonId], references: [id])
-  opmerking String? @db.VarChar(256)
-
+  id                             Int       @id @default(autoincrement())
+  projectId                      Int
+  project                        Project   @relation(fields: [projectId], references: [id])
+  deelnemerId                    Int
+  deelnemer                      Persoon   @relation(fields: [deelnemerId], references: [id])
+  woonplaatsDeelnemerId          Int
+  woonplaatsDeelnemer            Plaats    @relation(fields: [woonplaatsDeelnemerId], references: [id])
+  opmerking                      String?   @db.VarChar(256)
   tijdstipVanInschrijving        DateTime  @default(now())
   tijdstipVanAnnuleren           DateTime?
   tijdstipVanBevestiging         DateTime?
@@ -259,4 +261,18 @@ enum Doelgroep {
   keiJong
 
   @@map("doelgroep")
+}
+
+enum VakantieVerblijf {
+  geen
+  hotelOfPension
+  vakantiehuis
+  boot
+}
+
+enum VakantieVervoer {
+  geen
+  minibus
+  autocarOverdag
+  autocarNacht
 }

@@ -4,17 +4,17 @@ import { Upsertable } from './upsertable';
 export interface Inschrijving {
   id: number;
   projectId: number;
-  persoonId: number;
+  deelnemerId: number;
   tijdstipVanInschrijving: Date;
   tijdstipVanBevestiging?: Date;
   tijdstipVerzendenVervoersbrief?: Date;
   toestemmingFotos: boolean;
   opmerking?: string;
-  persoon?: Persoon;
+  deelnemer?: Persoon;
   wachtlijst: boolean;
 }
 
 export type UpsertableInschrijving = Upsertable<
   Inschrijving,
-  'persoonId' | 'projectId'
+  'deelnemerId' | 'projectId'
 >;

@@ -2,6 +2,7 @@ import {
   Deelname,
   Inschrijving,
   Project,
+  ProjectFilter,
   UpsertableDeelname,
   UpsertableInschrijving,
   UpsertableProject,
@@ -17,6 +18,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { DeelnameMapper } from './services/deelname.mapper';
 import { InschrijvingMapper } from './services/inschrijving.mapper';
@@ -41,8 +43,8 @@ export class ProjectenController {
   }
 
   @Get()
-  getAll(): Promise<Project[]> {
-    return this.projectMapper.getAll();
+  getAll(@Query() filter: ProjectFilter): Promise<Project[]> {
+    return this.projectMapper.getAll(filter);
   }
 
   @Get(':id/inschrijvingen')

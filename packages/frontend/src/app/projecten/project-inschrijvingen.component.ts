@@ -123,7 +123,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
           <tbody>
             ${this.inschrijvingen.map(
               (inschrijving) => html`<tr>
-                <td>${fullName(inschrijving.persoon!)}</td>
+                <td>${fullName(inschrijving.deelnemer!)}</td>
                 <td>${showDatum(inschrijving.tijdstipVanInschrijving)}</td>
                 <td>${showBoolean(inschrijving.wachtlijst)}</td>
                 <td>${showBoolean(inschrijving.toestemmingFotos)}</td>
@@ -176,7 +176,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
           const inschrijving = await projectService.createInschrijving(
             this.project.id,
             {
-              persoonId: +event.detail.value,
+              deelnemerId: +event.detail.value,
               projectId: this.project.id,
             },
           );

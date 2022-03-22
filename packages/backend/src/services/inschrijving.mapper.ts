@@ -12,7 +12,7 @@ export class InschrijvingMapper {
     const inschrijvingen = await this.db.inschrijving.findMany({
       where: filter,
       include: {
-        persoon: true,
+        deelnemer: true,
       },
     });
     return inschrijvingen.map(toInschrijving);
@@ -21,11 +21,19 @@ export class InschrijvingMapper {
   public async create(
     inschrijving: UpsertableInschrijving,
   ): Promise<Inschrijving> {
-    const { persoon, ...inschrijvingData } = inschrijving;
+    const { deelnemer, ...inschrijvingData } = inschrijving;
+    const { adres } = (await this.db.persoon.findUnique({
+      where: { id: inschrijvingData.deelnemerId },
+      include: { adres: true },
+    }))!;
+
     const dbInschrijving = await this.db.inschrijving.create({
-      data: inschrijvingData,
+      data: {
+        ...inschrijvingData,
+        woonplaatsDeelnemerId: adres.plaatsId,
+      },
       include: {
-        persoon: true,
+        deelnemer: true,
       },
     });
     return toInschrijving(dbInschrijving);
@@ -35,7 +43,7 @@ export class InschrijvingMapper {
     id: number,
     inschrijving: UpsertableInschrijving,
   ): Promise<Inschrijving> {
-    const { persoon, ...inschrijvingData } = inschrijving;
+    const { deelnemer: persoon, ...inschrijvingData } = inschrijving;
     const dbInschrijving = await this.db.inschrijving.update({
       data: inschrijvingData,
       where: {
@@ -46,6 +54,7 @@ export class InschrijvingMapper {
   }
 }
 
-function toInschrijving(inschrijving: db.Inschrijving): Inschrijving {
+function toInschrijving(raw: db.Inschrijving): Inschrijving {
+  const { woonplaatsDeelnemerId, ...inschrijving } = raw;
   return purgeNulls(inschrijving);
 }
