@@ -22,15 +22,19 @@ export class InschrijvingMapper {
     inschrijving: UpsertableInschrijving,
   ): Promise<Inschrijving> {
     const { deelnemer, ...inschrijvingData } = inschrijving;
-    const { adres } = (await this.db.persoon.findUnique({
-      where: { id: inschrijvingData.deelnemerId },
-      include: { adres: true },
-    }))!;
+    const { verblijfadres, domicilieadres } = (await this.db.persoon.findUnique(
+      {
+        where: { id: inschrijvingData.deelnemerId },
+        include: { verblijfadres: true, domicilieadres: true },
+      },
+    ))!;
 
     const dbInschrijving = await this.db.inschrijving.create({
       data: {
         ...inschrijvingData,
-        woonplaatsDeelnemerId: adres.plaatsId,
+        woonplaatsDeelnemerId: domicilieadres
+          ? domicilieadres.plaatsId
+          : verblijfadres.plaatsId,
       },
       include: {
         deelnemer: true,

@@ -62,7 +62,7 @@ export class PersonenComponent extends LitElement {
             <td>${show(persoon.geslacht)}</td>
             <td>${show(persoon.telefoonnummer)}</td>
             <td>${show(persoon.gsmNummer)}</td>
-            <td>${plaatsName(persoon.adres.plaats)}</td>
+            <td>${plaatsName(persoon.verblijfadres.plaats)}</td>
             <td>
               <kei-link btn btnSecondary href="../edit/${persoon.id}"
                 ><kei-icon icon="pencil"></kei-icon

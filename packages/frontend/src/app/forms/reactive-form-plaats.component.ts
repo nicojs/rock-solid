@@ -41,7 +41,7 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
   }
 
   private updateValidity() {
-    if (this.plaatsValue) {
+    if (this.plaatsValue || !this.control.validators?.required) {
       this.input.setCustomValidity(''); // valid
     } else {
       this.input.setCustomValidity('Selecteer een plaats');
@@ -52,7 +52,6 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
     changedProperties: PropertyValues<ReactiveFormPlaats<TEntity>>,
   ): void {
     super.update(changedProperties);
-    console.log('changes', [...changedProperties.keys()]);
     if (changedProperties.has('entity')) {
       this.updateValidity();
     }

@@ -65,20 +65,29 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
       max: new Date(new Date().getFullYear() - 5, 1, 1),
     },
   },
-  formGroup('adres', [
-    {
-      name: 'straatnaam',
-      type: InputType.text,
-      validators: { required: true },
-    },
-    {
-      name: 'huisnummer',
-      type: InputType.text,
-      validators: { required: true },
-    },
-    { name: 'plaats', type: InputType.plaats, label: 'Woonplaats' },
-    { name: 'busnummer', type: InputType.text },
-  ]),
+  formGroup(
+    'verblijfadres',
+    [
+      {
+        name: 'straatnaam',
+        type: InputType.text,
+        validators: { required: true },
+      },
+      {
+        name: 'huisnummer',
+        type: InputType.text,
+        validators: { required: true },
+      },
+      {
+        name: 'plaats',
+        type: InputType.plaats,
+        label: 'Woonplaats',
+        validators: { required: true },
+      },
+      { name: 'busnummer', type: InputType.text },
+    ],
+    { required: true },
+  ),
   {
     name: 'gsmNummer',
     label: 'GSM',
@@ -128,6 +137,32 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [
   ...basePersoonFormControls,
+  formGroup(
+    'domicilieadres',
+    [
+      {
+        name: 'straatnaam',
+        type: InputType.text,
+        validators: { required: true },
+      },
+      {
+        name: 'huisnummer',
+        type: InputType.text,
+        validators: { required: true },
+      },
+      {
+        name: 'plaats',
+        type: InputType.plaats,
+        label: 'Plaats',
+        validators: { required: true },
+      },
+      { name: 'busnummer', type: InputType.text },
+    ],
+    {
+      required: false,
+      requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
+    },
+  ),
   {
     name: 'woonsituatie',
     type: InputType.select,

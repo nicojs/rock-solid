@@ -90,7 +90,7 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
       class="form-control"
       id="${control.name}"
       name="${control.name}"
-      value="${this.entity[control.name]}"
+      value="${ifDefined(this.entity[control.name])}"
       ?required=${control.validators?.required}
       placeholder=${ifDefined(control.placeholder)}
       min="${ifDefined(toDateString(control.validators?.min))}"

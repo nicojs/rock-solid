@@ -1,14 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service';
 import * as db from '@prisma/client';
-import type { Prisma } from '@prisma/client';
-import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
+import {
+  Deelnemer,
+  Persoon,
+  PersoonFilter,
+  UpsertablePersoon,
+  UpsertableAdres,
+} from '@kei-crm/shared';
 import { purgeNulls } from './mapper-utils';
 import { toPage } from './paging';
 import { toAdres } from './adres.mapper';
 
 type DBPersonWithAdres = db.Persoon & {
-  adres: db.Adres & { plaats: db.Plaats };
+  verblijfadres: db.Adres & { plaats: db.Plaats };
+  domicilieadres: (db.Adres & { plaats: db.Plaats }) | null;
 };
 
 /**
@@ -20,11 +26,11 @@ export class PersoonMapper {
   constructor(private db: DBService) {}
 
   async getOne(
-    userWhereUniqueInput: Prisma.PersoonWhereUniqueInput,
+    userWhereUniqueInput: db.Prisma.PersoonWhereUniqueInput,
   ): Promise<Persoon | null> {
     const persoon = await this.db.persoon.findUnique({
       where: userWhereUniqueInput,
-      include: includeAdres,
+      include: includePersoonAdres,
     });
     return this.maybeToPersoon(persoon);
   }
@@ -41,7 +47,7 @@ export class PersoonMapper {
         },
         { voornaam: 'asc' },
       ],
-      include: includeAdres,
+      include: includePersoonAdres,
       ...toPage(pageNumber),
     });
     return people.map(toPersoon);
@@ -54,70 +60,59 @@ export class PersoonMapper {
     return count;
   }
 
-  async createPersoon(data: UpsertablePersoon): Promise<Persoon> {
-    const {
-      adres: { id: adresId, plaats, ...newAdres },
-      id,
-      ...rest
-    } = data;
-    return toPersoon(
-      await this.db.persoon.create({
-        data: {
-          ...rest,
-          volledigeNaam: computeVolledigeNaam(rest),
-          adres: {
-            create: {
-              ...newAdres,
-              plaats: { connect: { id: plaats.id } },
-            },
-          },
-        },
-        include: includeAdres,
-      }),
-    );
+  async createPersoon(persoon: UpsertablePersoon): Promise<Persoon> {
+    const { verblijfadres, domicilieadres, id, ...rest } = persoon; // cast to deelnemer, so we can pick off the domicilieadres
+    const dbPersoon = await this.db.persoon.create({
+      data: {
+        ...rest,
+        volledigeNaam: computeVolledigeNaam(rest),
+        verblijfadres: toCreateAdresInput(verblijfadres),
+        domicilieadres: domicilieadres
+          ? toCreateAdresInput(domicilieadres)
+          : undefined,
+      },
+      include: includePersoonAdres,
+    });
+    return toPersoon(dbPersoon);
   }
 
-  async updateUser({
+  async updatePersoon({
     where,
-    data,
+    persoon,
   }: {
-    where: Prisma.PersoonWhereUniqueInput;
-    data: Persoon;
+    where: db.Prisma.PersoonWhereUniqueInput;
+    persoon: Persoon;
   }): Promise<Persoon> {
-    const { id: personId, adres, ...props } = data;
-    const { plaats, id, ...adresProps } = adres;
-    const p = await this.db.persoon.update({
+    const { id: personId, verblijfadres, domicilieadres, ...props } = persoon;
+    const result = await this.db.persoon.update({
       where,
       data: {
         ...props,
         volledigeNaam: computeVolledigeNaam(props),
-        adres: {
-          update: {
-            ...adresProps,
-            plaats: {
-              connect: {
-                id: plaats.id,
-              },
-            },
-          },
-        },
+        verblijfadres: toUpdateAdresInput(verblijfadres),
+        domicilieadres: toUpdateDomicilieadresInput(domicilieadres),
       },
-      include: {
-        adres: {
-          include: {
-            plaats: true,
-          },
-        },
-      },
+      include: includePersoonAdres,
     });
-    return toPersoon(p);
+    // Delete domicilieadres after the fact of needed (this is the only way)
+    if (!domicilieadres && result.domicilieadres) {
+      return toPersoon(
+        await this.db.persoon.update({
+          where,
+          data: { domicilieadres: { delete: true } },
+          include: includePersoonAdres,
+        }),
+      );
+    } else {
+      return toPersoon(result);
+    }
   }
 
-  async deleteUser(where: Prisma.PersoonWhereUniqueInput): Promise<Persoon> {
+  async deleteUser(where: db.Prisma.PersoonWhereUniqueInput): Promise<Persoon> {
     return toPersoon(
       await this.db.persoon.delete({
         where,
-        include: includeAdres,
+        include: includePersoonAdres,
       }),
     );
   }
@@ -135,10 +130,18 @@ function computeVolledigeNaam({
 }
 
 export function toPersoon(p: DBPersonWithAdres): Persoon {
-  const { adres, adresId, volledigeNaam, ...person } = p;
+  const {
+    domicilieadres,
+    domicilieadresId,
+    verblijfadres,
+    verblijfadresId,
+    volledigeNaam,
+    ...person
+  } = p;
   return {
     ...purgeNulls(person),
-    adres: toAdres(adres),
+    domicilieadres: domicilieadres ? toAdres(domicilieadres) : undefined,
+    verblijfadres: toAdres(verblijfadres),
   };
 }
 
@@ -158,10 +161,54 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
   }
 }
 
-const includeAdres = {
-  adres: {
-    include: {
+export const includePersoonAdres = Object.freeze({
+  verblijfadres: Object.freeze({
+    include: Object.freeze({
       plaats: true,
+    }),
+  }),
+  domicilieadres: Object.freeze({
+    include: Object.freeze({
+      plaats: true,
+    }),
+  }),
+} as const);
+
+function toCreateAdresInput(
+  adres: UpsertableAdres,
+): db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput {
+  const { plaats, id, ...props } = adres;
+  return {
+    create: {
+      ...props,
+      plaats: { connect: { id: plaats.id } },
     },
-  },
-} as const;
+  };
+}
+
+function toUpdateAdresInput(
+  adres: UpsertableAdres,
+): db.Prisma.AdresUpdateOneRequiredWithoutVerblijfpersoonInput {
+  const { id, plaats, ...props } = adres;
+  return {
+    upsert: {
+      create: {
+        ...props,
+        plaats: { connect: { id: plaats.id } },
+      },
+      update: {
+        ...props,
+        plaats: { connect: { id: plaats.id } },
+      },
+    },
+  };
+}
+function toUpdateDomicilieadresInput(
+  adres?: UpsertableAdres,
+): db.Prisma.AdresUpdateOneWithoutDomiciliepersonenInput {
+  if (adres) {
+    return toUpdateAdresInput(adres);
+  } else {
+    return {};
+  }
+}

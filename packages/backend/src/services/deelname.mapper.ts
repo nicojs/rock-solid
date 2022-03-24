@@ -2,7 +2,7 @@ import { Deelname, Deelnemer, UpsertableDeelname } from '@kei-crm/shared';
 import { Injectable } from '@nestjs/common';
 import * as db from '@prisma/client';
 import { DBService } from './db.service';
-import { toPersoon } from './persoon.mapper';
+import { toPersoon, includePersoonAdres } from './persoon.mapper';
 
 /**
  * A data mapper for deelname
@@ -29,7 +29,7 @@ export class DeelnameMapper {
         },
       },
       include: {
-        deelnemer: { include: { adres: { include: { plaats: true } } } },
+        deelnemer: { include: includePersoonAdres },
       },
     });
     return deelnames.map(toDeelname);
@@ -62,9 +62,14 @@ export class DeelnameMapper {
 
 interface DeelnameQueryResult extends db.Deelname {
   deelnemer: db.Persoon & {
-    adres: db.Adres & {
+    verblijfadres: db.Adres & {
       plaats: db.Plaats;
     };
+    domicilieadres:
+      | (db.Adres & {
+          plaats: db.Plaats;
+        })
+      | null;
   };
 }
 

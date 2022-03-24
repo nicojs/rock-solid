@@ -5,7 +5,8 @@ import { Upsertable } from './upsertable';
 export interface BasePersoon {
   id: number;
   type: PersoonType;
-  adres: Adres;
+  verblijfadres: Adres;
+  domicilieadres?: Adres;
   voornaam?: string;
   achternaam: string;
   emailadres?: string;
@@ -21,15 +22,15 @@ export interface BasePersoon {
 export type UpsertablePersoon = UpsertableDeelnemer | UpsertableOverigPersoon;
 export type UpsertableDeelnemer = Omit<
   Upsertable<Deelnemer, 'achternaam'>,
-  'adres'
+  'verblijfadres'
 > & {
-  adres: UpsertableAdres;
+  verblijfadres: UpsertableAdres;
 };
 export type UpsertableOverigPersoon = Omit<
   Upsertable<OverigPersoon, 'achternaam'>,
-  'adres'
+  'verblijfadres'
 > & {
-  adres: UpsertableAdres;
+  verblijfadres: UpsertableAdres;
 };
 export type Persoon = Deelnemer | OverigPersoon;
 
@@ -74,7 +75,8 @@ export const persoonLabels: Record<keyof Persoon, string> = {
   id: 'id',
   achternaam: 'Achternaam',
   emailadres: 'Emailadres',
-  adres: 'Adres',
+  verblijfadres: 'Verblijfadres',
+  domicilieadres: 'Domicilieadres',
   geboortedatum: 'Geboortedatum',
   geboorteplaats: 'Geboorteplaats',
   geslacht: 'Geslacht',

@@ -154,7 +154,7 @@ export class PersonenComponent extends LitElement {
       case 'new':
         const persoon = {
           type: this.type,
-          adres: {},
+          verblijfadres: {},
         };
         return html` <h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading

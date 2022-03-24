@@ -55,13 +55,14 @@ export async function seedPersonen(client: db.PrismaClient) {
     ),
   );
 
-  const postcodes = new Set(
+  const plaatsIdByPostcode = new Map<string, number>(
     (
       await client.plaats.findMany({
-        select: { postcode: true },
+        select: { postcode: true, id: true },
       })
-    ).map(({ postcode }) => postcode),
+    ).map(({ postcode, id }) => [postcode, id] as const),
   );
+
   const deelnemers = deelnemersRaw.map(fromRaw).filter(notEmpty);
 
   for (const deelnemer of deelnemers) {
@@ -99,7 +100,8 @@ export async function seedPersonen(client: db.PrismaClient) {
         string,
         string | undefined,
       ];
-      if (!postcodes.has(raw.postcode)) {
+      const plaatsId = plaatsIdByPostcode.get(raw.postcode);
+      if (plaatsId === undefined) {
         importErrors.add('postcode_doesnt_exist', {
           detail: `Cannot find postcode "${raw.postcode}"`,
           deelnemer: raw,
@@ -111,16 +113,12 @@ export async function seedPersonen(client: db.PrismaClient) {
           volledigeNaam,
           emailadres: raw['e-mail'],
           geboortedatum: new Date(jaar ?? 0, (maand ?? 1) - 1, dag),
-          adres: {
+          verblijfadres: {
             create: {
               straatnaam,
               huisnummer,
               busnummer,
-              plaats: {
-                connect: {
-                  postcode: raw.postcode,
-                },
-              },
+              plaats: { connect: { id: plaatsId } },
             },
           },
         };
@@ -159,7 +157,7 @@ export async function seedFakePersonen(client: db.PrismaClient) {
         voornaam,
         volledigeNaam: `${voornaam} ${achternaam}`,
         geslacht: 'man' as const,
-        adresId: adressen[index % adressen.length]!.id,
+        verblijfadresId: adressen[index % adressen.length]!.id,
       };
     }),
   });
@@ -171,7 +169,7 @@ export async function seedFakePersonen(client: db.PrismaClient) {
         voornaam,
         volledigeNaam: `${voornaam} ${achternaam}`,
         geslacht: 'man' as const,
-        adresId: adressen[index % adressen.length]!.id,
+        verblijfadresId: adressen[index % adressen.length]!.id,
       };
     }),
   });

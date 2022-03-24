@@ -63,6 +63,6 @@ export class PersonenController {
     @Param('id') id: string,
     @Body() persoon: Persoon,
   ): Promise<void> {
-    await this.persoonService.updateUser({ where: { id: +id }, data: persoon });
+    await this.persoonService.updatePersoon({ where: { id: +id }, persoon: persoon });
   }
 }
