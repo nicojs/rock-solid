@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service';
 import * as db from '@prisma/client';
-import {
-  Deelnemer,
-  Persoon,
-  PersoonFilter,
-  UpsertablePersoon,
-  UpsertableAdres,
-} from '@kei-crm/shared';
+import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
 import { purgeNulls } from './mapper-utils';
 import { toPage } from './paging';
-import { toAdres } from './adres.mapper';
+import {
+  toAdres,
+  toCreateAdresInput,
+  toUpdateAdresInput,
+  toNullableUpdateAdresInput,
+} from './adres.mapper';
 
 type DBPersonWithAdres = db.Persoon & {
   verblijfadres: db.Adres & { plaats: db.Plaats };
@@ -90,7 +89,7 @@ export class PersoonMapper {
         ...props,
         volledigeNaam: computeVolledigeNaam(props),
         verblijfadres: toUpdateAdresInput(verblijfadres),
-        domicilieadres: toUpdateDomicilieadresInput(domicilieadres),
+        domicilieadres: toNullableUpdateAdresInput(domicilieadres),
       },
       include: includePersoonAdres,
     });
@@ -173,42 +172,3 @@ export const includePersoonAdres = Object.freeze({
     }),
   }),
 } as const);
-
-function toCreateAdresInput(
-  adres: UpsertableAdres,
-): db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput {
-  const { plaats, id, ...props } = adres;
-  return {
-    create: {
-      ...props,
-      plaats: { connect: { id: plaats.id } },
-    },
-  };
-}
-
-function toUpdateAdresInput(
-  adres: UpsertableAdres,
-): db.Prisma.AdresUpdateOneRequiredWithoutVerblijfpersoonInput {
-  const { id, plaats, ...props } = adres;
-  return {
-    upsert: {
-      create: {
-        ...props,
-        plaats: { connect: { id: plaats.id } },
-      },
-      update: {
-        ...props,
-        plaats: { connect: { id: plaats.id } },
-      },
-    },
-  };
-}
-function toUpdateDomicilieadresInput(
-  adres?: UpsertableAdres,
-): db.Prisma.AdresUpdateOneWithoutDomiciliepersonenInput {
-  if (adres) {
-    return toUpdateAdresInput(adres);
-  } else {
-    return {};
-  }
-}

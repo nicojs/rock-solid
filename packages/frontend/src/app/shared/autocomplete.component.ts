@@ -24,9 +24,16 @@ const minCharacters = 2;
 
 export enum FocusState {
   None,
-  InputFocus,
-  HoverAndInputFocus,
+  Focus,
   Hover,
+  HoverAndFocus,
+}
+
+export enum FocusStateTransition {
+  Focus,
+  Blur,
+  Enter,
+  Leave,
 }
 
 @customElement('kei-autocomplete')
@@ -47,6 +54,32 @@ export class AutocompleteComponent extends LitElement {
 
   @property()
   public entityName?: string;
+
+  private transitionState(transition: FocusStateTransition) {
+    let newState: FocusState;
+    const currentHover =
+      this.focusState === FocusState.HoverAndFocus ||
+      this.focusState === FocusState.Hover;
+    const currentFocus =
+      this.focusState === FocusState.HoverAndFocus ||
+      this.focusState === FocusState.Focus;
+
+    switch (transition) {
+      case FocusStateTransition.Blur:
+        newState = currentHover ? FocusState.Hover : FocusState.None;
+        break;
+      case FocusStateTransition.Focus:
+        newState = currentHover ? FocusState.HoverAndFocus : FocusState.Focus;
+        break;
+      case FocusStateTransition.Enter:
+        newState = currentFocus ? FocusState.HoverAndFocus : FocusState.Hover;
+        break;
+      case FocusStateTransition.Leave:
+        newState = currentFocus ? FocusState.Focus : FocusState.None;
+        break;
+    }
+    this.focusState = newState;
+  }
 
   override createRenderRoot() {
     // Use light dom, so input will be localized on screen using bootstrap styling
@@ -96,7 +129,7 @@ export class AutocompleteComponent extends LitElement {
 
     this.subscription.add(
       fromEvent(this.searchInput, 'focus').subscribe(() => {
-        this.focusState = FocusState.InputFocus;
+        this.transitionState(FocusStateTransition.Focus);
         // Force update
         this.searchInput.dispatchEvent(new InputEvent('input'));
       }),
@@ -104,28 +137,17 @@ export class AutocompleteComponent extends LitElement {
     this.subscription.add(
       fromEvent(this.searchInput, 'blur').subscribe(() => {
         // Allow click event in the dropdown to be handled
-        console.log('blur');
-        this.focusState =
-          this.focusState === FocusState.HoverAndInputFocus
-            ? FocusState.Hover
-            : FocusState.None;
+        this.transitionState(FocusStateTransition.Blur);
       }),
     );
     this.subscription.add(
       fromEvent(this, 'mouseenter').subscribe(() => {
-        this.focusState =
-          this.focusState === FocusState.InputFocus
-            ? FocusState.HoverAndInputFocus
-            : FocusState.Hover;
+        this.transitionState(FocusStateTransition.Enter);
       }),
     );
     this.subscription.add(
       fromEvent(this, 'mouseleave').subscribe(() => {
-        console.log('mouseleave');
-        this.focusState =
-          this.focusState === FocusState.HoverAndInputFocus
-            ? FocusState.InputFocus
-            : FocusState.None;
+        this.transitionState(FocusStateTransition.Leave);
       }),
     );
 
@@ -148,7 +170,6 @@ export class AutocompleteComponent extends LitElement {
               break;
             case 'Escape':
               this.searchInput.blur();
-              this.focusState = FocusState.None;
               break;
           }
           if (this.hintSelectedIndex < 0) {

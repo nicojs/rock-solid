@@ -57,8 +57,9 @@ model Adres {
   busnummer  String? @db.VarChar(10)
   plaatsId   Int
 
-  verblijfpersoon   Persoon[] @relation("verblijfadres")
-  domiciliepersonen Persoon[] @relation("domicilieadres")
+  verblijfpersoon   Persoon[]     @relation("verblijfadres")
+  domiciliepersonen Persoon[]     @relation("domicilieadres")
+  Organisatie       Organisatie[]
   @@map("adres")
 }
 
@@ -140,7 +141,9 @@ model Organisatie {
   naam                 String                @unique @db.VarChar(256)
   terAttentieVan       String?               @db.VarChar(256)
   emailadres           String?               @db.VarChar(256)
-  opmerking            String?               @db.VarChar(256)
+  adres                Adres?                @relation(fields: [adresId], references: [id])
+  adresId              Int?
+  opmerking            String?               @db.VarChar(1024)
   doelgroep            Doelgroep
   telefoonnummer       String?
   website              String?               @db.VarChar(256)

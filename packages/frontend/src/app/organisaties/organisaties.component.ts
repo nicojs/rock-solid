@@ -1,4 +1,8 @@
-import { Organisatie, UpsertableOrganisatie } from '@kei-crm/shared';
+import {
+  DeepPartial,
+  Organisatie,
+  UpsertableOrganisatie,
+} from '@kei-crm/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -27,7 +31,7 @@ export class OrganisatiesComponent extends LitElement {
   @state()
   private loading = false;
 
-  override updated(props: PropertyValues<OrganisatiesComponent>): void {
+  override update(props: PropertyValues<OrganisatiesComponent>): void {
     if (props.has('path')) {
       if (this.path[0] === 'list') {
         this.loadOrganisaties();
@@ -38,6 +42,7 @@ export class OrganisatiesComponent extends LitElement {
         });
       }
     }
+    super.update(props);
   }
 
   private loadOrganisaties() {
@@ -80,7 +85,16 @@ export class OrganisatiesComponent extends LitElement {
             <h2 class="col">Organisaties (${this.totalCount})</h2>
           </div>
           ${this.organisaties
-            ? html`<kei-organisaties-list
+            ? html`
+                <kei-link href="/organisaties/new" btn btnSuccess
+                  ><kei-icon icon="journalPlus" size="md"></kei-icon>
+                  Organisatie</kei-link
+                >
+                <kei-link btn btnOutlineSecondary href="../zoeken"
+                  ><kei-icon icon="search"></kei-icon> Geavanceerd
+                  zoeken</kei-link
+                >
+                <kei-organisaties-list
                   .organisaties=${this.organisaties}
                 ></kei-organisaties-list>
                 <kei-paging
@@ -89,21 +103,13 @@ export class OrganisatiesComponent extends LitElement {
                   .currentPage=${this.page}
                   .totalCount=${this.totalCount}
                 ></kei-paging>
-                <kei-link href="/organisaties/new" btn btnSuccess
-                  ><kei-icon icon="journalPlus" size="md"></kei-icon>
-                  Organisatie</kei-link
-                >
-                <kei-link btn btnOutlineSecondary href="../zoeken"
-                  ><kei-icon icon="search"></kei-icon> Geavanceerd
-                  zoeken</kei-link
-                >`
+              `
             : html`<kei-loading></kei-loading>`}
         `;
       case 'new':
-        const organisatie: UpsertableOrganisatie = {
-          naam: '',
-          doelgroep: 'deKei',
+        const organisatie: DeepPartial<Organisatie> = {
           folderVoorkeur: [],
+          adres: {},
         };
         return this.loading
           ? html`<kei-loading></kei-loading>`

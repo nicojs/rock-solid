@@ -1,11 +1,13 @@
 import { Upsertable } from '.';
 import { Options } from './options';
+import { Adres, UpsertableAdres } from './adres';
 
 export interface Organisatie {
   id: number;
   naam: string;
   terAttentieVan?: string;
   emailadres?: string;
+  adres?: Adres;
   opmerking?: string;
   doelgroep: Doelgroep;
   telefoonnummer?: string;
@@ -19,6 +21,7 @@ export const organisatieColumnNames: Record<keyof Organisatie, string> = {
   naam: 'Naam',
   terAttentieVan: 'TAV',
   emailadres: 'Emailadres',
+  adres: 'Adres',
   opmerking: 'Opmerking',
   doelgroep: 'Doelgroep',
   telefoonnummer: 'Telefoonnummer',
@@ -30,11 +33,16 @@ export const organisatieColumnNames: Record<keyof Organisatie, string> = {
 export type OrganisatieFilter = Partial<Pick<Organisatie, 'folderVoorkeur'>>;
 
 export type UpsertableOrganisatie = Upsertable<
-  Organisatie,
+  Omit<Organisatie, 'adres'>,
   'naam' | 'doelgroep' | 'folderVoorkeur'
->;
+> & { adres?: UpsertableAdres };
 
 export type Doelgroep = 'deKei' | 'keiJong';
+
+export const doelgroepen: Options<Doelgroep> = Object.freeze({
+  deKei: 'De Kei',
+  keiJong: 'Kei-Jong',
+});
 
 export type CommunicatieVoorkeur = 'post' | 'email';
 

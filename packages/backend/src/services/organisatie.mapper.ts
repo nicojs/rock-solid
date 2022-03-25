@@ -8,6 +8,19 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service';
 import { purgeNulls } from './mapper-utils';
 import { toPage } from './paging';
+import {
+  toAdres,
+  toCreateAdresInput,
+  toNullableUpdateAdresInput,
+} from './adres.mapper';
+
+type DBOrganisatieWithAdres = db.Organisatie & {
+  adres:
+    | (db.Adres & {
+        plaats: db.Plaats;
+      })
+    | null;
+};
 
 @Injectable()
 export class OrganisatieMapper {
@@ -20,9 +33,10 @@ export class OrganisatieMapper {
     const dbOrganisaties = await this.db.organisatie.findMany({
       where: toWhere(filter),
       orderBy: { naam: 'asc' },
+      include: includeAdres,
       ...toPage(pageNumber),
     });
-    return dbOrganisaties.map(toOrganisation);
+    return dbOrganisaties.map(toOrganisatie);
   }
 
   public async count(filter: OrganisatieFilter): Promise<number> {
@@ -36,9 +50,10 @@ export class OrganisatieMapper {
   ): Promise<Organisatie | null> {
     const org = await this.db.organisatie.findUnique({
       where: where,
+      include: includeAdres,
     });
     if (org) {
-      return toOrganisation(org);
+      return toOrganisatie(org);
     } else {
       return null;
     }
@@ -47,17 +62,44 @@ export class OrganisatieMapper {
   public async create(
     organisatie: UpsertableOrganisatie,
   ): Promise<Organisatie> {
+    const { adres, id, ...organisatieData } = organisatie;
     const dbOrganisatie = await this.db.organisatie.create({
-      data: organisatie,
+      data: {
+        ...organisatieData,
+        adres: adres ? toCreateAdresInput(adres) : undefined,
+      },
+      include: includeAdres,
     });
-    return toOrganisation(dbOrganisatie);
+    return toOrganisatie(dbOrganisatie);
   }
 
-  async update(params: {
+  async update({
+    where,
+    data,
+  }: {
     where: db.Prisma.OrganisatieWhereUniqueInput;
     data: UpsertableOrganisatie;
   }): Promise<Organisatie> {
-    return toOrganisation(await this.db.organisatie.update(params));
+    const { adres, id, ...props } = data;
+    const result = await this.db.organisatie.update({
+      where,
+      data: {
+        adres: toNullableUpdateAdresInput(adres),
+        ...props,
+      },
+      include: includeAdres,
+    });
+    if (!adres && result.adres) {
+      return toOrganisatie(
+        await this.db.organisatie.update({
+          where,
+          data: { adres: { delete: true } },
+          include: includeAdres,
+        }),
+      );
+    } else {
+      return toOrganisatie(result);
+    }
   }
 }
 
@@ -71,6 +113,14 @@ function toWhere(filter: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
   };
 }
 
-function toOrganisation(org: db.Organisatie): Organisatie {
-  return purgeNulls(org);
+function toOrganisatie(org: DBOrganisatieWithAdres): Organisatie {
+  const { adres, adresId, ...props } = org;
+  return {
+    ...purgeNulls(props),
+    adres: adres ? toAdres(adres) : undefined,
+  };
 }
+
+const includeAdres = Object.freeze({
+  adres: Object.freeze({ include: Object.freeze({ plaats: true as const }) }),
+});

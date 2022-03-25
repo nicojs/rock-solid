@@ -1,14 +1,8 @@
-import {
-  folderSelecties,
-  Organisatie,
-  UpsertableOrganisatie,
-} from '@kei-crm/shared';
+import { folderSelecties, Organisatie } from '@kei-crm/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { InputControl, InputType, patterns } from '../forms';
-import { pluralize, show } from '../shared';
-import { printOrganisatie } from './organisatie.pipes';
+import { show } from '../shared';
 
 @customElement('kei-organisaties-list')
 export class OrganisatiesListComponent extends LitElement {

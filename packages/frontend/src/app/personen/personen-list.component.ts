@@ -9,7 +9,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { pluralize, show } from '../shared/utility.pipes';
 import { fullName } from './full-name.pipe';
-import { plaatsName } from '../forms/plaats.pipes';
+import { plaatsName } from '../forms/adres.pipes';
 
 @customElement('kei-personen-list')
 export class PersonenComponent extends LitElement {

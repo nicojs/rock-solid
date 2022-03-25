@@ -40,7 +40,7 @@ export type FormControl<TEntity> =
 
 export function formGroup<TEntity, TKey extends keyof TEntity & string>(
   name: TKey,
-  controls: FormControl<NonNullable<TEntity[TKey]>>[],
+  controls: readonly FormControl<NonNullable<TEntity[TKey]>>[],
   options?: { required: boolean; requiredLabel?: string },
 ): FormGroup<TEntity, TKey> {
   return {
@@ -71,13 +71,13 @@ export interface FormArray<
 > {
   type: InputType.array;
   name: TKey;
-  controls: FormControl<TItem>[];
+  controls: readonly FormControl<TItem>[];
 }
 
 export interface FormGroup<TEntity, TKey extends keyof TEntity> {
   type: InputType.group;
   name: TKey;
-  controls: FormControl<NonNullable<TEntity[TKey]>>[];
+  controls: readonly FormControl<NonNullable<TEntity[TKey]>>[];
   required: boolean;
   requiredLabel?: string;
 }

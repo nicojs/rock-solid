@@ -42,10 +42,10 @@ export class ReactiveFormGroupComponent<
       ReactiveFormGroupComponent<TEntity, TKey>
     >,
   ): void {
-    super.update(changedProperties);
     if (changedProperties.has('entity')) {
       this.showControls = this.value !== undefined;
     }
+    super.update(changedProperties);
   }
 
   public override render() {

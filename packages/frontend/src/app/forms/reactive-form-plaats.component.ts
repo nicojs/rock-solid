@@ -11,7 +11,7 @@ import {
   TypeAheadHint,
 } from '../shared';
 import { PlaatsControl } from './form-control';
-import { plaatsName } from './plaats.pipes';
+import { plaatsName } from './adres.pipes';
 
 @customElement('kei-reactive-form-plaats')
 export class ReactiveFormPlaats<TEntity> extends LitElement {

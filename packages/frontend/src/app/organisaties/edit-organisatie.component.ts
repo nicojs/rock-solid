@@ -2,10 +2,17 @@ import {
   folderSelecties,
   Organisatie,
   UpsertableOrganisatie,
+  doelgroepen,
 } from '@kei-crm/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { InputControl, InputType, patterns } from '../forms';
+import {
+  adresControls,
+  formGroup,
+  FormControl,
+  InputType,
+  patterns,
+} from '../forms';
 import { printOrganisatie } from './organisatie.pipes';
 
 @customElement('kei-edit-organisatie')
@@ -36,7 +43,13 @@ export class EditOrganisatieComponent extends LitElement {
   }
 }
 
-const organisatieControls: InputControl<Organisatie>[] = [
+const organisatieControls: FormControl<Organisatie>[] = [
+  {
+    name: 'doelgroep',
+    type: InputType.select,
+    items: doelgroepen,
+    validators: { required: true },
+  },
   {
     name: 'naam',
     type: InputType.text,
@@ -52,6 +65,10 @@ const organisatieControls: InputControl<Organisatie>[] = [
     type: InputType.email,
     validators: { pattern: patterns.email },
   },
+  formGroup('adres', adresControls, {
+    required: false,
+    requiredLabel: 'Met adres',
+  }),
   {
     name: 'telefoonnummer',
     type: InputType.tel,
@@ -68,5 +85,6 @@ const organisatieControls: InputControl<Organisatie>[] = [
     multiple: true,
     type: InputType.select,
     items: folderSelecties,
+    size: Object.keys(folderSelecties).length,
   },
 ];

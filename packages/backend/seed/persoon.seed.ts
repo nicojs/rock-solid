@@ -2,6 +2,7 @@ import * as db from '@prisma/client';
 import { Adres } from '@prisma/client';
 import fs from 'fs/promises';
 import path from 'path';
+import { ImportErrors, notEmpty } from './import-errors';
 
 interface RawDeelnemer {
   achternaam: string;
@@ -16,36 +17,8 @@ interface RawDeelnemer {
   instelling: string;
 }
 
-interface ImportError {
-  deelnemer: RawDeelnemer;
-  detail: string;
-}
-
-class ImportErrors {
-  errorsByCategory = new Map<string, ImportError[]>();
-  private _length = 0;
-  add(category: string, error: ImportError) {
-    const errors = this.errorsByCategory.get(category) ?? [];
-    this.errorsByCategory.set(category, errors);
-    errors.push(error);
-    this._length++;
-  }
-
-  get length() {
-    return this._length;
-  }
-
-  toJSON() {
-    return Object.fromEntries(this.errorsByCategory.entries());
-  }
-}
-
 const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
-const importErrors = new ImportErrors();
-
-function notEmpty<T>(item: T | null | undefined): item is T {
-  return item !== null && item !== undefined;
-}
+const importErrors = new ImportErrors<RawDeelnemer>();
 
 export async function seedPersonen(client: db.PrismaClient) {
   const deelnemersRaw: RawDeelnemer[] = JSON.parse(
@@ -90,7 +63,7 @@ export async function seedPersonen(client: db.PrismaClient) {
 
     if (!adresMatch) {
       importErrors.add('adres_parse_error', {
-        deelnemer: raw,
+        item: raw,
         detail: `Adres is empty doesn\'t match pattern`,
       });
     } else {
@@ -104,7 +77,7 @@ export async function seedPersonen(client: db.PrismaClient) {
       if (plaatsId === undefined) {
         importErrors.add('postcode_doesnt_exist', {
           detail: `Cannot find postcode "${raw.postcode}"`,
-          deelnemer: raw,
+          item: raw,
         });
       } else {
         return {

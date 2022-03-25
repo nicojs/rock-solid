@@ -1,18 +1,16 @@
 import { Options } from '@kei-crm/shared';
 
+export type ValueFactory<T> = {
+  [Prop in keyof T]?: (val: T[Prop]) => string;
+};
+
 export function toCsvDownloadUrl<T>(
   values: T[],
   columns: Array<keyof T & string>,
   columnLabels: Record<keyof T, string>,
-  valueLabels: {
-    [K in keyof T]?: T[K] extends string[]
-      ? Options<T[K][0]>
-      : T[K] extends string
-      ? Options<T[K]>
-      : never;
-  },
+  valueFactory: ValueFactory<T>,
 ) {
-  const csv = toCsv(values, columns, columnLabels, valueLabels);
+  const csv = toCsv(values, columns, columnLabels, valueFactory);
   // BOM is needed, see https://stackoverflow.com/questions/18249290/generate-csv-for-excel-via-javascript-with-unicode-characters#answer-48818418
   const BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
   const href = URL.createObjectURL(
@@ -33,15 +31,9 @@ export function toCsv<T>(
   values: T[],
   columns: Array<keyof T & string>,
   columnLabels: Record<keyof T, string>,
-  valueLabels: {
-    [K in keyof T]?: T[K] extends string[]
-      ? Options<T[K][0]>
-      : T[K] extends string
-      ? Options<T[K]>
-      : never;
-  },
+  valueFactory: ValueFactory<T>,
 ): string {
-  // The excel csv delimiter is the oposite of the decimal separator, see https://www.ablebits.com/office-addins-blog/change-excel-csv-delimiter/
+  // The excel csv delimiter is the opposite of the decimal separator, see https://www.ablebits.com/office-addins-blog/change-excel-csv-delimiter/
   const delimiter = decimalSeparator() === ',' ? ';' : ',';
 
   let csv = columns
@@ -57,30 +49,20 @@ export function toCsv<T>(
 
   function toValue(row: T, column: keyof T) {
     const val = row[column];
-    if (Array.isArray(val)) {
-      return escape(val.map((el) => mapValue(column, el)).join(', '));
-    }
     return escape(mapValue(column, val));
   }
 
-  function mapValue(
-    column: keyof T,
-    val: T[keyof T] extends any[] ? T[keyof T][0] : T[keyof T],
-  ) {
+  function mapValue(column: keyof T, val: T[keyof T]) {
+    const factory = valueFactory[column];
+    if (factory) {
+      return factory(val);
+    }
     if (typeof val === 'object' || typeof val === 'function') {
       throw new Error(
         `Csv of ${typeof val} is not supported. Requested ${column}: ${val}`,
       );
     }
 
-    if (typeof val === 'string') {
-      const mappedVal = (
-        valueLabels[column] as Record<string, string> | undefined
-      )?.[val];
-      if (mappedVal) {
-        return mappedVal;
-      }
-    }
     if (val === undefined || val === null) {
       return '';
     }

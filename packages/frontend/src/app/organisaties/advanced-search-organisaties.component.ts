@@ -8,6 +8,7 @@ import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
+import { adresName } from '../forms/adres.pipes';
 import { toCsvDownloadUrl } from '../shared';
 import { organisatieService } from './organistatie.service';
 
@@ -32,6 +33,7 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
           'terAttentieVan',
           'folderVoorkeur',
           'communicatieVoorkeur',
+          'adres',
           'doelgroep',
           'emailadres',
           'telefoonnummer',
@@ -39,7 +41,10 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
         ],
         organisatieColumnNames,
         {
-          folderVoorkeur: folderSelecties,
+          folderVoorkeur(val) {
+            return val.map((val) => folderSelecties[val]).join(', ');
+          },
+          adres: adresName,
         },
       );
     }
@@ -64,11 +69,16 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
       ${this.isLoading
         ? html`<kei-loading></kei-loading>`
         : this.organisaties
-        ? html`<kei-organisaties-list .organisaties=${this.organisaties}
-            ></kei-organisaties-list>
-            <a href="${this.csvDataUrl}" class="btn btn-outline-secondary" download="organisaties.csv">
+        ? html`<a
+              href="${this.csvDataUrl}"
+              class="btn btn-outline-secondary"
+              download="organisaties.csv"
+            >
               <kei-icon icon="download"></kei-icon> Export
-            </button>`
+            </a>
+            <kei-organisaties-list
+              .organisaties=${this.organisaties}
+            ></kei-organisaties-list>`
         : ''}`;
   }
 }
@@ -79,5 +89,6 @@ const searchControls: InputControl<OrganisatieFilter>[] = [
     type: InputType.select,
     multiple: true,
     items: folderSelecties,
+    size: Object.keys(folderSelecties).length,
   },
 ];

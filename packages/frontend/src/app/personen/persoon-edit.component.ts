@@ -8,10 +8,11 @@ import {
   BasePersoon,
   OverigPersoon,
   overigPersoonSelecties,
+  Adres,
 } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { FormControl, InputType, formGroup } from '../forms';
+import { FormControl, InputType, formGroup, adresControls } from '../forms';
 
 @customElement('kei-persoon-edit')
 export class PersonenEditComponent extends LitElement {
@@ -137,32 +138,10 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [
   ...basePersoonFormControls,
-  formGroup(
-    'domicilieadres',
-    [
-      {
-        name: 'straatnaam',
-        type: InputType.text,
-        validators: { required: true },
-      },
-      {
-        name: 'huisnummer',
-        type: InputType.text,
-        validators: { required: true },
-      },
-      {
-        name: 'plaats',
-        type: InputType.plaats,
-        label: 'Plaats',
-        validators: { required: true },
-      },
-      { name: 'busnummer', type: InputType.text },
-    ],
-    {
-      required: false,
-      requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
-    },
-  ),
+  formGroup('domicilieadres', adresControls, {
+    required: false,
+    requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
+  }),
   {
     name: 'woonsituatie',
     type: InputType.select,

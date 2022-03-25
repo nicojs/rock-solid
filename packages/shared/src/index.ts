@@ -10,3 +10,4 @@ export * from './deelname';
 export * from './paging';
 export * from './organisatie';
 export * from './adres';
+export * from './deep-partial';

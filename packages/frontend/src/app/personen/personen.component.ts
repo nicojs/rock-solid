@@ -1,6 +1,7 @@
 import { html, LitElement, PropertyValues } from 'lit';
 import {
   BasePersoon,
+  DeepPartial,
   Persoon,
   PersoonType,
   persoonTypes,
@@ -152,7 +153,7 @@ export class PersonenComponent extends LitElement {
                 ></kei-paging> `
             : html`<kei-loading></kei-loading>`}`;
       case 'new':
-        const persoon = {
+        const persoon: DeepPartial<Persoon> = {
           type: this.type,
           verblijfadres: {},
         };
