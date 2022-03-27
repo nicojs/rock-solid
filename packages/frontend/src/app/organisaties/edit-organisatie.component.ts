@@ -3,6 +3,8 @@ import {
   Organisatie,
   UpsertableOrganisatie,
   doelgroepen,
+  organisatieColumnNames,
+  groupedOrganisatieSoorten,
 } from '@kei-crm/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -48,6 +50,7 @@ const organisatieControls: FormControl<Organisatie>[] = [
     name: 'doelgroep',
     type: InputType.select,
     items: doelgroepen,
+    grouped: false,
     validators: { required: true },
   },
   {
@@ -85,6 +88,19 @@ const organisatieControls: FormControl<Organisatie>[] = [
     multiple: true,
     type: InputType.select,
     items: folderSelecties,
+    grouped: false,
     size: Object.keys(folderSelecties).length,
+  },
+  {
+    name: 'soorten',
+    label: organisatieColumnNames.soorten,
+    type: InputType.select,
+    multiple: true,
+    grouped: true,
+    items: groupedOrganisatieSoorten,
+    size: Object.entries(groupedOrganisatieSoorten).reduce(
+      (acc, [, items]) => Object.entries(items).length + 1 + acc,
+      0,
+    ),
   },
 ];

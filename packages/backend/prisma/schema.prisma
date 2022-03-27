@@ -149,8 +149,40 @@ model Organisatie {
   website              String?               @db.VarChar(256)
   folderVoorkeur       FolderSelectie[]
   communicatieVoorkeur CommunicatieVoorkeur?
+  soorten              OrganisatieSoort[]
 
   @@map("organisatie")
+}
+
+enum OrganisatieSoort {
+  AmbulanteWoonondersteuning
+  ResidentieleWoonondersteuningMinderjarigen
+  ResidentieleWoonondersteuningMeerderjarigen
+  Pleegzorg
+  RechtstreeksToegankelijkeHulp
+  BijzondereJeugdzorg
+  Psychiatrie
+  Maatwerkbedrijf
+  Dagwerking
+  BegeleidWerkOfVrijwilligerswerk
+  ArbeidstrajectBegeleiding
+  Arbeidszorg
+  BuSO
+  CLB
+  CentraBasiseducatie
+  CAW
+  JAC
+  OCMW
+  GGZ
+  Justitiehuizen
+  OndersteuningTrajectbegeleiding
+  Vrijetijdsaanbod
+  Algemeen
+  Jeugdorganisatie
+  Jeugddienst
+  SociaalCultureleOrganisaties
+  SteunpuntenEnFederaties
+  Anders
 }
 
 enum CommunicatieVoorkeur {

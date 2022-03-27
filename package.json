@@ -17,7 +17,8 @@
     "start:tsc": "tsc -b -w",
     "test": "lerna run test --stream --concurrency 2",
     "docs:mermaid": "mmdc -i docs/erd.mmd -o docs/erd.svg",
-    "docs:mermaid:watch": "node tasks/watch-mermaid.mjs"
+    "docs:mermaid:watch": "node tasks/watch-mermaid.mjs",
+    "import:csv2json": "node tasks/import-csv2json.mjs"
   },
   "keywords": [],
   "author": "",

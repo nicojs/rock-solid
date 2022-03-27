@@ -186,12 +186,25 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
       ${control.placeholder
         ? html`<option value="">${control.placeholder}</option>`
         : nothing}
-      ${Object.entries(control.items).map(
-        ([value, title]) =>
-          html`<option value="${value}" ?selected=${isSelected(value)}>
-            ${title}
-          </option>`,
-      )}
+      ${control.grouped
+        ? Object.entries(control.items).flatMap(
+            ([groupName, items]) => html`<optgroup label="${groupName}">
+              ${Object.entries(items).map(
+                ([value, title]) => html`<option
+                  value="${value}"
+                  ?selected=${isSelected(value)}
+                >
+                  ${title}
+                </option>`,
+              )}
+            </optgroup>`,
+          )
+        : Object.entries(control.items).map(
+            ([value, title]) =>
+              html`<option value="${value}" ?selected=${isSelected(value)}>
+                ${title}
+              </option>`,
+          )}
     </select>`;
   }
 }

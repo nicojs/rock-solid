@@ -89,6 +89,7 @@ const searchControls: InputControl<OrganisatieFilter>[] = [
     type: InputType.select,
     multiple: true,
     items: folderSelecties,
+    grouped: false,
     size: Object.keys(folderSelecties).length,
   },
 ];

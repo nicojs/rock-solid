@@ -8,7 +8,6 @@ import {
   BasePersoon,
   OverigPersoon,
   overigPersoonSelecties,
-  Adres,
 } from '@kei-crm/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -57,6 +56,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
     name: 'geslacht',
     type: InputType.select,
     items: geslachten,
+    grouped: false,
   },
   {
     name: 'geboortedatum',
@@ -131,6 +131,7 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
     label: 'Selectie (gebruik ctrl of shift om meerdere te selecteren)',
     type: InputType.select,
     multiple: true,
+    grouped: false,
     items: overigPersoonSelecties,
     size: Object.keys(overigPersoonSelecties).length,
   },
@@ -145,6 +146,7 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
   {
     name: 'woonsituatie',
     type: InputType.select,
+    grouped: false,
     items: woonsituaties,
   },
   {
@@ -155,6 +157,7 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
   {
     name: 'werksituatie',
     type: InputType.select,
+    grouped: false,
     items: werksituaties,
   },
   {

@@ -29,7 +29,7 @@ interface Validators {
 
 export const patterns = Object.freeze({
   email: '.+@.+\\..+',
-  tel: '^\\+d+$',
+  tel: '^\\d+$',
 });
 
 export type FormControl<TEntity> =
@@ -153,12 +153,32 @@ export interface CheckboxInputControl<TEntity> extends BaseInputControl {
   type: InputType.checkbox;
 }
 
-export interface SelectControl<TEntity> extends BaseInputControl {
+interface BaseSelectControl<TEntity> extends BaseInputControl {
   type: InputType.select;
   name: KeysOfEnums<TEntity>;
   multiple?: true;
+  size?: number;
+}
+
+export interface GroupedSelectControl<TEntity>
+  extends BaseSelectControl<TEntity> {
+  grouped: true;
+  items: Record<
+    string,
+    {
+      readonly [K in TEntity[KeysOfEnums<TEntity>] & string]: string;
+    }
+  >;
+}
+
+export interface IndividualSelectControl<TEntity>
+  extends BaseSelectControl<TEntity> {
+  grouped: false;
   items: {
     readonly [K in TEntity[KeysOfEnums<TEntity>] & string]: string;
   };
-  size?: number;
 }
+
+export type SelectControl<TEntity> =
+  | IndividualSelectControl<TEntity>
+  | GroupedSelectControl<TEntity>;

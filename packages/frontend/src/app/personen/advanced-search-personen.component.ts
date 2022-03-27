@@ -123,6 +123,7 @@ const overigPersoonSearchControls: InputControl<OverigPersoon>[] = [
     type: InputType.select,
     multiple: true,
     items: overigPersoonSelecties,
+    grouped: false,
     size: Object.keys(overigPersoonSelecties).length,
   },
 ];
@@ -133,6 +134,7 @@ const deelnemerSearchControls: InputControl<Deelnemer>[] = [
     label: deelnemerLabels.geslacht,
     type: InputType.select,
     items: geslachten,
+    grouped: false,
     placeholder: 'Geen filter',
   },
   {
@@ -140,6 +142,7 @@ const deelnemerSearchControls: InputControl<Deelnemer>[] = [
     label: deelnemerLabels.werksituatie,
     type: InputType.select,
     items: werksituaties,
+    grouped: false,
     placeholder: 'Geen filter',
   },
 ];

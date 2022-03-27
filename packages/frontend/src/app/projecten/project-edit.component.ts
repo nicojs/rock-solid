@@ -88,6 +88,7 @@ const cursusProjectControls: FormControl<Cursus>[] = [
     validators: {
       required: true,
     },
+    grouped: false,
   },
   {
     name: 'overnachting',

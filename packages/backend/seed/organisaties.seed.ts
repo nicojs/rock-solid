@@ -1,5 +1,4 @@
 import * as db from '@prisma/client';
-import { Adres, Organisatie } from '@prisma/client';
 import fs from 'fs/promises';
 import path from 'path';
 import { ImportErrors, notEmpty } from './import-errors';
@@ -119,9 +118,10 @@ export async function seedOrganisaties(client: db.PrismaClient) {
       communicatieVoorkeur: raw['mailing op e-mail'] ? 'email' : 'post',
       emailadres: raw['e-mail'],
       opmerking: raw.opmerkingen,
-      website: raw.website,
+      website: fromRawWebsite(raw.website),
       telefoonnummer: raw.telefoon,
       folderVoorkeur: folderVoorkeurFromRaw(raw),
+      soorten: [],
     };
   }
 
@@ -133,6 +133,18 @@ export async function seedOrganisaties(client: db.PrismaClient) {
       })
       .join('');
   }
+
+  function fromRawWebsite(website: string): string | undefined {
+    if (website) {
+      if (website.startsWith('http://') || website.startsWith('https://')) {
+        return website;
+      } else {
+        return `https://${website}`;
+      }
+    }
+    return undefined;
+  }
+
   function folderVoorkeurFromRaw(raw: RawOrganisatie): db.FolderSelectie[] {
     const result: db.FolderSelectie[] = [];
     addIfJa('folders Kei-Jong (niet Buso)', 'KeiJongNietBuso');

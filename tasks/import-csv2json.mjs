@@ -4,8 +4,6 @@ import stripBom from 'strip-bom-stream';
 import fs from 'fs';
 import path from 'path';
 
-const csvParser = csv({ separator: ';' });
-
 /**
  * @param {URL | string} fileName
  * @returns {Promise<Array>}
@@ -15,7 +13,7 @@ function parseCsvFile(fileName) {
   return new Promise((res, rej) => {
     fs.createReadStream(fileName)
       .pipe(stripBom())
-      .pipe(csvParser)
+      .pipe(csv({ separator: ';' }))
       .on('data', (data) => results.push(data))
       .on('error', (err) => rej(err))
       .on('end', () => {
