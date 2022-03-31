@@ -1,4 +1,5 @@
 import { parse, RestRoutes, TOTAL_COUNT_HEADER } from '@kei-crm/shared';
+import { httpClient, HttpClient } from './http-client';
 import { HttpStatus } from './http-status';
 
 export interface Page<TRoute extends keyof RestRoutes> {
@@ -7,11 +8,15 @@ export interface Page<TRoute extends keyof RestRoutes> {
 }
 
 export class RestClient {
+  constructor(private http: HttpClient = httpClient) {}
+
   async getAll<TRoute extends keyof RestRoutes>(
     route: TRoute,
     query?: Record<string, unknown>,
   ): Promise<RestRoutes[TRoute]['entity'][]> {
-    const response = await fetch(`/api/${route}${toQueryString(query)}`);
+    const response = await this.http.fetch(
+      `/api/${route}${toQueryString(query)}`,
+    );
     const bodyText = await response.text();
     return parse(bodyText);
   }
@@ -22,7 +27,9 @@ export class RestClient {
     query: Record<string, unknown> = {},
   ): Promise<Page<TRoute>> {
     query['_page'] = page;
-    const response = await fetch(`/api/${route}${toQueryString(query)}`);
+    const response = await this.http.fetch(
+      `/api/${route}${toQueryString(query)}`,
+    );
     const bodyText = await response.text();
     const totalCount = response.headers.get(TOTAL_COUNT_HEADER);
     if (totalCount === null) {
@@ -38,7 +45,7 @@ export class RestClient {
     route: TRoute,
     id: string | number,
   ): Promise<RestRoutes[TRoute]['entity']> {
-    const response = await fetch(`/api/${route}/${id}`);
+    const response = await this.http.fetch(`/api/${route}/${id}`);
     const bodyText = await response.text();
     return parse(bodyText);
   }
@@ -47,7 +54,7 @@ export class RestClient {
     route: TRoute,
     entity: RestRoutes[TRoute]['upsertableEntity'][],
   ): Promise<void> {
-    const response = await fetch(`/api/${route}`, {
+    const response = await this.http.fetch(`/api/${route}`, {
       method: 'PUT',
       body: JSON.stringify(entity),
       headers: {
@@ -64,7 +71,7 @@ export class RestClient {
     id: string | number,
     entity: RestRoutes[TRoute]['upsertableEntity'],
   ): Promise<void> {
-    const response = await fetch(`/api/${route}/${id}`, {
+    const response = await this.http.fetch(`/api/${route}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(entity),
       headers: {
@@ -80,7 +87,7 @@ export class RestClient {
     route: TRoute,
     entity: RestRoutes[TRoute]['upsertableEntity'],
   ): Promise<RestRoutes[TRoute]['entity']> {
-    const response = await fetch(`/api/${route}`, {
+    const response = await this.http.fetch(`/api/${route}`, {
       method: 'POST',
       body: JSON.stringify(entity),
       headers: {

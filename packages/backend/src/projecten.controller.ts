@@ -19,12 +19,15 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from './auth';
 import { DeelnameMapper } from './services/deelname.mapper';
 import { InschrijvingMapper } from './services/inschrijving.mapper';
 import { ProjectMapper } from './services/project.mapper';
 
 @Controller({ path: 'projecten' })
+@UseGuards(JwtAuthGuard)
 export class ProjectenController {
   constructor(
     private readonly projectMapper: ProjectMapper,

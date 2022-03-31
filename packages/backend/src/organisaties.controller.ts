@@ -16,13 +16,16 @@ import {
   Put,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { JwtAuthGuard } from './auth';
 import { OrganisatieFilterPipe } from './pipes/organisatie-filter.pipe';
 import { PagePipe } from './pipes/page.pipe';
 import { OrganisatieMapper } from './services/organisatie.mapper';
 
 @Controller({ path: 'organisaties' })
+@UseGuards(JwtAuthGuard)
 export class OrganisatiesController {
   constructor(private organisatieMapper: OrganisatieMapper) {}
 

@@ -14,9 +14,7 @@ export class RouteParams {
     base = `${window.location.protocol}//${window.location.host}`,
   ): RouteParams {
     const { pathname, searchParams } = new URL(href, base);
-    const path = (pathname.endsWith('/') ? pathname.slice(0, -1) : pathname)
-      .slice(1)
-      .split('/');
+    const path = pathname.slice(1).split('/').filter(Boolean);
     const query: Query = {};
     searchParams.forEach((val, key) => (query[key] = val));
     return new RouteParams(path, query);
@@ -47,7 +45,7 @@ export class RouteParams {
 
 export class Router {
   private navigatorSubject = new BehaviorSubject<RouteParams>(
-    RouteParams.parse(window.location.pathname),
+    RouteParams.parse(`${window.location.pathname}${window.location.search}`),
   );
   public routeChange$ = this.navigatorSubject.asObservable();
 

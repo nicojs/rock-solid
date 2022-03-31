@@ -16,13 +16,16 @@ import {
   Put,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { PagePipe } from './pipes/page.pipe';
 import { PersoonFilterPipe } from './pipes/persoon-filter.pipe';
 import { PersoonMapper } from './services/persoon.mapper';
 import { Response } from 'express';
+import { JwtAuthGuard } from './auth';
 
 @Controller({ path: 'personen' })
+@UseGuards(JwtAuthGuard)
 export class PersonenController {
   constructor(private readonly persoonService: PersoonMapper) {}
 

@@ -1,8 +1,10 @@
 import { Plaats, PlaatsFilter } from '@kei-crm/shared';
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from './auth';
 import { PlaatsMapper } from './services/plaats.mapper';
 
 @Controller({ path: 'plaatsen' })
+@UseGuards(JwtAuthGuard)
 export class PlaatsenController {
   constructor(private readonly plaatsMapper: PlaatsMapper) {}
 

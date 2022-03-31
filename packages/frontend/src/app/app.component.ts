@@ -32,8 +32,16 @@ export class KeiCrmApp extends LitElement {
   public query?: Record<string, string>;
 
   public override render() {
-    return html` <div class="container-fluid">
-      <h1 class="display-1">KEI CRM 🤘</h1>
+    return html`<div class="container-fluid">
+      <nav class="navbar navbar-light bg-light justify-content-between">
+        <span class="navbar-brand mb-0 h1"
+          >RockSolid.
+          <span class="text-muted fs-6"
+            >Solide management systeem voor De Kei en Kei-Jong</span
+          ></span
+        >
+        <kei-user></kei-user>
+      </nav>
       <div class="row">
         <kei-nav
           class="col-xs-5 col-sm-4 col-md-3 col-lg-2"
@@ -46,6 +54,10 @@ export class KeiCrmApp extends LitElement {
 
   private renderMain() {
     switch (this.route?.path[0]) {
+      case 'login':
+        return html`<kei-login
+          .queryString="${this.route.queryString}"
+        ></kei-login>`;
       case 'cursussen':
       case 'vakanties':
         const projectType: ProjectType =

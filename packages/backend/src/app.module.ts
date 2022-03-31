@@ -13,6 +13,8 @@ import { OrganisatieMapper } from './services/organisatie.mapper';
 import { OrganisatiesController } from './organisaties.controller';
 import { PlaatsMapper } from './services/plaats.mapper';
 import { PlaatsenController } from './plaatsen.controller';
+import { AuthController } from './auth.controller';
+import { AuthModule } from './auth';
 
 const rootPath = path.resolve(
   __dirname,
@@ -27,14 +29,16 @@ const rootPath = path.resolve(
   imports: [
     ServeStaticModule.forRoot({
       rootPath,
-      exclude: ['/api*'],
+      exclude: ['/api*', '/auth*'],
     }),
+    AuthModule,
   ],
   controllers: [
     PersonenController,
     ProjectenController,
     OrganisatiesController,
     PlaatsenController,
+    AuthController,
   ],
   providers: [
     PersoonMapper,

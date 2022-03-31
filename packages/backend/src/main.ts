@@ -13,7 +13,7 @@ async function bootstrap() {
       reviver: keiReviver,
     }),
   );
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', { exclude: ['/auth/login', '/auth/callback'] });
   await app.listen(3000, 'localhost');
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
