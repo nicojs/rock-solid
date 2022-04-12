@@ -1,0 +1,14 @@
+name: Deploy
+
+on: [workflow_dispatch]
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: Acceptance
+    steps:
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - run: npm run deploy:${{ github.event.inputs.env }}
