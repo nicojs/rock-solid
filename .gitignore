@@ -3,3 +3,7 @@ dist
 *.tsbuildinfo
 *.env
 /import
+package.release.json
+/packages/backend/seed/import
+/.deploy
+/deploy.zip

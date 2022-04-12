@@ -1,7 +1,7 @@
 {
   "delay": 200,
   "verbose": true,
-  "watch": ["dist", "node_modules/@key-crm/frontend/dist/app.bundle.js"],
+  "watch": ["dist"],
   "ext": "*.js",
   "ignore": ["dist/**/*.test.js", "dist/**/*.spec.js"]
 }

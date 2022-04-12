@@ -23,7 +23,7 @@ const importErrors = new ImportErrors<RawDeelnemer>();
 export async function seedPersonen(client: db.PrismaClient) {
   const deelnemersRaw: RawDeelnemer[] = JSON.parse(
     await fs.readFile(
-      path.resolve(__dirname, '../../../../import/json/deelnemers.json'),
+      path.resolve(__dirname, './import/deelnemers.json'),
       'utf-8',
     ),
   );
@@ -47,7 +47,7 @@ export async function seedPersonen(client: db.PrismaClient) {
   console.log(`Seeded ${deelnemers.length} deelnemers`);
   console.log(`(${importErrors.length} errors)`);
   fs.writeFile(
-    path.resolve(__dirname, '../../../../import/deelnemers-import-errors.json'),
+    path.resolve(__dirname, './import/deelnemers-import-errors.json'),
     JSON.stringify(importErrors, null, 2),
     'utf-8',
   );

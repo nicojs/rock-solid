@@ -4,6 +4,8 @@ import stripBom from 'strip-bom-stream';
 import fs from 'fs';
 import path from 'path';
 
+const outDir = '../packages/backend/seed/import/';
+
 /**
  * @param {URL | string} fileName
  * @returns {Promise<Array>}
@@ -29,6 +31,8 @@ async function main() {
   await fs.promises.mkdir(new URL(`../import/json`, import.meta.url), {
     recursive: true,
   });
+  await fs.promises.mkdir(new URL(outDir, import.meta.url), { recursive: true });
+
   await Promise.all(
     csvFiles.map(async (fileName) => {
       const to = `${path.parse(fileName).name}.json`;
@@ -36,7 +40,7 @@ async function main() {
         new URL(`../import/csv/${fileName}`, import.meta.url),
       );
       await fs.promises.writeFile(
-        new URL(`../import/json/${to}`, import.meta.url),
+        new URL(`${outDir}${to}`, import.meta.url),
         JSON.stringify(obj, null, 2),
         'utf-8',
       );
