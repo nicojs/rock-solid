@@ -12,4 +12,4 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - run: npm run deploy:${{ github.event.inputs.env }}
+    - run: npm run deploy:acc
