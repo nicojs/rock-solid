@@ -25,13 +25,12 @@ function parseCsvFile(fileName) {
 }
 
 async function main() {
-  const csvFiles = await fs.promises.readdir(
-    new URL('../import/csv', import.meta.url),
-  );
-  await fs.promises.mkdir(new URL(`../import/json`, import.meta.url), {
+  const inputUrl = new URL('../import/csv', import.meta.url);
+  await fs.promises.mkdir(inputUrl, { recursive: true });
+  const csvFiles = await fs.promises.readdir(inputUrl);
+  await fs.promises.mkdir(new URL(outDir, import.meta.url), {
     recursive: true,
   });
-  await fs.promises.mkdir(new URL(outDir, import.meta.url), { recursive: true });
 
   await Promise.all(
     csvFiles.map(async (fileName) => {
