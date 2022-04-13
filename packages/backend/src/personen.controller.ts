@@ -18,11 +18,11 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { PagePipe } from './pipes/page.pipe';
-import { PersoonFilterPipe } from './pipes/persoon-filter.pipe';
-import { PersoonMapper } from './services/persoon.mapper';
+import { PagePipe } from './pipes/page.pipe.js';
+import { PersoonFilterPipe } from './pipes/persoon-filter.pipe.js';
+import { PersoonMapper } from './services/persoon.mapper.js';
 import { Response } from 'express';
-import { JwtAuthGuard } from './auth';
+import { JwtAuthGuard } from './auth/index.js';
 
 @Controller({ path: 'personen' })
 @UseGuards(JwtAuthGuard)

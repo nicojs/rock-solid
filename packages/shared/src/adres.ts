@@ -1,4 +1,4 @@
-import { Upsertable } from './upsertable';
+import { Upsertable } from './upsertable.js';
 
 export enum Provincie {
   'Brussels Hoofdstedelijk Gewest' = 1,

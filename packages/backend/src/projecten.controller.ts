@@ -21,10 +21,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from './auth';
-import { DeelnameMapper } from './services/deelname.mapper';
-import { InschrijvingMapper } from './services/inschrijving.mapper';
-import { ProjectMapper } from './services/project.mapper';
+import { JwtAuthGuard } from './auth/index.js';
+import { DeelnameMapper } from './services/deelname.mapper.js';
+import { InschrijvingMapper } from './services/inschrijving.mapper.js';
+import { ProjectMapper } from './services/project.mapper.js';
 
 @Controller({ path: 'projecten' })
 @UseGuards(JwtAuthGuard)

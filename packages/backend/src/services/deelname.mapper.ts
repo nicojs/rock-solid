@@ -1,8 +1,8 @@
 import { Deelname, Deelnemer, UpsertableDeelname } from '@kei-crm/shared';
 import { Injectable } from '@nestjs/common';
 import * as db from '@prisma/client';
-import { DBService } from './db.service';
-import { toPersoon, includePersoonAdres } from './persoon.mapper';
+import { DBService } from './db.service.js';
+import { toPersoon, includePersoonAdres } from './persoon.mapper.js';
 
 /**
  * A data mapper for deelname

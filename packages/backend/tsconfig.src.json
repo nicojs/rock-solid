@@ -5,9 +5,8 @@
     "lib": ["ES2020"],
     "rootDir": ".",
     "types": ["node"],
-    "resolveJsonModule": true,
   },
   "include": ["src/**/*.ts", "seed/**/*.ts", "seed/**/*.json"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
-  "references": [ { "path": "../shared" } ],
+  "references": [{ "path": "../shared" }]
 }

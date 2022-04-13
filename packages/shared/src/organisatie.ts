@@ -1,6 +1,6 @@
-import { Upsertable } from '.';
-import { Options, groupOptions } from './options';
-import { Adres, UpsertableAdres } from './adres';
+import { Upsertable } from './upsertable.js';
+import { Options, groupOptions } from './options.js';
+import { Adres, UpsertableAdres } from './adres.js';
 
 export interface Organisatie {
   id: number;

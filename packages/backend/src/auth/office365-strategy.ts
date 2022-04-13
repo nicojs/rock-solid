@@ -2,7 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-oauth2';
 import fetch from 'node-fetch';
-import { authConstants } from './constants';
+import { authConstants } from './constants.js';
 import { User } from '@kei-crm/shared';
 
 interface Office365User {
@@ -44,7 +44,7 @@ export class Office365Strategy extends PassportStrategy(
         `Authentication failed. Response of https://graph.microsoft.com/v1.0/me was with a ${response.status}`,
       );
     }
-    const officeUser: Office365User = await response.json();
+    const officeUser = (await response.json()) as Office365User;
     return {
       email: officeUser.mail,
       name: officeUser.displayName,

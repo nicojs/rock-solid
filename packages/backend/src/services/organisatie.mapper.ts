@@ -5,14 +5,14 @@ import {
   OrganisatieFilter,
 } from '@kei-crm/shared';
 import { Injectable } from '@nestjs/common';
-import { DBService } from './db.service';
-import { purgeNulls } from './mapper-utils';
-import { toPage } from './paging';
+import { DBService } from './db.service.js';
+import { purgeNulls } from './mapper-utils.js';
+import { toPage } from './paging.js';
 import {
   toAdres,
   toCreateAdresInput,
   toNullableUpdateAdresInput,
-} from './adres.mapper';
+} from './adres.mapper.js';
 
 type DBOrganisatieWithAdres = db.Organisatie & {
   adres:

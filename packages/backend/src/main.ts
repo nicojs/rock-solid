@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { keiReviver } from '@kei-crm/shared';
-import { AppModule } from './app.module';
-import { json } from 'body-parser';
+import { AppModule } from './app.module.js';
+import bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -9,7 +9,7 @@ async function bootstrap() {
     bodyParser: false,
   });
   app.use(
-    json({
+    bodyParser.json({
       reviver: keiReviver,
     }),
   );

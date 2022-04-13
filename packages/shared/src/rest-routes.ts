@@ -4,12 +4,12 @@ import {
   PersoonFilter,
   UpsertableDeelname,
   UpsertableInschrijving,
-} from '.';
-import { Inschrijving } from './inschrijving';
-import { Organisatie, UpsertableOrganisatie } from './organisatie';
-import { Persoon, UpsertablePersoon } from './persoon';
-import { Plaats, PlaatsFilter } from './adres';
-import { Project, UpsertableProject } from './project';
+} from './index.js';
+import { Inschrijving } from './inschrijving.js';
+import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
+import { Persoon, UpsertablePersoon } from './persoon.js';
+import { Plaats, PlaatsFilter } from './adres.js';
+import { Project, UpsertableProject } from './project.js';
 
 export type EntityFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['entity'];

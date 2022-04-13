@@ -1,29 +1,24 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
-import { PersonenController } from './personen.controller';
-import { PersoonMapper } from './services/persoon.mapper';
-import { DBService } from './services/db.service';
-import { ProjectenController } from './projecten.controller';
-import { ProjectMapper } from './services/project.mapper';
-import { InschrijvingMapper } from './services/inschrijving.mapper';
-import { DeelnameMapper } from './services/deelname.mapper';
-import { OrganisatieMapper } from './services/organisatie.mapper';
-import { OrganisatiesController } from './organisaties.controller';
-import { PlaatsMapper } from './services/plaats.mapper';
-import { PlaatsenController } from './plaatsen.controller';
-import { AuthController } from './auth.controller';
-import { AuthModule } from './auth';
+import { PersonenController } from './personen.controller.js';
+import { PersoonMapper } from './services/persoon.mapper.js';
+import { DBService } from './services/db.service.js';
+import { ProjectenController } from './projecten.controller.js';
+import { ProjectMapper } from './services/project.mapper.js';
+import { InschrijvingMapper } from './services/inschrijving.mapper.js';
+import { DeelnameMapper } from './services/deelname.mapper.js';
+import { OrganisatieMapper } from './services/organisatie.mapper.js';
+import { OrganisatiesController } from './organisaties.controller.js';
+import { PlaatsMapper } from './services/plaats.mapper.js';
+import { PlaatsenController } from './plaatsen.controller.js';
+import { AuthController } from './auth.controller.js';
+import { AuthModule } from './auth/index.js';
 
-const rootPath = path.resolve(
-  __dirname,
-  '..',
-  '..',
-  'node_modules',
-  '@kei-crm',
-  'frontend',
-  'dist',
+const rootPath = fileURLToPath(
+  new URL('../../node_modules/@kei-crm/frontend/dist', import.meta.url),
 );
 @Module({
   imports: [

@@ -1,5 +1,5 @@
-import { Deelnemer } from './persoon';
-import { Upsertable } from './upsertable';
+import { Deelnemer } from './persoon.js';
+import { Upsertable } from './upsertable.js';
 
 export interface Deelname {
   id: number;

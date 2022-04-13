@@ -1,6 +1,6 @@
 import * as db from '@prisma/client';
 import { Adres, UpsertableAdres } from '@kei-crm/shared';
-import { toPlaats } from './plaats.mapper';
+import { toPlaats } from './plaats.mapper.js';
 
 export function toAdres(adres: db.Adres & { plaats: db.Plaats }): Adres {
   const { plaats, plaatsId, busnummer, ...props } = adres;

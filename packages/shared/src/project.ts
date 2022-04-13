@@ -1,5 +1,5 @@
-import { Options } from './options';
-import { Upsertable } from './upsertable';
+import { Options } from './options.js';
+import { Upsertable } from './upsertable.js';
 
 export interface BaseProject {
   id: number;

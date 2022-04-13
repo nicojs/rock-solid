@@ -1,7 +1,7 @@
-import * as db from '@prisma/client';
-import { seedOrganisaties } from './organisaties.seed';
-import { seedPersonen } from './persoon.seed';
-import { seedPlaatsen } from './plaatsen.seed';
+import db from '@prisma/client';
+import { seedOrganisaties } from './organisaties.seed.js';
+import { seedPersonen } from './persoon.seed.js';
+import { seedPlaatsen } from './plaatsen.seed.js';
 
 async function main() {
   const client = new db.PrismaClient();

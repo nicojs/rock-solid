@@ -1,6 +1,6 @@
 import { LoginResponse, loginUrl, User } from '@kei-crm/shared';
 import { Controller, Request, UseGuards, Get } from '@nestjs/common';
-import { Office365AuthGuard, AuthService } from './auth';
+import { Office365AuthGuard, AuthService } from './auth/index.js';
 
 @Controller()
 export class AuthController {

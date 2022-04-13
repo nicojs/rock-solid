@@ -1,8 +1,7 @@
 import * as db from '@prisma/client';
 import { Adres } from '@prisma/client';
 import fs from 'fs/promises';
-import path from 'path';
-import { ImportErrors, notEmpty } from './import-errors';
+import { ImportErrors, notEmpty } from './import-errors.js';
 
 interface RawDeelnemer {
   achternaam: string;
@@ -23,7 +22,7 @@ const importErrors = new ImportErrors<RawDeelnemer>();
 export async function seedPersonen(client: db.PrismaClient) {
   const deelnemersRaw: RawDeelnemer[] = JSON.parse(
     await fs.readFile(
-      path.resolve(__dirname, './import/deelnemers.json'),
+      new URL('./import/deelnemers.json', import.meta.url),
       'utf-8',
     ),
   );
@@ -47,7 +46,7 @@ export async function seedPersonen(client: db.PrismaClient) {
   console.log(`Seeded ${deelnemers.length} deelnemers`);
   console.log(`(${importErrors.length} errors)`);
   fs.writeFile(
-    path.resolve(__dirname, './import/deelnemers-import-errors.json'),
+    new URL('./import/deelnemers-import-errors.json', import.meta.url),
     JSON.stringify(importErrors, null, 2),
     'utf-8',
   );

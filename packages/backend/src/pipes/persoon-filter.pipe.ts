@@ -1,6 +1,6 @@
 import { PersoonFilter, OverigPersoonSelectie } from '@kei-crm/shared';
 import { PipeTransform, Injectable } from '@nestjs/common';
-import { Flat } from './pipe-utils';
+import { Flat } from './pipe-utils.js';
 
 @Injectable()
 export class PersoonFilterPipe implements PipeTransform {

@@ -1,6 +1,6 @@
-import { Adres, UpsertableAdres } from './adres';
-import { Options } from './options';
-import { Upsertable } from './upsertable';
+import { Adres, UpsertableAdres } from './adres.js';
+import { Options } from './options.js';
+import { Upsertable } from './upsertable.js';
 
 export interface BasePersoon {
   id: number;

@@ -8,9 +8,9 @@ import {
   UpsertableProject,
 } from '@kei-crm/shared';
 import { Injectable } from '@nestjs/common';
-import { DBService } from './db.service';
+import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
-import { purgeNulls } from './mapper-utils';
+import { purgeNulls } from './mapper-utils.js';
 
 const includeQuery = {
   activiteiten: {

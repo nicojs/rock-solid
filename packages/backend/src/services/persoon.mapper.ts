@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { DBService } from './db.service';
+import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
 import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
-import { purgeNulls } from './mapper-utils';
-import { toPage } from './paging';
+import { purgeNulls } from './mapper-utils.js';
+import { toPage } from './paging.js';
 import {
   toAdres,
   toCreateAdresInput,
   toUpdateAdresInput,
   toNullableUpdateAdresInput,
-} from './adres.mapper';
+} from './adres.mapper.js';
 
 type DBPersonWithAdres = db.Persoon & {
   verblijfadres: db.Adres & { plaats: db.Plaats };

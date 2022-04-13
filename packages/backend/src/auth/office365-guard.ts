@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { authConstants } from './constants';
+import { authConstants } from './constants.js';
 
 @Injectable()
 export class Office365AuthGuard extends AuthGuard(

@@ -1,6 +1,6 @@
 // import { Test, TestingModule } from '@nestjs/testing';
-// import { AppController } from './app.controller';
-// import { AppService } from './persoon.service';
+// import { AppController } from './app.controller.js';
+// import { AppService } from './persoon.service.js';
 // import { expect } from 'chai';
 
 // describe('AppController', () => {
