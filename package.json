@@ -22,10 +22,11 @@
     "test": "lerna run test --stream --concurrency 2",
     "docs:mermaid": "mmdc -i docs/erd.mmd -o docs/erd.svg",
     "docs:mermaid:watch": "node tasks/watch-mermaid.mjs",
+    "import:az2csv": "az storage file download --share-name import --path import.zip --account-name $AZURE_STORAGE_ACCOUNT --account-key $AZURE_STORAGE_KEY && unzip import.zip -d . && rm import.zip",
     "import:csv2json": "node tasks/import-csv2json.mjs",
     "deploy:prepare": "tasks/prepare-deploy.sh",
     "deploy:acc:az": "az webapp deployment source config-zip --resource-group acc-rock-solid --name acc-rock-solid-web --src .deploy/deploy.zip",
-    "deploy:acc": "npm run clean && npm run import:csv2json && npm run build && npm run deploy:prepare && npm run deploy:acc:az"
+    "deploy:acc": "npm run clean && npm run import:az2csv && npm run import:csv2json && npm run build && npm run deploy:prepare && npm run deploy:acc:az"
   },
   "keywords": [],
   "author": "",

@@ -14,3 +14,6 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - run: npm ci
     - run: npm run deploy:acc
+      env:
+        AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+        AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}

@@ -249,3 +249,32 @@ az ad sp create-for-rbac --name $APP_NAME --role contributor \
                           --scopes /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RES_GROUP} \
                           --sdk-auth
 ```
+
+## Azure file storage
+
+Create a storage account, for example: "accrocksolidimport"
+
+Create the share:
+
+```sh
+RES_GROUP=acc-rock-solid
+AZURE_STORAGE_ACCOUNT=accrocksolidimport
+AZURE_STORAGE_KEY=super-secret
+
+az storage share create --name import --account-name $AZURE_STORAGE_ACCOUNT --account-key $AZURE_STORAGE_KEY
+```
+
+Zip and upload import files
+
+```sh
+zip -r import.zip import/
+az storage file upload --share-name import --source import.zip --account-name $AZURE_STORAGE_ACCOUNT --account-key $AZURE_STORAGE_KEY
+```
+
+Download and unzip
+
+```sh
+az storage file download --share-name import --path import.zip --account-name $AZURE_STORAGE_ACCOUNT --account-key $AZURE_STORAGE_KEY
+unzip import.zip -d .
+```
+
