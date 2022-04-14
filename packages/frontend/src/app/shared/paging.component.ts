@@ -1,11 +1,11 @@
-import { PAGE_SIZE } from '@kei-crm/shared';
+import { PAGE_SIZE } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 
 const MAX_PAGE_BUTTON_COUNT = 10;
 
-@customElement('kei-paging')
+@customElement('rock-paging')
 export class PagingComponent extends LitElement {
   static override styles = [bootstrap];
 

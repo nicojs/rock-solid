@@ -1,4 +1,4 @@
-import { Plaats } from '@kei-crm/shared';
+import { Plaats } from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -13,7 +13,7 @@ import {
 import { PlaatsControl } from './form-control';
 import { plaatsName } from './adres.pipes';
 
-@customElement('kei-reactive-form-plaats')
+@customElement('rock-reactive-form-plaats')
 export class ReactiveFormPlaats<TEntity> extends LitElement {
   @property({ attribute: false })
   public control!: PlaatsControl<TEntity>;
@@ -97,7 +97,7 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
           @invalid="${this.updateValidationMessage}"
         />
         <div class="invalid-feedback">${this.validationMessage}</div>
-        <kei-autocomplete
+        <rock-autocomplete
           class="col-lg-10 col-md-8"
           placeholder="Woonplaats"
           .searchAction="${(val: string): Promise<TypeAheadHint<Plaats>[]> =>
@@ -113,7 +113,7 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
             this.input.blur();
             (ev.target as AutocompleteComponent).focusState = FocusState.None;
           }}"
-        ></kei-autocomplete>
+        ></rock-autocomplete>
       </div>
     </div>`;
   }

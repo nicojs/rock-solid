@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-oauth2';
 import fetch from 'node-fetch';
 import { authConstants } from './constants.js';
-import { User } from '@kei-crm/shared';
+import { User } from '@rock-solid/shared';
 
 interface Office365User {
   displayName: string;

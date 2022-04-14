@@ -1,4 +1,4 @@
-import { Options } from '@kei-crm/shared';
+import { Options } from '@rock-solid/shared';
 
 export type ValueFactory<T> = {
   [Prop in keyof T]?: (val: T[Prop]) => string;

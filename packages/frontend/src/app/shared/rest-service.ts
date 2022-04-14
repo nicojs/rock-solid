@@ -3,7 +3,7 @@ import {
   FilterFrom,
   RestRoutes,
   UpsertableFrom,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { Page, RestClient } from './rest-client';
 
 export class RestService<TRoute extends keyof RestRoutes> {

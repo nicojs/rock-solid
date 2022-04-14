@@ -6,7 +6,7 @@ import {
   UpsertableDeelname,
   UpsertableInschrijving,
   UpsertableProject,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import {
   Body,
   Controller,

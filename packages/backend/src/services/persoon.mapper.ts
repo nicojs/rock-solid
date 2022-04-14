@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
-import { Persoon, PersoonFilter, UpsertablePersoon } from '@kei-crm/shared';
+import { Persoon, PersoonFilter, UpsertablePersoon } from '@rock-solid/shared';
 import { purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 import {

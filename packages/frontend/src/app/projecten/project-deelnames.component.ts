@@ -3,7 +3,7 @@ import {
   Deelnemer,
   Project,
   UpsertableDeelname,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -18,7 +18,7 @@ interface DeelnameRow extends UpsertableDeelname {
   deelnemer: Deelnemer;
 }
 
-@customElement('kei-project-deelnames')
+@customElement('rock-project-deelnames')
 export class ProjectDeelnamesComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -95,7 +95,7 @@ export class ProjectDeelnamesComponent extends LitElement {
         deelnames
       </h2>
       ${this.isLoading
-        ? html`<kei-loading></kei-loading>`
+        ? html`<rock-loading></rock-loading>`
         : html`<form
             novalidate
             class="${this.wasValidated ? 'was-validated' : ''}"
@@ -103,10 +103,10 @@ export class ProjectDeelnamesComponent extends LitElement {
           >
             ${this.deelnames?.map(
               (deelname) =>
-                html`<kei-reactive-form-control
+                html`<rock-reactive-form-control
                   .entity=${deelname}
                   .control=${createDeelnameFormControl(deelname)}
-                ></kei-reactive-form-control>`,
+                ></rock-reactive-form-control>`,
             )}
             <button class="btn btn-primary offset-sm-2" type="submit">
               Deelnames bevestigen

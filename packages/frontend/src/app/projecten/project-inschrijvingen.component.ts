@@ -1,4 +1,4 @@
-import { Inschrijving, Project } from '@kei-crm/shared';
+import { Inschrijving, Project } from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -16,7 +16,7 @@ import { router } from '../router';
 import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
 import { createRef, ref } from 'lit/directives/ref.js';
 
-@customElement('kei-project-inschrijvingen')
+@customElement('rock-project-inschrijvingen')
 export class ProjectInschrijvingenComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -85,12 +85,12 @@ export class ProjectInschrijvingenComponent extends LitElement {
     switch (this.path[0]) {
       case 'edit':
         return html`${this.inschrijvingInScope
-          ? html`<kei-project-inschrijving-edit
+          ? html`<rock-project-inschrijving-edit
               @inschrijving-updated=${this.inschrijvingUpdated}
               .project=${this.project}
               .inschrijving=${this.inschrijvingInScope}
-            ></kei-project-inschrijving-edit>`
-          : html`<kei-loading></kei-loading>`}`;
+            ></rock-project-inschrijving-edit>`
+          : html`<rock-loading></rock-loading>`}`;
       case undefined:
         return this.renderProjectInschrijvingen();
       default:
@@ -105,7 +105,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
       ${this.renderCreateInschrijvingForm()}
       ${this.inschrijvingen
         ? this.renderInschrijvingenTable()
-        : html`<kei-loading></kei-loading>`}`;
+        : html`<rock-loading></rock-loading>`}`;
   }
 
   private renderInschrijvingenTable() {
@@ -128,13 +128,13 @@ export class ProjectInschrijvingenComponent extends LitElement {
                 <td>${showBoolean(inschrijving.wachtlijst)}</td>
                 <td>${showBoolean(inschrijving.toestemmingFotos)}</td>
                 <td>
-                  <kei-link
+                  <rock-link
                     btn
                     btnOutlinePrimary
                     href="/${pluralize(this.project.type)}/${this.project
                       .id}/inschrijvingen/edit/${inschrijving.id}"
-                    ><kei-icon icon="pencil"></kei-icon
-                  ></kei-link>
+                    ><rock-icon icon="pencil"></rock-icon
+                  ></rock-link>
                 </td>
               </tr>`,
             )}
@@ -158,7 +158,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
         </div>
       </div>
 
-      <kei-autocomplete
+      <rock-autocomplete
         .searchAction="${(val: string): Promise<TypeAheadHint[]> =>
           persoonService
             .getAll({
@@ -184,7 +184,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
           this.searchInput.value!.value = '';
           this.searchInput.value!.dispatchEvent(new InputEvent('input'));
         }}"
-      ></kei-autocomplete>
+      ></rock-autocomplete>
     </div>`;
   }
 }

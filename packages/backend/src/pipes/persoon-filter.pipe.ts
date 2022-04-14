@@ -1,4 +1,4 @@
-import { PersoonFilter, OverigPersoonSelectie } from '@kei-crm/shared';
+import { PersoonFilter, OverigPersoonSelectie } from '@rock-solid/shared';
 import { PipeTransform, Injectable } from '@nestjs/common';
 import { Flat } from './pipe-utils.js';
 

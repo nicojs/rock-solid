@@ -6,7 +6,7 @@ import {
   Project,
   ProjectFilter,
   UpsertableProject,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';

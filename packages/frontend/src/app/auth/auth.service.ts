@@ -1,7 +1,7 @@
-import { LoginResponse, User } from '@kei-crm/shared';
+import { LoginResponse, User } from '@rock-solid/shared';
 import { BehaviorSubject } from 'rxjs';
 
-const KEI_LOGIN = 'kei-login';
+const KEI_LOGIN = 'rock-login';
 export class AuthService {
   private _user$ = new BehaviorSubject<User | undefined>(
     this.currentLogin?.user,

@@ -3,7 +3,7 @@ import {
   Organisatie,
   organisatieColumnNames,
   folderSelecties,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -12,7 +12,7 @@ import { adresName } from '../forms/adres.pipes';
 import { toCsvDownloadUrl } from '../shared';
 import { organisatieService } from './organistatie.service';
 
-@customElement('kei-advanced-search-organisaties')
+@customElement('rock-advanced-search-organisaties')
 export class AdvancedSearchOrganisatiesComponent extends LitElement {
   public static override styles = [bootstrap];
 
@@ -60,25 +60,25 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
   }
 
   override render() {
-    return html`<kei-reactive-form
+    return html`<rock-reactive-form
         .controls=${searchControls}
         .entity=${this.filter}
         submitLabel="Zoeken"
-        @kei-submit=${this.search}
-      ></kei-reactive-form>
+        @rock-submit=${this.search}
+      ></rock-reactive-form>
       ${this.isLoading
-        ? html`<kei-loading></kei-loading>`
+        ? html`<rock-loading></rock-loading>`
         : this.organisaties
         ? html`<a
               href="${this.csvDataUrl}"
               class="btn btn-outline-secondary"
               download="organisaties.csv"
             >
-              <kei-icon icon="download"></kei-icon> Export
+              <rock-icon icon="download"></rock-icon> Export
             </a>
-            <kei-organisaties-list
+            <rock-organisaties-list
               .organisaties=${this.organisaties}
-            ></kei-organisaties-list>`
+            ></rock-organisaties-list>`
         : ''}`;
   }
 }

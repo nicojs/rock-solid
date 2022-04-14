@@ -5,7 +5,7 @@ import {
   doelgroepen,
   organisatieColumnNames,
   groupedOrganisatieSoorten,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
@@ -17,7 +17,7 @@ import {
 } from '../forms';
 import { printOrganisatie } from './organisatie.pipes';
 
-@customElement('kei-edit-organisatie')
+@customElement('rock-edit-organisatie')
 export class EditOrganisatieComponent extends LitElement {
   @property({ attribute: false })
   public organisatie!: UpsertableOrganisatie;
@@ -28,11 +28,11 @@ export class EditOrganisatieComponent extends LitElement {
           ? `${printOrganisatie(this.organisatie)} wijzigen`
           : `Project toevoegen`}
       </h2>
-      <kei-reactive-form
-        @kei-submit="${this.save}"
+      <rock-reactive-form
+        @rock-submit="${this.save}"
         .controls="${organisatieControls}"
         .entity="${this.organisatie}"
-      ></kei-reactive-form>`;
+      ></rock-reactive-form>`;
   }
 
   private async save() {

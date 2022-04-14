@@ -170,7 +170,7 @@ export const overigPersoonSelecties: Options<OverigPersoonSelectie> =
   Object.freeze({
     vakantieVrijwilliger: 'vakantie vrijwilliger',
     personeel: 'personeel',
-    algemeneVergaderingKeiJong: 'kei-jong algemene vergadering',
+    algemeneVergaderingKeiJong: 'rock-jong algemene vergadering',
     algemeneVergaderingDeKei: 'de kei algemene vergadering',
     overheid: 'overheid',
   });

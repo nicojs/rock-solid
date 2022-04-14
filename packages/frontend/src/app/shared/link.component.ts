@@ -4,7 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
 
-@customElement('kei-link')
+@customElement('rock-link')
 export class Link extends LitElement {
   static override styles = [bootstrap];
 

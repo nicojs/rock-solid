@@ -6,7 +6,7 @@ import {
   PersoonType,
   persoonTypes,
   UpsertablePersoon,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { persoonService } from './persoon.service';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -15,7 +15,7 @@ import { capitalize, pluralize } from '../shared';
 import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { fullName } from './full-name.pipe';
 
-@customElement('kei-personen')
+@customElement('rock-personen')
 export class PersonenComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -122,36 +122,36 @@ export class PersonenComponent extends LitElement {
                   placeholder="Zoek op naam"
                 />
                 <button type="submit" class="btn btn-outline-secondary">
-                  <kei-icon icon="search"></kei-icon>
+                  <rock-icon icon="search"></rock-icon>
                 </button>
               </form>
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <kei-link href="../new" btn btnSuccess
-                ><kei-icon icon="personPlus"></kei-icon> ${capitalize(
+              <rock-link href="../new" btn btnSuccess
+                ><rock-icon icon="personPlus"></rock-icon> ${capitalize(
                   persoonTypes[this.type],
-                )}</kei-link
+                )}</rock-link
               >
-              <kei-link btn btnOutlineSecondary href="../zoeken"
-                ><kei-icon icon="search"></kei-icon> Geavanceerd
-                zoeken</kei-link
+              <rock-link btn btnOutlineSecondary href="../zoeken"
+                ><rock-icon icon="search"></rock-icon> Geavanceerd
+                zoeken</rock-link
               >
             </div>
           </div>
           ${this.personen
-            ? html`<kei-personen-list
+            ? html`<rock-personen-list
                   .type=${this.type}
                   .personen=${this.personen}
-                ></kei-personen-list>
-                <kei-paging
+                ></rock-personen-list>
+                <rock-paging
                   @navigate-page=${(event: CustomEvent<number>) =>
                     this.navigatePage(event.detail)}
                   .currentPage=${this.page}
                   .totalCount=${this.totalCount}
-                ></kei-paging> `
-            : html`<kei-loading></kei-loading>`}`;
+                ></rock-paging> `
+            : html`<rock-loading></rock-loading>`}`;
       case 'new':
         const persoon: DeepPartial<Persoon> = {
           type: this.type,
@@ -159,26 +159,26 @@ export class PersonenComponent extends LitElement {
         };
         return html` <h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading
-            ? html`<kei-loading></kei-loading>`
-            : html`<kei-persoon-edit
+            ? html`<rock-loading></rock-loading>`
+            : html`<rock-persoon-edit
                 .persoon="${persoon}"
                 @persoon-submitted=${this.createNewPersoon}
-              ></kei-persoon-edit>`}`;
+              ></rock-persoon-edit>`}`;
       case 'edit':
         return html`${this.persoonToEdit
           ? html`<h2>
                 ${capitalize(this.type)} ${fullName(this.persoonToEdit)}
                 wijzigen
               </h2>
-              <kei-persoon-edit
+              <rock-persoon-edit
                 .persoon="${this.persoonToEdit}"
                 @persoon-submitted=${this.updatePersoon}
-              ></kei-persoon-edit>`
-          : html`<kei-loading></kei-loading>`}`;
+              ></rock-persoon-edit>`
+          : html`<rock-loading></rock-loading>`}`;
       case 'zoeken':
-        return html`<kei-advanced-search-personen
+        return html`<rock-advanced-search-personen
           .type=${this.type}
-        ></kei-advanced-search-personen>`;
+        ></rock-advanced-search-personen>`;
       default:
         this.loadPersonen();
         router.navigate('./list');

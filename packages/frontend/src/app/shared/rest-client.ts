@@ -1,4 +1,4 @@
-import { parse, RestRoutes, TOTAL_COUNT_HEADER } from '@kei-crm/shared';
+import { parse, RestRoutes, TOTAL_COUNT_HEADER } from '@rock-solid/shared';
 import { httpClient, HttpClient } from './http-client';
 import { HttpStatus } from './http-status';
 

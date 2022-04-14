@@ -1,10 +1,10 @@
-import { folderSelecties, Organisatie } from '@kei-crm/shared';
+import { folderSelecties, Organisatie } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { show } from '../shared';
 
-@customElement('kei-organisaties-list')
+@customElement('rock-organisaties-list')
 export class OrganisatiesListComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -17,7 +17,7 @@ export class OrganisatiesListComponent extends LitElement {
         ? html`${this.organisaties.length
             ? this.renderTable()
             : html`<div>Geen organisaties gevonden 🤷‍♂️</div>`}`
-        : html`<kei-loading></kei-loading>`}
+        : html`<rock-loading></rock-loading>`}
     </div>`;
   }
 
@@ -44,9 +44,9 @@ export class OrganisatiesListComponent extends LitElement {
             <td>${show(org.emailadres)}</td>
             <td>${show(org.telefoonnummer)}</td>
             <td>
-              <kei-link btn btnSecondary href="../edit/${org.id}"
-                ><kei-icon icon="pencil"></kei-icon
-              ></kei-link>
+              <rock-link btn btnSecondary href="../edit/${org.id}"
+                ><rock-icon icon="pencil"></rock-icon
+              ></rock-link>
             </td>
           </tr>`,
         )}

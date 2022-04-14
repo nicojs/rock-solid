@@ -9,7 +9,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { FormGroup } from './form-control';
 import { capitalize } from '../shared';
 
-@customElement('kei-reactive-form-group')
+@customElement('rock-reactive-form-group')
 export class ReactiveFormGroupComponent<
   TEntity,
   TKey extends keyof TEntity & string,
@@ -58,10 +58,10 @@ export class ReactiveFormGroupComponent<
 
   private renderControls() {
     return this.control.controls.map(
-      (control) => html`<kei-reactive-form-control
+      (control) => html`<rock-reactive-form-control
         .control="${control}"
         .entity="${this.value}"
-      ></kei-reactive-form-control>`,
+      ></rock-reactive-form-control>`,
     );
   }
 

@@ -1,4 +1,6 @@
-# KEI CRM
+# RockSolid
+
+Steenvast en solide management systeem.
 
 ## ERD
 

@@ -1,4 +1,4 @@
-import { User } from '@kei-crm/shared';
+import { User } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 

@@ -4,14 +4,14 @@ import {
   bedrijfsonderdelen,
   Cursus,
   UpsertableProject,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl, formArray, InputControl, InputType } from '../forms';
 import { printProject } from './project.pipes';
 
-@customElement('kei-project-edit')
+@customElement('rock-project-edit')
 export class ProjectEditComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -24,11 +24,11 @@ export class ProjectEditComponent extends LitElement {
           ? `${printProject(this.project)} wijzigen`
           : `Project toevoegen`}
       </h2>
-      <kei-reactive-form
-        @kei-submit="${this.save}"
+      <rock-reactive-form
+        @rock-submit="${this.save}"
         .controls="${cursusProjectControls}"
         .entity="${this.project}"
-      ></kei-reactive-form>`;
+      ></rock-reactive-form>`;
   }
 
   private async save() {

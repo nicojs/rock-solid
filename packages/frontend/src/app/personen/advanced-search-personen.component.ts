@@ -9,7 +9,7 @@ import {
   geslachten,
   werksituaties,
   overigPersoonLabels,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -17,7 +17,7 @@ import { InputControl, InputType } from '../forms';
 import { pluralize, toCsvDownloadUrl, uncapitalize } from '../shared';
 import { persoonService } from './persoon.service';
 
-@customElement('kei-advanced-search-personen')
+@customElement('rock-advanced-search-personen')
 export class AdvancedSearchPersonenComponent extends LitElement {
   public static override styles = [bootstrap];
 
@@ -88,16 +88,16 @@ export class AdvancedSearchPersonenComponent extends LitElement {
   }
 
   override render() {
-    return html`<kei-reactive-form
+    return html`<rock-reactive-form
         .controls=${this.type === 'deelnemer'
           ? deelnemerSearchControls
           : overigPersoonSearchControls}
         .entity=${this.filter}
         submitLabel="Zoeken"
-        @kei-submit=${this.search}
-      ></kei-reactive-form>
+        @rock-submit=${this.search}
+      ></rock-reactive-form>
       ${this.isLoading
-        ? html`<kei-loading></kei-loading>`
+        ? html`<rock-loading></rock-loading>`
         : this.personen
         ? html`
         <a href="${
@@ -105,13 +105,13 @@ export class AdvancedSearchPersonenComponent extends LitElement {
         }" class="btn btn-outline-secondary" download="${pluralize(
             this.type,
           )}.csv">
-              <kei-icon icon="download"></kei-icon> Export
+              <rock-icon icon="download"></rock-icon> Export
             </button>
             </a>
-        <kei-personen-list
+        <rock-personen-list
             .type=${this.type}
             .personen=${this.personen}
-          ></kei-personen-list>`
+          ></rock-personen-list>`
         : ''}`;
   }
 }

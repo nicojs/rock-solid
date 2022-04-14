@@ -2,14 +2,14 @@ import {
   DeepPartial,
   Organisatie,
   UpsertableOrganisatie,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
 import { organisatieService } from './organistatie.service';
 
-@customElement('kei-organisaties')
+@customElement('rock-organisaties')
 export class OrganisatiesComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -86,25 +86,25 @@ export class OrganisatiesComponent extends LitElement {
           </div>
           ${this.organisaties
             ? html`
-                <kei-link href="/organisaties/new" btn btnSuccess
-                  ><kei-icon icon="journalPlus" size="md"></kei-icon>
-                  Organisatie</kei-link
+                <rock-link href="/organisaties/new" btn btnSuccess
+                  ><rock-icon icon="journalPlus" size="md"></rock-icon>
+                  Organisatie</rock-link
                 >
-                <kei-link btn btnOutlineSecondary href="../zoeken"
-                  ><kei-icon icon="search"></kei-icon> Geavanceerd
-                  zoeken</kei-link
+                <rock-link btn btnOutlineSecondary href="../zoeken"
+                  ><rock-icon icon="search"></rock-icon> Geavanceerd
+                  zoeken</rock-link
                 >
-                <kei-organisaties-list
+                <rock-organisaties-list
                   .organisaties=${this.organisaties}
-                ></kei-organisaties-list>
-                <kei-paging
+                ></rock-organisaties-list>
+                <rock-paging
                   @navigate-page=${(event: CustomEvent<number>) =>
                     this.navigatePage(event.detail)}
                   .currentPage=${this.page}
                   .totalCount=${this.totalCount}
-                ></kei-paging>
+                ></rock-paging>
               `
-            : html`<kei-loading></kei-loading>`}
+            : html`<rock-loading></rock-loading>`}
         `;
       case 'new':
         const organisatie: DeepPartial<Organisatie> = {
@@ -112,22 +112,22 @@ export class OrganisatiesComponent extends LitElement {
           adres: {},
         };
         return this.loading
-          ? html`<kei-loading></kei-loading>`
-          : html`<kei-edit-organisatie
+          ? html`<rock-loading></rock-loading>`
+          : html`<rock-edit-organisatie
               .organisatie="${organisatie}"
               @organisatie-submitted="${(event: CustomEvent<Organisatie>) =>
                 this.createOrganisatie(event.detail)}"
-            ></kei-edit-organisatie>`;
+            ></rock-edit-organisatie>`;
       case 'edit':
         return html`${this.organisatieToEdit
           ? html`<h2>${this.organisatieToEdit.naam} wijzigen</h2>
-              <kei-edit-organisatie
+              <rock-edit-organisatie
                 .organisatie="${this.organisatieToEdit}"
                 @organisatie-submitted=${this.updateOrganisatie}
-              ></kei-edit-organisatie>`
-          : html`<kei-loading></kei-loading>`}`;
+              ></rock-edit-organisatie>`
+          : html`<rock-loading></rock-loading>`}`;
       case 'zoeken':
-        return html`<kei-advanced-search-organisaties></kei-advanced-search-organisaties>`;
+        return html`<rock-advanced-search-organisaties></rock-advanced-search-organisaties>`;
       default:
         router.navigate(`/organisaties/list`);
     }

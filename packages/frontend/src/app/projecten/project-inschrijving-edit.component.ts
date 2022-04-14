@@ -1,11 +1,11 @@
-import { Inschrijving, Project } from '@kei-crm/shared';
+import { Inschrijving, Project } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
 import { fullName } from '../personen/full-name.pipe';
 
-@customElement('kei-project-inschrijving-edit')
+@customElement('rock-project-inschrijving-edit')
 export class ProjectInschrijvingEditComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -20,11 +20,11 @@ export class ProjectInschrijvingEditComponent extends LitElement {
         Inschrijving van ${fullName(this.inschrijving.deelnemer!)} voor
         ${this.project.id}
       </h2>
-      <kei-reactive-form
-        @kei-submit="${this.save}"
+      <rock-reactive-form
+        @rock-submit="${this.save}"
         .controls="${inschrijvingControls}"
         .entity="${this.inschrijving}"
-      ></kei-reactive-form>`;
+      ></rock-reactive-form>`;
   }
 
   private async save() {

@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { keiReviver } from '@kei-crm/shared';
+import { rockReviver } from '@rock-solid/shared';
 import { AppModule } from './app.module.js';
 import bodyParser from 'body-parser';
 
@@ -10,7 +10,7 @@ async function bootstrap() {
   });
   app.use(
     bodyParser.json({
-      reviver: keiReviver,
+      reviver: rockReviver,
     }),
   );
   app.setGlobalPrefix('api', { exclude: ['/auth/login', '/auth/callback'] });

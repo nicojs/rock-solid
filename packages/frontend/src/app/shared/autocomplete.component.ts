@@ -1,4 +1,4 @@
-import { escapeRegExp } from '@kei-crm/shared';
+import { escapeRegExp } from '@rock-solid/shared';
 import { html, css, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {
@@ -36,7 +36,7 @@ export enum FocusStateTransition {
   Leave,
 }
 
-@customElement('kei-autocomplete')
+@customElement('rock-autocomplete')
 export class AutocompleteComponent extends LitElement {
   @state()
   private isLoading = false;

@@ -1,4 +1,4 @@
-import { Adres, Plaats } from '@kei-crm/shared';
+import { Adres, Plaats } from '@rock-solid/shared';
 
 export function plaatsName(plaats?: Plaats): string {
   if (plaats) {

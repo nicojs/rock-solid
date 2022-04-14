@@ -1,11 +1,11 @@
-import { LoginResponse, loginUrl } from '@kei-crm/shared';
+import { LoginResponse, loginUrl } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { router } from '../router';
 import { httpClient } from '../shared/http-client';
 import { authService } from './auth.service';
 
-@customElement('kei-login')
+@customElement('rock-login')
 export class LoginComponent extends LitElement {
   @property()
   public queryString!: string;

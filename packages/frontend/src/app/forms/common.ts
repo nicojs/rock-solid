@@ -1,4 +1,4 @@
-import { Adres } from '@kei-crm/shared';
+import { Adres } from '@rock-solid/shared';
 import { FormControl, InputType } from './form-control';
 
 export const adresControls: readonly FormControl<Adres>[] = Object.freeze([

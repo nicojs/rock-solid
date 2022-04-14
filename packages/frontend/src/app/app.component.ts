@@ -4,10 +4,10 @@ import { customElement, property } from 'lit/decorators.js';
 import { router, RouteParams } from './router';
 import { bootstrap } from '../styles';
 import style from './app.component.scss';
-import { PersoonType, ProjectType } from '@kei-crm/shared';
+import { PersoonType, ProjectType } from '@rock-solid/shared';
 
-@customElement('kei-crm-app')
-export class KeiCrmApp extends LitElement {
+@customElement('rock-solid-app')
+export class RockSolidApp extends LitElement {
   public static override styles = [bootstrap, unsafeCSS(style)];
 
   private sub?: Subscription;
@@ -37,16 +37,17 @@ export class KeiCrmApp extends LitElement {
         <span class="navbar-brand mb-0 h1"
           >RockSolid.
           <span class="text-muted fs-6"
-            >Solide management systeem voor De Kei en Kei-Jong</span
+            >Steenvast en solide management systeem voor De Kei en
+            Kei-Jong</span
           ></span
         >
-        <kei-user></kei-user>
+        <rock-user></rock-user>
       </nav>
       <div class="row">
-        <kei-nav
+        <rock-nav
           class="col-xs-5 col-sm-4 col-md-3 col-lg-2"
           .active="${this.route?.path[0]}"
-        ></kei-nav>
+        ></rock-nav>
         <main class="col">${this.renderMain()}</main>
       </div>
     </div>`;
@@ -55,30 +56,30 @@ export class KeiCrmApp extends LitElement {
   private renderMain() {
     switch (this.route?.path[0]) {
       case 'login':
-        return html`<kei-login
+        return html`<rock-login
           .queryString="${this.route.queryString}"
-        ></kei-login>`;
+        ></rock-login>`;
       case 'cursussen':
       case 'vakanties':
         const projectType: ProjectType =
           this.route.path[0] === 'cursussen' ? 'cursus' : 'vakantie';
-        return html`<kei-projecten
+        return html`<rock-projecten
           .path="${this.route.path.slice(1)}"
           .type="${projectType}"
           .query="${this.route.query}"
-        ></kei-projecten>`;
+        ></rock-projecten>`;
       case 'overige-personen':
       case 'deelnemers':
         const persoonType: PersoonType =
           this.route?.path[0] === 'deelnemers' ? 'deelnemer' : 'overigPersoon';
-        return html`<kei-personen
+        return html`<rock-personen
           .type="${persoonType}"
           .path="${this.route.path.slice(1)}"
-        ></kei-personen>`;
+        ></rock-personen>`;
       case 'organisaties':
-        return html`<kei-organisaties
+        return html`<rock-organisaties
           .path=${this.route.path.slice(1)}
-        ></kei-organisaties>`;
+        ></rock-organisaties>`;
       case '':
         return html`<h2>Home</h2>`;
       default:

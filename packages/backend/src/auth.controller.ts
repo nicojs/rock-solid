@@ -1,4 +1,4 @@
-import { LoginResponse, loginUrl, User } from '@kei-crm/shared';
+import { LoginResponse, loginUrl, User } from '@rock-solid/shared';
 import { Controller, Request, UseGuards, Get } from '@nestjs/common';
 import { Office365AuthGuard, AuthService } from './auth/index.js';
 

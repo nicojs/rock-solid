@@ -1,4 +1,4 @@
-import { PAGE_SIZE } from '@kei-crm/shared';
+import { PAGE_SIZE } from '@rock-solid/shared';
 
 interface Page {
   skip?: number;

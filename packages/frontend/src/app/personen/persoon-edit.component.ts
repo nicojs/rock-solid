@@ -8,12 +8,12 @@ import {
   BasePersoon,
   OverigPersoon,
   overigPersoonSelecties,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl, InputType, formGroup, adresControls } from '../forms';
 
-@customElement('kei-persoon-edit')
+@customElement('rock-persoon-edit')
 export class PersonenEditComponent extends LitElement {
   @property({ attribute: false })
   private persoon!: UpsertablePersoon;
@@ -30,13 +30,13 @@ export class PersonenEditComponent extends LitElement {
   }
 
   override render() {
-    return html`<kei-reactive-form
-      @kei-submit="${this.submit}"
+    return html`<rock-reactive-form
+      @rock-submit="${this.submit}"
       .controls="${this.persoon.type === 'deelnemer'
         ? deelnemerFormControls
         : overigPersoonFormControls}"
       .entity="${this.persoon}"
-    ></kei-reactive-form>`;
+    ></rock-reactive-form>`;
   }
 }
 

@@ -1,11 +1,11 @@
-import { bedrijfsonderdelen, Project } from '@kei-crm/shared';
+import { bedrijfsonderdelen, Project } from '@rock-solid/shared';
 import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { notAvailable, pluralize, showDatum } from '../shared';
 import style from './projecten-list.component.scss';
 
-@customElement('kei-projecten-list')
+@customElement('rock-projecten-list')
 export class ProjectenListComponent extends LitElement {
   static override styles = [bootstrap, unsafeCSS(style)];
 
@@ -54,7 +54,7 @@ export class ProjectenListComponent extends LitElement {
                   activiteit.aantalDeelnames! >= project.aantalInschrijvingen!;
                 return html`<div class="mt-2">
                   ${inPast
-                    ? html`<kei-link
+                    ? html`<rock-link
                         title="Open activiteit"
                         btn
                         ?btnWarning=${!isComplete}
@@ -62,14 +62,14 @@ export class ProjectenListComponent extends LitElement {
                         href="/${pluralize(
                           project.type,
                         )}/${project.id}/deelnames/${activiteit.id}"
-                        ><kei-icon icon="calendar"></kei-icon> ${showDatum(
+                        ><rock-icon icon="calendar"></rock-icon> ${showDatum(
                           activiteit.van,
-                        )}</kei-link
+                        )}</rock-link
                       >`
                     : html`<span
                         title="Activiteit vindt plaats in de toekomst"
                         class="no-button-date"
-                        ><kei-icon icon="calendar"></kei-icon> ${showDatum(
+                        ><rock-icon icon="calendar"></rock-icon> ${showDatum(
                           activiteit.van,
                         )}</span
                       >`}
@@ -77,27 +77,27 @@ export class ProjectenListComponent extends LitElement {
               })}
             </td>
             <td>
-              <kei-link
+              <rock-link
                 btn
                 btnOutlinePrimary
                 title="Wijzigen"
                 href="/${pluralize(project.type)}/${project.id}/edit"
-                ><kei-icon icon="pencil"></kei-icon
-              ></kei-link>
-              <kei-link
+                ><rock-icon icon="pencil"></rock-icon
+              ></rock-link>
+              <rock-link
                 btn
                 btnOutlinePrimary
                 title="Inschrijvingen"
                 href="/${pluralize(project.type)}/${project.id}/inschrijvingen"
               >
-                <kei-icon icon="pencilSquare"></kei-icon>
+                <rock-icon icon="pencilSquare"></rock-icon>
                 <span
                   class="badge ${(project.aantalInschrijvingen ?? 0) > 0
                     ? 'bg-success'
                     : 'bg-secondary'}"
                   >${project.aantalInschrijvingen}</span
                 >
-              </kei-link>
+              </rock-link>
             </td>
           </tr>`,
         )}

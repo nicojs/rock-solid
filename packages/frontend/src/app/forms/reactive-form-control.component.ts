@@ -2,7 +2,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { FormControl, InputControl, InputType } from './form-control';
 
-@customElement('kei-reactive-form-control')
+@customElement('rock-reactive-form-control')
 export class ReactiveFormControl<TEntity> extends LitElement {
   @property({ attribute: false })
   public control!: FormControl<TEntity>;
@@ -21,26 +21,26 @@ export class ReactiveFormControl<TEntity> extends LitElement {
   override render() {
     switch (this.control.type) {
       case InputType.array:
-        return html`<kei-reactive-form-array
+        return html`<rock-reactive-form-array
           .control=${this.control}
           .entity=${this.entity}
-        ></kei-reactive-form-array>`;
+        ></rock-reactive-form-array>`;
       case InputType.group:
-        return html`<kei-reactive-form-group
+        return html`<rock-reactive-form-group
           .control=${this.control}
           .entity=${this.entity}
-        ></kei-reactive-form-group>`;
+        ></rock-reactive-form-group>`;
       case InputType.plaats:
-        return html`<kei-reactive-form-plaats .control=${this.control} .entity=${this.entity}></kei-reactive-form-plaats>
-        </kei-reactive-form-plaats>`;
+        return html`<rock-reactive-form-plaats .control=${this.control} .entity=${this.entity}></rock-reactive-form-plaats>
+        </rock-reactive-form-plaats>`;
       default:
         return this.renderInputControl(this.control);
     }
   }
   private renderInputControl(control: InputControl<TEntity>) {
-    return html`<kei-reactive-form-input-control
+    return html`<rock-reactive-form-input-control
       .control="${control}"
       .entity="${this.entity}"
-    ></kei-reactive-form-input-control>`;
+    ></rock-reactive-form-input-control>`;
   }
 }

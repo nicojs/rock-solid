@@ -14,7 +14,7 @@ import {
 } from './form-control';
 import { capitalize, toDateString } from '../shared';
 
-@customElement('kei-reactive-form-input-control')
+@customElement('rock-reactive-form-input-control')
 export class ReactiveFormInputControl<TEntity> extends LitElement {
   @property({ attribute: false })
   public control!: InputControl<TEntity>;

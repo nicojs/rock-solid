@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl } from './form-control';
 
-@customElement('kei-reactive-form')
+@customElement('rock-reactive-form')
 export class ReactiveFormComponent<TEntity> extends LitElement {
   static override styles = [bootstrap];
 
@@ -26,10 +26,10 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
       @submit="${this.submit}"
     >
       ${this.controls?.map((control) => {
-        return html`<kei-reactive-form-control
+        return html`<rock-reactive-form-control
               .control=${control}
               .entity=${this.entity}
-            ></kei-reactive-form-array>`;
+            ></rock-reactive-form-array>`;
       })}
       <div class="row">
         <div class=" offset-lg-2 offset-md-4">
@@ -44,7 +44,7 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
   submit(e: SubmitEvent) {
     e.preventDefault();
     if ((e.target as HTMLFormElement).checkValidity()) {
-      const submitEvent = new CustomEvent('kei-submit', {
+      const submitEvent = new CustomEvent('rock-submit', {
         bubbles: true,
         composed: true,
       });

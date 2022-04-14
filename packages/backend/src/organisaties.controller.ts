@@ -3,7 +3,7 @@ import {
   OrganisatieFilter,
   TOTAL_COUNT_HEADER,
   UpsertableOrganisatie,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import {
   Body,
   Controller,

@@ -3,7 +3,7 @@ import { css, LitElement } from 'lit';
 import { html } from 'lit-html';
 import { customElement, property } from 'lit/decorators.js';
 import { icons } from './icons';
-@customElement('kei-icon')
+@customElement('rock-icon')
 export class IconComponent extends LitElement {
   @property()
   public icon!: keyof typeof icons;

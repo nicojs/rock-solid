@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
-import { PlaatsFilter, Plaats } from '@kei-crm/shared';
+import { PlaatsFilter, Plaats } from '@rock-solid/shared';
 import * as db from '@prisma/client';
 
 /**

@@ -3,7 +3,7 @@ import {
   UpsertableOrganisatie,
   Organisatie,
   OrganisatieFilter,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import { purgeNulls } from './mapper-utils.js';

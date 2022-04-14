@@ -1,4 +1,4 @@
-import { OrganisatieFilter } from '@kei-crm/shared';
+import { OrganisatieFilter } from '@rock-solid/shared';
 import { PipeTransform, Injectable } from '@nestjs/common';
 import { FolderSelectie } from '@prisma/client';
 

@@ -4,14 +4,14 @@ import {
   Persoon,
   PersoonType,
   persoonTypes,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { pluralize, show } from '../shared/utility.pipes';
 import { fullName } from './full-name.pipe';
 import { plaatsName } from '../forms/adres.pipes';
 
-@customElement('kei-personen-list')
+@customElement('rock-personen-list')
 export class PersonenComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -27,7 +27,7 @@ export class PersonenComponent extends LitElement {
         ? html`${this.personen.length
             ? this.renderTable()
             : html`<div>Geen ${pluralize(this.type)} gevonden 🤷‍♂️</div>`}`
-        : html`<kei-loading></kei-loading>`}
+        : html`<rock-loading></rock-loading>`}
     </div>`;
   }
 
@@ -64,9 +64,9 @@ export class PersonenComponent extends LitElement {
             <td>${show(persoon.gsmNummer)}</td>
             <td>${plaatsName(persoon.verblijfadres.plaats)}</td>
             <td>
-              <kei-link btn btnSecondary href="../edit/${persoon.id}"
-                ><kei-icon icon="pencil"></kei-icon
-              ></kei-link>
+              <rock-link btn btnSecondary href="../edit/${persoon.id}"
+                ><rock-icon icon="pencil"></rock-icon
+              ></rock-link>
             </td>
           </tr>`,
         )}

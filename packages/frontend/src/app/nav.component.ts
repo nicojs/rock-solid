@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../styles';
 import { router } from './router';
 
-@customElement('kei-nav')
+@customElement('rock-nav')
 export class NavComponent extends LitElement {
   public static override styles = [bootstrap];
 

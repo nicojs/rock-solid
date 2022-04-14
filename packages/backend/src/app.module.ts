@@ -18,7 +18,7 @@ import { AuthController } from './auth.controller.js';
 import { AuthModule } from './auth/index.js';
 
 const rootPath = fileURLToPath(
-  new URL('../../node_modules/@kei-crm/frontend/dist', import.meta.url),
+  new URL('../../node_modules/@rock-solid/frontend/dist', import.meta.url),
 );
 @Module({
   imports: [

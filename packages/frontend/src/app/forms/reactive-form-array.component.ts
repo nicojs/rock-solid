@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { FormArray, KeysOfType } from './form-control';
 import { capitalize, singularize } from '../shared';
 
-@customElement('kei-reactive-form-array')
+@customElement('rock-reactive-form-array')
 export class ReactiveFormArrayComponent<
   TEntity,
   TItem,
@@ -71,10 +71,10 @@ export class ReactiveFormArrayComponent<
                 ></button>
               </div>
               ${this.control.controls.map(
-                (control) => html`<kei-reactive-form-control
+                (control) => html`<rock-reactive-form-control
                   .control="${control}"
                   .entity="${item}"
-                ></kei-reactive-form-control>`,
+                ></rock-reactive-form-control>`,
               )}
             </div>`,
         )}

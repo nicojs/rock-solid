@@ -1,11 +1,11 @@
-import { User } from '@kei-crm/shared';
+import { User } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { bootstrap } from '../../styles';
 import { authService } from './auth.service';
 
-@customElement('kei-user')
+@customElement('rock-user')
 export class UserComponent extends LitElement {
   public static override styles = [bootstrap];
 

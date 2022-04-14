@@ -3,7 +3,7 @@ import {
   PersoonFilter,
   UpsertablePersoon,
   TOTAL_COUNT_HEADER,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import {
   Body,
   Controller,

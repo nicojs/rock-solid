@@ -3,7 +3,7 @@ import {
   ProjectType,
   UpsertableProject,
   Cursus,
-} from '@kei-crm/shared';
+} from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -11,7 +11,7 @@ import { Query, router } from '../router';
 import { capitalize, pluralize } from '../shared';
 import { projectService } from './project.service';
 
-@customElement('kei-projecten')
+@customElement('rock-projecten')
 export class ProjectenComponent extends LitElement {
   static override styles = [bootstrap];
 
@@ -77,14 +77,14 @@ export class ProjectenComponent extends LitElement {
       case 'list':
         return html`<h2>${capitalize(pluralize(this.type))}</h2>
           ${this.projecten
-            ? html`<kei-projecten-list
+            ? html`<rock-projecten-list
                   .projecten="${this.projecten}"
-                ></kei-projecten-list>
-                <kei-link href="/${pluralize(this.type)}/new" btn btnSuccess
-                  ><kei-icon icon="journalPlus" size="md"></kei-icon>
-                  ${capitalize(this.type)}</kei-link
+                ></rock-projecten-list>
+                <rock-link href="/${pluralize(this.type)}/new" btn btnSuccess
+                  ><rock-icon icon="journalPlus" size="md"></rock-icon>
+                  ${capitalize(this.type)}</rock-link
                 >`
-            : html`<kei-loading></kei-loading>`} `;
+            : html`<rock-loading></rock-loading>`} `;
       case 'new':
         const project: UpsertableProject = {
           naam: '',
@@ -96,36 +96,36 @@ export class ProjectenComponent extends LitElement {
           (project as Cursus).organisatieonderdeel = 'deKei';
         }
         return this.loading
-          ? html`<kei-loading></kei-loading>`
-          : html`<kei-project-edit
+          ? html`<rock-loading></rock-loading>`
+          : html`<rock-project-edit
               .project="${project}"
               @project-submitted="${(event: CustomEvent<Project>) =>
                 this.addProject(event.detail)}"
-            ></kei-project-edit>`;
+            ></rock-project-edit>`;
       default:
         if (this.path[0]?.match(/\d+/)) {
           const [, page, ...rest] = this.path;
           if (this.projectInScope) {
             switch (page) {
               case 'edit':
-                return html`<kei-project-edit
+                return html`<rock-project-edit
                   .project="${this.projectInScope}"
                   @project-submitted="${(event: CustomEvent<Project>) =>
                     this.editProject(event.detail)}"
-                ></kei-project-edit>`;
+                ></rock-project-edit>`;
               case 'inschrijvingen':
-                return html`<kei-project-inschrijvingen
+                return html`<rock-project-inschrijvingen
                   .project="${this.projectInScope}"
                   .path="${rest}"
-                ></kei-project-inschrijvingen>`;
+                ></rock-project-inschrijvingen>`;
               case 'deelnames':
-                return html`<kei-project-deelnames
+                return html`<rock-project-deelnames
                   .project="${this.projectInScope}"
                   .path="${rest}"
-                ></kei-project-deelnames>`;
+                ></rock-project-deelnames>`;
             }
           } else {
-            return html`<kei-loading></kei-loading>`;
+            return html`<rock-loading></rock-loading>`;
           }
         }
         router.navigate(`/${pluralize(this.type)}/list`);

@@ -4,7 +4,7 @@ import { css, html, LitElement } from 'lit';
 /**
  * @see https://loading.io/css/
  */
-@customElement('kei-loading')
+@customElement('rock-loading')
 export class LoadingComponent extends LitElement {
   static override styles = [
     css`

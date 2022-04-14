@@ -1,4 +1,4 @@
-import { Plaats } from '@kei-crm/shared';
+import { Plaats } from '@rock-solid/shared';
 
 export enum InputType {
   // Native input types:

@@ -1,4 +1,4 @@
-import { Deelname, Deelnemer, UpsertableDeelname } from '@kei-crm/shared';
+import { Deelname, Deelnemer, UpsertableDeelname } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import * as db from '@prisma/client';
 import { DBService } from './db.service.js';

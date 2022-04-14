@@ -1,4 +1,4 @@
-import { loginUrl } from '@kei-crm/shared';
+import { loginUrl } from '@rock-solid/shared';
 import { authService, AuthService } from '../auth';
 import { HttpStatus } from './http-status';
 
