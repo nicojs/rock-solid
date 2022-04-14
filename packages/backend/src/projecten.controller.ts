@@ -3,6 +3,7 @@ import {
   Inschrijving,
   Project,
   ProjectFilter,
+  TOTAL_COUNT_HEADER,
   UpsertableDeelname,
   UpsertableInschrijving,
   UpsertableProject,
@@ -19,12 +20,16 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { JwtAuthGuard } from './auth/index.js';
 import { DeelnameMapper } from './services/deelname.mapper.js';
 import { InschrijvingMapper } from './services/inschrijving.mapper.js';
 import { ProjectMapper } from './services/project.mapper.js';
+import { PagePipe } from './pipes/page.pipe.js';
+import { MetaFilterPipe } from './pipes/pipe-utils.js';
 
 @Controller({ path: 'projecten' })
 @UseGuards(JwtAuthGuard)
@@ -46,8 +51,18 @@ export class ProjectenController {
   }
 
   @Get()
-  getAll(@Query() filter: ProjectFilter): Promise<Project[]> {
-    return this.projectMapper.getAll(filter);
+  async getAll(
+    @Res({ passthrough: true }) resp: Response,
+    @Query(MetaFilterPipe) filter: ProjectFilter,
+    @Query('_page', PagePipe)
+    page?: number,
+  ): Promise<Project[]> {
+    const [projects, count] = await Promise.all([
+      this.projectMapper.getAll(filter, page),
+      this.projectMapper.count(filter),
+    ]);
+    resp.set(TOTAL_COUNT_HEADER, count.toString());
+    return projects;
   }
 
   @Get(':id/inschrijvingen')

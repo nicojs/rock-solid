@@ -14,7 +14,7 @@ import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
-import { pluralize, toCsvDownloadUrl, uncapitalize } from '../shared';
+import { pluralize, toCsvDownloadUrl } from '../shared';
 import { persoonService } from './persoon.service';
 
 @customElement('rock-advanced-search-personen')

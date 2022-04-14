@@ -9,7 +9,7 @@ import { Inschrijving } from './inschrijving.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
 import { Persoon, UpsertablePersoon } from './persoon.js';
 import { Plaats, PlaatsFilter } from './adres.js';
-import { Project, UpsertableProject } from './project.js';
+import { Project, ProjectFilter, UpsertableProject } from './project.js';
 
 export type EntityFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['entity'];
@@ -31,7 +31,7 @@ type TopRoutes = {
   projecten: {
     entity: Project;
     upsertableEntity: UpsertableProject;
-    filter: Record<string, never>;
+    filter: ProjectFilter;
   };
   organisaties: {
     entity: Organisatie;

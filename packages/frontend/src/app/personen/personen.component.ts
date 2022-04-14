@@ -1,4 +1,4 @@
-import { html, LitElement, PropertyValues } from 'lit';
+import { html, PropertyValues } from 'lit';
 import {
   BasePersoon,
   DeepPartial,
@@ -7,16 +7,17 @@ import {
   persoonTypes,
   UpsertablePersoon,
 } from '@rock-solid/shared';
-import { persoonService } from './persoon.service';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
 import { capitalize, pluralize } from '../shared';
 import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { fullName } from './full-name.pipe';
+import { RockElement } from '../rock-element';
+import { personenStore } from './personen.store';
 
 @customElement('rock-personen')
-export class PersonenComponent extends LitElement {
+export class PersonenComponent extends RockElement {
   static override styles = [bootstrap];
 
   @property({ attribute: false })
@@ -36,71 +37,69 @@ export class PersonenComponent extends LitElement {
 
   override updated(changedProperties: PropertyValues<PersonenComponent>) {
     if (changedProperties.has('type')) {
-      this.loadPersonen();
+      personenStore.setFilter({
+        type: this.type,
+        searchType: 'persoon',
+      });
     }
     if (
       changedProperties.has('path') &&
       this.path[0] === 'edit' &&
       this.path[1]
     ) {
-      persoonService.get(this.path[1]).then((persoon) => {
-        this.persoonToEdit = persoon;
-      });
+      personenStore.setFocus(this.path[1]);
     }
   }
 
   @state()
-  private page = 0;
-  @state()
   private totalCount = 0;
 
-  private loadPersonen() {
-    this.personen = undefined;
-    persoonService
-      .getPage(this.page, { type: this.type, searchType: 'persoon' })
-      .then(({ items, totalCount }) => {
-        this.personen = items;
-        this.totalCount = totalCount;
-      });
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.subscription.add(
+      personenStore.currentPageItem$.subscribe(
+        (personen) => (this.personen = personen),
+      ),
+    );
+    this.subscription.add(
+      personenStore.totalCount$.subscribe((count) => (this.totalCount = count)),
+    );
+    this.subscription.add(
+      personenStore.focussedItem$.subscribe(
+        (item) => (this.persoonToEdit = item),
+      ),
+    );
   }
 
   private searchFormSubmit(event: SubmitEvent) {
     event.preventDefault();
     if (this.searchRef.value?.value) {
-      this.personen = undefined;
-      persoonService
-        .getAll({
-          type: this.type,
-          search: this.searchRef.value.value,
-          searchType: 'text',
-        })
-        .then((personen) => {
-          this.personen = personen;
-          this.page = 0;
-          this.totalCount = personen.length; // remove paging
-        });
+      personenStore.setCurrentPage(0, {
+        type: this.type,
+        search: this.searchRef.value.value,
+        searchType: 'text',
+      });
+    } else {
+      personenStore.setCurrentPage(0, undefined);
     }
   }
 
   private async createNewPersoon(event: CustomEvent<UpsertablePersoon>) {
     this.editIsLoading = true;
-    await persoonService.create(event.detail);
-    this.editIsLoading = false;
-    this.loadPersonen();
-    router.navigate('../list');
+    personenStore.create(event.detail).subscribe(() => {
+      this.editIsLoading = false;
+      router.navigate('../list');
+    });
   }
 
   private async updatePersoon() {
     this.editIsLoading = true;
-    await persoonService.update(this.persoonToEdit!.id, this.persoonToEdit!);
-    this.editIsLoading = false;
-    this.loadPersonen();
-    router.navigate('../../list');
-  }
-
-  public navigatePage(page: number) {
-    this.page = page;
-    this.loadPersonen();
+    personenStore
+      .update(this.persoonToEdit!.id, this.persoonToEdit!)
+      .subscribe(() => {
+        this.editIsLoading = false;
+        router.navigate('../../list');
+      });
   }
 
   private searchRef: Ref<HTMLInputElement> = createRef();
@@ -147,9 +146,8 @@ export class PersonenComponent extends LitElement {
                 ></rock-personen-list>
                 <rock-paging
                   @navigate-page=${(event: CustomEvent<number>) =>
-                    this.navigatePage(event.detail)}
-                  .currentPage=${this.page}
-                  .totalCount=${this.totalCount}
+                    personenStore.setCurrentPage(event.detail)}
+                  .store=${personenStore}
                 ></rock-paging> `
             : html`<rock-loading></rock-loading>`}`;
       case 'new':
@@ -180,7 +178,6 @@ export class PersonenComponent extends LitElement {
           .type=${this.type}
         ></rock-advanced-search-personen>`;
       default:
-        this.loadPersonen();
         router.navigate('./list');
         return html``;
     }

@@ -1,26 +1,40 @@
-import { PAGE_SIZE } from '@rock-solid/shared';
-import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { PAGE_SIZE, RestRoutes } from '@rock-solid/shared';
+import { html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
+import { RockElement } from '../rock-element';
+import { PagedStore } from './paged-store.store';
 
 const MAX_PAGE_BUTTON_COUNT = 10;
 
 @customElement('rock-paging')
-export class PagingComponent extends LitElement {
+export class PagingComponent<
+  TRoute extends keyof RestRoutes,
+> extends RockElement {
   static override styles = [bootstrap];
 
   @property()
-  public currentPage = 0;
-  @property()
-  public totalCount = 0;
+  public store!: PagedStore<TRoute>;
+
+  @state()
+  private currentPage = 0;
+  @state()
+  private totalCount = 0;
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.subscription.add(
+      this.store.currentPageNumber$.subscribe(
+        (page) => (this.currentPage = page),
+      ),
+    );
+    this.subscription.add(
+      this.store.totalCount$.subscribe((count) => (this.totalCount = count)),
+    );
+  }
 
   private clickPage(page: number) {
-    const event = new CustomEvent('navigate-page', {
-      bubbles: true,
-      composed: true,
-      detail: page,
-    });
-    this.dispatchEvent(event);
+    this.store.setCurrentPage(page);
   }
 
   override render() {

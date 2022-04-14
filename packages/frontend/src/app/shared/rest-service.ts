@@ -7,7 +7,7 @@ import {
 import { Page, RestClient } from './rest-client';
 
 export class RestService<TRoute extends keyof RestRoutes> {
-  constructor(private restClient: RestClient, private route: TRoute) {}
+  constructor(protected restClient: RestClient, private route: TRoute) {}
 
   getAll(query?: FilterFrom<TRoute>): Promise<EntityFrom<TRoute>[]> {
     return this.restClient.getAll(

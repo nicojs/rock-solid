@@ -4,15 +4,16 @@ import {
   UpsertableProject,
   Cursus,
 } from '@rock-solid/shared';
-import { html, LitElement, PropertyValues } from 'lit';
+import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
+import { RockElement } from '../rock-element';
 import { Query, router } from '../router';
 import { capitalize, pluralize } from '../shared';
-import { projectService } from './project.service';
+import { projectenStore } from './projecten.store';
 
 @customElement('rock-projecten')
-export class ProjectenComponent extends LitElement {
+export class ProjectenComponent extends RockElement {
   static override styles = [bootstrap];
 
   @property()
@@ -31,45 +32,51 @@ export class ProjectenComponent extends LitElement {
   private loading = false;
 
   @state()
-  private projectInScope: Project | undefined;
+  private focussedProject: Project | undefined;
 
-  private loadProjecten() {
-    this.projecten = undefined;
-    projectService.getAll({ type: this.type }).then((projecten) => {
-      this.projecten = projecten;
-    });
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.subscription.add(
+      projectenStore.currentPageItem$.subscribe(
+        (projecten) => (this.projecten = projecten),
+      ),
+    );
+    this.subscription.add(
+      projectenStore.focussedItem$.subscribe(
+        (focussedProject) => (this.focussedProject = focussedProject),
+      ),
+    );
   }
 
   override updated(props: PropertyValues<ProjectenComponent>): void {
+    if (props.has('type')) {
+      projectenStore.setFilter({ type: this.type });
+    }
     if (props.has('path')) {
-      if (this.path[0] === 'list') {
-        this.loadProjecten();
-      }
       const [projectId, page] = this.path;
       if (
         projectId &&
         ['edit', 'inschrijvingen', 'deelnames'].includes(page!)
       ) {
-        this.projectInScope = undefined;
-        projectService.get(projectId).then((project) => {
-          this.projectInScope = project;
-        });
+        projectenStore.setFocus(projectId);
       }
     }
   }
 
   private async addProject(project: Project) {
     this.loading = true;
-    await projectService.create(project);
-    this.loading = false;
-    router.navigate(`/${pluralize(this.type)}/list`);
+    projectenStore.create(project).subscribe(() => {
+      this.loading = false;
+      router.navigate(`/${pluralize(this.type)}/list`);
+    });
   }
 
   private async editProject(project: Project) {
     this.loading = true;
-    await projectService.update(project.id, project);
-    this.loading = false;
-    router.navigate(`/${pluralize(this.type)}/list`);
+    projectenStore.update(project.id, project).subscribe(() => {
+      this.loading = false;
+      router.navigate(`/${pluralize(this.type)}/list`);
+    });
   }
 
   override render() {
@@ -77,13 +84,14 @@ export class ProjectenComponent extends LitElement {
       case 'list':
         return html`<h2>${capitalize(pluralize(this.type))}</h2>
           ${this.projecten
-            ? html`<rock-projecten-list
-                  .projecten="${this.projecten}"
-                ></rock-projecten-list>
-                <rock-link href="/${pluralize(this.type)}/new" btn btnSuccess
+            ? html`<rock-link href="/${pluralize(this.type)}/new" btn btnSuccess
                   ><rock-icon icon="journalPlus" size="md"></rock-icon>
                   ${capitalize(this.type)}</rock-link
-                >`
+                >
+                <rock-projecten-list
+                  .projecten="${this.projecten}"
+                ></rock-projecten-list>
+                <rock-paging .store=${projectenStore}></rock-paging>`
             : html`<rock-loading></rock-loading>`} `;
       case 'new':
         const project: UpsertableProject = {
@@ -105,22 +113,22 @@ export class ProjectenComponent extends LitElement {
       default:
         if (this.path[0]?.match(/\d+/)) {
           const [, page, ...rest] = this.path;
-          if (this.projectInScope) {
+          if (this.focussedProject) {
             switch (page) {
               case 'edit':
                 return html`<rock-project-edit
-                  .project="${this.projectInScope}"
+                  .project="${this.focussedProject}"
                   @project-submitted="${(event: CustomEvent<Project>) =>
                     this.editProject(event.detail)}"
                 ></rock-project-edit>`;
               case 'inschrijvingen':
                 return html`<rock-project-inschrijvingen
-                  .project="${this.projectInScope}"
+                  .project="${this.focussedProject}"
                   .path="${rest}"
                 ></rock-project-inschrijvingen>`;
               case 'deelnames':
                 return html`<rock-project-deelnames
-                  .project="${this.projectInScope}"
+                  .project="${this.focussedProject}"
                   .path="${rest}"
                 ></rock-project-deelnames>`;
             }

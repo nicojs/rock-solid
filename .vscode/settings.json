@@ -89,6 +89,7 @@
     "toeleider",
     "toestemming",
     "toevoegen",
+    "transform",
     "upsertable",
     "Upsertable",
     "vakantie",
@@ -117,5 +118,6 @@
     "Zoeken",
     "Zonder"
   ],
+  "cSpell.ignoreWords": ["transform"],
   "cSpell.language": "en,nl",
 }

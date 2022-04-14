@@ -1,23 +1,15 @@
 import {
   Deelname,
   Inschrijving,
-  Project,
-  ProjectFilter,
   UpsertableDeelname,
   UpsertableInschrijving,
-  UpsertableProject,
 } from '@rock-solid/shared';
 import { restClient, RestClient } from '../shared/rest-client';
+import { RestService } from '../shared/rest-service';
 
-export class ProjectService {
-  constructor(private restClient: RestClient) {}
-
-  getAll(query: ProjectFilter): Promise<Project[]> {
-    return this.restClient.getAll('projecten', query);
-  }
-
-  get(id: string | number): Promise<Project> {
-    return this.restClient.getOne('projecten', id);
+export class ProjectService extends RestService<'projecten'> {
+  constructor(restClient: RestClient) {
+    super(restClient, 'projecten');
   }
 
   getInschrijvingen(projectId: number | string): Promise<Inschrijving[]> {
@@ -39,14 +31,6 @@ export class ProjectService {
     return this.restClient.getAll(
       `projecten/${projectId}/activiteiten/${activiteitId}/deelnames`,
     );
-  }
-
-  update(id: string | number, project: UpsertableProject): Promise<void> {
-    return this.restClient.update('projecten', id, project);
-  }
-
-  create(project: UpsertableProject): Promise<Project> {
-    return this.restClient.create('projecten', project);
   }
 
   createInschrijving(

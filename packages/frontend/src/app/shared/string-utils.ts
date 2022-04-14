@@ -1,4 +1,4 @@
-import { Options } from '@rock-solid/shared';
+import { showDatum } from './utility.pipes';
 
 export type ValueFactory<T> = {
   [Prop in keyof T]?: (val: T[Prop]) => string;
@@ -56,6 +56,9 @@ export function toCsv<T>(
     const factory = valueFactory[column];
     if (factory) {
       return factory(val);
+    }
+    if (val instanceof Date) {
+      return showDatum(val);
     }
     if (typeof val === 'object' || typeof val === 'function') {
       throw new Error(

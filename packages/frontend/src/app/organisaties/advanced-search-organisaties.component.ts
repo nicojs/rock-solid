@@ -10,7 +10,7 @@ import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
 import { adresName } from '../forms/adres.pipes';
 import { toCsvDownloadUrl } from '../shared';
-import { organisatieService } from './organistatie.service';
+import { organisatieService } from './organisatie.service';
 
 @customElement('rock-advanced-search-organisaties')
 export class AdvancedSearchOrganisatiesComponent extends LitElement {

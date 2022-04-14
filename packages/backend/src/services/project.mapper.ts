@@ -11,6 +11,7 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
 import { purgeNulls } from './mapper-utils.js';
+import { toPage } from './paging.js';
 
 const includeQuery = {
   activiteiten: {
@@ -42,16 +43,27 @@ const includeQuery = {
 export class ProjectMapper {
   constructor(private db: DBService) {}
 
-  public async getAll(filter: ProjectFilter): Promise<Project[]> {
+  public async getAll(
+    filter: ProjectFilter,
+    pageNumber: number | undefined,
+  ): Promise<Project[]> {
     const dbProjecten = await this.db.project.findMany({
       include: includeQuery,
       where: where(filter),
+      ...toPage(pageNumber),
     });
     const projecten = dbProjecten.map(toProject);
     await this.enrichWithDeelnemersuren(
       projecten.flatMap((project) => project.activiteiten),
     );
     return projecten;
+  }
+
+  async count(filter: ProjectFilter): Promise<number> {
+    const count = await this.db.project.count({
+      where: where(filter),
+    });
+    return count;
   }
 
   private async enrichWithDeelnemersuren(activiteiten: Activiteit[]) {

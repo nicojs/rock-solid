@@ -32,11 +32,15 @@ export async function seedOrganisaties(client: db.PrismaClient) {
   );
 
   const names = new Set<string>();
+  const duplicateNames = new Set<string>();
   for (const org of organisatiesRaw) {
     let name = org.Naam;
     let i = 1;
     while (names.has(name)) {
-      console.log('Duplicate org name', name);
+      if (!duplicateNames.has(org.Naam)) {
+        console.log('Duplicate org name', org.Naam);
+        duplicateNames.add(org.Naam);
+      }
       name = `${org.Naam}_${++i}`;
     }
     org.Naam = name;
