@@ -29,6 +29,9 @@ export class ProjectenComponent extends RockElement {
   private projecten: Project[] | undefined;
 
   @state()
+  private totalCount = 0;
+
+  @state()
   private loading = false;
 
   @state()
@@ -46,9 +49,15 @@ export class ProjectenComponent extends RockElement {
         (focussedProject) => (this.focussedProject = focussedProject),
       ),
     );
+    this.subscription.add(
+      projectenStore.totalCount$.subscribe(
+        (count) => (this.totalCount = count),
+      ),
+    );
   }
 
-  override updated(props: PropertyValues<ProjectenComponent>): void {
+  override update(props: PropertyValues<ProjectenComponent>): void {
+    super.update(props);
     if (props.has('type')) {
       projectenStore.setFilter({ type: this.type });
     }
@@ -82,7 +91,9 @@ export class ProjectenComponent extends RockElement {
   override render() {
     switch (this.path[0]) {
       case 'list':
-        return html`<h2>${capitalize(pluralize(this.type))}</h2>
+        return html`<div class="row">
+            <h2>${capitalize(pluralize(this.type))} (${this.totalCount})</h2>
+          </div>
           ${this.projecten
             ? html`<rock-link href="/${pluralize(this.type)}/new" btn btnSuccess
                   ><rock-icon icon="journalPlus" size="md"></rock-icon>

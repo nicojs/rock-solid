@@ -13,9 +13,11 @@ export class ProjectenListComponent extends LitElement {
   public projecten!: Project[];
 
   override render() {
-    return html`${html`${this.projecten.length
-      ? this.renderTable()
-      : html`<div class="mb-3">Geen projecten gevonden 🤷‍♂️</div>`}`}`;
+    return html`<div class="row">
+      ${html`${this.projecten.length
+        ? this.renderTable()
+        : html`<div class="mb-3">Geen projecten gevonden 🤷‍♂️</div>`}`}
+    </div>`;
   }
 
   private renderTable() {
