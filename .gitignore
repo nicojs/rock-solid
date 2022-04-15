@@ -4,6 +4,6 @@ dist
 *.env
 /import
 package.release.json
-/packages/backend/seed/import
+/packages/backend/import
 /.deploy
-/deploy.zip
+*.zip

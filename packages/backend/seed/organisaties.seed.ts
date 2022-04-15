@@ -26,7 +26,7 @@ const [from, to] = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
 export async function seedOrganisaties(client: db.PrismaClient) {
   const organisatiesRaw: RawOrganisatie[] = JSON.parse(
     await fs.readFile(
-      new URL('./import/organisaties.json', import.meta.url),
+      new URL('../../import/organisaties.json', import.meta.url),
       'utf-8',
     ),
   );
@@ -66,7 +66,7 @@ export async function seedOrganisaties(client: db.PrismaClient) {
   console.log(`Seeded ${orgs.length} organisaties`);
   console.log(`(${importErrors.length} errors)`);
   fs.writeFile(
-    new URL('./import/organisatie-import-errors.json', import.meta.url),
+    new URL('../../import/organisatie-import-errors.json', import.meta.url),
     JSON.stringify(importErrors, null, 2),
     'utf-8',
   );

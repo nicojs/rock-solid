@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf packages/*/dist packages/*/*.tsbuildinfo packages/backend/package.release.json packages/backend/seed/import",
+    "clean": "rimraf packages/*/dist packages/*/*.tsbuildinfo packages/backend/package.release.json packages/backend/import",
     "postinstall": "npm run bootstrap && npm run link-parent-bin",
     "bootstrap": "lerna bootstrap",
     "link-parent-bin": "link-parent-bin",

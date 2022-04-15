@@ -9,6 +9,7 @@ mkdir -p ./node_modules/@rock-solid/frontend
 cp -r ../packages/frontend/dist ./node_modules/@rock-solid/frontend/dist 
 cp -r ../packages/shared ./node_modules/@rock-solid/shared
 cp -r ../packages/backend/prisma ./prisma
+cp -r ../packages/backend/import ./import
 cp -r ../packages/backend/dist ./dist
 npm run prisma:client:generate
 zip -r deploy.zip .

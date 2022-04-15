@@ -4,7 +4,7 @@ import stripBom from 'strip-bom-stream';
 import fs from 'fs';
 import path from 'path';
 
-const outDir = '../packages/backend/seed/import/';
+const outDir = '../packages/backend/import/';
 
 /**
  * @param {URL | string} fileName

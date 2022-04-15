@@ -6,7 +6,7 @@
     "rootDir": ".",
     "types": ["node"],
   },
-  "include": ["src/**/*.ts", "seed/**/*.ts", "seed/**/*.json"],
+  "include": ["src/**/*.ts", "seed/**/*.ts", "seed/plaatsen.json"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [{ "path": "../shared" }]
 }
