@@ -2,7 +2,7 @@ import { LoginResponse, User } from '@rock-solid/shared';
 import { BehaviorSubject } from 'rxjs';
 
 const KEI_LOGIN = 'rock-login';
-export class AuthService {
+export class AuthStore {
   private _user$ = new BehaviorSubject<User | undefined>(
     this.currentLogin?.user,
   );
@@ -40,4 +40,4 @@ export class AuthService {
     }
   }
 }
-export const authService = new AuthService();
+export const authStore = new AuthStore();

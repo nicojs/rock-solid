@@ -3,7 +3,7 @@ import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
 import { bootstrap } from '../../styles';
-import { authService } from './auth.service';
+import { authStore } from './auth.store';
 
 @customElement('rock-user')
 export class UserComponent extends LitElement {
@@ -15,12 +15,12 @@ export class UserComponent extends LitElement {
 
   public logoff(event: MouseEvent) {
     event.preventDefault();
-    authService.logoff();
+    authStore.logoff();
   }
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this.sub.add(authService.user$.subscribe((user) => (this.user = user)));
+    this.sub.add(authStore.user$.subscribe((user) => (this.user = user)));
   }
 
   protected override render() {

@@ -3,10 +3,16 @@ import {
   EntityFrom,
   UpsertableFrom,
   FilterFrom,
+  notEmpty,
 } from '@rock-solid/shared';
-import { BehaviorSubject, from, tap, of } from 'rxjs';
+import { BehaviorSubject, from, tap, of, filter, mergeWith } from 'rxjs';
+import { authStore } from '../auth';
 import { RestService } from './rest-service';
 
+/**
+ * Store pattern implementation for a rest endpoint that supports paging
+ * It stores both the page number
+ */
 export class PagedStore<TRoute extends keyof RestRoutes> {
   private currentPageItemsSubject = new BehaviorSubject<
     EntityFrom<TRoute>[] | undefined
@@ -24,7 +30,9 @@ export class PagedStore<TRoute extends keyof RestRoutes> {
   private filter?: FilterFrom<TRoute>;
 
   constructor(private service: RestService<TRoute>) {
-    this.loadPage();
+    authStore.jwt$.pipe(filter(notEmpty)).subscribe(() => {
+      this.loadPage();
+    });
   }
 
   create(data: UpsertableFrom<TRoute>) {

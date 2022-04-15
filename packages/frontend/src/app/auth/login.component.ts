@@ -3,7 +3,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { router } from '../router';
 import { httpClient } from '../shared/http-client';
-import { authService } from './auth.service';
+import { authStore } from './auth.store';
 
 @customElement('rock-login')
 export class LoginComponent extends LitElement {
@@ -17,7 +17,7 @@ export class LoginComponent extends LitElement {
         .fetch(`${loginUrl}${this.queryString}`)
         .then((resp) => resp.json())
         .then((login: LoginResponse) => {
-          authService.login(login);
+          authStore.login(login);
           router.navigate('/');
         });
     } else {

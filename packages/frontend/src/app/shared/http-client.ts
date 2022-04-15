@@ -1,9 +1,9 @@
 import { loginUrl } from '@rock-solid/shared';
-import { authService, AuthService } from '../auth';
+import { authStore, AuthStore } from '../auth';
 import { HttpStatus } from './http-status';
 
 export class HttpClient {
-  constructor(auth: AuthService = authService) {
+  constructor(private auth: AuthStore = authStore) {
     auth.jwt$.subscribe((jwt) => {
       this.currentJwt = jwt;
     });
@@ -31,6 +31,9 @@ export class HttpClient {
     }
     const response = await fetch(input, init);
     if (response.status === HttpStatus.UNAUTHORIZED) {
+      // Clear old JWT
+      this.auth.logoff();
+
       // Redirect to login page
       window.location.href = loginUrl;
     }
