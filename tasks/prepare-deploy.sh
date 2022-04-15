@@ -6,10 +6,12 @@ node -e 'const pkg = require("../packages/backend/package.json"); delete pkg.dep
 cp ../packages/backend/package-lock.json .
 npm ci --production
 mkdir -p ./node_modules/@rock-solid/frontend
+mkdir -p ./seed
 cp -r ../packages/frontend/dist ./node_modules/@rock-solid/frontend/dist 
 cp -r ../packages/shared ./node_modules/@rock-solid/shared
 cp -r ../packages/backend/prisma ./prisma
 cp -r ../packages/backend/import ./import
+cp -r ../packages/backend/seed/plaatsen.json ./seed/plaatsen.json
 cp -r ../packages/backend/dist ./dist
 npm run prisma:client:generate
 zip -r deploy.zip .
