@@ -102,10 +102,10 @@ export async function seedCursussen(client: db.PrismaClient) {
   function organisatieOnderdeelFromRaw(
     raw: RawCursus,
   ): db.Organisatieonderdeel | undefined {
-    const deKei = raw['De Kei'] === 'ja';
-    const digistap = raw.Digistap === 'ja';
-    const keiJongBuso = raw['Kei-Jong BUSO'] === 'ja';
-    const KeiJongNietBuso = raw['Kei-Jong (niet BUSO)'] === 'ja';
+    const deKei = raw['De Kei'] === 'Ja';
+    const digistap = raw.Digistap === 'Ja';
+    const keiJongBuso = raw['Kei-Jong BUSO'] === 'Ja';
+    const KeiJongNietBuso = raw['Kei-Jong (niet BUSO)'] === 'Ja';
 
     let count = 0;
     if (deKei) count++;
