@@ -5,20 +5,39 @@ interface ImportError<T> {
 
 export class ImportErrors<T> {
   errorsByCategory = new Map<string, ImportError<T>[]>();
-  private _length = 0;
-  add(category: string, error: ImportError<T>) {
+  warningsByCategory = new Map<string, ImportError<T>[]>();
+  addError(category: string, error: ImportError<T>) {
     const errors = this.errorsByCategory.get(category) ?? [];
     this.errorsByCategory.set(category, errors);
     errors.push(error);
-    this._length++;
+  }
+  addWarning(category: string, warning: ImportError<T>) {
+    const warnings = this.warningsByCategory.get(category) ?? [];
+    this.warningsByCategory.set(category, warnings);
+    warnings.push(warning);
   }
 
-  get length() {
-    return this._length;
+  get errorLength() {
+    return [...this.errorsByCategory.entries()].reduce(
+      (acc, [, errors]) => errors.length + acc,
+      0,
+    );
+  }
+  get warningLength() {
+    return [...this.warningsByCategory.entries()].reduce(
+      (acc, [, warnings]) => warnings.length + acc,
+      0,
+    );
+  }
+  get report() {
+    return `${this.errorLength} errors, ${this.warningLength} warnings`;
   }
 
   toJSON() {
-    return Object.fromEntries(this.errorsByCategory.entries());
+    return {
+      errors: Object.fromEntries(this.errorsByCategory.entries()),
+      warnings: Object.fromEntries(this.warningsByCategory.entries()),
+    };
   }
 }
 

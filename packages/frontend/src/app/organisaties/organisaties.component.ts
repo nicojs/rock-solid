@@ -119,11 +119,10 @@ export class OrganisatiesComponent extends RockElement {
             ></rock-edit-organisatie>`;
       case 'edit':
         return html`${this.organisatieToEdit
-          ? html`<h2>${this.organisatieToEdit.naam} wijzigen</h2>
-              <rock-edit-organisatie
-                .organisatie="${this.organisatieToEdit}"
-                @organisatie-submitted=${this.updateOrganisatie}
-              ></rock-edit-organisatie>`
+          ? html`<rock-edit-organisatie
+              .organisatie="${this.organisatieToEdit}"
+              @organisatie-submitted=${this.updateOrganisatie}
+            ></rock-edit-organisatie>`
           : html`<rock-loading></rock-loading>`}`;
       case 'zoeken':
         return html`<rock-advanced-search-organisaties></rock-advanced-search-organisaties>`;

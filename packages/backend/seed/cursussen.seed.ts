@@ -46,7 +46,7 @@ export async function seedCursussen(client: db.PrismaClient) {
   }
 
   console.log(`Seeded ${cursussen.length} cursussen`);
-  console.log(`(${importErrors.length} errors)`);
+  console.log(`(${importErrors.report})`);
   fs.writeFile(
     new URL('../../import/cursussen-import-errors.json', import.meta.url),
     JSON.stringify(importErrors, null, 2),
@@ -55,7 +55,7 @@ export async function seedCursussen(client: db.PrismaClient) {
   function fromRaw(raw: RawCursus): db.Prisma.ProjectCreateInput | undefined {
     const projectNummerMatch = projectnummerRegex.exec(raw.titel);
     if (!projectNummerMatch) {
-      importErrors.add('project_nummer_parse', {
+      importErrors.addError('project_nummer_parse', {
         item: raw,
         detail: `Project nummer could not be parsed`,
       });
@@ -76,7 +76,7 @@ export async function seedCursussen(client: db.PrismaClient) {
             .data as db.Prisma.ActiviteitCreateManyProjectInput[]
         ).push(...activiteitenFromRaw(raw));
       } else {
-        importErrors.add('project_nummer_exists', {
+        importErrors.addError('project_nummer_exists', {
           item: raw,
           detail: `Project nummer ${projectnummer} already exists`,
         });

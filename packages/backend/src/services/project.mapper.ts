@@ -68,9 +68,10 @@ export class ProjectMapper {
   }
 
   private async enrichWithDeelnemersuren(activiteiten: Activiteit[]) {
-    const deelnemersurenResult = await this.db.$queryRaw<
-      { id: number; deelnemersuren: number }[]
-    >`
+    if (activiteiten.length) {
+      const deelnemersurenResult = await this.db.$queryRaw<
+        { id: number; deelnemersuren: number }[]
+      >`
     SELECT activiteit.id, SUM(deelname."effectieveDeelnamePerunage" * vormingsuren) as deelnemersuren
     FROM activiteit
     INNER JOIN deelname ON deelname."activiteitId" = activiteit.id
@@ -78,10 +79,11 @@ export class ProjectMapper {
       activiteiten.map(({ id }) => id),
     )})
     GROUP BY activiteit.id`;
-    for (const activiteit of activiteiten) {
-      activiteit.aantalDeelnemersuren = deelnemersurenResult.find(
-        ({ id }) => id === activiteit.id,
-      )?.deelnemersuren;
+      for (const activiteit of activiteiten) {
+        activiteit.aantalDeelnemersuren = deelnemersurenResult.find(
+          ({ id }) => id === activiteit.id,
+        )?.deelnemersuren;
+      }
     }
   }
 

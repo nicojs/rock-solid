@@ -64,7 +64,7 @@ export async function seedOrganisaties(client: db.PrismaClient) {
   }
 
   console.log(`Seeded ${orgs.length} organisaties`);
-  console.log(`(${importErrors.length} errors)`);
+  console.log(`(${importErrors.report})`);
   fs.writeFile(
     new URL('../../import/organisatie-import-errors.json', import.meta.url),
     JSON.stringify(importErrors, null, 2),
@@ -80,7 +80,7 @@ export async function seedOrganisaties(client: db.PrismaClient) {
     if (raw.adres) {
       const adresMatch = adresRegex.exec(raw.adres);
       if (!adresMatch) {
-        importErrors.add('adres_parse_error', {
+        importErrors.addError('adres_parse_error', {
           item: raw,
           detail: `Adres is empty doesn\'t match pattern`,
         });
@@ -88,7 +88,7 @@ export async function seedOrganisaties(client: db.PrismaClient) {
       const postcode = postcodeFromRaw(raw.postcode);
       const plaatsId = plaatsIdByPostcode.get(postcode);
       if (!plaatsId) {
-        importErrors.add('postcode_doesnt_exist', {
+        importErrors.addError('postcode_doesnt_exist', {
           detail: `Cannot find postcode "${raw.postcode}"`,
           item: raw,
         });

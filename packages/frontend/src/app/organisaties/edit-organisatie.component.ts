@@ -8,6 +8,7 @@ import {
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { bootstrap } from '../../styles';
 import {
   adresControls,
   formGroup,
@@ -19,6 +20,8 @@ import { printOrganisatie } from './organisatie.pipes';
 
 @customElement('rock-edit-organisatie')
 export class EditOrganisatieComponent extends LitElement {
+  static override styles = [bootstrap];
+
   @property({ attribute: false })
   public organisatie!: UpsertableOrganisatie;
 

@@ -52,27 +52,31 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
   const cursussenByCode = (
     await client.project.findMany({
       where: { type: 'cursus' },
-      select: { id: true, projectnummer: true },
+      include: { activiteiten: true },
     })
-  ).reduce((acc, { id, projectnummer }) => {
-    acc.set(projectnummer, id);
+  ).reduce((acc, { id, projectnummer, activiteiten }) => {
+    acc.set(projectnummer, { id, activiteiten });
     return acc;
-  }, new Map<string, number>());
+  }, new Map<string, { id: number; activiteiten: db.Activiteit[] }>());
   const inschrijvingen = inschrijvingenRaw
     .map(fromRaw)
     .filter(notEmpty)
     .filter(
       deduplicate(
         (inschrijving) =>
-          `${inschrijving.deelnemerId}-${inschrijving.projectId}`,
+          `${inschrijving.deelnemer.connect!.id!}-${
+            inschrijving.project.connect!.id
+          }`,
       ),
     );
 
-  await client.inschrijving.createMany({
-    data: inschrijvingen,
-  });
+  for (const inschrijving of inschrijvingen) {
+    await client.inschrijving.create({
+      data: inschrijving,
+    });
+  }
   console.log(`Seeded ${inschrijvingen.length} cursus inschrijvingen`);
-  console.log(`(${importErrors.length} errors)`);
+  console.log(`(${importErrors.report})`);
   fs.writeFile(
     new URL(
       '../../import/cursus-inschrijvingen-import-errors.json',
@@ -84,10 +88,10 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
 
   function fromRaw(
     raw: RawCursusInschrijving,
-  ): db.Prisma.InschrijvingCreateManyInput | undefined {
+  ): db.Prisma.InschrijvingCreateInput | undefined {
     const projectNummerMatch = projectnummerRegex.exec(raw.cursus);
     if (!projectNummerMatch) {
-      importErrors.add('project_nummer_parse', {
+      importErrors.addError('project_nummer_parse', {
         item: raw,
         detail: `Project nummer could not be parsed`,
       });
@@ -99,26 +103,36 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
       string,
       string | undefined,
     ];
-    const projectId = cursussenByCode.get(projectnummer);
+    const project = cursussenByCode.get(projectnummer);
     const deelnemer = deelnemerByNaam.get(raw.deelnemer);
-    if (projectId === undefined) {
-      importErrors.add('project_not_exit', {
+    if (project === undefined) {
+      importErrors.addError('project_not_exit', {
         item: raw,
         detail: `Project ${projectnummer} does not exist`,
       });
       return;
     }
     if (deelnemer === undefined) {
-      importErrors.add('deelnemer_not_exist', {
+      importErrors.addError('deelnemer_not_exist', {
         item: raw,
         detail: `Deelnemer ${raw.deelnemer} does not exist`,
       });
       return;
     }
     return {
-      deelnemerId: deelnemer.deelnemerId,
-      projectId,
-      woonplaatsDeelnemerId: deelnemer.woonplaatsId,
+      deelnemer: {
+        connect: { id: deelnemer.deelnemerId },
+      },
+      project: { connect: { id: project.id } },
+      deelnames: {
+        createMany: {
+          data: project.activiteiten.map((act) => ({
+            activiteitId: act.id,
+            effectieveDeelnamePerunage: raw.deelgenomen === 'Ja' ? 1 : 0,
+          })),
+        },
+      },
+      woonplaatsDeelnemer: { connect: { id: deelnemer.woonplaatsId } },
       opmerking: raw.opmerkingen,
     };
   }
