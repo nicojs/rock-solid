@@ -10,6 +10,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
+import Prisma from '@prisma/client';
 import { purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 
@@ -73,6 +74,9 @@ export class ProjectMapper {
     SELECT activiteit.id, SUM(deelname."effectieveDeelnamePerunage" * vormingsuren) as deelnemersuren
     FROM activiteit
     INNER JOIN deelname ON deelname."activiteitId" = activiteit.id
+    WHERE activiteit.id IN (${Prisma.Prisma.join(
+      activiteiten.map(({ id }) => id),
+    )})
     GROUP BY activiteit.id`;
     for (const activiteit of activiteiten) {
       activiteit.aantalDeelnemersuren = deelnemersurenResult.find(

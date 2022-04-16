@@ -13,6 +13,7 @@ import { router } from '../router';
 import { pluralize, showDatum } from '../shared';
 import { printProject } from './project.pipes';
 import { projectService } from './project.service';
+import { projectenStore } from './projecten.store';
 
 interface DeelnameRow extends UpsertableDeelname {
   deelnemer: Deelnemer;
@@ -51,15 +52,15 @@ export class ProjectDeelnamesComponent extends LitElement {
             .filter(
               (inschrijving) =>
                 !deelnames.find(
-                  (deelname) => deelname.deelnemerId === inschrijving.deelnemerId,
+                  ({ inschrijvingId }) => inschrijvingId === inschrijving.id,
                 ),
             )
             .map(
               (inschrijving): DeelnameRow => ({
                 activiteitId,
-                deelnemerId: inschrijving.deelnemerId,
+                inschrijvingId: inschrijving.id,
                 effectieveDeelnamePerunage: 1,
-                deelnemer: inschrijving.deelnemer as Deelnemer,
+                deelnemer: inschrijving.deelnemer!,
               }),
             ),
         ];
@@ -78,12 +79,11 @@ export class ProjectDeelnamesComponent extends LitElement {
     if ((e.target as HTMLFormElement).checkValidity() && this.activiteit) {
       this.isLoading = true;
       this.wasValidated = false;
-      await projectService.updateDeelnames(
-        this.project.id,
-        this.activiteit.id,
-        this.deelnames!,
-      );
-      router.navigate(`/${pluralize(this.project.type)}/list`);
+      projectenStore
+        .updateDeelnames(this.project.id, this.activiteit.id, this.deelnames!)
+        .subscribe(() => {
+          router.navigate(`/${pluralize(this.project.type)}/list`);
+        });
     } else {
       this.wasValidated = true;
     }

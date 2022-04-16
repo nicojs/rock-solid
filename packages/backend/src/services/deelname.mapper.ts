@@ -29,7 +29,9 @@ export class DeelnameMapper {
         },
       },
       include: {
-        deelnemer: { include: includePersoonAdres },
+        inschrijving: {
+          include: { deelnemer: { include: includePersoonAdres } },
+        },
       },
     });
     return deelnames.map(toDeelname);
@@ -61,15 +63,17 @@ export class DeelnameMapper {
 }
 
 interface DeelnameQueryResult extends db.Deelname {
-  deelnemer: db.Persoon & {
-    verblijfadres: db.Adres & {
-      plaats: db.Plaats;
+  inschrijving: db.Inschrijving & {
+    deelnemer: db.Persoon & {
+      verblijfadres: db.Adres & {
+        plaats: db.Plaats;
+      };
+      domicilieadres:
+        | (db.Adres & {
+            plaats: db.Plaats;
+          })
+        | null;
     };
-    domicilieadres:
-      | (db.Adres & {
-          plaats: db.Plaats;
-        })
-      | null;
   };
 }
 
@@ -83,9 +87,9 @@ function toDBDeelname(
         id: activiteitId,
       },
     },
-    deelnemer: {
+    inschrijving: {
       connect: {
-        id: deelname.deelnemerId,
+        id: deelname.inschrijvingId,
       },
     },
     effectieveDeelnamePerunage: deelname.effectieveDeelnamePerunage,
@@ -96,8 +100,8 @@ function toDeelname(val: DeelnameQueryResult): Deelname {
   return {
     id: val.id,
     activiteitId: val.activiteitId,
-    deelnemer: toPersoon(val.deelnemer) as Deelnemer,
-    deelnemerId: val.deelnemerId,
+    deelnemer: toPersoon(val.inschrijving.deelnemer) as Deelnemer,
+    inschrijvingId: val.inschrijvingId,
     effectieveDeelnamePerunage: val.effectieveDeelnamePerunage,
   };
 }

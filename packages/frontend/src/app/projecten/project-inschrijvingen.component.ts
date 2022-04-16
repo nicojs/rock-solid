@@ -5,13 +5,7 @@ import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
 import { fullName } from '../personen/full-name.pipe';
-import {
-  TypeAheadHint,
-  AutocompleteComponent,
-  pluralize,
-  showBoolean,
-  showDatum,
-} from '../shared';
+import { TypeAheadHint, pluralize, showBoolean, showDatum } from '../shared';
 import { router } from '../router';
 import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
 import { createRef, ref } from 'lit/directives/ref.js';

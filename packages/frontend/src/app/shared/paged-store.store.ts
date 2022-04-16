@@ -5,7 +5,7 @@ import {
   FilterFrom,
   notEmpty,
 } from '@rock-solid/shared';
-import { BehaviorSubject, from, tap, of, filter, mergeWith } from 'rxjs';
+import { BehaviorSubject, from, tap, of, filter, Observable } from 'rxjs';
 import { authStore } from '../auth';
 import { RestService } from './rest-service';
 
@@ -13,7 +13,10 @@ import { RestService } from './rest-service';
  * Store pattern implementation for a rest endpoint that supports paging
  * It stores both the page number
  */
-export class PagedStore<TRoute extends keyof RestRoutes> {
+export class PagedStore<
+  TRoute extends keyof RestRoutes,
+  TService extends RestService<TRoute> = RestService<TRoute>,
+> {
   private currentPageItemsSubject = new BehaviorSubject<
     EntityFrom<TRoute>[] | undefined
   >(undefined);
@@ -29,7 +32,7 @@ export class PagedStore<TRoute extends keyof RestRoutes> {
 
   private filter?: FilterFrom<TRoute>;
 
-  constructor(private service: RestService<TRoute>) {
+  constructor(protected service: TService) {
     authStore.jwt$.pipe(filter(notEmpty)).subscribe(() => {
       this.loadPage();
     });
@@ -39,7 +42,7 @@ export class PagedStore<TRoute extends keyof RestRoutes> {
     return from(this.service.create(data)).pipe(tap(() => this.loadPage()));
   }
 
-  update(id: string | number, data: EntityFrom<TRoute>) {
+  update(id: string | number, data: EntityFrom<TRoute>): Observable<void> {
     return from(this.service.update(id, data)).pipe(
       tap(() => {
         const currentPage = this.currentPageItemsSubject.value;
@@ -93,7 +96,7 @@ export class PagedStore<TRoute extends keyof RestRoutes> {
     this.focussedItemSubject.next(undefined);
   }
 
-  private loadPage() {
+  protected loadPage() {
     this.currentPageItemsSubject.next(undefined);
     from(
       this.service.getPage(this.currentPageNumberSubject.value, this.filter),

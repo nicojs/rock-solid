@@ -11,25 +11,24 @@ generator client {
 }
 
 model Persoon {
-  id                  Int            @id @default(autoincrement())
-  voornaam            String?        @db.VarChar(128)
-  achternaam          String         @db.VarChar(128)
-  volledigeNaam       String         @db.VarChar(256)
-  emailadres          String?        @db.VarChar(256)
+  id                  Int         @id @default(autoincrement())
+  voornaam            String?     @db.VarChar(128)
+  achternaam          String      @db.VarChar(128)
+  volledigeNaam       String      @db.VarChar(256)
+  emailadres          String?     @db.VarChar(256)
   verblijfadresId     Int
-  verblijfadres       Adres          @relation(name: "verblijfadres", fields: [verblijfadresId], references: [id])
+  verblijfadres       Adres       @relation(name: "verblijfadres", fields: [verblijfadresId], references: [id])
   domicilieadresId    Int? // indien anders dan verblijfadres is deze gevuld
-  domicilieadres      Adres?         @relation(name: "domicilieadres", fields: [domicilieadresId], references: [id])
-  geboortedatum       DateTime?      @db.Date
-  geboorteplaats      String?        @db.VarChar(256)
-  geslacht            Geslacht       @default(onbekend)
-  rekeningnummer      String?        @db.VarChar(256)
-  rijksregisternummer String?        @db.VarChar(256)
-  telefoonnummer      String?        @db.VarChar(256)
-  gsmNummer           String?        @db.VarChar(256)
+  domicilieadres      Adres?      @relation(name: "domicilieadres", fields: [domicilieadresId], references: [id])
+  geboortedatum       DateTime?   @db.Date
+  geboorteplaats      String?     @db.VarChar(256)
+  geslacht            Geslacht    @default(onbekend)
+  rekeningnummer      String?     @db.VarChar(256)
+  rijksregisternummer String?     @db.VarChar(256)
+  telefoonnummer      String?     @db.VarChar(256)
+  gsmNummer           String?     @db.VarChar(256)
   // communicatievoorkeur Communicatievoorkeur @default(post)
-  type                PersoonType    @default(deelnemer)
-  inschrijving        Inschrijving[]
+  type                PersoonType @default(deelnemer)
 
 
   // Deelnemer
@@ -40,7 +39,7 @@ model Persoon {
   werksituatieOpmerking String?
   voedingswens          Voedingswens    @default(geen)
   voedingswensOpmerking String?
-  Deelnames             Deelname[]
+  inschrijving          Inschrijving[]
 
   // OverigePersonen
   vrijwilligerOpmerking String?
@@ -102,7 +101,7 @@ model Inschrijving {
   deelnemer                      Persoon   @relation(fields: [deelnemerId], references: [id])
   woonplaatsDeelnemerId          Int
   woonplaatsDeelnemer            Plaats    @relation(fields: [woonplaatsDeelnemerId], references: [id])
-  opmerking                      String?   @db.VarChar(256)
+  opmerking                      String?   @db.VarChar(1024)
   tijdstipVanInschrijving        DateTime  @default(now())
   tijdstipVanAnnuleren           DateTime?
   tijdstipVanBevestiging         DateTime?
@@ -110,6 +109,8 @@ model Inschrijving {
   toestemmingFotos               Boolean   @default(false)
   wachtlijst                     Boolean   @default(false)
 
+  Deelname Deelname[]
+  @@unique([projectId, deelnemerId])
   @@map("inschrijving")
 }
 
@@ -126,13 +127,14 @@ model Activiteit {
 }
 
 model Deelname {
-  id                         Int        @id @default(autoincrement())
-  deelnemer                  Persoon    @relation(fields: [deelnemerId], references: [id])
-  deelnemerId                Int
-  activiteit                 Activiteit @relation(fields: [activiteitId], references: [id])
+  id                         Int          @id @default(autoincrement())
+  inschrijving               Inschrijving @relation(fields: [inschrijvingId], references: [id])
+  inschrijvingId             Int
+  activiteit                 Activiteit   @relation(fields: [activiteitId], references: [id])
   activiteitId               Int
   effectieveDeelnamePerunage Float
 
+  @@unique([inschrijvingId, activiteitId])
   @@map("deelname")
 }
 

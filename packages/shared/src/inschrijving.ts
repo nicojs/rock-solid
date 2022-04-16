@@ -1,4 +1,4 @@
-import { Persoon } from './persoon.js';
+import { Deelnemer } from './persoon.js';
 import { Upsertable } from './upsertable.js';
 
 export interface Inschrijving {
@@ -10,7 +10,7 @@ export interface Inschrijving {
   tijdstipVerzendenVervoersbrief?: Date;
   toestemmingFotos: boolean;
   opmerking?: string;
-  deelnemer?: Persoon;
+  deelnemer?: Deelnemer;
   wachtlijst: boolean;
 }
 

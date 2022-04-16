@@ -1,4 +1,27 @@
+import { Project, UpsertableDeelname } from '@rock-solid/shared';
+import { from, Observable, tap } from 'rxjs';
 import { PagedStore } from '../shared/paged-store.store';
-import { projectService } from './project.service';
+import { ProjectService, projectService } from './project.service';
 
-export const projectenStore = new PagedStore<'projecten'>(projectService);
+export class ProjectenStore extends PagedStore<'projecten', ProjectService> {
+  updateDeelnames(
+    projectId: number,
+    activiteitId: number,
+    deelnames: UpsertableDeelname[],
+  ): Observable<void> {
+    return from(
+      this.service.updateDeelnames(projectId, activiteitId, deelnames),
+    ).pipe(tap(() => this.loadPage()));
+  }
+
+  override update(id: string | number, data: Project): Observable<void> {
+    return super.update(id, data).pipe(
+      tap(() => {
+        // Side effect: Deelnemersuren may have been updated!
+        this.loadPage();
+      }),
+    );
+  }
+}
+
+export const projectenStore = new ProjectenStore(projectService);
