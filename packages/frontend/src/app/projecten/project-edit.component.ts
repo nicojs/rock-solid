@@ -3,12 +3,14 @@ import {
   BaseProject,
   bedrijfsonderdelen,
   Cursus,
+  ProjectType,
   UpsertableProject,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl, formArray, InputControl, InputType } from '../forms';
+import { capitalize } from '../shared';
 import { printProject } from './project.pipes';
 
 @customElement('rock-project-edit')
@@ -18,11 +20,14 @@ export class ProjectEditComponent extends LitElement {
   @property({ attribute: false })
   public project!: UpsertableProject;
 
+  @property()
+  public type: ProjectType = 'cursus';
+
   public override render() {
     return html`<h2>
         ${this.project.id
           ? `${printProject(this.project)} wijzigen`
-          : `Project toevoegen`}
+          : `${capitalize(this.type)} toevoegen`}
       </h2>
       <rock-reactive-form
         @rock-submit="${this.save}"

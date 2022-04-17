@@ -147,10 +147,13 @@ export function toPersoon(p: DBPersonWithAdres): Persoon {
 function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
   switch (filter.searchType) {
     case 'persoon':
-      const { searchType, selectie, ...where } = filter;
+      const { searchType, folderVoorkeur, selectie, ...where } = filter;
       return {
         ...where,
-        ...(selectie ? { AND: { selectie: { hasSome: selectie } } } : {}),
+        ...(folderVoorkeur
+          ? { folderVoorkeur: { hasSome: folderVoorkeur } }
+          : {}),
+        ...(selectie ? { selectie: { hasSome: selectie } } : {}),
       };
     case 'text':
       return {

@@ -8,8 +8,7 @@ import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
-import { adresName } from '../forms/adres.pipes';
-import { toCsvDownloadUrl } from '../shared';
+import { showAdres, toCsvDownloadUrl } from '../shared';
 import { organisatieService } from './organisatie.service';
 
 @customElement('rock-advanced-search-organisaties')
@@ -44,7 +43,7 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
           folderVoorkeur(val) {
             return val.map((val) => folderSelecties[val]).join(', ');
           },
-          adres: adresName,
+          adres: showAdres,
         },
       );
     }

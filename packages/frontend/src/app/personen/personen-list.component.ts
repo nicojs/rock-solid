@@ -3,13 +3,11 @@ import {
   overigPersoonSelecties,
   Persoon,
   PersoonType,
-  persoonTypes,
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { pluralize, show } from '../shared/utility.pipes';
+import { pluralize, show, showAdres } from '../shared';
 import { fullName } from './full-name.pipe';
-import { plaatsName } from '../forms/adres.pipes';
 
 @customElement('rock-personen-list')
 export class PersonenComponent extends LitElement {
@@ -36,13 +34,12 @@ export class PersonenComponent extends LitElement {
       <thead>
         <tr>
           <th>Naam</th>
-          <th>Type</th>
           ${this.type === 'overigPersoon' ? html`<th>Selectie</th>` : nothing}
           <th>Emailadres</th>
           <th>Geslacht</th>
           <th>Telefoonnummer</th>
           <th>Gsm</th>
-          <th>Woonplaats</th>
+          <th>Verblijfadres</th>
           <th>Acties</th>
         </tr>
       </thead>
@@ -50,7 +47,6 @@ export class PersonenComponent extends LitElement {
         ${this.personen!.map(
           (persoon) => html`<tr>
             <td>${fullName(persoon)}</td>
-            <td>${persoonTypes[persoon.type]}</td>
             ${persoon.type === 'overigPersoon'
               ? html`<td>
                   ${persoon.selectie
@@ -62,7 +58,7 @@ export class PersonenComponent extends LitElement {
             <td>${show(persoon.geslacht)}</td>
             <td>${show(persoon.telefoonnummer)}</td>
             <td>${show(persoon.gsmNummer)}</td>
-            <td>${plaatsName(persoon.verblijfadres.plaats)}</td>
+            <td>${showAdres(persoon.verblijfadres)}</td>
             <td>
               <rock-link btn btnSecondary href="../edit/${persoon.id}"
                 ><rock-icon icon="pencil"></rock-icon

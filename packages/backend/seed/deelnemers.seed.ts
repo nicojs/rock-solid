@@ -1,9 +1,11 @@
 import db from '@prisma/client';
-import fs from 'fs/promises';
+import { AdresSeeder } from './adres-seeder.js';
 import { ImportErrors } from './import-errors.js';
-import { readImportJson, writeOutputJson } from './seed-utils.js';
-
-const ONBEKENDE_PLAATS_ID = 1; // 1 = "onbekend"
+import {
+  readImportJson,
+  stringFromRaw,
+  writeOutputJson,
+} from './seed-utils.js';
 
 interface RawDeelnemer {
   '': string;
@@ -44,19 +46,12 @@ interface RawDeelnemer {
   woonsituatie: string;
 }
 
-const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
-const importErrors = new ImportErrors<RawDeelnemer>();
-
 export async function seedDeelnemers(client: db.PrismaClient) {
+  const importErrors = new ImportErrors<RawDeelnemer>();
   const deelnemersRaw = await readImportJson<RawDeelnemer[]>('deelnemers.json');
 
-  const plaatsIdByPostcode = new Map<string, number>(
-    (
-      await client.plaats.findMany({
-        select: { postcode: true, id: true },
-      })
-    ).map(({ postcode, id }) => [postcode, id] as const),
-  );
+  const adresSeeder = new AdresSeeder(client, importErrors);
+  await adresSeeder.init();
 
   const deelnemers = deelnemersRaw.map(fromRaw);
   const persoonIdByTitle = new Map<string, number>();
@@ -83,15 +78,12 @@ export async function seedDeelnemers(client: db.PrismaClient) {
     const [dag, maand, jaar] = raw.geboortedatum
       .split('-')
       .map((i) => parseInt(i));
-    const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput =
-      adresFromRaw(raw, raw.adres, raw.postcode) ?? {
-        create: {
-          huisnummer: '',
-          plaatsId: ONBEKENDE_PLAATS_ID,
-          straatnaam: '',
-        },
-      };
-    const domicilieadres = adresFromRaw(
+    const verblijfadres = adresSeeder.fromRawOrOnbekend(
+      raw,
+      raw.adres,
+      raw.postcode,
+    );
+    const domicilieadres = adresSeeder.fromRaw(
       raw,
       raw['adres domicilie'],
       raw['postnummer domicilie'],
@@ -112,60 +104,16 @@ export async function seedDeelnemers(client: db.PrismaClient) {
             : raw.geslacht === 'vrouw'
             ? db.Geslacht.vrouw
             : db.Geslacht.onbekend,
-        geboorteplaats: raw.geboorteplaats,
-        gsmNummer: raw.GSM,
+        geboorteplaats: stringFromRaw(raw.geboorteplaats),
+        gsmNummer: stringFromRaw(raw.GSM),
         rijksregisternummer: raw.rijksregisternummer,
         woonsituatieOpmerking: stringFromRaw(raw.woonsituatie),
         werksituatieOpmerking: stringFromRaw(raw.werksituatie),
-        telefoonnummer: raw.telefoon,
+        telefoonnummer: stringFromRaw(raw.telefoon),
+        opmerking: stringFromRaw(raw.opmerkingen),
         type: 'deelnemer',
       },
     ];
-  }
-
-  function stringFromRaw(str: string) {
-    return str === '' ? undefined : str;
-  }
-
-  function adresFromRaw(
-    raw: RawDeelnemer,
-    adres: string,
-    postcode: string,
-  ): undefined | db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput {
-    if (!adres.length) {
-      return undefined;
-    }
-    const adresMatch = adresRegex.exec(adres);
-
-    if (!adresMatch) {
-      importErrors.addWarning('adres_parse_error', {
-        item: raw,
-        detail: `Adres "${adres}" doesn\'t match pattern`,
-      });
-      return;
-    }
-    const [, straatnaam, huisnummer, busnummer] = adresMatch as unknown as [
-      string,
-      string,
-      string,
-      string | undefined,
-    ];
-    let plaatsId = plaatsIdByPostcode.get(postcode);
-    if (plaatsId === undefined) {
-      importErrors.addWarning('postcode_doesnt_exist', {
-        detail: `Cannot find postcode "${raw.postcode}", using onbekend`,
-        item: raw,
-      });
-      plaatsId = ONBEKENDE_PLAATS_ID;
-    }
-    return {
-      create: {
-        huisnummer,
-        straatnaam,
-        busnummer,
-        plaats: { connect: { id: plaatsId } },
-      },
-    };
   }
 }
 

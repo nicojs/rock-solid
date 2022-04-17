@@ -16,3 +16,6 @@ export async function writeOutputJson(relativeFileName: string, obj: unknown) {
     'utf-8',
   );
 }
+export function stringFromRaw(str: string) {
+  return str === '' ? undefined : str;
+}

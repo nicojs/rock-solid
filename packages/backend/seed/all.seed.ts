@@ -4,6 +4,8 @@ import { seedCursussen } from './cursussen.seed.js';
 import { seedOrganisaties } from './organisaties.seed.js';
 import { seedDeelnemers } from './deelnemers.seed.js';
 import { seedPlaatsen } from './plaatsen.seed.js';
+import { seedVrijwilligers } from './vrijwilligers.seed.js';
+import { seedExtraPersonen } from './extra-personen.seed.js';
 
 async function main() {
   const client = new db.PrismaClient();
@@ -14,6 +16,8 @@ async function main() {
     await seedOrganisaties(client);
     await seedCursussen(client);
     await seedCursusInschrijvingen(client);
+    await seedVrijwilligers(client);
+    await seedExtraPersonen(client);
   } finally {
     await client.$disconnect();
   }

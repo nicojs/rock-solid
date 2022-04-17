@@ -9,12 +9,20 @@ import {
   geslachten,
   werksituaties,
   overigPersoonLabels,
+  folderSelecties,
+  BasePersoon,
 } from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
-import { pluralize, toCsvDownloadUrl } from '../shared';
+import {
+  showAdres,
+  pluralize,
+  toCsvDownloadUrl,
+  ValueFactory,
+  show,
+} from '../shared';
 import { persoonService } from './persoon.service';
 
 @customElement('rock-advanced-search-personen')
@@ -42,12 +50,19 @@ export class AdvancedSearchPersonenComponent extends LitElement {
         'achternaam',
         'emailadres',
         'geboortedatum',
+        'verblijfadres',
+        'domicilieadres',
         'geslacht',
         'gsmNummer',
         'telefoonnummer',
         'rekeningnummer',
         'rijksregisternummer',
+        'opmerking',
       ] as const;
+      const adresValueFactories: ValueFactory<BasePersoon> = {
+        verblijfadres: showAdres,
+        domicilieadres: showAdres,
+      };
       if (this.type === 'deelnemer') {
         return toCsvDownloadUrl<Deelnemer>(
           this.personen as Deelnemer[],
@@ -59,14 +74,18 @@ export class AdvancedSearchPersonenComponent extends LitElement {
             'woonsituatieOpmerking',
           ],
           deelnemerLabels,
-          {},
+          adresValueFactories,
         );
       } else {
         return toCsvDownloadUrl<OverigPersoon>(
           this.personen as OverigPersoon[],
-          [...persoonColumns, 'selectie', 'vrijwilligerOpmerking'],
+          [...persoonColumns, 'selectie', 'folderVoorkeur'],
           overigPersoonLabels,
-          {},
+          {
+            ...adresValueFactories,
+            selectie: show,
+            folderVoorkeur: show,
+          },
         );
       }
     }
@@ -125,6 +144,15 @@ const overigPersoonSearchControls: InputControl<OverigPersoon>[] = [
     items: overigPersoonSelecties,
     grouped: false,
     size: Object.keys(overigPersoonSelecties).length,
+  },
+  {
+    name: 'folderVoorkeur',
+    label: overigPersoonLabels.folderVoorkeur,
+    type: InputType.select,
+    multiple: true,
+    items: folderSelecties,
+    grouped: false,
+    size: Object.keys(folderSelecties).length,
   },
 ];
 

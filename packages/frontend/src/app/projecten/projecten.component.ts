@@ -117,6 +117,7 @@ export class ProjectenComponent extends RockElement {
         return this.loading
           ? html`<rock-loading></rock-loading>`
           : html`<rock-project-edit
+              .type=${this.type}
               .project="${project}"
               @project-submitted="${(event: CustomEvent<Project>) =>
                 this.addProject(event.detail)}"

@@ -1,5 +1,6 @@
 import { Adres, UpsertableAdres } from './adres.js';
 import { Options } from './options.js';
+import { FolderSelectie } from './organisatie.js';
 import { Upsertable } from './upsertable.js';
 
 export interface BasePersoon {
@@ -17,6 +18,7 @@ export interface BasePersoon {
   rijksregisternummer?: string;
   telefoonnummer?: string;
   gsmNummer?: string;
+  opmerking?: string;
 }
 
 export type UpsertablePersoon = UpsertableDeelnemer | UpsertableOverigPersoon;
@@ -58,6 +60,7 @@ export interface Deelnemer extends BasePersoon {
 export interface OverigPersoon extends BasePersoon {
   type: 'overigPersoon';
   vrijwilligerOpmerking?: string;
+  folderVoorkeur: FolderSelectie[];
   selectie: OverigPersoonSelectie[];
 }
 
@@ -85,6 +88,7 @@ export const persoonLabels: Record<keyof Persoon, string> = {
   rijksregisternummer: 'Rijksregisternummer',
   telefoonnummer: 'Telefoonnummer',
   type: 'type',
+  opmerking: 'Opmerking',
   voornaam: 'Voornaam',
 };
 
@@ -98,6 +102,7 @@ export const deelnemerLabels: Record<keyof Deelnemer, string> = {
 export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
   ...persoonLabels,
   vrijwilligerOpmerking: 'Vrijwilliger opmerking',
+  folderVoorkeur: 'Folder voorkeur',
   selectie: 'Selectie',
 };
 
@@ -160,9 +165,11 @@ export const geslachten: Options<Geslacht> = Object.freeze({
 });
 
 export type OverigPersoonSelectie =
-  | 'algemeneVergaderingKeiJong'
+  | 'algemeneVergaderingDeBedding'
   | 'algemeneVergaderingDeKei'
-  | 'overheid'
+  | 'algemeneVergaderingKeiJong'
+  | 'raadVanBestuurDeKei'
+  | 'raadVanBestuurKeiJong'
   | 'personeel'
   | 'vakantieVrijwilliger';
 
@@ -170,7 +177,9 @@ export const overigPersoonSelecties: Options<OverigPersoonSelectie> =
   Object.freeze({
     vakantieVrijwilliger: 'vakantie vrijwilliger',
     personeel: 'personeel',
-    algemeneVergaderingKeiJong: 'rock-jong algemene vergadering',
-    algemeneVergaderingDeKei: 'de kei algemene vergadering',
-    overheid: 'overheid',
+    algemeneVergaderingDeBedding: 'De Bedding algemene vergadering',
+    algemeneVergaderingKeiJong: 'Kei-jong algemene vergadering',
+    algemeneVergaderingDeKei: 'De Kei algemene vergadering',
+    raadVanBestuurKeiJong: 'Raad van bestuur Kei-jong',
+    raadVanBestuurDeKei: 'Raad van bestuur De Kei',
   });

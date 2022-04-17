@@ -18,7 +18,7 @@ model Persoon {
   emailadres          String?     @db.VarChar(256)
   verblijfadresId     Int
   verblijfadres       Adres       @relation(name: "verblijfadres", fields: [verblijfadresId], references: [id])
-  domicilieadresId    Int? // indien anders dan verblijfadres is deze gevuld
+  domicilieadresId    Int?
   domicilieadres      Adres?      @relation(name: "domicilieadres", fields: [domicilieadresId], references: [id])
   geboortedatum       DateTime?   @db.Date
   geboorteplaats      String?     @db.VarChar(256)
@@ -28,6 +28,7 @@ model Persoon {
   telefoonnummer      String?     @db.VarChar(256)
   gsmNummer           String?     @db.VarChar(256)
   // communicatievoorkeur Communicatievoorkeur @default(post)
+  opmerking           String?     @db.VarChar(1024)
   type                PersoonType @default(deelnemer)
 
 
@@ -42,8 +43,8 @@ model Persoon {
   inschrijvingen        Inschrijving[]
 
   // OverigePersonen
-  vrijwilligerOpmerking String?
-  selectie              OverigPersoonSelectie[]
+  folderVoorkeur FolderSelectie[]
+  selectie       OverigPersoonSelectie[]
 
   @@map("persoon")
 }
@@ -128,9 +129,9 @@ model Activiteit {
 
 model Deelname {
   id                         Int          @id @default(autoincrement())
-  inschrijving               Inschrijving @relation(fields: [inschrijvingId], references: [id])
+  inschrijving               Inschrijving @relation(fields: [inschrijvingId], references: [id], onDelete: Cascade)
   inschrijvingId             Int
-  activiteit                 Activiteit   @relation(fields: [activiteitId], references: [id])
+  activiteit                 Activiteit   @relation(fields: [activiteitId], references: [id], onDelete: Cascade)
   activiteitId               Int
   effectieveDeelnamePerunage Float
 
@@ -210,9 +211,11 @@ enum ProjectType {
 }
 
 enum OverigPersoonSelectie {
-  algemeneVergaderingKeiJong
+  algemeneVergaderingDeBedding
   algemeneVergaderingDeKei
-  overheid
+  algemeneVergaderingKeiJong
+  raadVanBestuurDeKei
+  raadVanBestuurKeiJong
   personeel
   vakantieVrijwilliger
 

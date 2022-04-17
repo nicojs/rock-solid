@@ -8,6 +8,7 @@ import {
   BasePersoon,
   OverigPersoon,
   overigPersoonSelecties,
+  folderSelecties,
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -117,6 +118,10 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
       pattern: '^\\d{2}\\.\\d{2}\\.\\d{2}-\\d{3}-\\d{2}$',
     },
   },
+  {
+    name: 'opmerking',
+    type: InputType.text,
+  },
 ];
 
 const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
@@ -125,6 +130,15 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
     name: 'vrijwilligerOpmerking',
     label: 'Vrijwilliger opmerking',
     type: InputType.text,
+  },
+  {
+    name: 'folderVoorkeur',
+    label: 'Folder voorkeur',
+    type: InputType.select,
+    multiple: true,
+    grouped: false,
+    items: folderSelecties,
+    size: Object.keys(folderSelecties).length,
   },
   {
     name: 'selectie',

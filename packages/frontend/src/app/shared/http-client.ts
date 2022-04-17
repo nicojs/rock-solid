@@ -16,7 +16,6 @@ export class HttpClient {
     init?: RequestInit | undefined,
   ): Promise<Response> {
     if (this.currentJwt) {
-      console.log(`Add auth to ${input}`);
       init = init ?? {};
       const authorizationValue = `Bearer ${this.currentJwt}`;
       const authorizationKey = 'Authorization';

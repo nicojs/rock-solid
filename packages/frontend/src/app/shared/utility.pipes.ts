@@ -1,7 +1,9 @@
+import { Plaats, Adres } from '@rock-solid/shared';
+
 export const notAvailable = 'n/a';
 export const none = 'geen';
 
-export function show(value: unknown) {
+export function show<T>(value: T): string {
   if (value === undefined || value === null) {
     return notAvailable;
   } else if (Array.isArray(value)) {
@@ -11,7 +13,7 @@ export function show(value: unknown) {
       return none;
     }
   } else {
-    return value;
+    return String(value);
   }
 }
 
@@ -81,4 +83,30 @@ export function showDatum(val: Date | undefined): string {
     return val.toLocaleDateString();
   }
   return notAvailable;
+}
+
+export function showPlaats(plaats?: Plaats): string {
+  if (plaats) {
+    if (plaats.id === 1) {
+      return 'Onbekend';
+    }
+    return `${plaats.postcode} ${plaats.deelgemeente} (${plaats.gemeente})`;
+  } else {
+    return '';
+  }
+}
+
+export function showAdres(adres?: Adres) {
+  if (adres) {
+    const straatNaamEnHuisnummer = [adres.straatnaam, adres.huisnummer]
+      .filter(Boolean)
+      .join(' ');
+    const straatHuisnummerBus = `${straatNaamEnHuisnummer}${
+      adres.busnummer ? ` bus ${adres.busnummer}` : ''
+    }`;
+    return [straatHuisnummerBus, showPlaats(adres.plaats)]
+      .filter(Boolean)
+      .join(', ');
+  }
+  return '';
 }

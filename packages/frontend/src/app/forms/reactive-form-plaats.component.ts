@@ -7,11 +7,11 @@ import {
   AutocompleteComponent,
   capitalize,
   FocusState,
+  showPlaats,
   plaatsService,
   TypeAheadHint,
 } from '../shared';
 import { PlaatsControl } from './form-control';
-import { plaatsName } from './adres.pipes';
 
 @customElement('rock-reactive-form-plaats')
 export class ReactiveFormPlaats<TEntity> extends LitElement {
@@ -91,7 +91,7 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
           autocomplete="off"
           id="${this.control.name}"
           name="${this.control.name}"
-          .value="${plaatsName(this.plaatsValue)}"
+          .value="${showPlaats(this.plaatsValue)}"
           ?required=${this.control.validators?.required}
           placeholder=${ifDefined(this.control.placeholder)}
           @invalid="${this.updateValidationMessage}"
@@ -103,7 +103,7 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
           .searchAction="${(val: string): Promise<TypeAheadHint<Plaats>[]> =>
             plaatsService.getAll({ search: val }).then((plaatsen) =>
               plaatsen.map((plaats) => ({
-                text: plaatsName(plaats),
+                text: showPlaats(plaats),
                 value: plaats,
               })),
             )}"
