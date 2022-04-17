@@ -1,10 +1,12 @@
 import db from '@prisma/client';
 import fs from 'fs/promises';
-import { ImportErrors, notEmpty } from './import-errors.js';
+import { ImportErrors } from './import-errors.js';
+import { readImportJson, writeOutputJson } from './seed-utils.js';
 
 const ONBEKENDE_PLAATS_ID = 1; // 1 = "onbekend"
 
 interface RawDeelnemer {
+  '': string;
   achternaam: string;
   adres: string;
   'adres domicilie': string;
@@ -45,13 +47,8 @@ interface RawDeelnemer {
 const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
 const importErrors = new ImportErrors<RawDeelnemer>();
 
-export async function seedPersonen(client: db.PrismaClient) {
-  const deelnemersRaw: RawDeelnemer[] = JSON.parse(
-    await fs.readFile(
-      new URL('../../import/deelnemers.json', import.meta.url),
-      'utf-8',
-    ),
-  );
+export async function seedDeelnemers(client: db.PrismaClient) {
+  const deelnemersRaw = await readImportJson<RawDeelnemer[]>('deelnemers.json');
 
   const plaatsIdByPostcode = new Map<string, number>(
     (
@@ -61,25 +58,27 @@ export async function seedPersonen(client: db.PrismaClient) {
     ).map(({ postcode, id }) => [postcode, id] as const),
   );
 
-  const deelnemers = deelnemersRaw.map(fromRaw).filter(notEmpty);
+  const deelnemers = deelnemersRaw.map(fromRaw);
+  const persoonIdByTitle = new Map<string, number>();
 
-  for (const deelnemer of deelnemers) {
-    await client.persoon.create({
+  for (const [title, deelnemer] of deelnemers) {
+    const { id } = await client.persoon.create({
       data: deelnemer,
     });
+    persoonIdByTitle.set(title, id);
   }
-
+  await writeOutputJson(
+    'deelnemers-lookup.json',
+    Object.fromEntries(persoonIdByTitle.entries()),
+  );
+  console.log(`✅ deelnemers-lookup.json (${persoonIdByTitle.size})`);
   console.log(`Seeded ${deelnemers.length} deelnemers`);
   console.log(`(${importErrors.report})`);
-  fs.writeFile(
-    new URL('../../import/deelnemers-import-errors.json', import.meta.url),
-    JSON.stringify(importErrors, null, 2),
-    'utf-8',
-  );
+  await writeOutputJson('deelnemers-import-errors.json', importErrors);
 
   function fromRaw(
     raw: RawDeelnemer,
-  ): db.Prisma.PersoonCreateInput | undefined {
+  ): [title: string, createInput: db.Prisma.PersoonCreateInput] {
     const volledigeNaam = `${raw.naam} ${raw.achternaam}`;
     const [dag, maand, jaar] = raw.geboortedatum
       .split('-')
@@ -97,28 +96,31 @@ export async function seedPersonen(client: db.PrismaClient) {
       raw['adres domicilie'],
       raw['postnummer domicilie'],
     );
-    return {
-      achternaam: raw.achternaam,
-      voornaam: raw.naam,
-      volledigeNaam,
-      emailadres: raw['e-mail'],
-      geboortedatum: new Date(jaar ?? 0, (maand ?? 1) - 1, dag),
-      verblijfadres,
-      domicilieadres,
-      geslacht:
-        raw.geslacht === 'man'
-          ? db.Geslacht.man
-          : raw.geslacht === 'vrouw'
-          ? db.Geslacht.vrouw
-          : db.Geslacht.onbekend,
-      geboorteplaats: raw.geboorteplaats,
-      gsmNummer: raw.GSM,
-      rijksregisternummer: raw.rijksregisternummer,
-      woonsituatieOpmerking: stringFromRaw(raw.woonsituatie),
-      werksituatieOpmerking: stringFromRaw(raw.werksituatie),
-      telefoonnummer: raw.telefoon,
-      type: 'deelnemer',
-    };
+    return [
+      raw[''],
+      {
+        achternaam: raw.achternaam,
+        voornaam: raw.naam,
+        volledigeNaam,
+        emailadres: raw['e-mail'],
+        geboortedatum: new Date(jaar ?? 0, (maand ?? 1) - 1, dag),
+        verblijfadres,
+        domicilieadres,
+        geslacht:
+          raw.geslacht === 'man'
+            ? db.Geslacht.man
+            : raw.geslacht === 'vrouw'
+            ? db.Geslacht.vrouw
+            : db.Geslacht.onbekend,
+        geboorteplaats: raw.geboorteplaats,
+        gsmNummer: raw.GSM,
+        rijksregisternummer: raw.rijksregisternummer,
+        woonsituatieOpmerking: stringFromRaw(raw.woonsituatie),
+        werksituatieOpmerking: stringFromRaw(raw.werksituatie),
+        telefoonnummer: raw.telefoon,
+        type: 'deelnemer',
+      },
+    ];
   }
 
   function stringFromRaw(str: string) {

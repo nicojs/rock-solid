@@ -2,7 +2,7 @@ import db from '@prisma/client';
 import { seedCursusInschrijvingen } from './cursus-inschrijvingen.seed.js';
 import { seedCursussen } from './cursussen.seed.js';
 import { seedOrganisaties } from './organisaties.seed.js';
-import { seedPersonen } from './persoon.seed.js';
+import { seedDeelnemers } from './deelnemers.seed.js';
 import { seedPlaatsen } from './plaatsen.seed.js';
 
 async function main() {
@@ -10,7 +10,7 @@ async function main() {
   try {
     await client.$connect();
     await seedPlaatsen(client);
-    await seedPersonen(client);
+    await seedDeelnemers(client);
     await seedOrganisaties(client);
     await seedCursussen(client);
     await seedCursusInschrijvingen(client);

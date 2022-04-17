@@ -1,6 +1,7 @@
 import * as db from '@prisma/client';
 import fs from 'fs/promises';
 import { ImportErrors, notEmpty } from './import-errors.js';
+import { readImportJson, writeOutputJson } from './seed-utils.js';
 
 interface RawOrganisatie {
   Naam: string;
@@ -24,11 +25,8 @@ const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
 const [from, to] = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
 
 export async function seedOrganisaties(client: db.PrismaClient) {
-  const organisatiesRaw: RawOrganisatie[] = JSON.parse(
-    await fs.readFile(
-      new URL('../../import/organisaties.json', import.meta.url),
-      'utf-8',
-    ),
+  const organisatiesRaw = await readImportJson<RawOrganisatie[]>(
+    'organisaties.json',
   );
 
   const names = new Set<string>();
@@ -65,11 +63,7 @@ export async function seedOrganisaties(client: db.PrismaClient) {
 
   console.log(`Seeded ${orgs.length} organisaties`);
   console.log(`(${importErrors.report})`);
-  fs.writeFile(
-    new URL('../../import/organisatie-import-errors.json', import.meta.url),
-    JSON.stringify(importErrors, null, 2),
-    'utf-8',
-  );
+  await writeOutputJson('organisatie-import-errors.json', importErrors);
 
   function fromRaw(
     raw: RawOrganisatie,

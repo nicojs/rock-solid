@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import * as db from '@prisma/client';
 import { ImportErrors, notEmpty } from './import-errors.js';
+import { readImportJson, writeOutputJson } from './seed-utils.js';
 
 interface RawCursusInschrijving {
   'contactpersonen cursussen': string;
@@ -21,33 +22,25 @@ const projectnummerRegex = /([^ -]*)(?:-([^ -]*))?.*$/;
 const importErrors = new ImportErrors<RawCursusInschrijving>();
 
 export async function seedCursusInschrijvingen(client: db.PrismaClient) {
-  const inschrijvingenRaw: RawCursusInschrijving[] = JSON.parse(
-    await fs.readFile(
-      new URL('../../import/cursus-inschrijvingen.json', import.meta.url),
-      'utf-8',
+  const inschrijvingenRaw = await readImportJson<RawCursusInschrijving[]>(
+    'cursus-inschrijvingen.json',
+  );
+  const deelnemerIdByTitles = new Map(
+    Object.entries(
+      await readImportJson<Record<string, number>>('deelnemers-lookup.json'),
     ),
   );
-  const deelnemerByNaam = (
+  const deelnemerById = (
     await client.persoon.findMany({
       where: { type: 'deelnemer' },
       include: { verblijfadres: true, domicilieadres: true },
     })
-  ).reduce(
-    (map, { voornaam, achternaam, verblijfadres, domicilieadres, id }) => {
-      const key = `${achternaam} ${voornaam}`;
-      if (map.has(key)) {
-        console.warn(
-          `Duplicate deelnemer ${key} (${id} and ${map.get(key)?.deelnemerId})`,
-        );
-      }
-      map.set(key, {
-        deelnemerId: id,
-        woonplaatsId: domicilieadres?.plaatsId ?? verblijfadres.plaatsId,
-      });
-      return map;
-    },
-    new Map<string, { deelnemerId: number; woonplaatsId: number }>(),
-  );
+  ).reduce((map, { id, verblijfadres, domicilieadres }) => {
+    map.set(id, {
+      woonplaatsId: domicilieadres?.plaatsId ?? verblijfadres.plaatsId,
+    });
+    return map;
+  }, new Map<number, { woonplaatsId: number }>());
 
   const cursussenByCode = (
     await client.project.findMany({
@@ -77,13 +70,9 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
   }
   console.log(`Seeded ${inschrijvingen.length} cursus inschrijvingen`);
   console.log(`(${importErrors.report})`);
-  fs.writeFile(
-    new URL(
-      '../../import/cursus-inschrijvingen-import-errors.json',
-      import.meta.url,
-    ),
-    JSON.stringify(importErrors, null, 2),
-    'utf-8',
+  await writeOutputJson(
+    'cursus-inschrijvingen-import-errors.json',
+    importErrors,
   );
 
   function fromRaw(
@@ -104,7 +93,8 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
       string | undefined,
     ];
     const project = cursussenByCode.get(projectnummer);
-    const deelnemer = deelnemerByNaam.get(raw.deelnemer);
+    const deelnemerId = deelnemerIdByTitles.get(raw.deelnemer);
+    const deelnemer = deelnemerId ? deelnemerById.get(deelnemerId) : undefined;
     if (project === undefined) {
       importErrors.addError('project_not_exit', {
         item: raw,
@@ -112,7 +102,7 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
       });
       return;
     }
-    if (deelnemer === undefined) {
+    if (deelnemerId === undefined || deelnemer === undefined) {
       importErrors.addError('deelnemer_not_exist', {
         item: raw,
         detail: `Deelnemer ${raw.deelnemer} does not exist`,
@@ -121,7 +111,7 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
     }
     return {
       deelnemer: {
-        connect: { id: deelnemer.deelnemerId },
+        connect: { id: deelnemerId },
       },
       project: { connect: { id: project.id } },
       deelnames: {
