@@ -91,7 +91,7 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
           autocomplete="off"
           id="${this.control.name}"
           name="${this.control.name}"
-          .value="${showshowPlaats(this.plaatsValue)}"
+          .value="${showPlaats(this.plaatsValue)}"
           ?required=${this.control.validators?.required}
           placeholder=${ifDefined(this.control.placeholder)}
           @invalid="${this.updateValidationMessage}"
