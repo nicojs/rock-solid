@@ -15,11 +15,11 @@ async function main() {
     await client.$connect();
     await seedPlaatsen(client);
     await seedDeelnemers(client);
-    // await seedOrganisaties(client);
-    // await seedCursussen(client);
-    // await seedCursusInschrijvingen(client);
+    await seedOrganisaties(client);
+    await seedCursussen(client);
+    await seedCursusInschrijvingen(client);
     await seedVrijwilligers(client);
-    // await seedExtraPersonen(client);
+    await seedExtraPersonen(client);
     await seedVakanties(client);
     await seedVakantieInschrijvingen(client);
   } finally {
