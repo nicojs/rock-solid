@@ -15,6 +15,8 @@ import {
   FormControl,
   InputType,
   patterns,
+  selectControl,
+  groupedSelectControl,
 } from '../forms';
 import { printOrganisatie } from './organisatie.pipes';
 
@@ -49,13 +51,9 @@ export class EditOrganisatieComponent extends LitElement {
 }
 
 const organisatieControls: FormControl<Organisatie>[] = [
-  {
-    name: 'doelgroep',
-    type: InputType.select,
-    items: doelgroepen,
-    grouped: false,
+  selectControl('doelgroep', doelgroepen, {
     validators: { required: true },
-  },
+  }),
   {
     name: 'naam',
     type: InputType.text,
@@ -85,25 +83,12 @@ const organisatieControls: FormControl<Organisatie>[] = [
     type: InputType.url,
     placeholder: 'https://dekei.be',
   },
-  {
-    name: 'folderVoorkeur',
+  selectControl('folderVoorkeur', folderSelecties, {
     label: 'Folder voorkeur',
     multiple: true,
-    type: InputType.select,
-    items: folderSelecties,
-    grouped: false,
-    size: Object.keys(folderSelecties).length,
-  },
-  {
-    name: 'soorten',
+  }),
+  groupedSelectControl('soorten', groupedOrganisatieSoorten, {
     label: organisatieColumnNames.soorten,
-    type: InputType.select,
     multiple: true,
-    grouped: true,
-    items: groupedOrganisatieSoorten,
-    size: Object.entries(groupedOrganisatieSoorten).reduce(
-      (acc, [, items]) => Object.entries(items).length + 1 + acc,
-      0,
-    ),
-  },
+  }),
 ];

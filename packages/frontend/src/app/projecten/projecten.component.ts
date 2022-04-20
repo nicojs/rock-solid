@@ -129,7 +129,8 @@ export class ProjectenComponent extends RockElement {
             switch (page) {
               case 'edit':
                 return html`<rock-project-edit
-                  .project="${this.focussedProject}"
+                  .project=${this.focussedProject}
+                  .type=${this.type}
                   @project-submitted="${(event: CustomEvent<Project>) =>
                     this.editProject(event.detail)}"
                 ></rock-project-edit>`;

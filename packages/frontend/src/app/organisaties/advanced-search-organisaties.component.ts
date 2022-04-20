@@ -7,7 +7,7 @@ import {
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { InputControl, InputType } from '../forms';
+import { InputControl, selectControl } from '../forms';
 import { showAdres, toCsvDownloadUrl } from '../shared';
 import { organisatieService } from './organisatie.service';
 
@@ -82,13 +82,8 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
   }
 }
 const searchControls: InputControl<OrganisatieFilter>[] = [
-  {
-    name: 'folderVoorkeur',
+  selectControl('folderVoorkeur', folderSelecties, {
     label: 'Folder voorkeur',
-    type: InputType.select,
     multiple: true,
-    items: folderSelecties,
-    grouped: false,
-    size: Object.keys(folderSelecties).length,
-  },
+  }),
 ];

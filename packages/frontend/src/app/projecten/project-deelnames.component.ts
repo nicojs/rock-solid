@@ -1,5 +1,6 @@
 import {
   Activiteit,
+  BaseActiviteit,
   Deelnemer,
   Project,
   UpsertableDeelname,
@@ -38,8 +39,9 @@ export class ProjectDeelnamesComponent extends LitElement {
   override updated(props: PropertyValues<ProjectDeelnamesComponent>) {
     if (props.has('path') && this.path[0]) {
       const activiteitId = +this.path[0];
+      // @ts-expect-error "This expression is not callable"-nonsense
       this.activiteit = this.project.activiteiten.find(
-        (act) => act.id === activiteitId,
+        (act: Activiteit) => act.id === activiteitId,
       );
 
       Promise.all([
@@ -101,31 +103,42 @@ export class ProjectDeelnamesComponent extends LitElement {
             class="${this.wasValidated ? 'was-validated' : ''}"
             @submit="${this.submit}"
           >
-            ${this.deelnames?.map(
-              (deelname) =>
-                html`<rock-reactive-form-control
+            ${this.deelnames?.map((deelname) => {
+              const deelnameControl: InputControl<UpsertableDeelname> = {
+                name: 'effectieveDeelnamePerunage',
+                label: fullName(deelname.deelnemer),
+                type: InputType.number,
+                step: 0.01,
+                validators: {
+                  max: 1,
+                  min: 0,
+                  required: true,
+                },
+              };
+              const opmerkingControl: InputControl<UpsertableDeelname> = {
+                name: 'opmerking',
+                type: InputType.text,
+                placeholder: 'Opmerking',
+              };
+              return html`<div class="mb-3 row">
+                <label class="col-lg-2 col-md-4" for="${deelnameControl.name}"
+                  >${deelnameControl.label}</label
+                >
+                <rock-reactive-form-input-control
+                  class="col-lg-1 col-md-1"
                   .entity=${deelname}
-                  .control=${createDeelnameFormControl(deelname)}
-                ></rock-reactive-form-control>`,
-            )}
+                  .control=${deelnameControl}
+                ></rock-reactive-form-input-control>
+                <rock-reactive-form-input-control
+                  class="col-lg-9 col-md-9"
+                  .entity=${deelname}
+                  .control=${opmerkingControl}
+                ></rock-reactive-form-input-control>
+              </div>`;
+            })}
             <button class="btn btn-primary offset-sm-2" type="submit">
               Deelnames bevestigen
             </button>
           </form>`}`;
   }
-}
-
-function createDeelnameFormControl(
-  deelname: DeelnameRow,
-): InputControl<UpsertableDeelname> {
-  return {
-    name: 'effectieveDeelnamePerunage',
-    label: fullName(deelname.deelnemer),
-    type: InputType.number,
-    step: 0.01,
-    validators: {
-      max: 1,
-      min: 0,
-    },
-  };
 }

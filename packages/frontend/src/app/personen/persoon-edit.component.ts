@@ -12,7 +12,13 @@ import {
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { FormControl, InputType, formGroup, adresControls } from '../forms';
+import {
+  FormControl,
+  InputType,
+  formGroup,
+  adresControls,
+  selectControl,
+} from '../forms';
 
 @customElement('rock-persoon-edit')
 export class PersonenEditComponent extends LitElement {
@@ -53,12 +59,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
   },
   { name: 'voornaam', type: InputType.text },
   { name: 'emailadres', type: InputType.email },
-  {
-    name: 'geslacht',
-    type: InputType.select,
-    items: geslachten,
-    grouped: false,
-  },
+  selectControl('geslacht', geslachten),
   {
     name: 'geboortedatum',
     type: InputType.date,
@@ -131,24 +132,11 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
     label: 'Vrijwilliger opmerking',
     type: InputType.text,
   },
-  {
-    name: 'folderVoorkeur',
+  selectControl('folderVoorkeur', folderSelecties, {
+    multiple: true,
     label: 'Folder voorkeur',
-    type: InputType.select,
-    multiple: true,
-    grouped: false,
-    items: folderSelecties,
-    size: Object.keys(folderSelecties).length,
-  },
-  {
-    name: 'selectie',
-    label: 'Selectie (gebruik ctrl of shift om meerdere te selecteren)',
-    type: InputType.select,
-    multiple: true,
-    grouped: false,
-    items: overigPersoonSelecties,
-    size: Object.keys(overigPersoonSelecties).length,
-  },
+  }),
+  selectControl('selectie', overigPersoonSelecties, { multiple: true }),
 ];
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [
@@ -157,23 +145,13 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
     required: false,
     requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
   }),
-  {
-    name: 'woonsituatie',
-    type: InputType.select,
-    grouped: false,
-    items: woonsituaties,
-  },
+  selectControl('woonsituatie', woonsituaties),
   {
     name: 'woonsituatieOpmerking',
     label: 'Woonsituatie opmerking',
     type: InputType.text,
   },
-  {
-    name: 'werksituatie',
-    type: InputType.select,
-    grouped: false,
-    items: werksituaties,
-  },
+  selectControl('werksituatie', werksituaties),
   {
     name: 'werksituatieOpmerking',
     label: 'Werksituatie opmerking',

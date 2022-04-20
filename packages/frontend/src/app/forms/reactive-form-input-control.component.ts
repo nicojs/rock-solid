@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import {
   DateControl,
   InputType,
+  KeysOfType,
   NumberInputControl,
   SelectControl,
 } from './form-control';
@@ -13,6 +14,7 @@ import {
   StringInputControl,
 } from './form-control';
 import { capitalize, toDateString } from '../shared';
+import { Decimal } from '@rock-solid/shared';
 
 @customElement('rock-reactive-form-input-control')
 export class ReactiveFormInputControl<TEntity> extends LitElement {
@@ -31,19 +33,10 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
   }
 
   override render() {
-    return html`<div class="mb-3 row">
-      <div class="col-lg-2 col-md-4">
-        ${this.control.type !== InputType.checkbox
-          ? html`<label for="${this.control.name}" class="col-form-label"
-              >${this.control.label ?? capitalize(this.control.name)}</label
-            >`
-          : ''}
-      </div>
-      <div class="col-lg-10 col-md-8">
-        ${this.renderInput(this.control)}
-        <div class="invalid-feedback">${this.validationMessage}</div>
-      </div>
-    </div>`;
+    return html`
+      ${this.renderInput(this.control)}
+      <div class="invalid-feedback">${this.validationMessage}</div>
+    `;
   }
 
   private renderInput(control: InputControl<TEntity>): TemplateResult {
@@ -56,6 +49,7 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
       case InputType.url:
         return this.renderStringInput(control);
       case InputType.number:
+      case InputType.currency:
         return this.renderNumberInput(control);
       case InputType.date:
         return this.renderDateInput(control);
@@ -107,25 +101,37 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
   }
 
   private renderNumberInput(control: NumberInputControl<TEntity>) {
-    return html`<input
-      type="${control.type}"
-      class="form-control"
-      id="${control.name}"
-      name="${control.name}"
-      value="${this.entity[control.name]}"
-      ?required=${control.validators?.required}
-      step="${ifDefined(control.step)}"
-      placeholder=${ifDefined(control.placeholder)}
-      min="${ifDefined(control.validators?.min)}"
-      max="${ifDefined(control.validators?.max)}"
-      @invalid="${this.updateValidationMessage}"
-      @change="${(e: Event) => {
-        this.updateValidationMessage(e);
-        const inputEl = e.target as HTMLInputElement;
-        (this.entity[control.name] as unknown as number) =
-          inputEl.valueAsNumber;
-      }}"
-    /> `;
+    return html`<div class="input-group">
+      ${control.type === InputType.currency
+        ? html`<span class="input-group-text">€</span>`
+        : nothing}
+      <input
+        type="number"
+        class="form-control"
+        id="${control.name}"
+        name="${control.name}"
+        value="${this.entity[control.name]}"
+        ?required=${control.validators?.required}
+        step="${ifDefined(control.step)}"
+        placeholder=${ifDefined(control.placeholder)}
+        min="${ifDefined(control.validators?.min)}"
+        max="${ifDefined(control.validators?.max)}"
+        @invalid="${this.updateValidationMessage}"
+        @change="${(e: Event) => {
+          this.updateValidationMessage(e);
+          const inputEl = e.target as HTMLInputElement;
+          if (control.type === InputType.currency) {
+            (this.entity[control.name] as unknown as Decimal) = new Decimal(
+              inputEl.value,
+            );
+            console.log(`new Decimal(${inputEl.value})`);
+          } else {
+            (this.entity[control.name] as unknown as number) =
+              inputEl.valueAsNumber;
+          }
+        }}"
+      />
+    </div>`;
   }
 
   private renderDateInput(control: DateControl<TEntity>) {
@@ -153,7 +159,9 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
     this.validationMessage = inputEl.validationMessage;
   }
 
-  private renderSelect(control: SelectControl<TEntity>) {
+  private renderSelect<TKey extends KeysOfType<TEntity, string | string[]>>(
+    control: SelectControl<TEntity, TKey>,
+  ) {
     const isSelected = (value: string) => {
       if (control.multiple) {
         return (

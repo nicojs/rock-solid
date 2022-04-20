@@ -15,7 +15,7 @@ import {
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { InputControl, InputType } from '../forms';
+import { InputControl, InputType, selectControl } from '../forms';
 import {
   showAdres,
   pluralize,
@@ -136,41 +136,23 @@ export class AdvancedSearchPersonenComponent extends LitElement {
 }
 
 const overigPersoonSearchControls: InputControl<OverigPersoon>[] = [
-  {
-    name: 'selectie',
+  selectControl('selectie', overigPersoonSelecties, {
     label: overigPersoonLabels.selectie,
-    type: InputType.select,
     multiple: true,
-    items: overigPersoonSelecties,
-    grouped: false,
-    size: Object.keys(overigPersoonSelecties).length,
-  },
-  {
-    name: 'folderVoorkeur',
+  }),
+  selectControl('folderVoorkeur', folderSelecties, {
     label: overigPersoonLabels.folderVoorkeur,
-    type: InputType.select,
     multiple: true,
-    items: folderSelecties,
-    grouped: false,
-    size: Object.keys(folderSelecties).length,
-  },
+  }),
 ];
 
 const deelnemerSearchControls: InputControl<Deelnemer>[] = [
-  {
-    name: 'geslacht',
+  selectControl('geslacht', geslachten, {
     label: deelnemerLabels.geslacht,
-    type: InputType.select,
-    items: geslachten,
-    grouped: false,
     placeholder: 'Geen filter',
-  },
-  {
-    name: 'werksituatie',
+  }),
+  selectControl('werksituatie', werksituaties, {
     label: deelnemerLabels.werksituatie,
-    type: InputType.select,
-    items: werksituaties,
-    grouped: false,
     placeholder: 'Geen filter',
-  },
+  }),
 ];

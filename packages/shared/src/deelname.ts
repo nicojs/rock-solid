@@ -7,6 +7,7 @@ export interface Deelname {
   inschrijvingId: number;
   deelnemer: Deelnemer;
   effectieveDeelnamePerunage: number;
+  opmerking?: string;
 }
 
 export type UpsertableDeelname = Upsertable<

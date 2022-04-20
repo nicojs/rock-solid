@@ -1,4 +1,4 @@
-import { Plaats } from '@rock-solid/shared';
+import { Decimal, GroupedOptions, Options, Plaats } from '@rock-solid/shared';
 
 export enum InputType {
   // Native input types:
@@ -17,6 +17,7 @@ export enum InputType {
 
   // Custom types:
   plaats = 'plaats',
+  currency = 'currency',
 }
 
 interface Validators {
@@ -94,11 +95,11 @@ export type InputControl<TEntity> =
   | UrlInputControl<TEntity>
   | NumberInputControl<TEntity>
   | CheckboxInputControl<TEntity>
-  | SelectControl<TEntity>
+  | SelectControl<TEntity, any>
   | DateControl<TEntity>;
 
 export interface BaseInputControl {
-  label?: string;
+  label?: string | false;
   validators?: Validators;
   placeholder?: string;
 }
@@ -109,14 +110,6 @@ export type KeysOfType<TEntity, TValue> = keyof {
     : never]: TEntity[K];
 } &
   string;
-
-type KeysOfEnums<TEntity> = {
-  [K in keyof Required<TEntity> & string]: Required<TEntity>[K] extends
-    | string
-    | string[]
-    ? K
-    : never;
-}[keyof TEntity & string];
 
 export interface StringInputControl<TEntity> extends BaseInputControl {
   name: KeysOfType<TEntity, string>;
@@ -138,8 +131,8 @@ export interface UrlInputControl<TEntity> extends StringInputControl<TEntity> {
 }
 
 export interface NumberInputControl<TEntity> extends BaseInputControl {
-  name: KeysOfType<TEntity, number>;
-  type: InputType.number;
+  name: KeysOfType<TEntity, number | Decimal>;
+  type: InputType.number | InputType.currency;
   step?: number;
 }
 
@@ -153,32 +146,91 @@ export interface CheckboxInputControl<TEntity> extends BaseInputControl {
   type: InputType.checkbox;
 }
 
-interface BaseSelectControl<TEntity> extends BaseInputControl {
+interface BaseSelectControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string | string[]>,
+> extends BaseInputControl {
   type: InputType.select;
-  name: KeysOfEnums<TEntity>;
+  name: TKey;
   multiple?: true;
   size?: number;
 }
 
-export interface GroupedSelectControl<TEntity>
-  extends BaseSelectControl<TEntity> {
+export interface GroupedSelectControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string | string[]>,
+> extends BaseSelectControl<TEntity, TKey> {
   grouped: true;
   items: Record<
     string,
     {
-      readonly [K in TEntity[KeysOfEnums<TEntity>] & string]: string;
+      readonly [K in TEntity[TKey] & string]: string;
     }
   >;
 }
 
-export interface IndividualSelectControl<TEntity>
-  extends BaseSelectControl<TEntity> {
+export interface IndividualSelectControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string | string[]>,
+> extends BaseSelectControl<TEntity, TKey> {
   grouped: false;
-  items: {
-    readonly [K in TEntity[KeysOfEnums<TEntity>] & string]: string;
+  items: Options<TEntity[TKey] & string>;
+}
+
+interface SelectOptions {
+  multiple?: true;
+  size?: number;
+  validators?: Validators;
+  label?: string;
+  placeholder?: string;
+}
+
+export function selectControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string | string[]>,
+>(
+  name: TKey,
+  items: Options<TEntity[TKey] & string>,
+  options: SelectOptions = {},
+): IndividualSelectControl<TEntity, TKey> {
+  return {
+    type: InputType.select,
+    name,
+    items,
+    grouped: false,
+    ...options,
+    size:
+      options.size ?? options.multiple ? Object.keys(items).length : undefined,
   };
 }
 
-export type SelectControl<TEntity> =
-  | IndividualSelectControl<TEntity>
-  | GroupedSelectControl<TEntity>;
+export function groupedSelectControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string | string[]>,
+>(
+  name: TKey,
+  groupedItems: GroupedOptions<TEntity[TKey] & string>,
+  options: SelectOptions = {},
+): GroupedSelectControl<TEntity, TKey> {
+  return {
+    type: InputType.select,
+    name,
+    items: groupedItems,
+    grouped: true,
+    ...options,
+    size:
+      options.size ?? options.multiple
+        ? Object.entries(groupedItems).reduce(
+            (acc, [, items]) => Object.entries(items).length + 1 + acc,
+            0,
+          )
+        : undefined,
+  };
+}
+
+export type SelectControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string | string[]>,
+> =
+  | IndividualSelectControl<TEntity, TKey>
+  | GroupedSelectControl<TEntity, TKey>;

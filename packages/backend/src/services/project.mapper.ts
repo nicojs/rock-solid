@@ -1,11 +1,12 @@
 import {
-  Activiteit,
-  BaseProject,
+  CursusActiviteit,
+  Decimal,
   empty,
   notEmpty,
   Project,
   ProjectFilter,
   UpsertableProject,
+  VakantieActiviteit,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
@@ -67,7 +68,7 @@ export class ProjectMapper {
     return count;
   }
 
-  private async enrichWithDeelnemersuren(activiteiten: Activiteit[]) {
+  private async enrichWithDeelnemersuren(activiteiten: CursusActiviteit[]) {
     if (activiteiten.length) {
       const deelnemersurenResult = await this.db.$queryRaw<
         { id: number; deelnemersuren: number }[]
@@ -163,10 +164,9 @@ interface ProjectQueryResult extends db.Project {
 
 function toProject(val: ProjectQueryResult): Project {
   const { type, _count, ...projectProperties } = val;
-  const project: BaseProject = purgeNulls({
+  const project = purgeNulls({
     type,
     ...projectProperties,
-    activiteiten: val.activiteiten?.map(toActiviteit) ?? [],
     aantalInschrijvingen: _count?.inschrijvingen,
   });
   switch (type) {
@@ -174,12 +174,16 @@ function toProject(val: ProjectQueryResult): Project {
       return {
         ...project,
         type,
+        activiteiten: val.activiteiten?.map(toCursusActiviteit) ?? [],
         organisatieonderdeel: val.organisatieonderdeel!,
         overnachting: val.overnachting!,
       };
     case 'vakantie':
       return {
         ...project,
+        activiteiten: val.activiteiten?.map(toVakantieActiviteit) ?? [],
+        prijs: project.prijs as Decimal | undefined,
+        voorschot: project.voorschot as Decimal | undefined,
         type,
       };
     default:
@@ -188,8 +192,16 @@ function toProject(val: ProjectQueryResult): Project {
   }
 }
 
-function toActiviteit(val: ActiviteitQueryResult): Activiteit {
-  const { projectId, _count, ...act } = purgeNulls(val);
+function toCursusActiviteit(val: ActiviteitQueryResult): CursusActiviteit {
+  const { projectId, verblijf, vervoer, _count, ...act } = purgeNulls(val);
+  return {
+    ...act,
+    aantalDeelnames: _count?.deelnames,
+  };
+}
+
+function toVakantieActiviteit(val: ActiviteitQueryResult): VakantieActiviteit {
+  const { projectId, vormingsuren, _count, ...act } = purgeNulls(val);
   return {
     ...act,
     aantalDeelnames: _count?.deelnames,
@@ -197,6 +209,5 @@ function toActiviteit(val: ActiviteitQueryResult): Activiteit {
 }
 
 function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
-  const { activiteiten, ...whereQuery } = filter;
-  return whereQuery;
+  return { type: filter.type };
 }

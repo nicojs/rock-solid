@@ -1,15 +1,27 @@
 import {
-  Activiteit,
+  BaseActiviteit,
   BaseProject,
   bedrijfsonderdelen,
   Cursus,
+  CursusActiviteit,
   ProjectType,
   UpsertableProject,
+  Vakantie,
+  VakantieActiviteit,
+  vakantieSeizoenen,
+  vakantieVerblijven,
+  vakantieVervoerOptions,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { FormControl, formArray, InputControl, InputType } from '../forms';
+import {
+  FormControl,
+  formArray,
+  InputControl,
+  InputType,
+  selectControl,
+} from '../forms';
 import { capitalize } from '../shared';
 import { printProject } from './project.pipes';
 
@@ -31,7 +43,9 @@ export class ProjectEditComponent extends LitElement {
       </h2>
       <rock-reactive-form
         @rock-submit="${this.save}"
-        .controls="${cursusProjectControls}"
+        .controls="${this.type === 'cursus'
+          ? cursusProjectControls
+          : vakantieProjectControls}"
         .entity="${this.project}"
       ></rock-reactive-form>`;
   }
@@ -66,7 +80,7 @@ const baseProjectControls: InputControl<BaseProject>[] = [
   },
 ];
 
-const activiteitenControls: InputControl<Activiteit>[] = [
+const baseActiviteitenControls: FormControl<BaseActiviteit>[] = [
   {
     name: 'van',
     type: InputType.date,
@@ -78,27 +92,42 @@ const activiteitenControls: InputControl<Activiteit>[] = [
     type: InputType.date,
     validators: { required: true },
   },
+];
+
+const cursusActiviteitenControls: FormControl<CursusActiviteit>[] = [
+  ...baseActiviteitenControls,
   {
     name: 'vormingsuren',
     type: InputType.number,
   },
 ];
+const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
+  ...baseActiviteitenControls,
+  {
+    name: 'begeleidingsuren',
+    type: InputType.number,
+  },
+  selectControl('verblijf', vakantieVerblijven),
+  selectControl('vervoer', vakantieVervoerOptions),
+];
 
 const cursusProjectControls: FormControl<Cursus>[] = [
   ...baseProjectControls,
-  {
-    name: 'organisatieonderdeel',
-    type: InputType.select,
-    items: bedrijfsonderdelen,
-    validators: {
-      required: true,
-    },
-    grouped: false,
-  },
+  selectControl('organisatieonderdeel', bedrijfsonderdelen, {
+    validators: { required: true },
+  }),
   {
     name: 'overnachting',
     type: InputType.checkbox,
     label: 'Met overnachting',
   },
-  formArray('activiteiten', activiteitenControls),
+  formArray('activiteiten', cursusActiviteitenControls),
+];
+
+const vakantieProjectControls: FormControl<Vakantie>[] = [
+  ...baseProjectControls,
+  { type: InputType.currency, name: 'prijs' },
+  { type: InputType.currency, name: 'voorschot' },
+  selectControl('seizoen', vakantieSeizoenen),
+  formArray('activiteiten', vakantieActiviteitenControls),
 ];

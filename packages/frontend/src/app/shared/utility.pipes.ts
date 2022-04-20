@@ -1,4 +1,5 @@
-import { Plaats, Adres } from '@rock-solid/shared';
+import { Plaats, Adres, Decimal } from '@rock-solid/shared';
+import { decimalSeparator } from './string-utils';
 
 export const notAvailable = 'n/a';
 export const none = 'geen';
@@ -109,4 +110,11 @@ export function showAdres(adres?: Adres) {
       .join(', ');
   }
   return '';
+}
+
+export function showMoney(decimal?: Decimal) {
+  if (decimal) {
+    return `€ ${decimal.toFixed(2).replace('.', decimalSeparator())}`;
+  }
+  return notAvailable;
 }

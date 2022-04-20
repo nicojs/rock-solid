@@ -91,6 +91,11 @@ model Project {
   organisatieonderdeel Organisatieonderdeel?
   overnachting         Boolean?
 
+  // Vakantie
+  prijs     Decimal?         @db.Money
+  voorschot Decimal?         @db.Money
+  seizoen   VakantieSeizoen?
+
   @@map("project")
 }
 
@@ -116,14 +121,18 @@ model Inschrijving {
 }
 
 model Activiteit {
-  id           Int      @id @default(autoincrement())
-  project      Project  @relation(fields: [projectId], references: [id])
+  id           Int        @id @default(autoincrement())
+  project      Project    @relation(fields: [projectId], references: [id])
   projectId    Int
-  van          DateTime @db.Date
-  totEnMet     DateTime @db.Date
+  van          DateTime   @db.Date
+  totEnMet     DateTime   @db.Date
   vormingsuren Float?
+  deelnames    Deelname[]
 
-  deelnames Deelname[]
+  // Vakanties
+  verblijf VakantieVerblijf?
+  vervoer  VakantieVervoer?
+
   @@map("activiteit")
 }
 
@@ -134,6 +143,7 @@ model Deelname {
   activiteit                 Activiteit   @relation(fields: [activiteitId], references: [id], onDelete: Cascade)
   activiteitId               Int
   effectieveDeelnamePerunage Float
+  opmerking                  String?      @db.VarChar(512)
 
   @@unique([inschrijvingId, activiteitId])
   @@map("deelname")
@@ -299,15 +309,27 @@ enum Doelgroep {
 }
 
 enum VakantieVerblijf {
-  geen
   hotelOfPension
   vakantiehuis
   boot
+
+  @@map("vakantie_verblijf")
 }
 
 enum VakantieVervoer {
-  geen
-  minibus
-  autocarOverdag
+  vliegtuig
   autocarNacht
+  autocarOverdag
+  trein
+  minibus
+  boot
+
+  @@map("vakantie_vervoer")
+}
+
+enum VakantieSeizoen {
+  zomer
+  winter
+
+  @@map("vakantie_seizoen")
 }

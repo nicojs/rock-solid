@@ -27,9 +27,9 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
     >
       ${this.controls?.map((control) => {
         return html`<rock-reactive-form-control
-              .control=${control}
-              .entity=${this.entity}
-            ></rock-reactive-form-array>`;
+          .control=${control}
+          .entity=${this.entity}
+        ></rock-reactive-form-control>`;
       })}
       <div class="row">
         <div class=" offset-lg-2 offset-md-4">

@@ -1,5 +1,6 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { capitalize } from '../shared';
 import { FormControl, InputControl, InputType } from './form-control';
 
 @customElement('rock-reactive-form-control')
@@ -9,9 +10,6 @@ export class ReactiveFormControl<TEntity> extends LitElement {
 
   @property({ attribute: false })
   public entity!: TEntity;
-
-  @property({ attribute: false })
-  private validationMessage = '';
 
   override createRenderRoot() {
     // Use light dom, so input elements participate in form validation 🤷‍♂️
@@ -37,10 +35,21 @@ export class ReactiveFormControl<TEntity> extends LitElement {
         return this.renderInputControl(this.control);
     }
   }
+
   private renderInputControl(control: InputControl<TEntity>) {
-    return html`<rock-reactive-form-input-control
-      .control="${control}"
-      .entity="${this.entity}"
-    ></rock-reactive-form-input-control>`;
+    return html` <div class="mb-3 row">
+      <div class="col-lg-2 col-md-4">
+        ${control.type !== InputType.checkbox
+          ? html`<label for="${this.control.name}" class="col-form-label"
+              >${control.label ?? capitalize(this.control.name)}</label
+            >`
+          : ''}
+      </div>
+      <rock-reactive-form-input-control
+        class="col-lg-10 col-md-8"
+        .control="${control}"
+        .entity="${this.entity}"
+      ></rock-reactive-form-input-control>
+    </div>`;
   }
 }

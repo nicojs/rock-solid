@@ -1,8 +1,12 @@
-import { bedrijfsonderdelen, Project } from '@rock-solid/shared';
-import { html, LitElement, unsafeCSS } from 'lit';
+import {
+  bedrijfsonderdelen,
+  Project,
+  vakantieSeizoenen,
+} from '@rock-solid/shared';
+import { html, LitElement, nothing, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { notAvailable, pluralize, showDatum } from '../shared';
+import { notAvailable, pluralize, showDatum, showMoney } from '../shared';
 import style from './projecten-list.component.scss';
 
 @customElement('rock-projecten-list')
@@ -26,8 +30,12 @@ export class ProjectenListComponent extends LitElement {
         <tr>
           <th>Projectnummer</th>
           <th>Naam</th>
-          <th>Organisatieonderdeel</th>
-          <th>Deelnemersuren</th>
+          ${this.projecten[0]!.type === 'cursus'
+            ? html`<th>Organisatieonderdeel</th>
+                <th>Deelnemersuren</th>`
+            : html`<th>Seizoen</th>
+                <th>Prijs</th>
+                <th>Voorschot</th>`}
           <th>Activiteiten</th>
           <th>Acties</th>
         </tr>
@@ -37,18 +45,27 @@ export class ProjectenListComponent extends LitElement {
           (project) => html`<tr>
             <td>${project.projectnummer}</td>
             <td>${project.naam}</td>
-            <td>
-              ${project.type === 'cursus'
-                ? bedrijfsonderdelen[project.organisatieonderdeel]
-                : notAvailable}
-            </td>
-            <td>
-              ${project.type === 'cursus'
-                ? project.activiteiten
-                    .map((act) => act.aantalDeelnemersuren)
-                    .reduce<number>((acc, cur) => acc + (cur ?? 0), 0)
-                : notAvailable}
-            </td>
+            ${project.type === 'cursus'
+              ? html`<td>
+                    ${project.type === 'cursus'
+                      ? bedrijfsonderdelen[project.organisatieonderdeel]
+                      : notAvailable}
+                  </td>
+                  <td>
+                    ${project.type === 'cursus'
+                      ? project.activiteiten
+                          .map((act) => act.aantalDeelnemersuren)
+                          .reduce<number>((acc, cur) => acc + (cur ?? 0), 0)
+                      : notAvailable}
+                  </td>`
+              : html`<td>
+                    ${project.seizoen
+                      ? vakantieSeizoenen[project.seizoen]
+                      : notAvailable}
+                  </td>
+                  <td>${showMoney(project.prijs)}</td>
+                  <td>${showMoney(project.voorschot)}</td>`}
+
             <td>
               ${project.activiteiten.map((activiteit) => {
                 const inPast = activiteit.totEnMet < new Date();

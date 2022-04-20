@@ -6,6 +6,8 @@ import { seedDeelnemers } from './deelnemers.seed.js';
 import { seedPlaatsen } from './plaatsen.seed.js';
 import { seedVrijwilligers } from './vrijwilligers.seed.js';
 import { seedExtraPersonen } from './extra-personen.seed.js';
+import { seedVakanties } from './vakanties.seed.js';
+import { seedVakantieInschrijvingen } from './vakantie-inschrijvingen.seed.js';
 
 async function main() {
   const client = new db.PrismaClient();
@@ -13,11 +15,13 @@ async function main() {
     await client.$connect();
     await seedPlaatsen(client);
     await seedDeelnemers(client);
-    await seedOrganisaties(client);
-    await seedCursussen(client);
-    await seedCursusInschrijvingen(client);
+    // await seedOrganisaties(client);
+    // await seedCursussen(client);
+    // await seedCursusInschrijvingen(client);
     await seedVrijwilligers(client);
-    await seedExtraPersonen(client);
+    // await seedExtraPersonen(client);
+    await seedVakanties(client);
+    await seedVakantieInschrijvingen(client);
   } finally {
     await client.$disconnect();
   }

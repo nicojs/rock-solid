@@ -1,29 +1,22 @@
-import fs from 'fs/promises';
 import * as db from '@prisma/client';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
 
-interface RawCursusInschrijving {
-  'contactpersonen cursussen': string;
-  cursus: string;
-  deelgenomen: 'Ja' | 'Nee';
+interface RawVakantieInschrijving {
+  titel: string;
+  'contactpersonen vakanties': string;
+  deelgenomen: 'Nee' | 'Ja';
   deelnemer: string;
   opmerkingen: string;
-  opstapplaats: string;
+  'opstapplaats vakanties': string;
+  vakantie: string;
 }
 
-// can parse these things:
-// DK/21/882 - Online Digitaal ontmoeten
-// DK/22/090-2 - Goed in je vel
-// DK/22/090
-// DK/22/090-3
-const projectnummerRegex = /([^ -]*)(?:-([^ -]*))?.*$/;
+const importErrors = new ImportErrors<RawVakantieInschrijving>();
 
-const importErrors = new ImportErrors<RawCursusInschrijving>();
-
-export async function seedCursusInschrijvingen(client: db.PrismaClient) {
-  const inschrijvingenRaw = await readImportJson<RawCursusInschrijving[]>(
-    'cursus-inschrijvingen.json',
+export async function seedVakantieInschrijvingen(client: db.PrismaClient) {
+  const inschrijvingenRaw = await readImportJson<RawVakantieInschrijving[]>(
+    'vakantie-inschrijvingen.json',
   );
   const deelnemerIdByTitles = new Map(
     Object.entries(
@@ -42,9 +35,9 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
     return map;
   }, new Map<number, { woonplaatsId: number }>());
 
-  const cursussenByCode = (
+  const vakantiesByCode = (
     await client.project.findMany({
-      where: { type: 'cursus' },
+      where: { type: 'vakantie' },
       include: { activiteiten: true },
     })
   ).reduce((acc, { id, projectnummer, activiteiten }) => {
@@ -68,37 +61,23 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
       data: inschrijving,
     });
   }
-  console.log(`Seeded ${inschrijvingen.length} cursus inschrijvingen`);
+  console.log(`Seeded ${inschrijvingen.length} vakantie inschrijvingen`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
-    'cursus-inschrijvingen-import-errors.json',
+    'vakantie-inschrijvingen-import-errors.json',
     importErrors,
   );
 
   function fromRaw(
-    raw: RawCursusInschrijving,
+    raw: RawVakantieInschrijving,
   ): db.Prisma.InschrijvingCreateInput | undefined {
-    const projectNummerMatch = projectnummerRegex.exec(raw.cursus);
-    if (!projectNummerMatch) {
-      importErrors.addError('project_nummer_parse', {
-        item: raw,
-        detail: `Project nummer could not be parsed`,
-      });
-      return;
-    }
-
-    const [, projectnummer] = projectNummerMatch as unknown as [
-      string,
-      string,
-      string | undefined,
-    ];
-    const project = cursussenByCode.get(projectnummer);
+    const project = vakantiesByCode.get(raw.vakantie);
     const deelnemerId = deelnemerIdByTitles.get(raw.deelnemer);
     const deelnemer = deelnemerId ? deelnemerById.get(deelnemerId) : undefined;
     if (project === undefined) {
       importErrors.addError('project_not_exit', {
         item: raw,
-        detail: `Project ${projectnummer} does not exist`,
+        detail: `Project ${raw.vakantie} does not exist`,
       });
       return;
     }
@@ -119,7 +98,7 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
           data: project.activiteiten.map((act) => ({
             activiteitId: act.id,
             effectieveDeelnamePerunage: raw.deelgenomen === 'Ja' ? 1 : 0,
-            opmerking: raw.opmerkingen.length ? raw.opmerkingen : undefined,
+            opmerking: raw.opmerkingen,
           })),
         },
       },

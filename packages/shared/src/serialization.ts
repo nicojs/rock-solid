@@ -1,3 +1,5 @@
+import Decimal from 'decimal.js';
+
 const dateWhitelist = Object.freeze([
   'van',
   'tot',
@@ -9,6 +11,7 @@ const dateWhitelist = Object.freeze([
 ]);
 
 const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(:?\.\d+)?Z$/;
+const decimalWhitelist = Object.freeze(['prijs', 'voorschot']);
 
 export function rockReviver(key: string, value: unknown): unknown {
   if (
@@ -17,6 +20,9 @@ export function rockReviver(key: string, value: unknown): unknown {
     dateFormat.test(value)
   ) {
     return new Date(value);
+  }
+  if (decimalWhitelist.includes(key) && typeof value === 'string') {
+    return new Decimal(value);
   }
 
   return value;
