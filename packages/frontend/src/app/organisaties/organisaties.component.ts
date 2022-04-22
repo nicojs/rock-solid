@@ -107,8 +107,8 @@ export class OrganisatiesComponent extends RockElement {
         `;
       case 'new':
         const organisatie: DeepPartial<Organisatie> = {
-          folderVoorkeur: [],
           adres: {},
+          contacten: [],
         };
         return this.loading
           ? html`<rock-loading></rock-loading>`

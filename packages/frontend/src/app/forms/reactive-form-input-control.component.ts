@@ -1,5 +1,5 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { html, LitElement, nothing, TemplateResult } from 'lit';
+import { html, nothing, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
   DateControl,
@@ -15,22 +15,15 @@ import {
 } from './form-control';
 import { capitalize, toDateString } from '../shared';
 import { Decimal } from '@rock-solid/shared';
+import { FormElement } from './form-element';
 
 @customElement('rock-reactive-form-input-control')
-export class ReactiveFormInputControl<TEntity> extends LitElement {
+export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
   @property({ attribute: false })
-  public control!: InputControl<TEntity>;
-
-  @property({ attribute: false })
-  public entity!: TEntity;
+  public override control!: InputControl<TEntity>;
 
   @property({ attribute: false })
   private validationMessage = '';
-
-  override createRenderRoot() {
-    // Use light dom, so input elements participate in form validation 🤷‍♂️
-    return this;
-  }
 
   override render() {
     return html`
@@ -61,7 +54,7 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
   private renderCheckbox(control: CheckboxInputControl<TEntity>) {
     return html`<div class="form-check">
       <input
-        id="${control.name}"
+        id="${this.name}"
         name="${control.name}"
         type="checkbox"
         class="form-check-input"
@@ -82,7 +75,7 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
     return html`<input
       type="${control.type}"
       class="form-control"
-      id="${control.name}"
+      id="${this.name}"
       name="${control.name}"
       value="${ifDefined(this.entity[control.name])}"
       ?required=${control.validators?.required}
@@ -108,7 +101,7 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
       <input
         type="number"
         class="form-control"
-        id="${control.name}"
+        id="${this.name}"
         name="${control.name}"
         value="${this.entity[control.name]}"
         ?required=${control.validators?.required}
@@ -138,7 +131,7 @@ export class ReactiveFormInputControl<TEntity> extends LitElement {
     return html`<input
       type="${control.type}"
       class="form-control"
-      id="${control.name}"
+      id="${this.name}"
       name="${control.name}"
       value="${toDateString(this.entity[control.name] as unknown as Date)}"
       ?required=${control.validators?.required}

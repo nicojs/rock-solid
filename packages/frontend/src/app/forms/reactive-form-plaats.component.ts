@@ -1,5 +1,5 @@
 import { Plaats } from '@rock-solid/shared';
-import { html, LitElement, PropertyValues } from 'lit';
+import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { createRef, ref } from 'lit/directives/ref.js';
@@ -12,14 +12,12 @@ import {
   TypeAheadHint,
 } from '../shared';
 import { PlaatsControl } from './form-control';
+import { FormElement } from './form-element';
 
 @customElement('rock-reactive-form-plaats')
-export class ReactiveFormPlaats<TEntity> extends LitElement {
+export class ReactiveFormPlaats<TEntity> extends FormElement<TEntity> {
   @property({ attribute: false })
-  public control!: PlaatsControl<TEntity>;
-
-  @property({ attribute: false })
-  public entity!: TEntity;
+  public override control!: PlaatsControl<TEntity>;
 
   @property({ attribute: false })
   private validationMessage = '';
@@ -66,11 +64,6 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
     }
   }
 
-  override createRenderRoot() {
-    // Use light dom, so input elements participate in form validation 🤷‍♂️
-    return this;
-  }
-
   private updateValidationMessage(e: Event) {
     const inputEl = e.target as HTMLInputElement;
     this.validationMessage = inputEl.validationMessage;
@@ -79,7 +72,7 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
   public override render() {
     return html`<div class="mb-3 row">
       <div class="col-lg-2 col-md-4">
-        <label for="${this.control.name}" class="col-form-label"
+        <label for="${this.name}" class="col-form-label"
           >${this.control.label ?? capitalize(this.control.name)}</label
         >
       </div>
@@ -89,7 +82,7 @@ export class ReactiveFormPlaats<TEntity> extends LitElement {
           type="text"
           class="form-control"
           autocomplete="off"
-          id="${this.control.name}"
+          id="${this.name}"
           name="${this.control.name}"
           .value="${showPlaats(this.plaatsValue)}"
           ?required=${this.control.validators?.required}

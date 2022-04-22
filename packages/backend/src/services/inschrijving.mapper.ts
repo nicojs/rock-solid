@@ -14,6 +14,7 @@ export class InschrijvingMapper {
       include: {
         deelnemer: true,
       },
+      orderBy: { deelnemer: { volledigeNaam: 'asc' } },
     });
     return inschrijvingen.map(toInschrijving);
   }

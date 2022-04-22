@@ -1,5 +1,4 @@
 import * as db from '@prisma/client';
-import fs from 'fs/promises';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
 

@@ -70,6 +70,7 @@ export async function seedVakanties(client: db.PrismaClient) {
       naam: [raw.bestemming, raw.land].filter(Boolean).join(' - '),
       projectnummer,
       type: 'vakantie',
+      seizoen: raw.seizoen === 'winter' ? 'winter' : 'zomer',
       organisatieonderdeel: 'deKei',
       prijs: prijsFromRaw(raw.prijs),
       voorschot: prijsFromRaw(raw.vosal),

@@ -1,4 +1,5 @@
 import * as db from '@prisma/client';
+import { deduplicate } from '../src/services/mapper-utils.js';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
 
@@ -49,12 +50,19 @@ export async function seedVakantieInschrijvingen(client: db.PrismaClient) {
     .filter(notEmpty)
     .filter(
       deduplicate(
-        (inschrijving) =>
+        ([, inschrijving]) =>
           `${inschrijving.deelnemer.connect!.id!}-${
             inschrijving.project.connect!.id
           }`,
+        ([inschrijving]) => {
+          importErrors.addWarning('duplicate_inschrijving', {
+            item: inschrijving,
+            detail: `Inschrijving already exists`,
+          });
+        },
       ),
-    );
+    )
+    .map(([, inschrijving]) => inschrijving);
 
   for (const inschrijving of inschrijvingen) {
     await client.inschrijving.create({
@@ -70,7 +78,12 @@ export async function seedVakantieInschrijvingen(client: db.PrismaClient) {
 
   function fromRaw(
     raw: RawVakantieInschrijving,
-  ): db.Prisma.InschrijvingCreateInput | undefined {
+  ):
+    | [
+        raw: RawVakantieInschrijving,
+        createInput: db.Prisma.InschrijvingCreateInput,
+      ]
+    | undefined {
     const project = vakantiesByCode.get(raw.vakantie);
     const deelnemerId = deelnemerIdByTitles.get(raw.deelnemer);
     const deelnemer = deelnemerId ? deelnemerById.get(deelnemerId) : undefined;
@@ -88,35 +101,24 @@ export async function seedVakantieInschrijvingen(client: db.PrismaClient) {
       });
       return;
     }
-    return {
-      deelnemer: {
-        connect: { id: deelnemerId },
-      },
-      project: { connect: { id: project.id } },
-      deelnames: {
-        createMany: {
-          data: project.activiteiten.map((act) => ({
-            activiteitId: act.id,
-            effectieveDeelnamePerunage: raw.deelgenomen === 'Ja' ? 1 : 0,
-            opmerking: raw.opmerkingen,
-          })),
+    return [
+      raw,
+      {
+        deelnemer: {
+          connect: { id: deelnemerId },
         },
+        project: { connect: { id: project.id } },
+        deelnames: {
+          createMany: {
+            data: project.activiteiten.map((act) => ({
+              activiteitId: act.id,
+              effectieveDeelnamePerunage: raw.deelgenomen === 'Ja' ? 1 : 0,
+              opmerking: raw.opmerkingen,
+            })),
+          },
+        },
+        woonplaatsDeelnemer: { connect: { id: deelnemer.woonplaatsId } },
       },
-      woonplaatsDeelnemer: { connect: { id: deelnemer.woonplaatsId } },
-    };
+    ];
   }
-}
-function deduplicate<T>(
-  keySelector: (val: T) => string,
-): (value: T) => boolean {
-  const set = new Set<string>();
-  return (val) => {
-    const key = keySelector(val);
-    if (set.has(key)) {
-      console.warn(`Removing duplicate value ${JSON.stringify(val)}`);
-      return false;
-    }
-    set.add(key);
-    return true;
-  };
 }

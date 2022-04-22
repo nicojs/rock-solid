@@ -41,7 +41,7 @@ export class AdresSeeder<TRaw> {
   fromRaw(
     raw: TRaw,
     adres: string,
-    postcode: string,
+    rawPostcode: string,
   ): undefined | db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput {
     if (!adres.length) {
       return undefined;
@@ -61,10 +61,12 @@ export class AdresSeeder<TRaw> {
       string,
       string | undefined,
     ];
-    let plaatsId = this.plaatsIdByPostcode.get(postcode);
+
+    const postCode = postcodeFromRaw(rawPostcode);
+    let plaatsId = this.plaatsIdByPostcode.get(postCode);
     if (plaatsId === undefined) {
       this.importErrors.addWarning('postcode_doesnt_exist', {
-        detail: `Cannot find postcode "${postcode}", using onbekend`,
+        detail: `Cannot find postcode "${postCode}", using onbekend`,
         item: raw,
       });
       plaatsId = ONBEKENDE_PLAATS_ID;
@@ -78,4 +80,14 @@ export class AdresSeeder<TRaw> {
       },
     };
   }
+}
+const [from, to] = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
+
+function postcodeFromRaw(raw: string): string {
+  return [...raw]
+    .filter((char) => {
+      const charCode = char.charCodeAt(0);
+      return charCode >= from && charCode <= to;
+    })
+    .join('');
 }

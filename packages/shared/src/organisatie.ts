@@ -5,39 +5,76 @@ import { Adres, UpsertableAdres } from './adres.js';
 export interface Organisatie {
   id: number;
   naam: string;
-  terAttentieVan?: string;
   emailadres?: string;
   adres?: Adres;
   opmerking?: string;
   doelgroep: Doelgroep;
-  telefoonnummer?: string;
   website?: string;
-  folderVoorkeur: FolderSelectie[];
-  communicatieVoorkeur?: CommunicatieVoorkeur;
   soorten: OrganisatieSoort[];
+  contacten: OrganisatieContact[];
 }
 
-export const organisatieColumnNames: Record<keyof Organisatie, string> = {
-  id: 'id',
-  naam: 'Naam',
-  terAttentieVan: 'TAV',
-  emailadres: 'Emailadres',
-  adres: 'Adres',
-  opmerking: 'Opmerking',
-  doelgroep: 'Doelgroep',
-  telefoonnummer: 'Telefoonnummer',
-  website: 'Website',
+export interface FolderAdressering {
+  folderVoorkeur: FolderSelectie[];
+  communicatieVoorkeur?: CommunicatieVoorkeur;
+  emailadres?: string;
+  adres?: Adres;
+}
+
+export interface OrganisatieContact extends FolderAdressering {
+  id: number;
+  terAttentieVan?: string;
+  telefoonnummer?: string;
+}
+
+export const folderAdresseringColumnNames: Record<
+  keyof FolderAdressering,
+  string
+> = Object.freeze({
   folderVoorkeur: 'Folder voorkeur',
   communicatieVoorkeur: 'Communicatie voorkeur',
-  soorten: 'Soort(en)',
-};
+  emailadres: 'Emailadres',
+  adres: 'Adres',
+});
 
-export type OrganisatieFilter = Partial<Pick<Organisatie, 'folderVoorkeur'>>;
+export const organisatieColumnNames: Record<keyof Organisatie, string> =
+  Object.freeze({
+    id: 'id',
+    naam: 'Naam',
+    opmerking: 'Opmerking',
+    doelgroep: 'Doelgroep',
+    website: 'Website',
+    emailadres: 'Emailadres',
+    adres: 'Adres',
+    soorten: 'Soort(en)',
+    contacten: 'Contact(en)',
+  });
+
+export const organisatieContactColumnNames: Record<
+  keyof OrganisatieContact,
+  string
+> = Object.freeze({
+  id: 'id',
+  terAttentieVan: 'TAV',
+  telefoonnummer: 'Telefoonnummer',
+  ...folderAdresseringColumnNames,
+});
+
+export type OrganisatieFilter = Partial<
+  Pick<OrganisatieContact, 'folderVoorkeur'>
+>;
 
 export type UpsertableOrganisatie = Upsertable<
-  Omit<Organisatie, 'adres'>,
-  'naam' | 'doelgroep' | 'folderVoorkeur'
-> & { adres?: UpsertableAdres };
+  Omit<Organisatie, 'contacten'>,
+  'naam' | 'doelgroep'
+> & { contacten: UpsertableOrganisatieContact[] };
+
+export type UpsertableOrganisatieContact = Upsertable<
+  Omit<OrganisatieContact, 'adres'>,
+  never
+> & {
+  adres?: UpsertableAdres;
+};
 
 export type Doelgroep = 'deKei' | 'keiJong';
 
@@ -56,11 +93,11 @@ export type FolderSelectie =
   | 'KeiJongBuso';
 
 export const folderSelecties: Options<FolderSelectie> = Object.freeze({
-  deKeiCursussen: 'De Kei cursussen',
-  deKeiZomervakanties: 'De Kei zomervakanties',
-  deKeiWintervakanties: 'De Kei wintervakanties',
-  KeiJongBuso: 'Kei-Jong Buso',
-  KeiJongNietBuso: 'Kei-Jong niet Buso',
+  deKeiCursussen: 'De Kei',
+  deKeiZomervakanties: 'Zomervakanties',
+  deKeiWintervakanties: 'Wintervakanties',
+  KeiJongBuso: 'Buso',
+  KeiJongNietBuso: 'niet Buso',
 });
 
 export const organisatieSoorten: Options<OrganisatieSoort> = {

@@ -33,6 +33,7 @@ export class DeelnameMapper {
           include: { deelnemer: { include: includePersoonAdres } },
         },
       },
+      orderBy: { inschrijving: { deelnemer: { volledigeNaam: 'asc' } } },
     });
     return deelnames.map(toDeelname);
   }
@@ -93,6 +94,7 @@ function toDBDeelname(
       },
     },
     effectieveDeelnamePerunage: deelname.effectieveDeelnamePerunage,
+    opmerking: deelname.opmerking,
   };
 }
 
@@ -103,5 +105,6 @@ function toDeelname(val: DeelnameQueryResult): Deelname {
     deelnemer: toPersoon(val.inschrijving.deelnemer) as Deelnemer,
     inschrijvingId: val.inschrijvingId,
     effectieveDeelnamePerunage: val.effectieveDeelnamePerunage,
+    opmerking: val.opmerking ?? undefined,
   };
 }

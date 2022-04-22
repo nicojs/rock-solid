@@ -1,7 +1,13 @@
 import * as db from '@prisma/client';
-import fs from 'fs/promises';
+import { Organisatie } from '@prisma/client';
+import { AdresSeeder } from './adres-seeder.js';
 import { ImportErrors, notEmpty } from './import-errors.js';
-import { readImportJson, writeOutputJson } from './seed-utils.js';
+import {
+  groupBy,
+  pickNotEmpty,
+  readImportJson,
+  writeOutputJson,
+} from './seed-utils.js';
 
 interface RawOrganisatie {
   Naam: string;
@@ -21,41 +27,78 @@ interface RawOrganisatie {
   'folders wintervakanties De Kei': 'ja' | 'nee';
   'folders zomervakanties De Kei': 'ja' | 'nee';
 }
-const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
-const [from, to] = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
+
+type CreateOrgInput = Omit<db.Prisma.OrganisatieCreateInput, 'contacten'> & {
+  contacten: {
+    create: db.Prisma.OrganisatieContactCreateWithoutOrganisatieInput[];
+  };
+};
 
 export async function seedOrganisaties(client: db.PrismaClient) {
   const organisatiesRaw = await readImportJson<RawOrganisatie[]>(
     'organisaties.json',
   );
 
-  const names = new Set<string>();
-  const duplicateNames = new Set<string>();
-  for (const org of organisatiesRaw) {
-    let name = org.Naam;
-    let i = 1;
-    while (names.has(name)) {
-      if (!duplicateNames.has(org.Naam)) {
-        console.log('Duplicate org name', org.Naam);
-        duplicateNames.add(org.Naam);
-      }
-      name = `${org.Naam}_${++i}`;
-    }
-    org.Naam = name;
-    names.add(name);
-  }
-
   const importErrors = new ImportErrors<RawOrganisatie>();
 
-  const plaatsIdByPostcode = new Map<string, number>(
-    (
-      await client.plaats.findMany({
-        select: { postcode: true, id: true },
-      })
-    ).map(({ postcode, id }) => [postcode, id] as const),
-  );
+  const adresSeeder = new AdresSeeder(client, importErrors);
+  await adresSeeder.init();
 
-  const orgs = organisatiesRaw.map(fromRaw).filter(notEmpty);
+  const orgsByName = organisatiesRaw
+    .map(fromRaw)
+    .reduce(...groupBy<CreateOrgInput>((org) => org.naam.toLocaleLowerCase()));
+
+  const orgs = [...orgsByName.values()].map((orgs) => {
+    if (orgs.length === 1) {
+      return orgs[0]!;
+    }
+    importErrors.addWarning('duplicate_contact', {
+      // @ts-expect-error Don't have origin here
+      item: {},
+      detail: `Merging duplicate organisatie ${orgs
+        .map(({ naam }) => `"${naam}"`)
+        .join(', ')}`,
+    });
+    const org = orgs[0]!;
+
+    // Pick the useful information
+    org.website = pickNotEmpty(orgs, 'website');
+    org.contacten.create = orgs.flatMap((org) => org.contacten.create);
+    return org;
+  });
+
+  orgs.forEach((org) => {
+    const contactenByTav = org.contacten.create.reduce(
+      ...groupBy<db.Prisma.OrganisatieContactCreateWithoutOrganisatieInput>(
+        (contact) => contact.terAttentieVan.toLocaleLowerCase(),
+      ),
+    );
+
+    org.contacten.create = [...contactenByTav.values()].map((contacten) => {
+      if (contacten.length === 1) {
+        return contacten[0]!;
+      }
+      importErrors.addWarning('duplicate_contact', {
+        // @ts-expect-error Don't have origin here
+        item: {},
+        detail: `Merging duplicate contacts ${contacten
+          .map(({ terAttentieVan }) => `"${terAttentieVan}"`)
+          .join(', ')}`,
+      });
+      const contact = contacten[0]!;
+
+      // Pick the useful information
+      contact.emailadres = pickNotEmpty(contacten, 'emailadres');
+      contact.adres = pickNotEmpty(contacten, 'adres');
+      contact.telefoonnummer = pickNotEmpty(contacten, 'telefoonnummer');
+      contact.opmerking = contacten
+        .map(({ opmerking }) => opmerking)
+        .filter(Boolean)
+        .join(', ');
+
+      return contact;
+    });
+  });
 
   for (const org of orgs) {
     await client.organisatie.create({ data: org });
@@ -65,67 +108,27 @@ export async function seedOrganisaties(client: db.PrismaClient) {
   console.log(`(${importErrors.report})`);
   await writeOutputJson('organisatie-import-errors.json', importErrors);
 
-  function fromRaw(
-    raw: RawOrganisatie,
-  ): db.Prisma.OrganisatieCreateInput | undefined {
-    let adres:
-      | db.Prisma.AdresCreateNestedOneWithoutOrganisatieInput
-      | undefined = undefined;
-    if (raw.adres) {
-      const adresMatch = adresRegex.exec(raw.adres);
-      if (!adresMatch) {
-        importErrors.addError('adres_parse_error', {
-          item: raw,
-          detail: `Adres is empty doesn\'t match pattern`,
-        });
-      }
-      const postcode = postcodeFromRaw(raw.postcode);
-      const plaatsId = plaatsIdByPostcode.get(postcode);
-      if (!plaatsId) {
-        importErrors.addError('postcode_doesnt_exist', {
-          detail: `Cannot find postcode "${raw.postcode}"`,
-          item: raw,
-        });
-      } else {
-        const [, straatnaam, huisnummer, busnummer] = adresMatch as unknown as [
-          string,
-          string,
-          string,
-          string | undefined,
-        ];
-        adres = {
-          create: {
-            straatnaam: straatnaam.trim(),
-            huisnummer,
-            busnummer,
-            plaats: { connect: { id: plaatsId } },
-          },
-        };
-      }
-    }
-
+  function fromRaw(raw: RawOrganisatie): CreateOrgInput {
+    const adres = adresSeeder.fromRaw(raw, raw.adres, raw.postcode);
     return {
       doelgroep: 'deKei',
       naam: raw.Naam,
-      terAttentieVan: raw.TAV,
-      adres,
-      communicatieVoorkeur: raw['mailing op e-mail'] ? 'email' : 'post',
-      emailadres: raw['e-mail'],
-      opmerking: raw.opmerkingen,
       website: fromRawWebsite(raw.website),
-      telefoonnummer: raw.telefoon,
-      folderVoorkeur: folderVoorkeurFromRaw(raw),
       soorten: [],
+      contacten: {
+        create: [
+          {
+            terAttentieVan: raw.TAV,
+            adres,
+            telefoonnummer: raw.telefoon,
+            communicatieVoorkeur: raw['mailing op e-mail'] ? 'email' : 'post',
+            emailadres: raw['e-mail'],
+            opmerking: raw.opmerkingen,
+            folderVoorkeur: folderVoorkeurFromRaw(raw),
+          },
+        ],
+      },
     };
-  }
-
-  function postcodeFromRaw(raw: string): string {
-    return [...raw]
-      .filter((char) => {
-        const charCode = char.charCodeAt(0);
-        return charCode >= from && charCode <= to;
-      })
-      .join('');
   }
 
   function fromRawWebsite(website: string): string | undefined {

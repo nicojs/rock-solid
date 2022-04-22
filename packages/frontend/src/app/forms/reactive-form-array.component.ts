@@ -1,24 +1,17 @@
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { FormArray, KeysOfType } from './form-control';
 import { capitalize, singularize } from '../shared';
+import { FormElement } from './form-element';
 
 @customElement('rock-reactive-form-array')
 export class ReactiveFormArrayComponent<
   TEntity,
   TItem,
   TKey extends KeysOfType<TEntity, Array<TItem>>,
-> extends LitElement {
-  override createRenderRoot() {
-    // Use light dom, so input elements participate in form validation 🤷‍♂️
-    return this;
-  }
-
+> extends FormElement<TEntity> {
   @property({ attribute: false })
-  public control!: FormArray<TEntity, TItem, TKey>;
-
-  @property({ attribute: false })
-  public entity!: TEntity;
+  public override control!: FormArray<TEntity, TItem, TKey>;
 
   public get items(): TItem[] {
     return this.entity[this.control.name] as unknown as TItem[];
@@ -56,7 +49,7 @@ export class ReactiveFormArrayComponent<
           </button>
         </div>
         ${this.items.map(
-          (item) =>
+          (item, index) =>
             html`<div class="row mb-3 border">
               <div class="d-flex justify-content-between">
                 <span class="form-text"
@@ -74,6 +67,7 @@ export class ReactiveFormArrayComponent<
                 (control) => html`<rock-reactive-form-control
                   .control="${control}"
                   .entity="${item}"
+                  .path="${this.name}_${index}"
                 ></rock-reactive-form-control>`,
               )}
             </div>`,

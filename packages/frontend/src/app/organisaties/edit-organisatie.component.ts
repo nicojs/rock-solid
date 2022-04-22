@@ -17,6 +17,7 @@ import {
   patterns,
   selectControl,
   groupedSelectControl,
+  formArray,
 } from '../forms';
 import { printOrganisatie } from './organisatie.pipes';
 
@@ -31,7 +32,7 @@ export class EditOrganisatieComponent extends LitElement {
     return html`<h2>
         ${this.organisatie.id
           ? `${printOrganisatie(this.organisatie)} wijzigen`
-          : `Project toevoegen`}
+          : `Organisatie toevoegen`}
       </h2>
       <rock-reactive-form
         @rock-submit="${this.save}"
@@ -51,42 +52,49 @@ export class EditOrganisatieComponent extends LitElement {
 }
 
 const organisatieControls: FormControl<Organisatie>[] = [
-  selectControl('doelgroep', doelgroepen, {
-    validators: { required: true },
-  }),
   {
     name: 'naam',
     type: InputType.text,
     validators: { required: true },
   },
-  {
-    name: 'terAttentieVan',
-    type: InputType.text,
-    label: 'Ter attentie van',
-  },
-  {
-    name: 'emailadres',
-    type: InputType.email,
-    validators: { pattern: patterns.email },
-  },
+  selectControl('doelgroep', doelgroepen, {
+    validators: { required: true },
+  }),
+  formArray('contacten', [
+    {
+      name: 'terAttentieVan',
+      type: InputType.text,
+      label: 'Ter attentie van',
+    },
+    selectControl('folderVoorkeur', folderSelecties, {
+      label: 'Folder voorkeur',
+      multiple: true,
+    }),
+    {
+      name: 'emailadres',
+      type: InputType.email,
+      validators: { pattern: patterns.email },
+    },
+    {
+      name: 'telefoonnummer',
+      type: InputType.tel,
+      validators: { pattern: patterns.tel },
+    },
+    formGroup('adres', adresControls, {
+      required: false,
+      requiredLabel: 'Met adres',
+    }),
+  ]),
   formGroup('adres', adresControls, {
     required: false,
     requiredLabel: 'Met adres',
   }),
   {
-    name: 'telefoonnummer',
-    type: InputType.tel,
-    validators: { pattern: patterns.tel },
-  },
-  {
     name: 'website',
     type: InputType.url,
     placeholder: 'https://dekei.be',
   },
-  selectControl('folderVoorkeur', folderSelecties, {
-    label: 'Folder voorkeur',
-    multiple: true,
-  }),
+
   groupedSelectControl('soorten', groupedOrganisatieSoorten, {
     label: organisatieColumnNames.soorten,
     multiple: true,

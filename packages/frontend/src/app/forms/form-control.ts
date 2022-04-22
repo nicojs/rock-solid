@@ -30,7 +30,7 @@ interface Validators {
 
 export const patterns = Object.freeze({
   email: '.+@.+\\..+',
-  tel: '^\\d+$',
+  tel: '^(\\d|\\s|\\.|\\(|\\))+$',
 });
 
 export type FormControl<TEntity> =

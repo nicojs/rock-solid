@@ -3,23 +3,23 @@ import {
   UpsertableOrganisatie,
   Organisatie,
   OrganisatieFilter,
+  OrganisatieContact,
+  UpsertableOrganisatieContact,
+  notEmpty,
+  empty,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import { purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
-import {
-  toAdres,
-  toCreateAdresInput,
-  toNullableUpdateAdresInput,
-} from './adres.mapper.js';
+import { DBAdresWithPlaats, toNullableAdres } from './adres.mapper.js';
 
-type DBOrganisatieWithAdres = db.Organisatie & {
-  adres:
-    | (db.Adres & {
-        plaats: db.Plaats;
-      })
-    | null;
+type DBOrganisatieContactWithAdres = db.OrganisatieContact & {
+  adres: DBAdresWithPlaats | null;
+};
+
+type DBOrganisatieWithContacten = db.Organisatie & {
+  contacten: DBOrganisatieContactWithAdres[];
 };
 
 @Injectable()
@@ -33,9 +33,10 @@ export class OrganisatieMapper {
     const dbOrganisaties = await this.db.organisatie.findMany({
       where: toWhere(filter),
       orderBy: { naam: 'asc' },
-      include: includeAdres,
+      include: includeContacten(filter),
       ...toPage(pageNumber),
     });
+
     return dbOrganisaties.map(toOrganisatie);
   }
 
@@ -50,7 +51,7 @@ export class OrganisatieMapper {
   ): Promise<Organisatie | null> {
     const org = await this.db.organisatie.findUnique({
       where: where,
-      include: includeAdres,
+      include: includeContacten(),
     });
     if (org) {
       return toOrganisatie(org);
@@ -62,13 +63,15 @@ export class OrganisatieMapper {
   public async create(
     organisatie: UpsertableOrganisatie,
   ): Promise<Organisatie> {
-    const { adres, id, ...organisatieData } = organisatie;
+    const { adres, contacten, id, ...organisatieData } = organisatie;
     const dbOrganisatie = await this.db.organisatie.create({
       data: {
         ...organisatieData,
-        adres: adres ? toCreateAdresInput(adres) : undefined,
+        contacten: {
+          create: contacten.map(toCreateContactInput),
+        },
       },
-      include: includeAdres,
+      include: includeContacten(),
     });
     return toOrganisatie(dbOrganisatie);
   }
@@ -77,50 +80,131 @@ export class OrganisatieMapper {
     where,
     data,
   }: {
-    where: db.Prisma.OrganisatieWhereUniqueInput;
+    where: { id: number };
     data: UpsertableOrganisatie;
   }): Promise<Organisatie> {
-    const { adres, id, ...props } = data;
+    const { contacten, id, ...props } = data;
+
+    // Delete contacts that need to be deleted
+    await this.db.organisatieContact.deleteMany({
+      where: {
+        organisatieId: where.id,
+        id: {
+          notIn: contacten.map(({ id }) => id).filter(notEmpty),
+        },
+      },
+    });
+
     const result = await this.db.organisatie.update({
       where,
       data: {
-        adres: toNullableUpdateAdresInput(adres),
         ...props,
+        // Update and create contacts that need to be updated or deleted
+        contacten: {
+          create: data.contacten
+            .filter((contact) => empty(contact.id))
+            .map(toCreateContactInput),
+          updateMany: data.contacten
+            .filter((contact) => notEmpty(contact.id))
+            .map(toUpdateManyContactInput),
+        },
       },
-      include: includeAdres,
+      include: includeContacten(),
     });
-    if (!adres && result.adres) {
-      return toOrganisatie(
-        await this.db.organisatie.update({
-          where,
-          data: { adres: { delete: true } },
-          include: includeAdres,
-        }),
+
+    // Delete addresses that needs to be deleted
+    for (const contact of contacten) {
+      const updatedContactIndex = result.contacten.findIndex(
+        ({ id }) => contact.id === id,
       );
-    } else {
-      return toOrganisatie(result);
+      const updatedContact = result.contacten[updatedContactIndex];
+      if (!contact.adres && updatedContact?.adres) {
+        result.contacten[updatedContactIndex] =
+          await this.db.organisatieContact.update({
+            where: { id: updatedContact.id },
+            data: { adres: { delete: true } },
+            include: includeAdres,
+          });
+      }
     }
+
+    return toOrganisatie(result);
   }
 }
 
 function toWhere(filter: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
   return {
-    folderVoorkeur: filter.folderVoorkeur
-      ? {
-          hasSome: filter.folderVoorkeur,
-        }
-      : undefined,
+    contacten: {
+      some: {
+        folderVoorkeur: filter.folderVoorkeur
+          ? {
+              hasSome: filter.folderVoorkeur,
+            }
+          : undefined,
+      },
+    },
   };
 }
 
-function toOrganisatie(org: DBOrganisatieWithAdres): Organisatie {
-  const { adres, adresId, ...props } = org;
+function toOrganisatie(org: DBOrganisatieWithContacten): Organisatie {
+  const { contacten, ...props } = org;
   return {
     ...purgeNulls(props),
-    adres: adres ? toAdres(adres) : undefined,
+    contacten: contacten.map(toContact),
+  };
+}
+
+function toContact(contact: DBOrganisatieContactWithAdres): OrganisatieContact {
+  const { organisatieId, adresId, adres, ...props } = contact;
+  return {
+    ...purgeNulls(props),
+    adres: toNullableAdres(adres),
   };
 }
 
 const includeAdres = Object.freeze({
   adres: Object.freeze({ include: Object.freeze({ plaats: true as const }) }),
 });
+
+function includeContacten(filter?: OrganisatieFilter): {
+  contacten: Omit<db.Prisma.OrganisatieContactFindManyArgs, 'include'> & {
+    include: typeof includeAdres;
+  };
+} {
+  return {
+    contacten: {
+      include: includeAdres,
+      orderBy: {
+        terAttentieVan: 'asc',
+      },
+      where: filter
+        ? {
+            folderVoorkeur: filter.folderVoorkeur
+              ? {
+                  hasSome: filter.folderVoorkeur,
+                }
+              : undefined,
+          }
+        : undefined,
+    },
+  };
+}
+
+function toCreateContactInput(
+  contact: UpsertableOrganisatieContact,
+): db.Prisma.OrganisatieContactCreateWithoutOrganisatieInput {
+  const { adres, id, ...props } = contact;
+  return {
+    ...props,
+    terAttentieVan: props.terAttentieVan ?? '', // Empty string so we can use the unique key contraint
+  };
+}
+
+function toUpdateManyContactInput(
+  contact: UpsertableOrganisatieContact,
+): db.Prisma.OrganisatieContactUpdateManyWithWhereWithoutOrganisatieInput {
+  return {
+    where: { id: contact.id },
+    data: toCreateContactInput(contact),
+  };
+}

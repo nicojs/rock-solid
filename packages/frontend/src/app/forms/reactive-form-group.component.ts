@@ -8,22 +8,14 @@ import {
 import { customElement, property, state } from 'lit/decorators.js';
 import { FormGroup } from './form-control';
 import { capitalize } from '../shared';
+import { FormElement } from './form-element';
 
 @customElement('rock-reactive-form-group')
 export class ReactiveFormGroupComponent<
   TEntity,
   TKey extends keyof TEntity & string,
-> extends LitElement {
-  override createRenderRoot() {
-    // Use light dom, so input elements participate in form validation 🤷‍♂️
-    return this;
-  }
-
-  @property({ attribute: false })
-  public control!: FormGroup<TEntity, TKey>;
-
-  @property({ attribute: false })
-  public entity!: TEntity;
+> extends FormElement<TEntity> {
+  public override control!: FormGroup<TEntity, TKey>;
 
   @state()
   private showControls = false;
@@ -61,6 +53,7 @@ export class ReactiveFormGroupComponent<
       (control) => html`<rock-reactive-form-control
         .control="${control}"
         .entity="${this.value}"
+        .path="${this.name}"
       ></rock-reactive-form-control>`,
     );
   }
@@ -71,7 +64,7 @@ export class ReactiveFormGroupComponent<
       <div class="col-lg-10 col-md-8">
         <div class="form-check">
           <input
-            id="required_${this.control.name}"
+            id="required_${this.name}"
             name="${this.control.name}"
             type="checkbox"
             class="form-check-input"
@@ -87,7 +80,7 @@ export class ReactiveFormGroupComponent<
               }
             }}"
           />
-          <label for="required_${this.control.name}" class="form-check-label"
+          <label for="required_${this.name}" class="form-check-label"
             >${this.control.requiredLabel}</label
           >
         </div>

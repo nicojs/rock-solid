@@ -19,3 +19,23 @@ export async function writeOutputJson(relativeFileName: string, obj: unknown) {
 export function stringFromRaw(str: string) {
   return str === '' ? undefined : str;
 }
+
+export function groupBy<T>(keySelector: (item: T) => string) {
+  return [
+    (acc: Map<string, T[]>, item: T) => {
+      const key = keySelector(item);
+      const items = acc.get(key) ?? [];
+      items.push(item);
+      acc.set(key, items);
+      return acc;
+    },
+    new Map<string, T[]>(),
+  ] as const;
+}
+
+export function pickNotEmpty<T, TProp extends keyof T>(
+  items: T[],
+  prop: TProp,
+) {
+  return items.map((item) => item[prop]).filter(Boolean)[0];
+}

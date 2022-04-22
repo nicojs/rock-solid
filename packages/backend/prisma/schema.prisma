@@ -57,9 +57,10 @@ model Adres {
   busnummer  String? @db.VarChar(10)
   plaatsId   Int
 
-  verblijfpersoon   Persoon[]     @relation("verblijfadres")
-  domiciliepersonen Persoon[]     @relation("domicilieadres")
-  Organisatie       Organisatie[]
+  verblijfpersoon    Persoon[]            @relation("verblijfadres")
+  domiciliepersonen  Persoon[]            @relation("domicilieadres")
+  OrganisatieContact OrganisatieContact[]
+
   @@map("adres")
 }
 
@@ -150,21 +151,31 @@ model Deelname {
 }
 
 model Organisatie {
+  id        Int                  @id @default(autoincrement())
+  naam      String               @unique @db.VarChar(256)
+  doelgroep Doelgroep
+  website   String?              @db.VarChar(256)
+  soorten   OrganisatieSoort[]
+  contacten OrganisatieContact[]
+
+  @@map("organisatie")
+}
+
+model OrganisatieContact {
   id                   Int                   @id @default(autoincrement())
-  naam                 String                @unique @db.VarChar(256)
-  terAttentieVan       String?               @db.VarChar(256)
+  organisatieId        Int
+  terAttentieVan       String                @db.VarChar(256)
   emailadres           String?               @db.VarChar(256)
+  telefoonnummer       String?               @db.VarChar(256)
   adres                Adres?                @relation(fields: [adresId], references: [id])
   adresId              Int?
   opmerking            String?               @db.VarChar(1024)
-  doelgroep            Doelgroep
-  telefoonnummer       String?
-  website              String?               @db.VarChar(256)
   folderVoorkeur       FolderSelectie[]
   communicatieVoorkeur CommunicatieVoorkeur?
-  soorten              OrganisatieSoort[]
+  Organisatie          Organisatie           @relation(fields: [organisatieId], references: [id])
 
-  @@map("organisatie")
+  @@unique([organisatieId, terAttentieVan])
+  @@map("organisatie_contact")
 }
 
 enum OrganisatieSoort {

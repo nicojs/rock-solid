@@ -1,4 +1,12 @@
-import { Plaats, Adres, Decimal } from '@rock-solid/shared';
+import {
+  Plaats,
+  Adres,
+  Decimal,
+  FolderSelectie,
+  folderSelecties,
+  empty,
+} from '@rock-solid/shared';
+import { html } from 'lit';
 import { decimalSeparator } from './string-utils';
 
 export const notAvailable = 'n/a';
@@ -109,7 +117,7 @@ export function showAdres(adres?: Adres) {
       .filter(Boolean)
       .join(', ');
   }
-  return '';
+  return ' ';
 }
 
 export function showMoney(decimal?: Decimal) {
@@ -117,4 +125,16 @@ export function showMoney(decimal?: Decimal) {
     return `€ ${decimal.toFixed(2).replace('.', decimalSeparator())}`;
   }
   return notAvailable;
+}
+
+export function folderVoorkeurBadges(
+  folderVoorkeur: FolderSelectie[] | undefined,
+) {
+  if (folderVoorkeur) {
+    return folderVoorkeur.map(
+      (folder) =>
+        html`<span class="badge bg-success">${folderSelecties[folder]}</span>`,
+    );
+  }
+  return empty;
 }

@@ -2,13 +2,24 @@ import * as db from '@prisma/client';
 import { Adres, UpsertableAdres } from '@rock-solid/shared';
 import { toPlaats } from './plaats.mapper.js';
 
-export function toAdres(adres: db.Adres & { plaats: db.Plaats }): Adres {
+export type DBAdresWithPlaats = db.Adres & { plaats: db.Plaats };
+
+export function toAdres(adres: DBAdresWithPlaats): Adres {
   const { plaats, plaatsId, busnummer, ...props } = adres;
   return {
     plaats: toPlaats(plaats),
     busnummer: busnummer ?? undefined,
     ...props,
   };
+}
+
+export function toNullableAdres(
+  adres: DBAdresWithPlaats | null | undefined,
+): Adres | undefined {
+  if (adres) {
+    return toAdres(adres);
+  }
+  return;
 }
 
 export function toCreateAdresInput(

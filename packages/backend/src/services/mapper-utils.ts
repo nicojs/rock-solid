@@ -33,3 +33,19 @@ export function purgeNulls<T>(value: T): NullsPurged<T> {
   }
   return value as NullsPurged<T>;
 }
+
+export function deduplicate<T>(
+  keySelector: (val: T) => string,
+  onRemove: (val: T) => void,
+): (value: T) => boolean {
+  const set = new Set<string>();
+  return (val) => {
+    const key = keySelector(val);
+    if (set.has(key)) {
+      onRemove(val);
+      return false;
+    }
+    set.add(key);
+    return true;
+  };
+}
