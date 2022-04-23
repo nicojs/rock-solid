@@ -9,19 +9,20 @@ import {
   geslachten,
   werksituaties,
   overigPersoonLabels,
-  folderSelecties,
+  foldersoorten,
   BasePersoon,
 } from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { InputControl, InputType, selectControl } from '../forms';
+import { InputControl, selectControl } from '../forms';
 import {
   showAdres,
   pluralize,
   toCsvDownloadUrl,
   ValueFactory,
   show,
+  foldervoorkeurenCsv,
 } from '../shared';
 import { persoonService } from './persoon.service';
 
@@ -79,12 +80,12 @@ export class AdvancedSearchPersonenComponent extends LitElement {
       } else {
         return toCsvDownloadUrl<OverigPersoon>(
           this.personen as OverigPersoon[],
-          [...persoonColumns, 'selectie', 'folderVoorkeur'],
+          [...persoonColumns, 'selectie', 'foldervoorkeuren'],
           overigPersoonLabels,
           {
             ...adresValueFactories,
             selectie: show,
-            folderVoorkeur: show,
+            foldervoorkeuren: foldervoorkeurenCsv,
           },
         );
       }
@@ -135,13 +136,13 @@ export class AdvancedSearchPersonenComponent extends LitElement {
   }
 }
 
-const overigPersoonSearchControls: InputControl<OverigPersoon>[] = [
+const overigPersoonSearchControls: InputControl<PersoonDetailsFilter>[] = [
   selectControl('selectie', overigPersoonSelecties, {
     label: overigPersoonLabels.selectie,
     multiple: true,
   }),
-  selectControl('folderVoorkeur', folderSelecties, {
-    label: overigPersoonLabels.folderVoorkeur,
+  selectControl('foldersoorten', foldersoorten, {
+    label: 'folders',
     multiple: true,
   }),
 ];

@@ -52,7 +52,7 @@ export async function seedVrijwilligers(client: db.PrismaClient) {
     const [dag, maand, jaar] = raw.geboortedatum
       .split('-')
       .map((i) => parseInt(i));
-    const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput =
+    const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput =
       adresSeeder.fromRawOrOnbekend(raw, raw.adres, raw.postcode);
     return {
       achternaam: raw.achternaam,
@@ -64,8 +64,22 @@ export async function seedVrijwilligers(client: db.PrismaClient) {
       gsmNummer: stringFromRaw(raw.GSM),
       telefoonnummer: stringFromRaw(raw.telefoon),
       type: 'overigPersoon',
+      foldervoorkeuren,
       selectie: ['vakantieVrijwilliger'],
       opmerking: stringFromRaw(raw.opmerkingen),
     };
   }
 }
+
+/**
+ * This is my best guess for foldervoorkeuren for a vrijwilliger 🤷‍♀️
+ */
+const foldervoorkeuren: db.Prisma.FoldervoorkeurCreateNestedManyWithoutPersoonInput =
+  {
+    createMany: {
+      data: [
+        { communicatie: 'email', folder: 'deKeiWintervakanties' },
+        { communicatie: 'email', folder: 'deKeiZomervakanties' },
+      ],
+    },
+  };

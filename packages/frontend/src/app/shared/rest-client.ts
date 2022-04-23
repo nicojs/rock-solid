@@ -107,7 +107,12 @@ export const restClient = new RestClient();
 function toQueryString(query: Record<string, unknown> | undefined) {
   if (query) {
     return `?${Object.entries(query)
-      .filter(([, val]) => val !== '')
+      .filter(
+        ([, val]) =>
+          val !== undefined &&
+          val !== '' &&
+          (!Array.isArray(val) || val.length > 0),
+      )
       .map(
         ([key, val]) =>
           `${encodeURIComponent(key)}=${encodeURIComponent(String(val))}`,

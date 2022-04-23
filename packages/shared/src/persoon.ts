@@ -1,6 +1,6 @@
 import { Adres, UpsertableAdres } from './adres.js';
 import { Options } from './options.js';
-import { FolderSelectie } from './organisatie.js';
+import { Foldersoort, Foldervoorkeur } from './organisatie.js';
 import { Upsertable } from './upsertable.js';
 
 export interface BasePersoon {
@@ -42,8 +42,10 @@ export interface PersoonTextFilter {
   search: string;
 }
 export type PersoonDetailsFilter = Partial<
-  Omit<OverigPersoon, 'type'> & Omit<Deelnemer, 'type'> & { type: PersoonType }
+  Omit<OverigPersoon, 'type' | 'foldervoorkeuren'> &
+    Omit<Deelnemer, 'type'> & { type: PersoonType }
 > & {
+  foldersoorten?: Foldersoort[];
   searchType: 'persoon';
 };
 
@@ -60,7 +62,7 @@ export interface Deelnemer extends BasePersoon {
 export interface OverigPersoon extends BasePersoon {
   type: 'overigPersoon';
   vrijwilligerOpmerking?: string;
-  folderVoorkeur: FolderSelectie[];
+  foldervoorkeuren: Foldervoorkeur[];
   selectie: OverigPersoonSelectie[];
 }
 
@@ -102,7 +104,7 @@ export const deelnemerLabels: Record<keyof Deelnemer, string> = {
 export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
   ...persoonLabels,
   vrijwilligerOpmerking: 'Vrijwilliger opmerking',
-  folderVoorkeur: 'Folder voorkeur',
+  foldervoorkeuren: 'Foldervoorkeuren',
   selectie: 'Selectie',
 };
 

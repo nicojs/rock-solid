@@ -1,5 +1,15 @@
-import { Adres } from '@rock-solid/shared';
-import { FormControl, InputType } from './form-control';
+import {
+  Adres,
+  communicatievoorkeuren,
+  foldersoorten,
+  Foldervoorkeur,
+} from '@rock-solid/shared';
+import {
+  FormArray,
+  FormControl,
+  InputType,
+  selectControl,
+} from './form-control';
 
 export const adresControls: readonly FormControl<Adres>[] = Object.freeze([
   Object.freeze({
@@ -20,3 +30,11 @@ export const adresControls: readonly FormControl<Adres>[] = Object.freeze([
   }),
   Object.freeze({ name: 'busnummer', type: InputType.text }),
 ]);
+
+export const foldervoorkeurControls: readonly FormControl<Foldervoorkeur>[] =
+  Object.freeze([
+    selectControl('folder', foldersoorten, { validators: { required: true } }),
+    selectControl('communicatie', communicatievoorkeuren, {
+      validators: { required: true },
+    }),
+  ]);

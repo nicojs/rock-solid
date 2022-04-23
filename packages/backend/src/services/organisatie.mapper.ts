@@ -5,6 +5,7 @@ import {
   OrganisatieFilter,
   OrganisatieContact,
   UpsertableOrganisatieContact,
+  Foldervoorkeur,
   notEmpty,
   empty,
 } from '@rock-solid/shared';
@@ -19,12 +20,13 @@ import {
   toNullableUpdateAdresInput,
 } from './adres.mapper.js';
 
-type DBOrganisatieContactWithAdres = db.OrganisatieContact & {
+type DBOrganisatieContactAggregate = db.OrganisatieContact & {
   adres: DBAdresWithPlaats | null;
+  foldervoorkeuren: db.Foldervoorkeur[];
 };
 
-type DBOrganisatieWithContacten = db.Organisatie & {
-  contacten: DBOrganisatieContactWithAdres[];
+type DBOrganisatieAggregate = db.Organisatie & {
+  contacten: DBOrganisatieContactAggregate[];
 };
 
 @Injectable()
@@ -86,7 +88,7 @@ export class OrganisatieMapper {
     data,
   }: {
     where: { id: number };
-    data: UpsertableOrganisatie;
+    data: Organisatie;
   }): Promise<Organisatie> {
     const { contacten, id, ...props } = data;
 
@@ -129,7 +131,10 @@ export class OrganisatieMapper {
           await this.db.organisatieContact.update({
             where: { id: updatedContact.id },
             data: { adres: { delete: true } },
-            include: includeAdres,
+            include: {
+              ...includeAdres,
+              ...includeFoldervoorkeuren,
+            },
           });
       }
     }
@@ -138,13 +143,17 @@ export class OrganisatieMapper {
   }
 }
 
-function toWhere(filter: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
+function toWhere({
+  folders,
+}: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
   return {
     contacten: {
       some: {
-        folderVoorkeur: filter.folderVoorkeur
+        foldervoorkeuren: folders
           ? {
-              hasSome: filter.folderVoorkeur,
+              some: {
+                folder: { in: folders },
+              },
             }
           : undefined,
       },
@@ -152,7 +161,7 @@ function toWhere(filter: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
   };
 }
 
-function toOrganisatie(org: DBOrganisatieWithContacten): Organisatie {
+function toOrganisatie(org: DBOrganisatieAggregate): Organisatie {
   const { contacten, ...props } = org;
   return {
     ...purgeNulls(props),
@@ -160,11 +169,19 @@ function toOrganisatie(org: DBOrganisatieWithContacten): Organisatie {
   };
 }
 
-function toContact(contact: DBOrganisatieContactWithAdres): OrganisatieContact {
-  const { organisatieId, adresId, adres, ...props } = contact;
+function toContact(contact: DBOrganisatieContactAggregate): OrganisatieContact {
+  const { organisatieId, foldervoorkeuren, adresId, adres, ...props } = contact;
   return {
     ...purgeNulls(props),
     adres: toNullableAdres(adres),
+    foldervoorkeuren: foldervoorkeuren.map(toFoldervoorkeur),
+  };
+}
+
+function toFoldervoorkeur(foldervoorkeur: db.Foldervoorkeur): Foldervoorkeur {
+  return {
+    communicatie: foldervoorkeur.communicatie,
+    folder: foldervoorkeur.folder,
   };
 }
 
@@ -172,24 +189,31 @@ const includeAdres = Object.freeze({
   adres: Object.freeze({ include: Object.freeze({ plaats: true as const }) }),
 });
 
+const includeFoldervoorkeuren = Object.freeze({
+  foldervoorkeuren: true as const,
+});
+
 function includeContacten(filter?: OrganisatieFilter): {
   contacten: Omit<db.Prisma.OrganisatieContactFindManyArgs, 'include'> & {
-    include: typeof includeAdres;
+    include: typeof includeAdres & typeof includeFoldervoorkeuren;
   };
 } {
   return {
     contacten: {
-      include: includeAdres,
+      include: {
+        ...includeAdres,
+        ...includeFoldervoorkeuren,
+      },
       orderBy: {
         terAttentieVan: 'asc',
       },
-      where: filter
+      where: filter?.folders
         ? {
-            folderVoorkeur: filter.folderVoorkeur
-              ? {
-                  hasSome: filter.folderVoorkeur,
-                }
-              : undefined,
+            foldervoorkeuren: {
+              some: {
+                folder: { in: filter.folders },
+              },
+            },
           }
         : undefined,
     },
@@ -199,22 +223,46 @@ function includeContacten(filter?: OrganisatieFilter): {
 function toCreateContactInput(
   contact: UpsertableOrganisatieContact,
 ): db.Prisma.OrganisatieContactCreateWithoutOrganisatieInput {
-  const { adres, id, ...props } = contact;
+  const { adres, id, foldervoorkeuren, ...props } = contact;
   return {
     ...props,
     adres: toNullableCreateAdresInput(adres),
-    terAttentieVan: props.terAttentieVan ?? '', // Empty string so we can use the unique key contraint
+    terAttentieVan: props.terAttentieVan ?? '', // Empty string so we can use the unique key constraint
+    foldervoorkeuren: {
+      create: foldervoorkeuren?.map(({ communicatie, folder }) => ({
+        communicatie,
+        folder,
+      })),
+    },
   };
 }
 
 function toUpdateContactInput(
-  contact: UpsertableOrganisatieContact,
+  contact: OrganisatieContact,
 ): db.Prisma.OrganisatieContactUpdateWithWhereUniqueWithoutOrganisatieInput {
   return {
     where: { id: contact.id },
     data: {
       ...toCreateContactInput(contact),
       adres: toNullableUpdateAdresInput(contact.adres),
+      foldervoorkeuren: {
+        upsert: contact.foldervoorkeuren.map(({ communicatie, folder }) => ({
+          where: {
+            folder_organisatieContactId: {
+              folder,
+              organisatieContactId: contact.id,
+            },
+          },
+          create: { folder, communicatie },
+          update: { folder, communicatie },
+        })),
+        deleteMany: {
+          organisatieContactId: contact.id,
+          folder: {
+            notIn: contact.foldervoorkeuren.map(({ folder }) => folder),
+          },
+        },
+      },
     },
   };
 }

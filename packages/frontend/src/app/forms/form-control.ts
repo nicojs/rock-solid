@@ -57,7 +57,7 @@ export type ArrayItem<T> = T extends (infer TItem)[] ? TItem : never;
 
 export function formArray<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   name: TKey,
-  controls: FormControl<ArrayItem<TEntity[TKey]>>[],
+  controls: readonly FormControl<ArrayItem<TEntity[TKey]>>[],
 ): FormArray<TEntity, TKey> {
   return {
     name,

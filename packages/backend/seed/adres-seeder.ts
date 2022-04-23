@@ -26,7 +26,7 @@ export class AdresSeeder<TRaw> {
     raw: TRaw,
     adres: string,
     postcode: string,
-  ): db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput {
+  ): db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput {
     return (
       this.fromRaw(raw, adres, postcode) ?? {
         create: {
@@ -42,7 +42,7 @@ export class AdresSeeder<TRaw> {
     raw: TRaw,
     adres: string,
     rawPostcode: string,
-  ): undefined | db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput {
+  ): undefined | db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput {
     if (!adres.length) {
       return undefined;
     }

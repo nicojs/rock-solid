@@ -96,13 +96,13 @@ export async function seedCursussen(client: db.PrismaClient) {
     const deKei = raw['De Kei'] === 'Ja';
     const digistap = raw.Digistap === 'Ja';
     const keiJongBuso = raw['Kei-Jong BUSO'] === 'Ja';
-    const KeiJongNietBuso = raw['Kei-Jong (niet BUSO)'] === 'Ja';
+    const keiJongNietBuso = raw['Kei-Jong (niet BUSO)'] === 'Ja';
 
     let count = 0;
     if (deKei) count++;
     if (digistap) count++;
     if (keiJongBuso) count++;
-    if (KeiJongNietBuso) count++;
+    if (keiJongNietBuso) count++;
 
     if (count > 1) {
       return undefined;
@@ -111,7 +111,7 @@ export async function seedCursussen(client: db.PrismaClient) {
       ? 'deKei'
       : keiJongBuso
       ? 'keiJongBuSO'
-      : KeiJongNietBuso
+      : keiJongNietBuso
       ? 'keiJongNietBuSO'
       : undefined;
   }

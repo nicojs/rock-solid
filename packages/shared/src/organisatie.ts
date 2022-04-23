@@ -7,13 +7,12 @@ export interface Organisatie {
   naam: string;
   emailadres?: string;
   website?: string;
-  soorten: OrganisatieSoort[];
+  soorten: Organisatiesoort[];
   contacten: OrganisatieContact[];
 }
 
 export interface FolderAdressering {
-  folderVoorkeur: FolderSelectie[];
-  communicatieVoorkeur?: CommunicatieVoorkeur;
+  foldervoorkeuren: Foldervoorkeur[];
   emailadres?: string;
   adres?: Adres;
 }
@@ -30,8 +29,7 @@ export const folderAdresseringColumnNames: Record<
   keyof FolderAdressering,
   string
 > = Object.freeze({
-  folderVoorkeur: 'Folder voorkeur',
-  communicatieVoorkeur: 'Communicatie voorkeur',
+  foldervoorkeuren: 'Foldervoorkeuren',
   emailadres: 'Emailadres',
   adres: 'Adres',
 });
@@ -61,9 +59,9 @@ export const organisatieContactColumnNames: Record<
   ...folderAdresseringColumnNames,
 });
 
-export type OrganisatieFilter = Partial<
-  Pick<OrganisatieContact, 'folderVoorkeur'>
->;
+export type OrganisatieFilter = {
+  folders?: Foldersoort[];
+};
 
 export type UpsertableOrganisatie = Upsertable<
   Omit<Organisatie, 'contacten'>,
@@ -84,24 +82,36 @@ export const doelgroepen: Options<Doelgroep> = Object.freeze({
   keiJong: 'Kei-Jong',
 });
 
-export type CommunicatieVoorkeur = 'post' | 'email';
+export type Communicatievoorkeur = 'post' | 'email' | 'postEnEmail';
 
-export type FolderSelectie =
+export type Foldersoort =
   | 'deKeiCursussen'
   | 'deKeiZomervakanties'
   | 'deKeiWintervakanties'
-  | 'KeiJongNietBuso'
-  | 'KeiJongBuso';
+  | 'keiJongNietBuso'
+  | 'keiJongBuso';
 
-export const folderSelecties: Options<FolderSelectie> = Object.freeze({
+export interface Foldervoorkeur {
+  communicatie: Communicatievoorkeur;
+  folder: Foldersoort;
+}
+
+export const foldersoorten: Options<Foldersoort> = Object.freeze({
   deKeiCursussen: 'De Kei',
   deKeiZomervakanties: 'Zomervakanties',
   deKeiWintervakanties: 'Wintervakanties',
-  KeiJongBuso: 'Buso',
-  KeiJongNietBuso: 'niet Buso',
+  keiJongBuso: 'Buso',
+  keiJongNietBuso: 'niet Buso',
 });
 
-export const organisatieSoorten: Options<OrganisatieSoort> = {
+export const communicatievoorkeuren: Options<Communicatievoorkeur> =
+  Object.freeze({
+    post: 'post',
+    email: 'e-mail',
+    postEnEmail: 'post en e-mail',
+  });
+
+export const organisatieSoorten: Options<Organisatiesoort> = {
   AmbulanteWoonondersteuning: 'Ambulante en/of mobiele woonondersteuning',
   ResidentieleWoonondersteuningMinderjarigen:
     'Residentiële woonondersteuning minderjarigen',
@@ -163,7 +173,7 @@ export const groupedOrganisatieSoorten = groupOptions(organisatieSoorten, {
   Andere: ['Anders'],
 });
 
-export type OrganisatieSoort =
+export type Organisatiesoort =
   | 'AmbulanteWoonondersteuning'
   | 'ResidentieleWoonondersteuningMinderjarigen'
   | 'ResidentieleWoonondersteuningMeerderjarigen'

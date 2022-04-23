@@ -2,9 +2,11 @@ import {
   Plaats,
   Adres,
   Decimal,
-  FolderSelectie,
-  folderSelecties,
+  foldersoorten,
   empty,
+  Foldervoorkeur,
+  communicatievoorkeuren,
+  Options,
 } from '@rock-solid/shared';
 import { html } from 'lit';
 import { decimalSeparator } from './string-utils';
@@ -127,14 +129,36 @@ export function showMoney(decimal?: Decimal) {
   return notAvailable;
 }
 
-export function folderVoorkeurBadges(
-  folderVoorkeur: FolderSelectie[] | undefined,
+export function foldervoorkeurBadges(
+  folderVoorkeur: Foldervoorkeur[] | undefined,
 ) {
   if (folderVoorkeur) {
     return folderVoorkeur.map(
-      (folder) =>
-        html`<span class="badge bg-success">${folderSelecties[folder]}</span>`,
+      ({ folder, communicatie }) =>
+        html`<span
+          title="${foldersoorten[folder]} per ${communicatievoorkeuren[
+            communicatie
+          ]}"
+          class="badge bg-success me-1"
+        >
+          ${foldersoorten[folder]}</span
+        >`,
     );
   }
   return empty;
+}
+
+export function foldervoorkeurenCsv(
+  foldervoorkeuren: Foldervoorkeur[],
+): string {
+  return foldervoorkeuren
+    .map(
+      ({ folder, communicatie }) =>
+        `${foldersoorten[folder]} per ${communicatievoorkeuren[communicatie]}`,
+    )
+    .join(', ');
+}
+
+export function optionsCsv<T extends string>(options: Options<T>) {
+  return (values: T[]) => values.map((value) => options[value]).join(', ');
 }

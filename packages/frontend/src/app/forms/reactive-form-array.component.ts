@@ -24,7 +24,7 @@ export class ReactiveFormArrayComponent<
 
   override connectedCallback() {
     super.connectedCallback();
-    this.items = this.entity[this.control.name] as unknown as unknown[];
+    this.items = (this.entity[this.control.name] as unknown as unknown[]) ?? [];
   }
 
   private addNew = () => {
@@ -38,7 +38,7 @@ export class ReactiveFormArrayComponent<
   public override render() {
     return html`<fieldset>
       <div class="row">
-        <div class="d-flex justify-content-end mb-3">
+        <div class="d-flex justify-content-start mb-3">
           <button
             type="button"
             @click=${this.addNew}

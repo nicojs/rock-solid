@@ -167,6 +167,23 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       }
     };
 
+    if (
+      this.entity[control.name] === undefined &&
+      !control.placeholder &&
+      !control.multiple
+    ) {
+      if (control.grouped) {
+        const firstGroup = Object.values(control.items)[0];
+        if (firstGroup) {
+          (this.entity[control.name] as unknown as string | undefined) =
+            Object.keys(firstGroup)[0];
+        }
+      } else {
+        (this.entity[control.name] as unknown as string | undefined) =
+          Object.keys(control.items)[0];
+      }
+    }
+
     return html`<select
       class="form-select"
       name="${control.name}"

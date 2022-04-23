@@ -1,5 +1,4 @@
 import {
-  folderSelecties,
   Organisatie,
   UpsertableOrganisatie,
   doelgroepen,
@@ -18,6 +17,7 @@ import {
   selectControl,
   groupedSelectControl,
   formArray,
+  foldervoorkeurControls,
 } from '../forms';
 import { printOrganisatie } from './organisatie.pipes';
 
@@ -80,10 +80,7 @@ const organisatieControls: FormControl<Organisatie>[] = [
       validators: { required: true },
       multiple: true,
     }),
-    selectControl('folderVoorkeur', folderSelecties, {
-      label: 'Folder voorkeur',
-      multiple: true,
-    }),
+    formArray('foldervoorkeuren', foldervoorkeurControls),
     {
       name: 'emailadres',
       type: InputType.email,

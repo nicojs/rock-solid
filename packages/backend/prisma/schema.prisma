@@ -27,7 +27,6 @@ model Persoon {
   rijksregisternummer String?     @db.VarChar(256)
   telefoonnummer      String?     @db.VarChar(256)
   gsmNummer           String?     @db.VarChar(256)
-  // communicatievoorkeur Communicatievoorkeur @default(post)
   opmerking           String?     @db.VarChar(1024)
   type                PersoonType @default(deelnemer)
 
@@ -43,8 +42,8 @@ model Persoon {
   inschrijvingen        Inschrijving[]
 
   // OverigePersonen
-  folderVoorkeur FolderSelectie[]
-  selectie       OverigPersoonSelectie[]
+  foldervoorkeuren Foldervoorkeur[]
+  selectie         OverigPersoonSelectie[]
 
   @@map("persoon")
 }
@@ -57,9 +56,9 @@ model Adres {
   busnummer  String? @db.VarChar(10)
   plaatsId   Int
 
-  verblijfpersoon    Persoon[]            @relation("verblijfadres")
-  domiciliepersonen  Persoon[]            @relation("domicilieadres")
-  OrganisatieContact OrganisatieContact[]
+  verblijfpersonen     Persoon[]            @relation("verblijfadres")
+  domiciliepersonen    Persoon[]            @relation("domicilieadres")
+  organisatieContacten OrganisatieContact[]
 
   @@map("adres")
 }
@@ -154,32 +153,31 @@ model Organisatie {
   id        Int                  @id @default(autoincrement())
   naam      String               @unique @db.VarChar(256)
   website   String?              @db.VarChar(256)
-  soorten   OrganisatieSoort[]
+  soorten   Organisatiesoort[]
   contacten OrganisatieContact[]
 
   @@map("organisatie")
 }
 
 model OrganisatieContact {
-  id                   Int                   @id @default(autoincrement())
-  organisatieId        Int
-  terAttentieVan       String                @db.VarChar(256)
-  afdeling             String?               @db.VarChar(256)
-  doelgroepen          Doelgroep[]
-  emailadres           String?               @db.VarChar(256)
-  telefoonnummer       String?               @db.VarChar(256)
-  adres                Adres?                @relation(fields: [adresId], references: [id])
-  adresId              Int?
-  opmerking            String?               @db.VarChar(1024)
-  folderVoorkeur       FolderSelectie[]
-  communicatieVoorkeur CommunicatieVoorkeur?
-  Organisatie          Organisatie           @relation(fields: [organisatieId], references: [id])
+  id               Int              @id @default(autoincrement())
+  organisatieId    Int
+  terAttentieVan   String           @db.VarChar(256)
+  afdeling         String?          @db.VarChar(256)
+  doelgroepen      Doelgroep[]
+  emailadres       String?          @db.VarChar(256)
+  telefoonnummer   String?          @db.VarChar(256)
+  adres            Adres?           @relation(fields: [adresId], references: [id])
+  adresId          Int?
+  opmerking        String?          @db.VarChar(1024)
+  foldervoorkeuren Foldervoorkeur[]
+  organisatie      Organisatie      @relation(fields: [organisatieId], references: [id])
 
   @@unique([organisatieId, terAttentieVan])
   @@map("organisatie_contact")
 }
 
-enum OrganisatieSoort {
+enum Organisatiesoort {
   AmbulanteWoonondersteuning
   ResidentieleWoonondersteuningMinderjarigen
   ResidentieleWoonondersteuningMeerderjarigen
@@ -208,21 +206,41 @@ enum OrganisatieSoort {
   SociaalCultureleOrganisaties
   SteunpuntenEnFederaties
   Anders
+
+  @@map("organisatiesoort")
 }
 
-enum CommunicatieVoorkeur {
+model Foldervoorkeur {
+  id                   Int                  @id @default(autoincrement())
+  communicatie         Communicatievoorkeur
+  folder               Foldersoort
+  organisatieContactId Int?
+  persoonId            Int?
+  organisatieContact   OrganisatieContact?  @relation(fields: [organisatieContactId], references: [id])
+  persoon              Persoon?             @relation(fields: [persoonId], references: [id])
+
+  @@unique([folder, persoonId])
+  @@unique([folder, organisatieContactId])
+  @@index([folder])
+  @@map("folder_voorkeur")
+}
+
+enum Communicatievoorkeur {
   post
   email
+  postEnEmail
 
   @@map("communicatie_voorkeur")
 }
 
-enum FolderSelectie {
+enum Foldersoort {
   deKeiCursussen
   deKeiZomervakanties
   deKeiWintervakanties
-  KeiJongNietBuso
-  KeiJongBuso
+  keiJongNietBuso
+  keiJongBuso
+
+  @@map("foldersoort")
 }
 
 enum ProjectType {

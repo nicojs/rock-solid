@@ -56,7 +56,7 @@ export async function seedExtraPersonen(client: db.PrismaClient) {
     const volledigeNaam = raw.titel;
     const [voornaam, ...achternaamParts] = volledigeNaam.split(' ');
     const achternaam = achternaamParts.join(' ');
-    const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput =
+    const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput =
       adresSeeder.fromRawOrOnbekend(raw, raw.adres, raw.postcode);
     return {
       achternaam,
@@ -67,7 +67,7 @@ export async function seedExtraPersonen(client: db.PrismaClient) {
       telefoonnummer: stringFromRaw(raw.telefoon),
       type: 'overigPersoon',
       selectie: selectieFromRaw(raw),
-      folderVoorkeur: folderVoorkeurFromRaw(raw),
+      foldervoorkeuren: foldervoorkeurenFromRaw(raw),
       opmerking: stringFromRaw(raw.opmerkingen),
     };
   }
@@ -91,16 +91,18 @@ function selectieFromRaw(raw: RawExtraPersoon): db.OverigPersoonSelectie[] {
   return totalSelectie;
 }
 
-function folderVoorkeurFromRaw(raw: RawExtraPersoon): db.FolderSelectie[] {
-  const totalSelectie: db.FolderSelectie[] = [];
-  function addIfJa(val: JaNee, selectie: db.FolderSelectie) {
+function foldervoorkeurenFromRaw(
+  raw: RawExtraPersoon,
+): db.Prisma.FoldervoorkeurCreateNestedManyWithoutPersoonInput {
+  const voorkeuren: db.Prisma.FoldervoorkeurCreateManyPersoonInput[] = [];
+  function addIfJa(val: JaNee, folder: db.Foldersoort) {
     if (val === 'ja') {
-      totalSelectie.push(selectie);
+      voorkeuren.push({ communicatie: 'post', folder });
     }
   }
-  addIfJa(raw['folders Kei-Jong (niet Buso)'], 'KeiJongNietBuso');
-  addIfJa(raw['folders Kei-Jong Buso'], 'KeiJongBuso');
+  addIfJa(raw['folders Kei-Jong (niet Buso)'], 'keiJongNietBuso');
+  addIfJa(raw['folders Kei-Jong Buso'], 'keiJongBuso');
   addIfJa(raw['folders cursussen De Kei'], 'deKeiCursussen');
   addIfJa(raw['folders zomervakanties De Kei'], 'deKeiZomervakanties');
-  return totalSelectie;
+  return { createMany: { data: voorkeuren } };
 }

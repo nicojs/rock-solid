@@ -2,13 +2,21 @@ import {
   OrganisatieFilter,
   Organisatie,
   organisatieColumnNames,
-  folderSelecties,
+  foldersoorten,
+  OrganisatieContact,
+  organisatieContactColumnNames,
+  organisatieSoorten,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, selectControl } from '../forms';
-import { showAdres, toCsvDownloadUrl } from '../shared';
+import {
+  foldervoorkeurenCsv,
+  optionsCsv,
+  showAdres,
+  toCsvDownloadUrl,
+} from '../shared';
 import { organisatieService } from './organisatie.service';
 
 @customElement('rock-advanced-search-organisaties')
@@ -26,17 +34,24 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
   get csvDataUrl(): string | undefined {
     if (this.organisaties) {
       return toCsvDownloadUrl(
-        this.organisaties,
+        this.organisaties.flatMap((org) =>
+          org.contacten.map((contact) => ({ ...org, ...contact })),
+        ),
         [
           'naam',
-          // 'doelgroep',
-          'emailadres',
-          // 'telefoonnummer',
           'website',
+          'terAttentieVan',
+          'foldervoorkeuren',
+          'adres',
+          'emailadres',
+          'telefoonnummer',
+          'soorten',
         ],
-        organisatieColumnNames,
+        { ...organisatieColumnNames, ...organisatieContactColumnNames },
         {
-          // adres: showAdres,
+          foldervoorkeuren: foldervoorkeurenCsv,
+          soorten: optionsCsv(organisatieSoorten),
+          adres: showAdres,
         },
       );
     }
@@ -75,8 +90,8 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
   }
 }
 const searchControls: InputControl<OrganisatieFilter>[] = [
-  selectControl('folderVoorkeur', folderSelecties, {
-    label: 'Folder voorkeur',
+  selectControl('folders', foldersoorten, {
+    label: 'Folders',
     multiple: true,
   }),
 ];

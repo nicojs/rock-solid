@@ -8,7 +8,6 @@ import {
   BasePersoon,
   OverigPersoon,
   overigPersoonSelecties,
-  folderSelecties,
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -18,6 +17,8 @@ import {
   formGroup,
   adresControls,
   selectControl,
+  formArray,
+  foldervoorkeurControls,
 } from '../forms';
 
 @customElement('rock-persoon-edit')
@@ -132,10 +133,7 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
     label: 'Vrijwilliger opmerking',
     type: InputType.text,
   },
-  selectControl('folderVoorkeur', folderSelecties, {
-    multiple: true,
-    label: 'Folder voorkeur',
-  }),
+  formArray('foldervoorkeuren', foldervoorkeurControls),
   selectControl('selectie', overigPersoonSelecties, { multiple: true }),
 ];
 

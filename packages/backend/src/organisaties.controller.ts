@@ -63,7 +63,7 @@ export class OrganisatiesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param('id') id: string,
-    @Body() org: UpsertableOrganisatie,
+    @Body() org: Organisatie,
   ): Promise<void> {
     await this.organisatieMapper.update({
       where: { id: +id },

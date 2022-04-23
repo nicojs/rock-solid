@@ -2,7 +2,11 @@ import { Deelname, Deelnemer, UpsertableDeelname } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import * as db from '@prisma/client';
 import { DBService } from './db.service.js';
-import { toPersoon, includePersoonAdres } from './persoon.mapper.js';
+import {
+  toPersoon,
+  includePersoonAggregate,
+  DBPersonAggregate,
+} from './persoon.mapper.js';
 
 /**
  * A data mapper for deelname
@@ -30,7 +34,7 @@ export class DeelnameMapper {
       },
       include: {
         inschrijving: {
-          include: { deelnemer: { include: includePersoonAdres } },
+          include: { deelnemer: { include: includePersoonAggregate } },
         },
       },
       orderBy: { inschrijving: { deelnemer: { volledigeNaam: 'asc' } } },
@@ -65,16 +69,7 @@ export class DeelnameMapper {
 
 interface DeelnameQueryResult extends db.Deelname {
   inschrijving: db.Inschrijving & {
-    deelnemer: db.Persoon & {
-      verblijfadres: db.Adres & {
-        plaats: db.Plaats;
-      };
-      domicilieadres:
-        | (db.Adres & {
-            plaats: db.Plaats;
-          })
-        | null;
-    };
+    deelnemer: DBPersonAggregate;
   };
 }
 

@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as db from '@prisma/client';
-import { Organisatie } from '@prisma/client';
 import { AdresSeeder } from './adres-seeder.js';
-import { ImportErrors, notEmpty } from './import-errors.js';
+import { ImportErrors } from './import-errors.js';
 import {
   groupBy,
   pickNotEmpty,
@@ -122,10 +122,9 @@ export async function seedOrganisaties(client: db.PrismaClient) {
             adres,
             doelgroepen: ['deKei', 'keiJong'],
             telefoonnummer: stringFromRaw(raw.telefoon),
-            communicatieVoorkeur: raw['mailing op e-mail'] ? 'email' : 'post',
             emailadres: stringFromRaw(raw['e-mail']),
             opmerking: stringFromRaw(raw.opmerkingen),
-            folderVoorkeur: folderVoorkeurFromRaw(raw),
+            foldervoorkeuren: foldervoorkeurenFromRaw(raw),
           },
         ],
       },
@@ -143,21 +142,27 @@ export async function seedOrganisaties(client: db.PrismaClient) {
     return undefined;
   }
 
-  function folderVoorkeurFromRaw(raw: RawOrganisatie): db.FolderSelectie[] {
-    const result: db.FolderSelectie[] = [];
-    addIfJa('folders Kei-Jong (niet Buso)', 'KeiJongNietBuso');
-    addIfJa('folders Kei-Jong Buso', 'KeiJongBuso');
+  function foldervoorkeurenFromRaw(
+    raw: RawOrganisatie,
+  ): db.Prisma.FoldervoorkeurCreateNestedManyWithoutOrganisatieContactInput {
+    const voorkeuren: db.Prisma.FoldervoorkeurCreateManyOrganisatieContactInput[] =
+      [];
+    addIfJa('folders Kei-Jong (niet Buso)', 'keiJongNietBuso');
+    addIfJa('folders Kei-Jong Buso', 'keiJongBuso');
     addIfJa('folders cursussen De Kei', 'deKeiCursussen');
     addIfJa('folders wintervakanties De Kei', 'deKeiWintervakanties');
     addIfJa('folders zomervakanties De Kei', 'deKeiZomervakanties');
-    return result;
+    return { createMany: { data: voorkeuren } };
 
     function addIfJa<Key extends keyof RawOrganisatie & `folders ${string}`>(
       prop: Key,
-      selectie: db.FolderSelectie,
+      folder: db.Foldersoort,
     ) {
       if (raw[prop] === 'ja') {
-        result.push(selectie);
+        voorkeuren.push({
+          communicatie: raw['mailing op e-mail'] ? 'email' : 'post',
+          folder,
+        });
       }
     }
   }

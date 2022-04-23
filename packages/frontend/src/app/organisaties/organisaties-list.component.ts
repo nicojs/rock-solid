@@ -2,7 +2,11 @@ import { Organisatie, OrganisatieContact } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { show, showAdres, folderVoorkeurBadges } from '../shared';
+import {
+  show,
+  showAdres,
+  foldervoorkeurBadges as foldervoorkeurBadges,
+} from '../shared';
 
 @customElement('rock-organisaties-list')
 export class OrganisatiesListComponent extends LitElement {
@@ -60,7 +64,7 @@ export class OrganisatiesListComponent extends LitElement {
         <td>${show(contact.telefoonnummer)}</td>
         <td>${show(contact.emailadres)}</td>
         <td>${showAdres(contact.adres)}</td>
-        <td>${folderVoorkeurBadges(contact.folderVoorkeur)}</td>`;
+        <td>${foldervoorkeurBadges(contact.foldervoorkeuren)}</td>`;
     }
   }
 }

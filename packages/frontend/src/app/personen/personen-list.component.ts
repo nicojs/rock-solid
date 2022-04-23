@@ -6,7 +6,7 @@ import {
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { pluralize, show, showAdres } from '../shared';
+import { foldervoorkeurBadges, pluralize, show, showAdres } from '../shared';
 import { fullName } from './full-name.pipe';
 
 @customElement('rock-personen-list')
@@ -39,7 +39,9 @@ export class PersonenComponent extends LitElement {
           <th>Geslacht</th>
           <th>Telefoonnummer</th>
           <th>Gsm</th>
-          <th>Verblijfadres</th>
+          ${this.type === 'deelnemer'
+            ? html`<th>Verblijfadres</th>`
+            : html`<th>Folders</th>`}
           <th>Acties</th>
         </tr>
       </thead>
@@ -58,7 +60,11 @@ export class PersonenComponent extends LitElement {
             <td>${show(persoon.geslacht)}</td>
             <td>${show(persoon.telefoonnummer)}</td>
             <td>${show(persoon.gsmNummer)}</td>
-            <td>${showAdres(persoon.verblijfadres)}</td>
+            <td>
+              ${persoon.type === 'deelnemer'
+                ? showAdres(persoon.verblijfadres)
+                : foldervoorkeurBadges(persoon.foldervoorkeuren)}
+            </td>
             <td>
               <rock-link btn btnSecondary href="../edit/${persoon.id}"
                 ><rock-icon icon="pencil"></rock-icon

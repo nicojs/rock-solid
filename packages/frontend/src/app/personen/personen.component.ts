@@ -2,6 +2,7 @@ import { html, PropertyValues } from 'lit';
 import {
   BasePersoon,
   DeepPartial,
+  OverigPersoon,
   Persoon,
   PersoonType,
   persoonTypes,
@@ -155,6 +156,9 @@ export class PersonenComponent extends RockElement {
           type: this.type,
           verblijfadres: {},
         };
+        if (persoon.type === 'overigPersoon') {
+          persoon.foldervoorkeuren = [];
+        }
         return html` <h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading
             ? html`<rock-loading></rock-loading>`
