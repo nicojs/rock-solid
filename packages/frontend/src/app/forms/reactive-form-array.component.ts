@@ -7,37 +7,36 @@ import { FormElement } from './form-element';
 @customElement('rock-reactive-form-array')
 export class ReactiveFormArrayComponent<
   TEntity,
-  TItem,
-  TKey extends KeysOfType<TEntity, Array<TItem>>,
+  TKey extends KeysOfType<TEntity, any[]>,
 > extends FormElement<TEntity> {
   @property({ attribute: false })
-  public override control!: FormArray<TEntity, TItem, TKey>;
+  public override control!: FormArray<TEntity, TKey>;
 
-  public get items(): TItem[] {
-    return this.entity[this.control.name] as unknown as TItem[];
+  public get items(): any[] {
+    return this.entity[this.control.name] as unknown as unknown[];
   }
 
   @property({ attribute: false, type: Array })
-  public set items(val: TItem[]) {
-    (this.entity[this.control.name] as unknown as TItem[]) = val;
+  public set items(val: any[]) {
+    (this.entity[this.control.name] as unknown as unknown[]) = val;
     this.requestUpdate('items');
   }
 
   override connectedCallback() {
     super.connectedCallback();
-    this.items = this.entity[this.control.name] as unknown as TItem[];
+    this.items = this.entity[this.control.name] as unknown as unknown[];
   }
 
   private addNew = () => {
-    this.items = [...this.items, {} as unknown as TItem];
+    this.items = [...this.items, {} as unknown];
   };
 
-  private removeItem(val: TItem) {
+  private removeItem(val: unknown) {
     this.items = this.items.filter((item) => item !== val);
   }
 
   public override render() {
-    return html` <fieldset>
+    return html`<fieldset>
       <div class="row">
         <div class="d-flex justify-content-end mb-3">
           <button

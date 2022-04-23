@@ -6,6 +6,7 @@ import {
   groupBy,
   pickNotEmpty,
   readImportJson,
+  stringFromRaw,
   writeOutputJson,
 } from './seed-utils.js';
 
@@ -111,7 +112,6 @@ export async function seedOrganisaties(client: db.PrismaClient) {
   function fromRaw(raw: RawOrganisatie): CreateOrgInput {
     const adres = adresSeeder.fromRaw(raw, raw.adres, raw.postcode);
     return {
-      doelgroep: 'deKei',
       naam: raw.Naam,
       website: fromRawWebsite(raw.website),
       soorten: [],
@@ -120,10 +120,11 @@ export async function seedOrganisaties(client: db.PrismaClient) {
           {
             terAttentieVan: raw.TAV,
             adres,
-            telefoonnummer: raw.telefoon,
+            doelgroepen: ['deKei', 'keiJong'],
+            telefoonnummer: stringFromRaw(raw.telefoon),
             communicatieVoorkeur: raw['mailing op e-mail'] ? 'email' : 'post',
-            emailadres: raw['e-mail'],
-            opmerking: raw.opmerkingen,
+            emailadres: stringFromRaw(raw['e-mail']),
+            opmerking: stringFromRaw(raw.opmerkingen),
             folderVoorkeur: folderVoorkeurFromRaw(raw),
           },
         ],

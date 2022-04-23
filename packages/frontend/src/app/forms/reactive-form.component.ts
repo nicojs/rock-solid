@@ -32,7 +32,7 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
         ></rock-reactive-form-control>`;
       })}
       <div class="row">
-        <div class=" offset-lg-2 offset-md-4">
+        <div class="col offset-lg-2 offset-md-4">
           <button class="btn btn-primary" type="submit">
             ${this.submitLabel}
           </button>

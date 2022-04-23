@@ -95,19 +95,15 @@ export class OrganisatiesComponent extends RockElement {
                   zoeken</rock-link
                 >
                 <rock-organisaties-list
+                  class="row"
                   .organisaties=${this.organisaties}
                 ></rock-organisaties-list>
-                <rock-paging
-                  @navigate-page=${(event: CustomEvent<number>) =>
-                    organisatieStore.setCurrentPage(event.detail)}
-                  .store=${organisatieStore}
-                ></rock-paging>
+                <rock-paging .store=${organisatieStore}></rock-paging>
               `
             : html`<rock-loading></rock-loading>`}
         `;
       case 'new':
         const organisatie: DeepPartial<Organisatie> = {
-          adres: {},
           contacten: [],
         };
         return this.loading

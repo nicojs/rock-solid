@@ -6,9 +6,6 @@ export interface Organisatie {
   id: number;
   naam: string;
   emailadres?: string;
-  adres?: Adres;
-  opmerking?: string;
-  doelgroep: Doelgroep;
   website?: string;
   soorten: OrganisatieSoort[];
   contacten: OrganisatieContact[];
@@ -23,6 +20,8 @@ export interface FolderAdressering {
 
 export interface OrganisatieContact extends FolderAdressering {
   id: number;
+  doelgroepen: Doelgroep[];
+  afdeling?: string;
   terAttentieVan?: string;
   telefoonnummer?: string;
 }
@@ -56,6 +55,8 @@ export const organisatieContactColumnNames: Record<
 > = Object.freeze({
   id: 'id',
   terAttentieVan: 'TAV',
+  afdeling: 'Afdeling',
+  doelgroepen: 'Doelgroepen',
   telefoonnummer: 'Telefoonnummer',
   ...folderAdresseringColumnNames,
 });
@@ -66,12 +67,12 @@ export type OrganisatieFilter = Partial<
 
 export type UpsertableOrganisatie = Upsertable<
   Omit<Organisatie, 'contacten'>,
-  'naam' | 'doelgroep'
+  'naam'
 > & { contacten: UpsertableOrganisatieContact[] };
 
 export type UpsertableOrganisatieContact = Upsertable<
   Omit<OrganisatieContact, 'adres'>,
-  never
+  'doelgroepen'
 > & {
   adres?: UpsertableAdres;
 };

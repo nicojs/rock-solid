@@ -57,8 +57,14 @@ const organisatieControls: FormControl<Organisatie>[] = [
     type: InputType.text,
     validators: { required: true },
   },
-  selectControl('doelgroep', doelgroepen, {
-    validators: { required: true },
+  {
+    name: 'website',
+    type: InputType.url,
+    placeholder: 'https://dekei.be',
+  },
+  groupedSelectControl('soorten', groupedOrganisatieSoorten, {
+    label: organisatieColumnNames.soorten,
+    multiple: true,
   }),
   formArray('contacten', [
     {
@@ -66,6 +72,14 @@ const organisatieControls: FormControl<Organisatie>[] = [
       type: InputType.text,
       label: 'Ter attentie van',
     },
+    {
+      name: 'afdeling',
+      type: InputType.text,
+    },
+    selectControl('doelgroepen', doelgroepen, {
+      validators: { required: true },
+      multiple: true,
+    }),
     selectControl('folderVoorkeur', folderSelecties, {
       label: 'Folder voorkeur',
       multiple: true,
@@ -85,18 +99,4 @@ const organisatieControls: FormControl<Organisatie>[] = [
       requiredLabel: 'Met adres',
     }),
   ]),
-  formGroup('adres', adresControls, {
-    required: false,
-    requiredLabel: 'Met adres',
-  }),
-  {
-    name: 'website',
-    type: InputType.url,
-    placeholder: 'https://dekei.be',
-  },
-
-  groupedSelectControl('soorten', groupedOrganisatieSoorten, {
-    label: organisatieColumnNames.soorten,
-    multiple: true,
-  }),
 ];

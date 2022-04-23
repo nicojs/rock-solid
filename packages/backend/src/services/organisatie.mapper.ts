@@ -12,7 +12,12 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import { purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
-import { DBAdresWithPlaats, toNullableAdres } from './adres.mapper.js';
+import {
+  DBAdresWithPlaats,
+  toNullableAdres,
+  toNullableCreateAdresInput,
+  toNullableUpdateAdresInput,
+} from './adres.mapper.js';
 
 type DBOrganisatieContactWithAdres = db.OrganisatieContact & {
   adres: DBAdresWithPlaats | null;
@@ -63,7 +68,7 @@ export class OrganisatieMapper {
   public async create(
     organisatie: UpsertableOrganisatie,
   ): Promise<Organisatie> {
-    const { adres, contacten, id, ...organisatieData } = organisatie;
+    const { contacten, id, ...organisatieData } = organisatie;
     const dbOrganisatie = await this.db.organisatie.create({
       data: {
         ...organisatieData,
@@ -85,32 +90,33 @@ export class OrganisatieMapper {
   }): Promise<Organisatie> {
     const { contacten, id, ...props } = data;
 
-    // Delete contacts that need to be deleted
-    await this.db.organisatieContact.deleteMany({
-      where: {
-        organisatieId: where.id,
-        id: {
-          notIn: contacten.map(({ id }) => id).filter(notEmpty),
+    const [result] = await this.db.$transaction([
+      this.db.organisatie.update({
+        where,
+        data: {
+          ...props,
+          // Update and create contacts that need to be updated or deleted
+          contacten: {
+            create: data.contacten
+              .filter((contact) => empty(contact.id))
+              .map(toCreateContactInput),
+            update: data.contacten
+              .filter((contact) => notEmpty(contact.id))
+              .map(toUpdateContactInput),
+          },
         },
-      },
-    });
-
-    const result = await this.db.organisatie.update({
-      where,
-      data: {
-        ...props,
-        // Update and create contacts that need to be updated or deleted
-        contacten: {
-          create: data.contacten
-            .filter((contact) => empty(contact.id))
-            .map(toCreateContactInput),
-          updateMany: data.contacten
-            .filter((contact) => notEmpty(contact.id))
-            .map(toUpdateManyContactInput),
+        include: includeContacten(),
+      }),
+      // Delete the once that need to be deleted
+      this.db.organisatieContact.deleteMany({
+        where: {
+          organisatieId: where.id,
+          id: {
+            notIn: contacten.map(({ id }) => id).filter(notEmpty),
+          },
         },
-      },
-      include: includeContacten(),
-    });
+      }),
+    ]);
 
     // Delete addresses that needs to be deleted
     for (const contact of contacten) {
@@ -196,15 +202,19 @@ function toCreateContactInput(
   const { adres, id, ...props } = contact;
   return {
     ...props,
+    adres: toNullableCreateAdresInput(adres),
     terAttentieVan: props.terAttentieVan ?? '', // Empty string so we can use the unique key contraint
   };
 }
 
-function toUpdateManyContactInput(
+function toUpdateContactInput(
   contact: UpsertableOrganisatieContact,
-): db.Prisma.OrganisatieContactUpdateManyWithWhereWithoutOrganisatieInput {
+): db.Prisma.OrganisatieContactUpdateWithWhereUniqueWithoutOrganisatieInput {
   return {
     where: { id: contact.id },
-    data: toCreateContactInput(contact),
+    data: {
+      ...toCreateContactInput(contact),
+      adres: toNullableUpdateAdresInput(contact.adres),
+    },
   };
 }

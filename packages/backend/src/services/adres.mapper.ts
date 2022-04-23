@@ -34,6 +34,15 @@ export function toCreateAdresInput(
   };
 }
 
+export function toNullableCreateAdresInput(
+  adres?: UpsertableAdres,
+): db.Prisma.AdresCreateNestedOneWithoutVerblijfpersoonInput | undefined {
+  if (adres) {
+    return toCreateAdresInput(adres);
+  }
+  return;
+}
+
 export function toUpdateAdresInput(
   adres: UpsertableAdres,
 ): db.Prisma.AdresUpdateOneRequiredWithoutVerblijfpersoonInput {

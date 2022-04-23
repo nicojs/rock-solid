@@ -1,8 +1,4 @@
-import {
-  folderSelecties,
-  Organisatie,
-  OrganisatieContact,
-} from '@rock-solid/shared';
+import { Organisatie, OrganisatieContact } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -16,13 +12,11 @@ export class OrganisatiesListComponent extends LitElement {
   private organisaties: Organisatie[] | undefined;
 
   override render() {
-    return html` <div class="row">
-      ${this.organisaties
-        ? html`${this.organisaties.length
-            ? this.renderTable()
-            : html`<div>Geen organisaties gevonden 🤷‍♂️</div>`}`
-        : html`<rock-loading></rock-loading>`}
-    </div>`;
+    return html` ${this.organisaties
+      ? html`${this.organisaties.length
+          ? this.renderTable()
+          : html`<div>Geen organisaties gevonden 🤷‍♂️</div>`}`
+      : html`<rock-loading></rock-loading>`}`;
   }
 
   private renderTable(): unknown {

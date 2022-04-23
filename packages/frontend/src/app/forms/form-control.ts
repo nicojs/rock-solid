@@ -30,12 +30,12 @@ interface Validators {
 
 export const patterns = Object.freeze({
   email: '.+@.+\\..+',
-  tel: '^(\\d|\\s|\\.|\\(|\\))+$',
+  tel: '^(\\d|\\s|\\.|\\(|\\)|/)+$',
 });
 
 export type FormControl<TEntity> =
   | InputControl<TEntity>
-  | FormArray<TEntity, any, any>
+  | FormArray<TEntity, any>
   | FormGroup<TEntity, any>
   | PlaatsControl<TEntity>;
 
@@ -53,11 +53,12 @@ export function formGroup<TEntity, TKey extends keyof TEntity & string>(
   };
 }
 
-export function formArray<
-  TEntity,
-  TItem,
-  TKey extends KeysOfType<TEntity, Array<TItem>>,
->(name: TKey, controls: FormControl<TItem>[]): FormArray<TEntity, TItem, TKey> {
+export type ArrayItem<T> = T extends (infer TItem)[] ? TItem : never;
+
+export function formArray<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
+  name: TKey,
+  controls: FormControl<ArrayItem<TEntity[TKey]>>[],
+): FormArray<TEntity, TKey> {
   return {
     name,
     type: InputType.array,
@@ -65,14 +66,10 @@ export function formArray<
   };
 }
 
-export interface FormArray<
-  TEntity,
-  TItem,
-  TKey extends KeysOfType<TEntity, TItem[]>,
-> {
+export interface FormArray<TEntity, TKey extends KeysOfType<TEntity, any[]>> {
   type: InputType.array;
   name: TKey;
-  controls: readonly FormControl<TItem>[];
+  controls: readonly FormControl<ArrayItem<TEntity[TKey]>>[];
 }
 
 export interface FormGroup<TEntity, TKey extends keyof TEntity> {

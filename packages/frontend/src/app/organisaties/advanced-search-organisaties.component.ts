@@ -29,15 +29,14 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
         this.organisaties,
         [
           'naam',
-          'adres',
-          'doelgroep',
+          // 'doelgroep',
           'emailadres',
           // 'telefoonnummer',
           'website',
         ],
         organisatieColumnNames,
         {
-          adres: showAdres,
+          // adres: showAdres,
         },
       );
     }
