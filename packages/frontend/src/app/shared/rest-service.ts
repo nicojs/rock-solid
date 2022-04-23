@@ -27,7 +27,10 @@ export class RestService<TRoute extends keyof RestRoutes> {
     return this.restClient.getOne(this.route, id);
   }
 
-  update(id: string | number, data: UpsertableFrom<TRoute>): Promise<void> {
+  update(
+    id: string | number,
+    data: UpsertableFrom<TRoute>,
+  ): Promise<EntityFrom<TRoute>> {
     return this.restClient.update(this.route, id, data);
   }
 

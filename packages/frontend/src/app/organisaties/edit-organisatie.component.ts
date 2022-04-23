@@ -66,34 +66,38 @@ const organisatieControls: FormControl<Organisatie>[] = [
     label: organisatieColumnNames.soorten,
     multiple: true,
   }),
-  formArray('contacten', [
-    {
-      name: 'terAttentieVan',
-      type: InputType.text,
-      label: 'Ter attentie van',
-    },
-    {
-      name: 'afdeling',
-      type: InputType.text,
-    },
-    selectControl('doelgroepen', doelgroepen, {
-      validators: { required: true },
-      multiple: true,
-    }),
-    formArray('foldervoorkeuren', foldervoorkeurControls),
-    {
-      name: 'emailadres',
-      type: InputType.email,
-      validators: { pattern: patterns.email },
-    },
-    {
-      name: 'telefoonnummer',
-      type: InputType.tel,
-      validators: { pattern: patterns.tel },
-    },
-    formGroup('adres', adresControls, {
-      required: false,
-      requiredLabel: 'Met adres',
-    }),
-  ]),
+  formArray(
+    'contacten',
+    [
+      {
+        name: 'terAttentieVan',
+        type: InputType.text,
+        label: 'Ter attentie van',
+      },
+      {
+        name: 'afdeling',
+        type: InputType.text,
+      },
+      selectControl('doelgroepen', doelgroepen, {
+        validators: { required: true },
+        multiple: true,
+      }),
+      formArray('foldervoorkeuren', foldervoorkeurControls),
+      {
+        name: 'emailadres',
+        type: InputType.email,
+        validators: { pattern: patterns.email },
+      },
+      {
+        name: 'telefoonnummer',
+        type: InputType.tel,
+        validators: { pattern: patterns.tel },
+      },
+      formGroup('adres', adresControls, {
+        required: false,
+        requiredLabel: 'Met adres',
+      }),
+    ],
+    () => ({ terAttentieVan: '' }),
+  ),
 ];

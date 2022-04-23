@@ -15,7 +15,7 @@ import Prisma from '@prisma/client';
 import { purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 
-const includeQuery = {
+const includeAggregate = {
   activiteiten: {
     orderBy: [
       {
@@ -50,7 +50,7 @@ export class ProjectMapper {
     pageNumber: number | undefined,
   ): Promise<Project[]> {
     const dbProjecten = await this.db.project.findMany({
-      include: includeQuery,
+      include: includeAggregate,
       where: where(filter),
       ...toPage(pageNumber),
     });
@@ -91,7 +91,7 @@ export class ProjectMapper {
   async getOne(where: Partial<Project>): Promise<Project | null> {
     const dbProject = await this.db.project.findUnique({
       where,
-      include: includeQuery,
+      include: includeAggregate,
     });
     if (dbProject) {
       const project = toProject(dbProject);
@@ -109,60 +109,61 @@ export class ProjectMapper {
           create: newProject.activiteiten,
         },
       },
-      include: includeQuery,
+      include: includeAggregate,
     });
     return toProject(project);
   }
 
-  async updateProject(id: number, project: UpsertableProject): Promise<void> {
+  async updateProject(
+    id: number,
+    project: UpsertableProject,
+  ): Promise<Project> {
     const { aantalInschrijvingen, ...data } = project;
-    await this.db.$transaction([
-      this.db.activiteit.deleteMany({
-        where: {
-          projectId: id,
-          id: {
-            notIn: project.activiteiten.map(({ id }) => id).filter(notEmpty),
+    const result = await this.db.project.update({
+      where: { id },
+      data: {
+        ...data,
+        activiteiten: {
+          deleteMany: {
+            projectId: id,
+            id: {
+              notIn: project.activiteiten.map(({ id }) => id).filter(notEmpty),
+            },
           },
+          create: project.activiteiten.filter((act) => empty(act.id)),
+          updateMany: project.activiteiten
+            .filter((act) => notEmpty(act.id))
+            .map((act) => {
+              const { aantalDeelnemersuren, aantalDeelnames, ...data } = act;
+              return {
+                where: {
+                  id: act.id!,
+                },
+                data,
+              };
+            }),
         },
-      }),
-      this.db.project.update({
-        where: { id },
-        data: {
-          ...data,
-          activiteiten: {
-            create: project.activiteiten.filter((act) => empty(act.id)),
-            updateMany: project.activiteiten
-              .filter((act) => notEmpty(act.id))
-              .map((act) => {
-                const { aantalDeelnemersuren, aantalDeelnames, ...data } = act;
-                return {
-                  where: {
-                    id: act.id!,
-                  },
-                  data,
-                };
-              }),
-          },
-        },
-      }),
-    ]);
+      },
+      include: includeAggregate,
+    });
+    return toProject(result);
   }
 }
 
-type ActiviteitQueryResult = db.Activiteit & {
+type DBActiviteitAggregate = db.Activiteit & {
   _count?: {
     deelnames?: number;
   } | null;
 };
 
-interface ProjectQueryResult extends db.Project {
-  activiteiten: ActiviteitQueryResult[];
+interface DBProjectAggregate extends db.Project {
+  activiteiten: DBActiviteitAggregate[];
   _count: {
     inschrijvingen: number;
   } | null;
 }
 
-function toProject(val: ProjectQueryResult): Project {
+function toProject(val: DBProjectAggregate): Project {
   const { type, _count, ...projectProperties } = val;
   const project = purgeNulls({
     type,
@@ -192,7 +193,7 @@ function toProject(val: ProjectQueryResult): Project {
   }
 }
 
-function toCursusActiviteit(val: ActiviteitQueryResult): CursusActiviteit {
+function toCursusActiviteit(val: DBActiviteitAggregate): CursusActiviteit {
   const { projectId, verblijf, vervoer, _count, ...act } = purgeNulls(val);
   return {
     ...act,
@@ -200,7 +201,7 @@ function toCursusActiviteit(val: ActiviteitQueryResult): CursusActiviteit {
   };
 }
 
-function toVakantieActiviteit(val: ActiviteitQueryResult): VakantieActiviteit {
+function toVakantieActiviteit(val: DBActiviteitAggregate): VakantieActiviteit {
   const { projectId, vormingsuren, _count, ...act } = purgeNulls(val);
   return {
     ...act,

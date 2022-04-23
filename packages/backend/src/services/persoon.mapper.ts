@@ -211,6 +211,12 @@ function toFoldervoorkeurInput(
 ): db.Prisma.FoldervoorkeurUpdateManyWithoutPersoonInput | undefined {
   if (persoon.type === 'overigPersoon') {
     return {
+      deleteMany: {
+        persoonId: persoon.id,
+        folder: {
+          notIn: persoon.foldervoorkeuren.map(({ folder }) => folder),
+        },
+      },
       upsert: persoon.foldervoorkeuren.map(({ communicatie, folder }) => ({
         where: {
           folder_persoonId: {
@@ -221,12 +227,6 @@ function toFoldervoorkeurInput(
         create: { folder, communicatie },
         update: { folder, communicatie },
       })),
-      deleteMany: {
-        persoonId: persoon.id,
-        folder: {
-          notIn: persoon.foldervoorkeuren.map(({ folder }) => folder),
-        },
-      },
     };
   }
   return;

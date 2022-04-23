@@ -14,7 +14,7 @@ export class ProjectenStore extends PagedStore<'projecten', ProjectService> {
     ).pipe(tap(() => this.loadPage()));
   }
 
-  override update(id: string | number, data: Project): Observable<void> {
+  override update(id: string | number, data: Project): Observable<Project> {
     return super.update(id, data).pipe(
       tap(() => {
         // Side effect: Deelnemersuren may have been updated!

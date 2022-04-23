@@ -28,7 +28,7 @@ export class ReactiveFormArrayComponent<
   }
 
   private addNew = () => {
-    this.items = [...this.items, {} as unknown];
+    this.items = [...this.items, this.control.factory()];
   };
 
   private removeItem(val: unknown) {

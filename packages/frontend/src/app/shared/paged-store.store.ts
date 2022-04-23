@@ -42,16 +42,19 @@ export class PagedStore<
     return from(this.service.create(data)).pipe(tap(() => this.loadPage()));
   }
 
-  update(id: string | number, data: EntityFrom<TRoute>): Observable<void> {
+  update(
+    id: string | number,
+    data: EntityFrom<TRoute>,
+  ): Observable<EntityFrom<TRoute>> {
     return from(this.service.update(id, data)).pipe(
-      tap(() => {
+      tap((entity) => {
         const currentPage = this.currentPageItemsSubject.value;
         const indexOfItemToUpdate =
           currentPage?.findIndex((item) => item.id === id) ?? -1;
         if (currentPage && indexOfItemToUpdate !== -1) {
           const newPage: EntityFrom<TRoute>[] = [
             ...currentPage.slice(0, indexOfItemToUpdate),
-            data,
+            entity,
             ...currentPage.slice(indexOfItemToUpdate + 1),
           ];
           this.currentPageItemsSubject.next(newPage);

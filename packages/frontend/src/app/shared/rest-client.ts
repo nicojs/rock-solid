@@ -61,7 +61,7 @@ export class RestClient {
         'Content-Type': 'application/json',
       },
     });
-    if (response.status !== HttpStatus.NO_CONTENT) {
+    if (!response.ok) {
       throw new Error(`Update failed (HTTP status code ${response.status})`);
     }
   }
@@ -70,7 +70,7 @@ export class RestClient {
     route: TRoute,
     id: string | number,
     entity: RestRoutes[TRoute]['upsertableEntity'],
-  ): Promise<void> {
+  ): Promise<RestRoutes[TRoute]['entity']> {
     const response = await this.http.fetch(`/api/${route}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(entity),
@@ -78,9 +78,11 @@ export class RestClient {
         'Content-Type': 'application/json',
       },
     });
-    if (response.status !== HttpStatus.NO_CONTENT) {
+    if (!response.ok) {
       throw new Error(`Update failed (HTTP status code ${response.status})`);
     }
+    const bodyText = await response.text();
+    return parse(bodyText);
   }
 
   async create<TRoute extends keyof RestRoutes>(

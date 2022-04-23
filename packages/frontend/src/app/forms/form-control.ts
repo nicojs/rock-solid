@@ -1,4 +1,10 @@
-import { Decimal, GroupedOptions, Options, Plaats } from '@rock-solid/shared';
+import {
+  Decimal,
+  DeepPartial,
+  GroupedOptions,
+  Options,
+  Plaats,
+} from '@rock-solid/shared';
 
 export enum InputType {
   // Native input types:
@@ -58,10 +64,12 @@ export type ArrayItem<T> = T extends (infer TItem)[] ? TItem : never;
 export function formArray<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   name: TKey,
   controls: readonly FormControl<ArrayItem<TEntity[TKey]>>[],
+  factory: () => DeepPartial<ArrayItem<TEntity[TKey]>> = () => ({}),
 ): FormArray<TEntity, TKey> {
   return {
     name,
     type: InputType.array,
+    factory,
     controls,
   };
 }
@@ -69,6 +77,7 @@ export function formArray<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
 export interface FormArray<TEntity, TKey extends KeysOfType<TEntity, any[]>> {
   type: InputType.array;
   name: TKey;
+  factory: () => DeepPartial<ArrayItem<TEntity[TKey]>>;
   controls: readonly FormControl<ArrayItem<TEntity[TKey]>>[];
 }
 

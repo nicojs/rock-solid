@@ -92,33 +92,28 @@ export class OrganisatieMapper {
   }): Promise<Organisatie> {
     const { contacten, id, ...props } = data;
 
-    const [result] = await this.db.$transaction([
-      this.db.organisatie.update({
-        where,
-        data: {
-          ...props,
-          // Update and create contacts that need to be updated or deleted
-          contacten: {
-            create: data.contacten
-              .filter((contact) => empty(contact.id))
-              .map(toCreateContactInput),
-            update: data.contacten
-              .filter((contact) => notEmpty(contact.id))
-              .map(toUpdateContactInput),
+    const result = await this.db.organisatie.update({
+      where,
+      data: {
+        ...props,
+        // Update and create contacts that need to be updated or deleted
+        contacten: {
+          deleteMany: {
+            organisatieId: where.id,
+            id: {
+              notIn: contacten.map(({ id }) => id).filter(notEmpty),
+            },
           },
+          create: data.contacten
+            .filter((contact) => empty(contact.id))
+            .map(toCreateContactInput),
+          update: data.contacten
+            .filter((contact) => notEmpty(contact.id))
+            .map(toUpdateContactInput),
         },
-        include: includeContacten(),
-      }),
-      // Delete the once that need to be deleted
-      this.db.organisatieContact.deleteMany({
-        where: {
-          organisatieId: where.id,
-          id: {
-            notIn: contacten.map(({ id }) => id).filter(notEmpty),
-          },
-        },
-      }),
-    ]);
+      },
+      include: includeContacten(),
+    });
 
     // Delete addresses that needs to be deleted
     for (const contact of contacten) {
@@ -246,6 +241,12 @@ function toUpdateContactInput(
       ...toCreateContactInput(contact),
       adres: toNullableUpdateAdresInput(contact.adres),
       foldervoorkeuren: {
+        deleteMany: {
+          organisatieContactId: contact.id,
+          folder: {
+            notIn: contact.foldervoorkeuren.map(({ folder }) => folder),
+          },
+        },
         upsert: contact.foldervoorkeuren.map(({ communicatie, folder }) => ({
           where: {
             folder_organisatieContactId: {
@@ -256,12 +257,6 @@ function toUpdateContactInput(
           create: { folder, communicatie },
           update: { folder, communicatie },
         })),
-        deleteMany: {
-          organisatieContactId: contact.id,
-          folder: {
-            notIn: contact.foldervoorkeuren.map(({ folder }) => folder),
-          },
-        },
       },
     },
   };

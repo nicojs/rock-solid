@@ -60,12 +60,11 @@ export class OrganisatiesController {
   }
 
   @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param('id') id: string,
     @Body() org: Organisatie,
-  ): Promise<void> {
-    await this.organisatieMapper.update({
+  ): Promise<Organisatie> {
+    return this.organisatieMapper.update({
       where: { id: +id },
       data: org,
     });

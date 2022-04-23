@@ -61,12 +61,11 @@ export class PersonenController {
   }
 
   @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param('id') id: string,
     @Body() persoon: Persoon,
-  ): Promise<void> {
-    await this.persoonService.updatePersoon({
+  ): Promise<Persoon> {
+    return this.persoonService.updatePersoon({
       where: { id: +id },
       persoon: persoon,
     });
