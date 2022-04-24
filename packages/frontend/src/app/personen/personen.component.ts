@@ -36,7 +36,7 @@ export class PersonenComponent extends RockElement {
   @property({ attribute: false, type: Boolean })
   public editIsLoading = false;
 
-  override updated(changedProperties: PropertyValues<PersonenComponent>) {
+  override update(changedProperties: PropertyValues<PersonenComponent>) {
     if (changedProperties.has('type')) {
       personenStore.setFilter({
         type: this.type,
@@ -50,6 +50,7 @@ export class PersonenComponent extends RockElement {
     ) {
       personenStore.setFocus(this.path[1]);
     }
+    super.update(changedProperties);
   }
 
   @state()

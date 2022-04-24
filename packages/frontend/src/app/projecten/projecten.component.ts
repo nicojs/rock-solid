@@ -57,7 +57,6 @@ export class ProjectenComponent extends RockElement {
   }
 
   override update(props: PropertyValues<ProjectenComponent>): void {
-    super.update(props);
     if (props.has('type')) {
       projectenStore.setFilter({ type: this.type });
     }
@@ -70,6 +69,7 @@ export class ProjectenComponent extends RockElement {
         projectenStore.setFocus(projectId);
       }
     }
+    super.update(props);
   }
 
   private async addProject(project: Project) {
