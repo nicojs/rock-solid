@@ -46,7 +46,7 @@ export class ProjectService extends RestService<'projecten'> {
   updateInschrijving(
     projectId: number | string,
     inschrijving: Inschrijving,
-  ): Promise<void> {
+  ): Promise<Inschrijving> {
     return this.restClient.update(
       `projecten/${projectId}/inschrijvingen`,
       inschrijving.id,

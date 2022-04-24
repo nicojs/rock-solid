@@ -101,7 +101,6 @@ export class ReactiveFormPlaats<TEntity> extends FormElement<TEntity> {
               })),
             )}"
           @selected="${(ev: CustomEvent<TypeAheadHint<Plaats>>) => {
-            console.log('selected', ev.detail.text);
             this.plaatsValue = ev.detail.value;
             this.input.blur();
             (ev.target as AutocompleteComponent).focusState = FocusState.None;

@@ -1,5 +1,5 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { html, nothing, TemplateResult } from 'lit';
+import { html, nothing, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
   DateControl,
@@ -16,6 +16,7 @@ import {
 import { capitalize, toDateString } from '../shared';
 import { Decimal } from '@rock-solid/shared';
 import { FormElement } from './form-element';
+import { ref, createRef } from 'lit/directives/ref.js';
 
 @customElement('rock-reactive-form-input-control')
 export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
@@ -30,6 +31,23 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       ${this.renderInput(this.control)}
       <div class="invalid-feedback">${this.validationMessage}</div>
     `;
+  }
+
+  private inputRef = createRef<HTMLInputElement>();
+  override updated() {
+    this.updateCustomValidity();
+  }
+
+  private updateCustomValidity() {
+    const errorMessage = this.control.validators?.custom?.(
+      (this.entity as any)[this.control.name] as unknown as never,
+      this.entity,
+    );
+    this.inputRef.value?.setCustomValidity(errorMessage ?? '');
+  }
+
+  private updateValidationMessage() {
+    this.validationMessage = this.inputRef.value!.validationMessage;
   }
 
   private renderInput(control: InputControl<TEntity>): TemplateResult {
@@ -55,6 +73,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
     return html`<div class="form-check">
       <input
         id="${this.name}"
+        ${ref(this.inputRef)}
         name="${control.name}"
         type="checkbox"
         class="form-check-input"
@@ -75,6 +94,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
     return html`<input
       type="${control.type}"
       class="form-control"
+      ${ref(this.inputRef)}
       id="${this.name}"
       name="${control.name}"
       value="${ifDefined(this.entity[control.name])}"
@@ -86,9 +106,10 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       minlength="${ifDefined(control.validators?.minLength)}"
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
-        this.updateValidationMessage(e);
         const inputEl = e.target as HTMLInputElement;
         (this.entity[control.name] as unknown as string) = inputEl.value;
+        this.updateCustomValidity();
+        this.updateValidationMessage();
       }}"
     /> `;
   }
@@ -101,6 +122,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       <input
         type="number"
         class="form-control"
+        ${ref(this.inputRef)}
         id="${this.name}"
         name="${control.name}"
         value="${this.entity[control.name]}"
@@ -111,7 +133,6 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
         max="${ifDefined(control.validators?.max)}"
         @invalid="${this.updateValidationMessage}"
         @change="${(e: Event) => {
-          this.updateValidationMessage(e);
           const inputEl = e.target as HTMLInputElement;
           if (control.type === InputType.currency) {
             (this.entity[control.name] as unknown as Decimal) = new Decimal(
@@ -122,6 +143,8 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
             (this.entity[control.name] as unknown as number) =
               inputEl.valueAsNumber;
           }
+          this.updateCustomValidity();
+          this.updateValidationMessage();
         }}"
       />
     </div>`;
@@ -132,6 +155,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       type="${control.type}"
       class="form-control"
       id="${this.name}"
+      ${ref(this.inputRef)}
       name="${control.name}"
       value="${toDateString(this.entity[control.name] as unknown as Date)}"
       ?required=${control.validators?.required}
@@ -139,17 +163,13 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       max="${ifDefined(toDateString(control.validators?.max))}"
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
-        this.updateValidationMessage(e);
         const inputEl = e.target as HTMLInputElement;
         (this.entity[control.name] as unknown as Date | undefined) =
           inputEl.valueAsDate ?? undefined;
+        this.updateCustomValidity();
+        this.updateValidationMessage();
       }}"
     /> `;
-  }
-
-  private updateValidationMessage(e: Event) {
-    const inputEl = e.target as HTMLInputElement;
-    this.validationMessage = inputEl.validationMessage;
   }
 
   private renderSelect<TKey extends KeysOfType<TEntity, string | string[]>>(
@@ -187,6 +207,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
     return html`<select
       class="form-select"
       name="${control.name}"
+      ${ref(this.inputRef)}
       ?multiple=${control.multiple}
       ?required=${control.validators?.required}
       size=${ifDefined(control.size)}

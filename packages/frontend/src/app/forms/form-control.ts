@@ -26,12 +26,13 @@ export enum InputType {
   currency = 'currency',
 }
 
-interface Validators {
+interface Validators<TEntity, TValue> {
   required?: boolean;
   minLength?: number;
   min?: Date | number;
   max?: Date | number;
   pattern?: string;
+  custom?: (value: TValue, entity: TEntity) => string;
 }
 
 export const patterns = Object.freeze({
@@ -89,7 +90,8 @@ export interface FormGroup<TEntity, TKey extends keyof TEntity> {
   requiredLabel?: string;
 }
 
-export interface PlaatsControl<TEntity> extends BaseInputControl {
+export interface PlaatsControl<TEntity>
+  extends BaseInputControl<TEntity, Plaats> {
   name: KeysOfType<TEntity, Plaats>;
   type: InputType.plaats;
 }
@@ -104,9 +106,9 @@ export type InputControl<TEntity> =
   | SelectControl<TEntity, any>
   | DateControl<TEntity>;
 
-export interface BaseInputControl {
+export interface BaseInputControl<TEntity, TValue> {
   label?: string | false;
-  validators?: Validators;
+  validators?: Validators<TEntity, TValue>;
   placeholder?: string;
 }
 
@@ -117,7 +119,8 @@ export type KeysOfType<TEntity, TValue> = keyof {
 } &
   string;
 
-export interface StringInputControl<TEntity> extends BaseInputControl {
+export interface StringInputControl<TEntity>
+  extends BaseInputControl<TEntity, string> {
   name: KeysOfType<TEntity, string>;
   type: InputType.text | InputType.email | InputType.tel | InputType.url;
 }
@@ -136,18 +139,20 @@ export interface UrlInputControl<TEntity> extends StringInputControl<TEntity> {
   type: InputType.url;
 }
 
-export interface NumberInputControl<TEntity> extends BaseInputControl {
+export interface NumberInputControl<TEntity>
+  extends BaseInputControl<TEntity, number | Decimal> {
   name: KeysOfType<TEntity, number | Decimal>;
   type: InputType.number | InputType.currency;
   step?: number;
 }
 
-export interface DateControl<TEntity> extends BaseInputControl {
+export interface DateControl<TEntity> extends BaseInputControl<TEntity, Date> {
   name: KeysOfType<TEntity, Date>;
   type: InputType.date;
 }
 
-export interface CheckboxInputControl<TEntity> extends BaseInputControl {
+export interface CheckboxInputControl<TEntity>
+  extends BaseInputControl<TEntity, boolean> {
   name: KeysOfType<TEntity, boolean>;
   type: InputType.checkbox;
 }
@@ -155,7 +160,7 @@ export interface CheckboxInputControl<TEntity> extends BaseInputControl {
 interface BaseSelectControl<
   TEntity,
   TKey extends KeysOfType<TEntity, string | string[]>,
-> extends BaseInputControl {
+> extends BaseInputControl<TEntity, TEntity[TKey]> {
   type: InputType.select;
   name: TKey;
   multiple?: true;
@@ -183,10 +188,10 @@ export interface IndividualSelectControl<
   items: Options<TEntity[TKey] & string>;
 }
 
-interface SelectOptions {
+interface SelectOptions<TEntity, TValue> {
   multiple?: true;
   size?: number;
-  validators?: Validators;
+  validators?: Validators<TEntity, TValue>;
   label?: string;
   placeholder?: string;
 }
@@ -197,7 +202,7 @@ export function selectControl<
 >(
   name: TKey,
   items: Options<TEntity[TKey] & string>,
-  options: SelectOptions = {},
+  options: SelectOptions<TEntity, TEntity[TKey]> = {},
 ): IndividualSelectControl<TEntity, TKey> {
   return {
     type: InputType.select,
@@ -216,7 +221,7 @@ export function groupedSelectControl<
 >(
   name: TKey,
   groupedItems: GroupedOptions<TEntity[TKey] & string>,
-  options: SelectOptions = {},
+  options: SelectOptions<TEntity, TEntity[TKey]> = {},
 ): GroupedSelectControl<TEntity, TKey> {
   return {
     type: InputType.select,
