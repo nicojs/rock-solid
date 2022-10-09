@@ -24,41 +24,44 @@ export class OrganisatiesListComponent extends LitElement {
   }
 
   private renderTable(): unknown {
-    return html`<table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Naam</th>
-          <th>Website</th>
-          <th>TAV</th>
-          <th>Telefoonnummer</th>
-          <th>Emailadres</th>
-          <th>Adres</th>
-          <th>Folder voorkeur</th>
-          <th>Acties</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${this.organisaties!.map((org) => {
-          const rowSpan = org.contacten.length === 0 ? 1 : org.contacten.length;
-          return html`<tr>
-              <td rowspan="${rowSpan}">${org.naam}</td>
-              <td rowspan="${rowSpan}">${show(org.website)}</td>
-              ${renderContactTableData(org.contacten[0]!)}
-              <td rowspan="${rowSpan}">
-                <rock-link btn btnSecondary href="../edit/${org.id}"
-                  ><rock-icon icon="pencil"></rock-icon
-                ></rock-link>
-              </td>
-            </tr>
-            ${org.contacten.slice(1).map(
-              (contact) =>
-                html`<tr>
-                  ${renderContactTableData(contact)}
-                </tr>`,
-            )}`;
-        })}
-      </tbody>
-    </table>`;
+    return html`<div class="row">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Naam</th>
+            <th>Website</th>
+            <th>TAV</th>
+            <th>Telefoonnummer</th>
+            <th>Emailadres</th>
+            <th>Adres</th>
+            <th>Folder voorkeur</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${this.organisaties!.map((org) => {
+            const rowSpan =
+              org.contacten.length === 0 ? 1 : org.contacten.length;
+            return html`<tr>
+                <td rowspan="${rowSpan}">${org.naam}</td>
+                <td rowspan="${rowSpan}">${show(org.website)}</td>
+                ${renderContactTableData(org.contacten[0]!)}
+                <td rowspan="${rowSpan}">
+                  <rock-link btn btnSecondary href="../edit/${org.id}"
+                    ><rock-icon icon="pencil"></rock-icon
+                  ></rock-link>
+                </td>
+              </tr>
+              ${org.contacten.slice(1).map(
+                (contact) =>
+                  html`<tr>
+                    ${renderContactTableData(contact)}
+                  </tr>`,
+              )}`;
+          })}
+        </tbody>
+      </table>
+    </div>`;
     function renderContactTableData(contact: OrganisatieContact) {
       return html`<td>${show(contact.terAttentieVan)}</td>
         <td>${show(contact.telefoonnummer)}</td>

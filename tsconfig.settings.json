@@ -13,6 +13,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     // "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
     "composite": true,
     "target": "ES2019",
     "lib": [

@@ -47,12 +47,12 @@ export function toCsv<T>(
     .join('\n');
   return csv;
 
-  function toValue(row: T, column: keyof T) {
+  function toValue(row: T, column: keyof T & string) {
     const val = row[column];
     return escape(mapValue(column, val));
   }
 
-  function mapValue(column: keyof T, val: T[keyof T]) {
+  function mapValue(column: keyof T & string, val: T[keyof T & string]) {
     const factory = valueFactory[column];
     if (factory) {
       return factory(val);
