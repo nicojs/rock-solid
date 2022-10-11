@@ -208,7 +208,7 @@ export const includePersoonAggregate = Object.freeze({
 
 function toFoldervoorkeurInput(
   persoon: Persoon,
-): db.Prisma.FoldervoorkeurUpdateManyWithoutPersoonInput | undefined {
+): db.Prisma.FoldervoorkeurUpdateManyWithoutPersoonNestedInput | undefined {
   if (persoon.type === 'overigPersoon') {
     return {
       deleteMany: {

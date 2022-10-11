@@ -2,7 +2,6 @@ import { html, PropertyValues } from 'lit';
 import {
   BasePersoon,
   DeepPartial,
-  OverigPersoon,
   Persoon,
   PersoonType,
   persoonTypes,

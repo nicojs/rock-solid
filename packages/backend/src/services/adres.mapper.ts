@@ -45,7 +45,7 @@ export function toNullableCreateAdresInput(
 
 export function toUpdateAdresInput(
   adres: UpsertableAdres,
-): db.Prisma.AdresUpdateOneRequiredWithoutVerblijfpersonenInput {
+): db.Prisma.AdresUpdateOneRequiredWithoutVerblijfpersonenNestedInput {
   const { id, plaats, ...props } = adres;
   return {
     upsert: {
@@ -63,7 +63,7 @@ export function toUpdateAdresInput(
 
 export function toNullableUpdateAdresInput(
   adres?: UpsertableAdres,
-): db.Prisma.AdresUpdateOneWithoutDomiciliepersonenInput {
+): db.Prisma.AdresUpdateOneWithoutDomiciliepersonenNestedInput {
   if (adres) {
     return toUpdateAdresInput(adres);
   } else {

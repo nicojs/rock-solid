@@ -7,10 +7,14 @@ import {
   Foldervoorkeur,
   communicatievoorkeuren,
   Options,
+  Provincie,
+  Organisatieonderdeel,
+  bedrijfsonderdelen,
 } from '@rock-solid/shared';
 import { html } from 'lit';
 import { decimalSeparator } from './string-utils';
 
+export const unknown = 'onbekend';
 export const notAvailable = 'n/a';
 export const none = 'geen';
 
@@ -99,12 +103,16 @@ export function showDatum(val: Date | undefined): string {
 export function showPlaats(plaats?: Plaats): string {
   if (plaats) {
     if (plaats.id === 1) {
-      return 'Onbekend';
+      return unknown;
     }
     return `${plaats.postcode} ${plaats.deelgemeente} (${plaats.gemeente})`;
   } else {
     return '';
   }
+}
+
+export function showProvincie(provincie?: Provincie) {
+  return (provincie && Provincie[provincie]) ?? unknown;
 }
 
 export function showAdres(adres?: Adres) {
@@ -127,6 +135,15 @@ export function showMoney(decimal?: Decimal) {
     return `€ ${decimal.toFixed(2).replace('.', decimalSeparator())}`;
   }
   return notAvailable;
+}
+
+export function showOrganisatieonderdeel(
+  organisatie?: Organisatieonderdeel,
+): string {
+  if (organisatie) {
+    return bedrijfsonderdelen[organisatie];
+  }
+  return unknown;
 }
 
 export function foldervoorkeurBadges(

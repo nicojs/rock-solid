@@ -1,4 +1,3 @@
-import path from 'path';
 import { fileURLToPath } from 'url';
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -16,6 +15,8 @@ import { PlaatsMapper } from './services/plaats.mapper.js';
 import { PlaatsenController } from './plaatsen.controller.js';
 import { AuthController } from './auth.controller.js';
 import { AuthModule } from './auth/index.js';
+import { ReportsController } from './reports.controller.js';
+import { ReportMapper } from './services/report.mapper.js';
 
 const rootPath = fileURLToPath(
   new URL('../../node_modules/@rock-solid/frontend/dist', import.meta.url),
@@ -34,6 +35,7 @@ const rootPath = fileURLToPath(
     OrganisatiesController,
     PlaatsenController,
     AuthController,
+    ReportsController,
   ],
   providers: [
     PersoonMapper,
@@ -42,6 +44,7 @@ const rootPath = fileURLToPath(
     PlaatsMapper,
     OrganisatieMapper,
     DeelnameMapper,
+    ReportMapper,
     DBService,
   ],
 })

@@ -4,3 +4,5 @@ export * from './utility.pipes';
 export * from './string-utils';
 export * from './autocomplete.component';
 export * from './plaats.service';
+export * from './rest-client';
+export * from './http-client';

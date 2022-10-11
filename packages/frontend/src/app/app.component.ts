@@ -80,6 +80,10 @@ export class RockSolidApp extends LitElement {
         return html`<rock-organisaties
           .path=${this.route.path.slice(1)}
         ></rock-organisaties>`;
+      case 'rapportages':
+        return html`<rock-rapportages
+          .path=${this.route.path.slice(1)}
+        ></rock-rapportages>`;
       case '':
         return html`<h2>Home</h2>`;
       default:

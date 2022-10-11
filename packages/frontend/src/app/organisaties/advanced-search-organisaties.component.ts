@@ -3,7 +3,6 @@ import {
   Organisatie,
   organisatieColumnNames,
   foldersoorten,
-  OrganisatieContact,
   organisatieContactColumnNames,
   organisatieSoorten,
 } from '@rock-solid/shared';
