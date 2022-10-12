@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { capitalize } from '../shared';
-import { InputControl, InputType, selectControl } from './form-control';
+import { InputControl, InputType } from './form-control';
 import { FormElement } from './form-element';
 
 @customElement('rock-reactive-form-control')

@@ -3,7 +3,7 @@ import {
   Project,
   vakantieSeizoenen,
 } from '@rock-solid/shared';
-import { html, LitElement, nothing, unsafeCSS } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { notAvailable, pluralize, showDatum, showMoney } from '../shared';

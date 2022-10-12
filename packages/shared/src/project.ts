@@ -12,6 +12,11 @@ export interface BaseProject {
 
 export type ProjectType = 'cursus' | 'vakantie';
 
+export const projectTypes: Options<ProjectType> = Object.freeze({
+  cursus: 'Cursus',
+  vakantie: 'Vakantie',
+});
+
 export interface Cursus extends BaseProject {
   type: 'cursus';
   organisatieonderdeel: Organisatieonderdeel;

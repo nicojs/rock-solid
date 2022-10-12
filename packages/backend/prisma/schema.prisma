@@ -30,7 +30,6 @@ model Persoon {
   opmerking           String?     @db.VarChar(1024)
   type                PersoonType @default(deelnemer)
 
-
   // Deelnemer
   woonsituatie          Woonsituatie    @default(onbekend)
   woonsituatieOpmerking String?
@@ -73,6 +72,7 @@ model Plaats {
 
   Adres        Adres[]
   Inschrijving Inschrijving[]
+
   @@index(deelgemeente)
   @@index(gemeente)
   @@index(provincieId)

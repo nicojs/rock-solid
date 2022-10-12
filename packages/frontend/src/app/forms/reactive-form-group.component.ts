@@ -1,11 +1,5 @@
-import {
-  html,
-  LitElement,
-  nothing,
-  PropertyValueMap,
-  PropertyValues,
-} from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { html, nothing, PropertyValues } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { FormGroup } from './form-control';
 import { capitalize } from '../shared';
 import { FormElement } from './form-element';

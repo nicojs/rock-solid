@@ -1,6 +1,5 @@
 import {
   Activiteit,
-  BaseActiviteit,
   Deelnemer,
   Project,
   UpsertableDeelname,

@@ -1,5 +1,6 @@
 import {
   Deelname,
+  DeelnamesReport,
   InschrijvingenReport,
   OrganisatieFilter,
   PersoonFilter,
@@ -10,12 +11,7 @@ import { Inschrijving } from './inschrijving.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
 import { Persoon, UpsertablePersoon } from './persoon.js';
 import { Plaats, PlaatsFilter } from './adres.js';
-import {
-  Project,
-  ProjectFilter,
-  ProjectType,
-  UpsertableProject,
-} from './project.js';
+import { Project, ProjectFilter, UpsertableProject } from './project.js';
 
 export type EntityFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['entity'];
@@ -68,8 +64,11 @@ type ActiviteitDeelnamesRoute = {
 };
 
 export type ReportRoutes = {
-  [K in `reports/projecten/${ProjectType}/inschrijvingen`]: {
+  'reports/projecten/inschrijvingen': {
     entity: InschrijvingenReport;
+  };
+  'reports/projecten/deelnames': {
+    entity: DeelnamesReport;
   };
 };
 

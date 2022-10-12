@@ -12,29 +12,34 @@ export class ReportMapper {
   constructor(private db: DBService) {}
 
   async aantalInschrijvingen(
-    type: ProjectType,
+    type: ProjectType | undefined,
     groupField: GroupField,
-    secondGroupField: GroupField,
+    secondGroupField: GroupField | undefined,
   ): Promise<InschrijvingenReport> {
     const rawResults = await this.db.$queryRawUnsafe<
-      { key1: string; key2: string; count: number }[]
+      { key1: string; key2?: string; count: number }[]
     >(`
     SELECT 
       ${select(groupField)}::text as key1, 
-      ${select(secondGroupField)}::text as key2, 
+      ${secondGroupField ? `${select(secondGroupField)}::text as key2,` : ''} 
       COUNT(inschrijving.id)::int as count
     FROM inschrijving
-    INNER JOIN project ON inschrijving."projectId" = project.id AND project.type = '${type}'::project_type
+    INNER JOIN project ON inschrijving."projectId" = project.id ${
+      type ? `AND project.type = '${type}'::project_type` : ''
+    }
     INNER JOIN persoon ON persoon.id = inschrijving."deelnemerId"    
     INNER JOIN plaats ON inschrijving."woonplaatsDeelnemerId" = plaats.id
-    GROUP BY ${fieldName(groupField)}, ${fieldName(secondGroupField)}
-    ORDER BY ${fieldName(groupField)} DESC, ${fieldName(secondGroupField)} DESC
+    GROUP BY ${fieldName(groupField)}${
+      secondGroupField ? `, ${fieldName(secondGroupField)}` : ''
+    }
+    ORDER BY ${fieldName(groupField)} DESC${
+      secondGroupField ? `, ${fieldName(secondGroupField)} DESC` : ''
+    }
     `);
     const inschrijvingen: InschrijvingenReport = [];
     function newReport(key: string) {
       const report: GroupedReport = {
         key,
-        rows: [],
         total: 0,
       };
       inschrijvingen.push(report);
@@ -45,10 +50,11 @@ export class ReportMapper {
       const reportItem =
         inschrijvingen.find((report) => report.key === row.key1) ??
         newReport(row.key1);
-      reportItem.rows.push({
-        count: row.count,
-        key: row.key2,
-      });
+      if (row.key2) {
+        const rows = reportItem.rows ?? [];
+        rows.push({ count: row.count, key: row.key2 });
+        reportItem.rows = rows;
+      }
       reportItem.total += row.count;
     });
 

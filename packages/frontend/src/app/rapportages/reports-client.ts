@@ -1,4 +1,9 @@
-import { GroupField, parse, ReportRoutes } from '@rock-solid/shared';
+import {
+  GroupField,
+  parse,
+  ProjectType,
+  ReportRoutes,
+} from '@rock-solid/shared';
 import { httpClient, HttpClient } from '../shared/index';
 
 export class ReportsClient {
@@ -7,10 +12,13 @@ export class ReportsClient {
   public async get<TReportRoute extends keyof ReportRoutes>(
     reportRoute: TReportRoute,
     group1: GroupField,
-    group2: GroupField,
+    group2?: GroupField,
+    type?: ProjectType,
   ): Promise<ReportRoutes[TReportRoute]['entity']> {
     const response = await this.http.fetch(
-      `/api/${reportRoute}?by=${group1}&andBy=${group2}`,
+      `/api/${reportRoute}?${type ? `type=${type}&` : ''}by=${group1}${
+        group2 ? `&andBy=${group2}` : ''
+      }`,
     );
     const bodyText = await response.text();
     return parse(bodyText);

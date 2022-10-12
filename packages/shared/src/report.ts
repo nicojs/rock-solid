@@ -1,6 +1,7 @@
 import { Options } from './options';
 
 export type InschrijvingenReport = GroupedReport[];
+export type DeelnamesReport = GroupedReport[];
 
 export interface ReportRow {
   key: string;
@@ -9,7 +10,7 @@ export interface ReportRow {
 
 export interface GroupedReport {
   key: string;
-  rows: ReportRow[];
+  rows?: ReportRow[];
   total: number;
 }
 

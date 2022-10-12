@@ -4,12 +4,7 @@ import {
   foldersoorten,
   Foldervoorkeur,
 } from '@rock-solid/shared';
-import {
-  FormArray,
-  FormControl,
-  InputType,
-  selectControl,
-} from './form-control';
+import { FormControl, InputType, selectControl } from './form-control';
 
 export const adresControls: readonly FormControl<Adres>[] = Object.freeze([
   Object.freeze({

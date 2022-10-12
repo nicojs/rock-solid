@@ -1,5 +1,5 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { html, nothing, PropertyValueMap, TemplateResult } from 'lit';
+import { html, nothing, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
   DateControl,
