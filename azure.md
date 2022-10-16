@@ -10,10 +10,27 @@ https://docs.microsoft.com/en-us/azure/app-service/deploy-run-package
 https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-create
 https://github.com/marketplace/actions/azure-login#configure-a-service-principal-with-a-secret
 
-## Networking
+## Set subscription
 
 ```
-acc-rock-solid-vnet
+SUBSCRIPTION_ID=12345678-abcd-9012-3456-efghijklmnop
+az account login
+az account set --subscription $SUBSCRIPTION_ID
+```
+
+## Resource group
+
+```
+RES_GROUP=acc-rock-solid # Resource Group name
+az group create --name $RES_GROUP --location westeurope
+az configure --defaults location=westeurope
+```
+
+## Networking
+
+Topology:
+
+```
 00000000 00000000 00000000 00000000
 00000000 00000000 11111111 11111111
 10.0.0.0/16
@@ -24,20 +41,35 @@ Subnet DB
 10.0.0.0/29
 
 Subnet Web
-00000000 00000000 00000000 00000000
 00000000 00000000 00000001 00000000
-10.0.1.0/24
+00000000 00000000 00000001 00000111
+10.0.1.0/29
+```
+
+```shell
+VNET=acc-rock-solid-vnet
+
+az network vnet create --name $VNET  \
+  --resource-group $RES_GROUP \
+  --address-prefix 10.0.0.0/16 
+
+az network vnet subnet create --vnet-name $VNET \
+   --resource-group $RES_GROUP \
+   --name DB \
+   --address-prefixes 10.0.0.0/29
+
+az network vnet subnet create --vnet-name $VNET \
+   --resource-group $RES_GROUP \
+   --name Web \
+   --address-prefixes 10.0.1.0/29  
 ```
 
 ## Key vault
 
 ```sh
-RES_GROUP=acc-rock-solid # Resource Group name
-ACR_NAME=rocksolidacc       # Azure Container Registry registry name
-AKV_NAME=rock-solid       # Azure Key Vault vault name
+AKV_NAME=acc-rock-solid-kv      # Azure Key Vault vault name
 
 az keyvault create -g $RES_GROUP -n $AKV_NAME
-az keyvault create -g acc-rock-solid -n rock-solid
 ```
 
 ## Create service principal
@@ -49,7 +81,7 @@ az ad sp create-for-rbac \
   --role acrpull
 
 SP_ID="abcd5.sdsdsd"
-SP_PW="abcd5.sdsdsd"
+SP_PW="ab!cd5.s~~sdsd"
 
 az keyvault secret set \
   --vault-name $AKV_NAME \
@@ -62,15 +94,38 @@ az keyvault secret set \
     --value $(az ad sp show --id $SP_ID --query appId --output tsv)
 ```
 
-## Add more keys
 
-```sh
-DATABASE_URL="postgres://rocksolidadmin:{pw}@acc-rock-solid-db.postgres.database.azure.com/postgres?schema=public&sslmode=require"
-JWT_SECRET="super-serious"
+## Database
+
+```
+DB_NAME=acc-rock-solid-db
+az postgres flexible-server create --database-name $DB_NAME \
+    --resource-group $RES_GROUP \
+    --vnet $VNET \
+    --subnet DB \
+    --sku-name Standard_B1ms \
+    --tier Burstable
+```
+
+> Do you want to create a new private DNS zone server415881925.private.postgres.database.azure.com in resource group acc-rock-solid (y/n): y
+
+```
+DATABASE_URL=postgresql://user:password@server123456.postgres.database.azure.com/postgres?sslmode=require
+```
+
+## Create App and certificate
+
+Go to AD app registrations and register a new app. Create client secret. I.e. acc-rock-solid. Fill env variables:
+
+```
 OFFICE_365_TENANT_ID="12345678-abcd-9012-3456-efghijklmnop"
 OFFICE_365_CLIENT_ID="12345678-abcd-9012-3456-efghijklmnop"
 OFFICE_365_CLIENT_SECRET="super-secret"
+```
 
+## Add those keys
+
+```sh
 az keyvault secret set \
   --vault-name $AKV_NAME \
   --name rock-solid-db-url \
@@ -93,103 +148,6 @@ az keyvault secret set \
   --value $OFFICE_365_CLIENT_SECRET
 ```
 
-## Private network
-
-```sh
-VNET=acc-rock-solid-vnet
-VNET_ADDRESS_PREFIX="10.0.0.0/16"
-SUBNET=web
-SUBNET_ADDRESS_PREFIX="10.0.1.0/24"
-```
-
-## Deploy container with azure cli
-
-```sh
-ACR_LOGIN_SERVER=$(az acr show --name $ACR_NAME --resource-group $RES_GROUP --query "loginServer" --output tsv)
-CONTAINER_APP_NAME=acc-rock-solid-web
-
-az container create \
-    --name $CONTAINER_APP_NAME \
-    --resource-group $RES_GROUP \
-    --vnet $VNET \
-    --vnet-address-prefix $VNET_ADDRESS_PREFIX \
-    --subnet $SUBNET \
-    --subnet-address-prefix $SUBNET_ADDRESS_PREFIX\
-    --image $ACR_LOGIN_SERVER/rocksolid:latest \
-    --registry-login-server $ACR_LOGIN_SERVER \
-    --registry-username $(az keyvault secret show --vault-name $AKV_NAME -n $ACR_NAME-pull-usr --query value -o tsv) \
-    --registry-password $(az keyvault secret show --vault-name $AKV_NAME -n $ACR_NAME-pull-pwd --query value -o tsv) \
-    --ports 3000 \
-    --query ipAddress.fqdn \
-    --environment-variables 'BASE_URL'="https://$CONTAINER_APP_NAME.westeurope.azurecontainer.io/" 'DATABASE_URL'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-db-url --query value -o tsv) 'JWT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-jwt-secret --query value -o tsv) 'OFFICE_365_TENANT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-tenant-id --query value -o tsv) 'OFFICE_365_CLIENT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-id --query value -o tsv) 'OFFICE_365_CLIENT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-secret --query value -o tsv)
-
-az container attach --resource-group $RES_GROUP --name $CONTAINER_APP_NAME
-az container logs --resource-group $RES_GROUP --name $CONTAINER_APP_NAME
-
-az container delete --resource-group $RES_GROUP --name CONTAINER_APP_NAME
-```
-
-## Create a public ip adres
-
-```sh
-az network vnet subnet create \
-  --name gateway \
-  --resource-group $RES_GROUP \
-  --vnet-name $VNET  \
-  --address-prefix 10.0.2.0/24
-
-
-az container show \
-  --name $CONTAINER_APP_NAME \
-  --resource-group $RES_GROUP \
-  --query ipAddress.ip --output tsv
-
-az network public-ip create \
-  --resource-group $RES_GROUP \
-  --name $CONTAINER_APP_NAME-public-ip \
-  --allocation-method Static \
-  --sku Standard
-
-ACI_IP=$(az container show \
-  --name $CONTAINER_APP_NAME \
-  --resource-group $RES_GROUP \
-  --query ipAddress.ip --output tsv)
-
-az network application-gateway create \
-  --name ${CONTAINER_APP_NAME}-application-gateway \
-  --location westeurope \
-  --resource-group $RES_GROUP \
-  --capacity 2 \
-  --sku Standard_v2 \
-  --http-settings-protocol http \
-  --public-ip-address $CONTAINER_APP_NAME-public-ip \
-  --vnet-name $VNET \
-  --subnet gateway \
-  --servers "$ACI_IP"
-
-az network public-ip show \
---resource-group $RES_GROUP \
---name $CONTAINER_APP_NAME-public-ip \
---query [ipAddress] \
---output tsv
-```
-
-## Create application gateway
-
-```
-az network application-gateway create \
-  --name acc-rock-solid-gateway \
-  --location "West Europe" \
-  --resource-group $RES_GROUP \
-  --capacity 2 \
-  --sku Standard_v2 \
-  --http-settings-protocol http \
-  --public-ip-address myAGPublicIPAddress \
-  --vnet-name myVNet \
-  --subnet myAGSubnet \
-  --servers "$ACI_IP"
-```
-
 ## Run your app in Azure App Service directly from a ZIP package
 
 ```sh
@@ -205,14 +163,16 @@ APP_NAME=acc-rock-solid-web
 APP_SERVICE_PLAN=acc-rock-solid-web
 VNET=acc-rock-solid-vnet
 SUBNET=web
-
 ```
 
 ### Create
 
 ```sh
+APP_NAME=acc-rock-solid-web
+APP_SERVICE_PLAN=acc-rock-solid-web
+
 az appservice plan create --name $APP_SERVICE_PLAN --resource-group $RES_GROUP --sku B1
-az webapp create -g $RES_GROUP -p $APP_SERVICE_PLAN -n $APP_NAME --runtime "node|14-lts" --vnet $VNET --subnet $SUBNET
+az webapp create -g $RES_GROUP -p $APP_SERVICE_PLAN -n $APP_NAME --runtime "NODE:16-lts" --vnet $VNET --subnet web
 
 az webapp config appsettings set --resource-group $RES_GROUP --name $APP_NAME --settings 'BASE_URL'="https://$APP_NAME.azurewebsites.net" 'DATABASE_URL'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-db-url --query value -o tsv) 'JWT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-jwt-secret --query value -o tsv) 'OFFICE_365_TENANT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-tenant-id --query value -o tsv) 'OFFICE_365_CLIENT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-id --query value -o tsv) 'OFFICE_365_CLIENT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-secret --query value -o tsv)
 
@@ -259,9 +219,35 @@ Create the share:
 ```sh
 RES_GROUP=acc-rock-solid
 AZURE_STORAGE_ACCOUNT=accrocksolidimport
-AZURE_STORAGE_KEY=super-secret
 
+az storage account create --name $AZURE_STORAGE_ACCOUNT \
+   --sku Standard_LRS \
+   --resource-group $RES_GROUP
+```
+
+After that, get and set env variable for `AZURE_STORAGE_KEY`
+
+```
+az storage account keys list --resource-group $RES_GROUP --account-name $AZURE_STORAGE_ACCOUNT
+
+AZURE_STORAGE_KEY=123supersecret
+```
+
+```
 az storage share create --name import --account-name $AZURE_STORAGE_ACCOUNT --account-key $AZURE_STORAGE_KEY
+```
+
+Add those keys
+
+```sh
+az keyvault secret set \
+  --vault-name $AKV_NAME \
+  --name azure-storage-account-import \
+  --value $AZURE_STORAGE_ACCOUNT
+az keyvault secret set \
+  --vault-name $AKV_NAME \
+  --name azure-storage-key-import \
+  --value $AZURE_STORAGE_KEY
 ```
 
 Zip and upload import files
@@ -277,4 +263,3 @@ Download and unzip
 az storage file download --share-name import --path import.zip --account-name $AZURE_STORAGE_ACCOUNT --account-key $AZURE_STORAGE_KEY
 unzip import.zip -d .
 ```
-

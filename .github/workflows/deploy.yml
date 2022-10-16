@@ -15,5 +15,4 @@ jobs:
     - run: npm ci
     - run: npm run deploy:acc
       env:
-        AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-        AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
+        AKV_NAME: acc-rock-solid-kv
