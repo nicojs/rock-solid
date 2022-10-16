@@ -72,29 +72,6 @@ AKV_NAME=acc-rock-solid-kv      # Azure Key Vault vault name
 az keyvault create -g $RES_GROUP -n $AKV_NAME
 ```
 
-## Create service principal
-
-```sh
-az ad sp create-for-rbac \
-  --name http://$ACR_NAME-pull \
-  --scopes $(az acr show --name $ACR_NAME --query id --output tsv) \
-  --role acrpull
-
-SP_ID="abcd5.sdsdsd"
-SP_PW="ab!cd5.s~~sdsd"
-
-az keyvault secret set \
-  --vault-name $AKV_NAME \
-  --name $ACR_NAME-pull-pwd \
-  --value $SP_PW
-
-az keyvault secret set \
-    --vault-name $AKV_NAME \
-    --name $ACR_NAME-pull-usr \
-    --value $(az ad sp show --id $SP_ID --query appId --output tsv)
-```
-
-
 ## Database
 
 ```
@@ -185,6 +162,20 @@ az webapp connection create postgres-flexible --client-type nodejs --resource-gr
 ```sh
 az webapp config appsettings set --resource-group $RES_GROUP --name $APP_NAME --settings WEBSITE_RUN_FROM_PACKAGE="1"
 ```
+
+
+## Create service principal
+
+See https://github.com/marketplace/actions/azure-login#configure-deployment-credentials
+
+```sh
+SP_NAME=acc-rock-solid
+az ad sp create-for-rbac --name $SP_NAME --role contributor \
+                         --scopes /subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RES_GROUP \
+                         --sdk-auth
+```
+
+Add under `ACC_AZURE_CREDENTIALS` in gh secrets
 
 ### Deploy the package
 
