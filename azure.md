@@ -145,24 +145,17 @@ SUBNET=web
 ### Create
 
 ```sh
-APP_NAME=acc-rock-solid-web
-APP_SERVICE_PLAN=acc-rock-solid-web
+APP_NAME=acc-rock-solid-web-app
+APP_SERVICE_PLAN=acc-rock-solid-web-plan
 
-az appservice plan create --name $APP_SERVICE_PLAN --resource-group $RES_GROUP --sku B1
+az appservice plan create --is-linux --name $APP_SERVICE_PLAN --resource-group $RES_GROUP --sku B1
 az webapp create -g $RES_GROUP -p $APP_SERVICE_PLAN -n $APP_NAME --runtime "NODE:16-lts" --vnet $VNET --subnet web
 
-az webapp config appsettings set --resource-group $RES_GROUP --name $APP_NAME --settings 'BASE_URL'="https://$APP_NAME.azurewebsites.net" 'DATABASE_URL'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-db-url --query value -o tsv) 'JWT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-jwt-secret --query value -o tsv) 'OFFICE_365_TENANT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-tenant-id --query value -o tsv) 'OFFICE_365_CLIENT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-id --query value -o tsv) 'OFFICE_365_CLIENT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-secret --query value -o tsv)
+az webapp config appsettings set --resource-group $RES_GROUP --name $APP_NAME --settings 'BASE_URL'="https://$APP_NAME.azurewebsites.net" 'DATABASE_URL'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-db-url --query value -o tsv) 'JWT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-jwt-secret --query value -o tsv) 'OFFICE_365_TENANT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-tenant-id --query value -o tsv) 'OFFICE_365_CLIENT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-id --query value -o tsv) 'OFFICE_365_CLIENT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-secret --query value -o tsv) WEBSITE_RUN_FROM_PACKAGE="1"
 
 
 az webapp connection create postgres-flexible --client-type nodejs --resource-group $RES_GROUP -n $APP_NAME --target-resource-group $RES_GROUP --server acc-rock-solid-db.postgres.database.azure.com --database rock-solid-db  --secret name=XX secret=XX
 ```
-
-### Enable running from package
-
-```sh
-az webapp config appsettings set --resource-group $RES_GROUP --name $APP_NAME --settings WEBSITE_RUN_FROM_PACKAGE="1"
-```
-
 
 ## Create service principal
 
@@ -175,7 +168,7 @@ az ad sp create-for-rbac --name $SP_NAME --role contributor \
                          --sdk-auth
 ```
 
-Add under `ACC_AZURE_CREDENTIALS` in gh secrets
+Add under `AZURE_CREDENTIALS` in gh secrets
 
 ### Deploy the package
 
