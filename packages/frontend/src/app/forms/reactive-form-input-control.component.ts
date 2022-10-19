@@ -84,7 +84,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
           (this.entity[control.name] as unknown as boolean) = inputEl.checked;
         }}"
       />
-      <label for="${this.control.name}" class="form-check-label"
+      <label for="${this.name}" class="form-check-label"
         >${this.control.label ?? capitalize(this.control.name)}</label
       >
     </div> `;
