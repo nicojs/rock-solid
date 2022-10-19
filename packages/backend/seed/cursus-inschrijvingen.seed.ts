@@ -45,12 +45,13 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
   const cursussenByCode = (
     await client.project.findMany({
       where: { type: 'cursus' },
-      include: { activiteiten: true },
+      include: { activiteiten: { orderBy: { van: 'asc' } } },
     })
-  ).reduce((acc, { id, projectnummer, activiteiten }) => {
-    acc.set(projectnummer, { id, activiteiten });
+  ).reduce((acc, { id, projectnummer, jaar, activiteiten }) => {
+    acc.set(projectnummer, { id, jaar, activiteiten });
     return acc;
-  }, new Map<string, { id: number; activiteiten: db.Activiteit[] }>());
+  }, new Map<string, { id: number; jaar: number; activiteiten: db.Activiteit[] }>());
+
   const inschrijvingen = inschrijvingenRaw
     .map(fromRaw)
     .filter(notEmpty)
@@ -66,10 +67,27 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
             detail: `Already exists`,
           }),
       ),
-    )
-    .map(([, item]) => item);
+    );
 
-  for (const inschrijving of inschrijvingen) {
+  const eersteCursusByDeelnemer = inschrijvingen.reduce(
+    (map, [, inschrijving, projectnummer]) => {
+      const deelnemerId = inschrijving.deelnemer.connect!.id!;
+      const eersteCursusCode = map.get(deelnemerId);
+      if (
+        !eersteCursusCode ||
+        cursusDate(eersteCursusCode) > cursusDate(projectnummer)
+      ) {
+        map.set(deelnemerId, projectnummer);
+      }
+      return map;
+    },
+    new Map<number, string>(),
+  );
+
+  for (const [, inschrijving, projectnummer] of inschrijvingen) {
+    const deelnemerId = inschrijving.deelnemer.connect!.id!;
+    inschrijving.eersteInschrijving =
+      eersteCursusByDeelnemer.get(deelnemerId) === projectnummer;
     await client.inschrijving.create({
       data: inschrijving,
     });
@@ -87,6 +105,7 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
     | [
         raw: RawCursusInschrijving,
         createInput: db.Prisma.InschrijvingCreateInput,
+        projectNummer: string,
       ]
     | undefined {
     const projectNummerMatch = projectnummerRegex.exec(raw.cursus);
@@ -138,6 +157,11 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
         },
         woonplaatsDeelnemer: { connect: { id: deelnemer.woonplaatsId } },
       },
+      projectnummer,
     ];
+  }
+  function cursusDate(cursusCode: string): Date {
+    const cursus = cursussenByCode.get(cursusCode)!;
+    return cursus.activiteiten[0]?.van ?? new Date(cursus.jaar, 1, 1);
   }
 }

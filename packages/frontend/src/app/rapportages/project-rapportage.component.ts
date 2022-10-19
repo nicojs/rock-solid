@@ -15,7 +15,7 @@ import {
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, PropertyValues } from 'lit';
-import { selectControl } from '../forms';
+import { CheckboxInputControl, InputType, selectControl } from '../forms';
 import { show, showOrganisatieonderdeel, showProvincie } from '../shared';
 
 @customElement('rock-project-rapportage')
@@ -38,6 +38,9 @@ export class ProjectRapportageComponent extends RockElement {
   public group2?: GroupField;
 
   @state()
+  public enkelNieuwkomers?: boolean;
+
+  @state()
   public isLoading = false;
 
   public override updated(props: PropertyValues<ProjectRapportageComponent>) {
@@ -45,7 +48,8 @@ export class ProjectRapportageComponent extends RockElement {
       (props.has('reportType') ||
         props.has('projectType') ||
         props.has('group1') ||
-        props.has('group2')) &&
+        props.has('group2') ||
+        props.has('enkelNieuwkomers')) &&
       this.group1
     ) {
       this.isLoading = true;
@@ -55,6 +59,7 @@ export class ProjectRapportageComponent extends RockElement {
           this.group1,
           this.group2,
           this.projectType,
+          this.enkelNieuwkomers,
         )
         .then((report) => (this.report = report))
         .finally(() => {
@@ -79,6 +84,13 @@ export class ProjectRapportageComponent extends RockElement {
         <rock-reactive-form-input-control
           class="col-12 col-md-3 col-sm-5 col-lg-3"
           .control=${groupingControl('group2')}
+          .entity=${this}
+        ></rock-reactive-form-input-control>
+      </div>
+      <div class="row">
+        <rock-reactive-form-input-control
+          class="col-12 col-md-3 col-sm-5 col-lg-3"
+          .control=${enkelNieuwkomersControl}
           .entity=${this}
         ></rock-reactive-form-input-control>
       </div>
@@ -144,6 +156,13 @@ const projectTypeControl = selectControl<
   ProjectRapportageComponent,
   'projectType'
 >('projectType', projectTypes, { placeholder: 'Project type...' });
+
+const enkelNieuwkomersControl: CheckboxInputControl<ProjectRapportageComponent> =
+  {
+    name: 'enkelNieuwkomers',
+    type: InputType.checkbox,
+    label: 'Enkel eerste inschrijvingen',
+  };
 
 function showGroupKey(group: GroupField, key: string | undefined): string {
   switch (group) {

@@ -39,6 +39,7 @@ export class InschrijvingMapper {
           inschrijvingen: {
             some: {
               deelnemerId: inschrijvingData.deelnemerId,
+              projectId: inschrijvingData.projectId,
               eersteInschrijving: true,
             },
           },

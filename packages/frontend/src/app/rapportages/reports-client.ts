@@ -14,11 +14,12 @@ export class ReportsClient {
     group1: GroupField,
     group2?: GroupField,
     type?: ProjectType,
+    enkelNieuwkomers?: boolean,
   ): Promise<ReportRoutes[TReportRoute]['entity']> {
     const response = await this.http.fetch(
       `/api/${reportRoute}?${type ? `type=${type}&` : ''}by=${group1}${
         group2 ? `&andBy=${group2}` : ''
-      }`,
+      }${enkelNieuwkomers ? '&enkelNieuwkomers=true' : ''}`,
     );
     const bodyText = await response.text();
     return parse(bodyText);

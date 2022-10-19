@@ -17,6 +17,7 @@ export class ReportMapper {
     projectType: ProjectType | undefined,
     groupField: GroupField,
     secondGroupField: GroupField | undefined,
+    enkelNieuwkomers: boolean | undefined,
   ): Promise<ProjectReport> {
     const rawResults = await this.db.$queryRawUnsafe<
       { key1: string; key2?: string; count: number }[]
@@ -32,6 +33,7 @@ export class ReportMapper {
     ${reportTypeJoin(reportType)}
     INNER JOIN persoon ON persoon.id = inschrijving."deelnemerId"    
     INNER JOIN plaats ON inschrijving."woonplaatsDeelnemerId" = plaats.id
+    ${enkelNieuwkomers ? 'WHERE inschrijving."eersteInschrijving" = true' : ''}
     GROUP BY ${fieldName(groupField)}${
       secondGroupField ? `, ${fieldName(secondGroupField)}` : ''
     }

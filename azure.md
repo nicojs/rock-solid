@@ -135,7 +135,7 @@ zip -r deploy.zip .deploy/
 
 ```sh
 RES_GROUP=acc-rock-solid # Resource Group name
-AKV_NAME=rock-solid       # Azure Key Vault vault name
+AKV_NAME=acc-rock-solid-kv   # Azure Key Vault vault name
 APP_NAME=acc-rock-solid-web
 APP_SERVICE_PLAN=acc-rock-solid-web
 VNET=acc-rock-solid-vnet
