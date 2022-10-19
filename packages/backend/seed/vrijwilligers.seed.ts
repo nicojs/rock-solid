@@ -27,7 +27,10 @@ interface RawVrijwilliger {
   telefoon: string;
 }
 
-export async function seedVrijwilligers(client: db.PrismaClient) {
+export async function seedVrijwilligers(
+  client: db.PrismaClient,
+  readonly: boolean,
+) {
   const importErrors = new ImportErrors<RawVrijwilliger>();
   const vrijwilligersRaw = await readImportJson<RawVrijwilliger[]>(
     'vrijwilligers.json',
@@ -45,7 +48,11 @@ export async function seedVrijwilligers(client: db.PrismaClient) {
   }
   console.log(`Seeded ${vrijwilligers.length} vrijwilligers`);
   console.log(`(${importErrors.report})`);
-  await writeOutputJson('vrijwilligers-import-errors.json', importErrors);
+  await writeOutputJson(
+    'vrijwilligers-import-errors.json',
+    importErrors,
+    readonly,
+  );
 
   function fromRaw(raw: RawVrijwilliger): db.Prisma.PersoonCreateInput {
     const volledigeNaam = `${raw.naam} ${raw.achternaam}`;

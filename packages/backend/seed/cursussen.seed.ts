@@ -28,7 +28,10 @@ const importErrors = new ImportErrors<RawCursus>();
 // DK/22/090-3
 const projectnummerRegex = /([^ -]*)(?:-([^ -]*))?.*$/;
 
-export async function seedCursussen(client: db.PrismaClient) {
+export async function seedCursussen(
+  client: db.PrismaClient,
+  readonly: boolean,
+) {
   const projectsByCode = new Map<string, db.Prisma.ProjectCreateInput>();
   const cursussenRaw = await readImportJson<RawCursus[]>('cursussen.json');
 
@@ -42,7 +45,7 @@ export async function seedCursussen(client: db.PrismaClient) {
 
   console.log(`Seeded ${cursussen.length} cursussen`);
   console.log(`(${importErrors.report})`);
-  await writeOutputJson('cursussen-import-errors.json', importErrors);
+  await writeOutputJson('cursussen-import-errors.json', importErrors, readonly);
   function fromRaw(raw: RawCursus): db.Prisma.ProjectCreateInput | undefined {
     const projectNummerMatch = projectnummerRegex.exec(raw.titel);
     if (!projectNummerMatch) {

@@ -35,7 +35,10 @@ type CreateOrgInput = Omit<db.Prisma.OrganisatieCreateInput, 'contacten'> & {
   };
 };
 
-export async function seedOrganisaties(client: db.PrismaClient) {
+export async function seedOrganisaties(
+  client: db.PrismaClient,
+  readonly: boolean,
+) {
   const organisatiesRaw = await readImportJson<RawOrganisatie[]>(
     'organisaties.json',
   );
@@ -107,7 +110,11 @@ export async function seedOrganisaties(client: db.PrismaClient) {
 
   console.log(`Seeded ${orgs.length} organisaties`);
   console.log(`(${importErrors.report})`);
-  await writeOutputJson('organisatie-import-errors.json', importErrors);
+  await writeOutputJson(
+    'organisatie-import-errors.json',
+    importErrors,
+    readonly,
+  );
 
   function fromRaw(raw: RawOrganisatie): CreateOrgInput {
     const adres = adresSeeder.fromRaw(raw, raw.adres, raw.postcode);

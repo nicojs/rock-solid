@@ -21,15 +21,21 @@ const projectnummerRegex = /([^ -]*)(?:-([^ -]*))?.*$/;
 
 const importErrors = new ImportErrors<RawCursusInschrijving>();
 
-export async function seedCursusInschrijvingen(client: db.PrismaClient) {
+export async function seedCursusInschrijvingen(
+  client: db.PrismaClient,
+  deelnemersLookup: Map<string, number> | undefined,
+  readonly: boolean,
+) {
   const inschrijvingenRaw = await readImportJson<RawCursusInschrijving[]>(
     'cursus-inschrijvingen.json',
   );
-  const deelnemerIdByTitles = new Map(
-    Object.entries(
-      await readImportJson<Record<string, number>>('deelnemers-lookup.json'),
-    ),
-  );
+  const deelnemerIdByTitles =
+    deelnemersLookup ??
+    new Map(
+      Object.entries(
+        await readImportJson<Record<string, number>>('deelnemers-lookup.json'),
+      ),
+    );
   const deelnemerById = (
     await client.persoon.findMany({
       where: { type: 'deelnemer' },
@@ -97,6 +103,7 @@ export async function seedCursusInschrijvingen(client: db.PrismaClient) {
   await writeOutputJson(
     'cursus-inschrijvingen-import-errors.json',
     importErrors,
+    readonly,
   );
 
   function fromRaw(

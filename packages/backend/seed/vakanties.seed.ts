@@ -32,7 +32,10 @@ const importErrors = new ImportErrors<RawVakantie>();
 // DK/22/090-3
 const projectnummerRegex = /([^ -]*)(?:-([^ -]*))?.*$/;
 
-export async function seedVakanties(client: db.PrismaClient) {
+export async function seedVakanties(
+  client: db.PrismaClient,
+  readonly: boolean,
+) {
   const projectsByCode = new Map<string, db.Prisma.ProjectCreateInput>();
   const vakantiesRaw = await readImportJson<RawVakantie[]>('vakanties.json');
 
@@ -46,7 +49,7 @@ export async function seedVakanties(client: db.PrismaClient) {
 
   console.log(`Seeded ${vakanties.length} vakanties`);
   console.log(`(${importErrors.report})`);
-  await writeOutputJson('vakanties-import-errors.json', importErrors);
+  await writeOutputJson('vakanties-import-errors.json', importErrors, readonly);
 
   function fromRaw(raw: RawVakantie): db.Prisma.ProjectCreateInput | undefined {
     const projectNummerMatch = projectnummerRegex.exec(raw.titel);

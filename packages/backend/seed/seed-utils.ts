@@ -9,7 +9,15 @@ export async function readImportJson<T>(relativeFileName: string) {
   ) as T;
 }
 
-export async function writeOutputJson(relativeFileName: string, obj: unknown) {
+export async function writeOutputJson(
+  relativeFileName: string,
+  obj: unknown,
+  readonly: boolean,
+) {
+  if (readonly) {
+    console.log(`Skipping ${relativeFileName} (readonly mode)`);
+    return;
+  }
   await fs.writeFile(
     new URL(`../../import/${relativeFileName}`, import.meta.url),
     JSON.stringify(obj, null, 2),

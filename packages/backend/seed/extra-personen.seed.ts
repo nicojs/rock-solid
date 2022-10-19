@@ -32,7 +32,10 @@ interface RawExtraPersoon {
   telefoon: string;
 }
 
-export async function seedExtraPersonen(client: db.PrismaClient) {
+export async function seedExtraPersonen(
+  client: db.PrismaClient,
+  readonly: boolean,
+) {
   const importErrors = new ImportErrors<RawExtraPersoon>();
   const extraPersonenRaw = await readImportJson<RawExtraPersoon[]>(
     'extra-personen.json',
@@ -50,7 +53,11 @@ export async function seedExtraPersonen(client: db.PrismaClient) {
   }
   console.log(`Seeded ${extraPersonen.length} extra-personen`);
   console.log(`(${importErrors.report})`);
-  await writeOutputJson('extra-personen-import-errors.json', importErrors);
+  await writeOutputJson(
+    'extra-personen-import-errors.json',
+    importErrors,
+    readonly,
+  );
 
   function fromRaw(raw: RawExtraPersoon): db.Prisma.PersoonCreateInput {
     const volledigeNaam = raw.titel;

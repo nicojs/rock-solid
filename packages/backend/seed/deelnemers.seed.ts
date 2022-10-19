@@ -46,7 +46,10 @@ interface RawDeelnemer {
   woonsituatie: string;
 }
 
-export async function seedDeelnemers(client: db.PrismaClient) {
+export async function seedDeelnemers(
+  client: db.PrismaClient,
+  readonly: boolean,
+) {
   const importErrors = new ImportErrors<RawDeelnemer>();
   const deelnemersRaw = await readImportJson<RawDeelnemer[]>('deelnemers.json');
 
@@ -65,11 +68,18 @@ export async function seedDeelnemers(client: db.PrismaClient) {
   await writeOutputJson(
     'deelnemers-lookup.json',
     Object.fromEntries(persoonIdByTitle.entries()),
+    readonly,
   );
   console.log(`✅ deelnemers-lookup.json (${persoonIdByTitle.size})`);
   console.log(`Seeded ${deelnemers.length} deelnemers`);
   console.log(`(${importErrors.report})`);
-  await writeOutputJson('deelnemers-import-errors.json', importErrors);
+  await writeOutputJson(
+    'deelnemers-import-errors.json',
+    importErrors,
+    readonly,
+  );
+
+  return persoonIdByTitle;
 
   function fromRaw(
     raw: RawDeelnemer,
