@@ -79,6 +79,7 @@ export async function seedCursussen(client: db.PrismaClient) {
       naam: raw.cursusnaam,
       projectnummer,
       type: 'cursus',
+      jaar: parseInt(raw.jaar),
       organisatieonderdeel,
       activiteiten: {
         createMany: {

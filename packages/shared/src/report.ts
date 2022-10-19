@@ -1,7 +1,8 @@
 import { Options } from './options';
 
-export type InschrijvingenReport = GroupedReport[];
-export type DeelnamesReport = GroupedReport[];
+export type ProjectReportType = 'inschrijvingen' | 'deelnames';
+
+export type ProjectReport = GroupedReport[];
 
 export interface ReportRow {
   key: string;
@@ -27,5 +28,5 @@ export const groupingFieldOptions: Options<GroupField> = {
   woonsituatie: 'Woonsituatie',
   werksituatie: 'Werksituatie',
   geslacht: 'Geslacht',
-  organisatieonderdeel: 'Organisatie',
+  organisatieonderdeel: 'Organisatieonderdeel',
 };

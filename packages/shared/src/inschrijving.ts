@@ -5,6 +5,7 @@ export interface Inschrijving {
   id: number;
   projectId: number;
   deelnemerId: number;
+  eersteInschrijving: boolean;
   tijdstipVanInschrijving: Date;
   tijdstipVanBevestiging?: Date;
   tijdstipVerzendenVervoersbrief?: Date;

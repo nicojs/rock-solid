@@ -6,3 +6,4 @@ export * from './autocomplete.component';
 export * from './plaats.service';
 export * from './rest-client';
 export * from './http-client';
+export * from './link.directive';

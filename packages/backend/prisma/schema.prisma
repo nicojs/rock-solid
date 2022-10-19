@@ -86,6 +86,7 @@ model Project {
   naam           String         @db.VarChar(256)
   activiteiten   Activiteit[]
   inschrijvingen Inschrijving[]
+  jaar           Int
 
   // Cursus
   organisatieonderdeel Organisatieonderdeel?
@@ -115,6 +116,7 @@ model Inschrijving {
   tijdstipVerzendenVervoersbrief DateTime?
   toestemmingFotos               Boolean    @default(false)
   wachtlijst                     Boolean    @default(false)
+  eersteInschrijving             Boolean    @default(false)
 
   @@unique([projectId, deelnemerId])
   @@map("inschrijving")

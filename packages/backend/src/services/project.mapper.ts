@@ -5,6 +5,7 @@ import {
   notEmpty,
   Project,
   ProjectFilter,
+  UpsertableActiviteit,
   UpsertableProject,
   VakantieActiviteit,
 } from '@rock-solid/shared';
@@ -105,6 +106,7 @@ export class ProjectMapper {
     const project = await this.db.project.create({
       data: {
         ...newProject,
+        jaar: determineYear(newProject.activiteiten),
         activiteiten: {
           create: newProject.activiteiten,
         },
@@ -123,6 +125,7 @@ export class ProjectMapper {
       where: { id },
       data: {
         ...data,
+        jaar: determineYear(data.activiteiten),
         activiteiten: {
           deleteMany: {
             projectId: id,
@@ -148,6 +151,10 @@ export class ProjectMapper {
     });
     return toProject(result);
   }
+}
+
+function determineYear(activiteiten: UpsertableActiviteit[]) {
+  return activiteiten[0]?.van.getFullYear() ?? new Date().getFullYear(); // current year as default 🤷‍♂️
 }
 
 type DBActiviteitAggregate = db.Activiteit & {

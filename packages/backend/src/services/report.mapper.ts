@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import {
   GroupedReport,
   GroupField,
-  InschrijvingenReport,
+  ProjectReport,
+  ProjectReportType,
   ProjectType,
 } from '@rock-solid/shared';
 import { DBService } from './db.service.js';
@@ -11,11 +12,12 @@ import { DBService } from './db.service.js';
 export class ReportMapper {
   constructor(private db: DBService) {}
 
-  async aantalInschrijvingen(
-    type: ProjectType | undefined,
+  async project(
+    reportType: ProjectReportType,
+    projectType: ProjectType | undefined,
     groupField: GroupField,
     secondGroupField: GroupField | undefined,
-  ): Promise<InschrijvingenReport> {
+  ): Promise<ProjectReport> {
     const rawResults = await this.db.$queryRawUnsafe<
       { key1: string; key2?: string; count: number }[]
     >(`
@@ -25,8 +27,9 @@ export class ReportMapper {
       COUNT(inschrijving.id)::int as count
     FROM inschrijving
     INNER JOIN project ON inschrijving."projectId" = project.id ${
-      type ? `AND project.type = '${type}'::project_type` : ''
+      projectType ? `AND project.type = '${projectType}'::project_type` : ''
     }
+    ${reportTypeJoin(reportType)}
     INNER JOIN persoon ON persoon.id = inschrijving."deelnemerId"    
     INNER JOIN plaats ON inschrijving."woonplaatsDeelnemerId" = plaats.id
     GROUP BY ${fieldName(groupField)}${
@@ -36,7 +39,7 @@ export class ReportMapper {
       secondGroupField ? `, ${fieldName(secondGroupField)} DESC` : ''
     }
     `);
-    const inschrijvingen: InschrijvingenReport = [];
+    const inschrijvingen: ProjectReport = [];
     function newReport(key: string) {
       const report: GroupedReport = {
         key,
@@ -50,15 +53,24 @@ export class ReportMapper {
       const reportItem =
         inschrijvingen.find((report) => report.key === row.key1) ??
         newReport(row.key1);
-      if (row.key2) {
+      if ('key2' in row) {
         const rows = reportItem.rows ?? [];
-        rows.push({ count: row.count, key: row.key2 });
+        rows.push({ count: row.count, key: row.key2 ?? '' });
         reportItem.rows = rows;
       }
       reportItem.total += row.count;
     });
 
     return inschrijvingen;
+
+    function reportTypeJoin(reportType: ProjectReportType): string {
+      switch (reportType) {
+        case 'deelnames':
+          return 'INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0';
+        case 'inschrijvingen':
+          return '';
+      }
+    }
   }
 }
 

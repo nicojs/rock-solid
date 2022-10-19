@@ -1,11 +1,13 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import {
   GroupField,
-  InschrijvingenReport,
+  ProjectReport,
+  ProjectReportType,
   ProjectType,
 } from '@rock-solid/shared';
 import { JwtAuthGuard } from './auth/index.js';
 import { GroupingFieldPipe } from './pipes/grouping-field.pipe.js';
+import { ProjectReportTypePipe } from './pipes/project-report-type.pipe.js';
 import { ProjectTypePipe } from './pipes/project-type.pipe.js';
 import { RequiredPipe } from './pipes/required.pipe.js';
 import { ReportMapper } from './services/report.mapper.js';
@@ -15,12 +17,15 @@ import { ReportMapper } from './services/report.mapper.js';
 export class ReportsController {
   constructor(private readonly reportMapper: ReportMapper) {}
 
-  @Get('projecten/inschrijvingen')
-  async inschrijvingen(
-    @Query('type', ProjectTypePipe) type: ProjectType | undefined,
+  @Get('projecten/:projectReport')
+  async deelnemers(
+    @Param('projectReport', ProjectReportTypePipe, RequiredPipe)
+    report: ProjectReportType,
+    @Query('type', ProjectTypePipe)
+    type: ProjectType | undefined,
     @Query('by', GroupingFieldPipe, RequiredPipe) group1: GroupField,
     @Query('andBy', GroupingFieldPipe) group2: GroupField | undefined,
-  ): Promise<InschrijvingenReport> {
-    return this.reportMapper.aantalInschrijvingen(type, group1, group2);
+  ): Promise<ProjectReport> {
+    return this.reportMapper.project(report, type, group1, group2);
   }
 }

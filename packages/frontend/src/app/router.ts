@@ -58,8 +58,16 @@ export class Router {
       .subscribe(this.navigatorSubject);
   }
 
+  resolve(path: string) {
+    return this.navigatorSubject.value.resolve(path);
+  }
+
+  isActive(path: string) {
+    return this.resolve(path).pathname === this.navigatorSubject.value.pathname;
+  }
+
   navigate(path: string) {
-    const route = this.navigatorSubject.value.resolve(path);
+    const route = this.resolve(path);
     window.history.pushState({}, '', route.pathname);
     this.navigatorSubject.next(route);
   }
