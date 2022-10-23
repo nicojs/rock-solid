@@ -1,10 +1,10 @@
 import {
   GroupField,
   parse,
-  ProjectType,
+  ProjectReportFilter,
   ReportRoutes,
 } from '@rock-solid/shared';
-import { httpClient, HttpClient } from '../shared/index';
+import { httpClient, HttpClient, toQueryString } from '../shared/index';
 
 export class ReportsClient {
   constructor(private http: HttpClient = httpClient) {}
@@ -12,14 +12,15 @@ export class ReportsClient {
   public async get<TReportRoute extends keyof ReportRoutes>(
     reportRoute: TReportRoute,
     group1: GroupField,
-    group2?: GroupField,
-    type?: ProjectType,
-    enkelNieuwkomers?: boolean,
+    group2: GroupField | undefined,
+    filter: ProjectReportFilter,
   ): Promise<ReportRoutes[TReportRoute]['entity']> {
     const response = await this.http.fetch(
-      `/api/${reportRoute}?${type ? `type=${type}&` : ''}by=${group1}${
-        group2 ? `&andBy=${group2}` : ''
-      }${enkelNieuwkomers ? '&enkelNieuwkomers=true' : ''}`,
+      `/api/${reportRoute}${toQueryString({
+        by: group1,
+        andBy: group2,
+        ...filter,
+      })}`,
     );
     const bodyText = await response.text();
     return parse(bodyText);

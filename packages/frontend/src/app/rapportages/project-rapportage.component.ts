@@ -12,10 +12,16 @@ import {
   Werksituatie,
   werksituaties,
   ProjectReportType,
+  organisatieonderdelen,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, PropertyValues } from 'lit';
-import { CheckboxInputControl, InputType, selectControl } from '../forms';
+import {
+  CheckboxInputControl,
+  InputType,
+  NumberInputControl,
+  selectControl,
+} from '../forms';
 import { show, showOrganisatieonderdeel, showProvincie } from '../shared';
 
 @customElement('rock-project-rapportage')
@@ -38,7 +44,13 @@ export class ProjectRapportageComponent extends RockElement {
   public group2?: GroupField;
 
   @state()
-  public enkelNieuwkomers?: boolean;
+  public enkelEersteInschrijvingen?: boolean;
+
+  @state()
+  public enkelOrganisatieonderdeel?: Organisatieonderdeel;
+
+  @state()
+  public enkelJaar?: number;
 
   @state()
   public isLoading = false;
@@ -49,18 +61,19 @@ export class ProjectRapportageComponent extends RockElement {
         props.has('projectType') ||
         props.has('group1') ||
         props.has('group2') ||
-        props.has('enkelNieuwkomers')) &&
+        props.has('enkelEersteInschrijvingen') ||
+        props.has('enkelJaar') ||
+        props.has('enkelOrganisatieonderdeel')) &&
       this.group1
     ) {
       this.isLoading = true;
       reportsClient
-        .get(
-          `reports/projecten/${this.reportType}`,
-          this.group1,
-          this.group2,
-          this.projectType,
-          this.enkelNieuwkomers,
-        )
+        .get(`reports/projecten/${this.reportType}`, this.group1, this.group2, {
+          enkelEersteInschrijvingen: this.enkelEersteInschrijvingen,
+          organisatieonderdeel: this.enkelOrganisatieonderdeel,
+          type: this.projectType,
+          jaar: this.enkelJaar,
+        })
         .then((report) => (this.report = report))
         .finally(() => {
           this.isLoading = false;
@@ -69,13 +82,10 @@ export class ProjectRapportageComponent extends RockElement {
   }
 
   override render() {
-    return html` <div class="row">
-      <div class="row">
-        <rock-reactive-form-input-control
-          class="col-12 col-md-3 col-sm-5 col-lg-3"
-          .control=${projectTypeControl}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
+    return html`<div class="row">
+      <fieldset class="row mt-3 mb-3 ">
+        <legend class="h6">Groeperen</legend>
+
         <rock-reactive-form-input-control
           class="col-12 col-md-3 col-sm-5 col-lg-3"
           .control=${groupingControl('group1')}
@@ -86,14 +96,30 @@ export class ProjectRapportageComponent extends RockElement {
           .control=${groupingControl('group2')}
           .entity=${this}
         ></rock-reactive-form-input-control>
-      </div>
-      <div class="row">
+      </fieldset>
+      <fieldset class="row mb-3">
+        <legend class="h6">Filteren</legend>
         <rock-reactive-form-input-control
-          class="col-12 col-md-3 col-sm-5 col-lg-3"
+          class="col-12 col-md-4 col-sm-6"
+          .control=${projectTypeControl}
+          .entity=${this}
+        ></rock-reactive-form-input-control>
+        <rock-reactive-form-input-control
+          class="col-12 col-md-4 col-sm-6"
+          .control=${projectJaarControl}
+          .entity=${this}
+        ></rock-reactive-form-input-control>
+        <rock-reactive-form-input-control
+          class="col-12 col-md-4 col-sm-6"
+          .control=${organisatieonderdeelFilterControl}
+          .entity=${this}
+        ></rock-reactive-form-input-control>
+        <rock-reactive-form-input-control
+          class="col-12 col-md-4 col-sm-6"
           .control=${enkelNieuwkomersControl}
           .entity=${this}
         ></rock-reactive-form-input-control>
-      </div>
+      </fieldset>
 
       <div class="row">
         <div class="col">
@@ -156,10 +182,24 @@ const projectTypeControl = selectControl<
   ProjectRapportageComponent,
   'projectType'
 >('projectType', projectTypes, { placeholder: 'Project type...' });
+const projectJaarControl: NumberInputControl<ProjectRapportageComponent> = {
+  name: 'enkelJaar',
+  type: InputType.number,
+  label: 'Enkel in jaar...',
+  placeholder: 'Enkel in jaar...',
+  step: 1,
+};
+
+const organisatieonderdeelFilterControl = selectControl<
+  ProjectRapportageComponent,
+  'enkelOrganisatieonderdeel'
+>('enkelOrganisatieonderdeel', organisatieonderdelen, {
+  placeholder: 'Enkel organisatieonderdeel...',
+});
 
 const enkelNieuwkomersControl: CheckboxInputControl<ProjectRapportageComponent> =
   {
-    name: 'enkelNieuwkomers',
+    name: 'enkelEersteInschrijvingen',
     type: InputType.checkbox,
     label: 'Enkel eerste inschrijvingen',
   };
@@ -167,6 +207,7 @@ const enkelNieuwkomersControl: CheckboxInputControl<ProjectRapportageComponent> 
 function showGroupKey(group: GroupField, key: string | undefined): string {
   switch (group) {
     case 'jaar':
+    case 'project':
     case 'woonsituatie':
     case 'geslacht':
       return show(key);

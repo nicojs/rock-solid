@@ -1,5 +1,5 @@
 import {
-  bedrijfsonderdelen,
+  organisatieonderdelen,
   Project,
   vakantieSeizoenen,
 } from '@rock-solid/shared';
@@ -48,7 +48,7 @@ export class ProjectenListComponent extends LitElement {
             ${project.type === 'cursus'
               ? html`<td>
                     ${project.type === 'cursus'
-                      ? bedrijfsonderdelen[project.organisatieonderdeel]
+                      ? organisatieonderdelen[project.organisatieonderdeel]
                       : notAvailable}
                   </td>
                   <td>

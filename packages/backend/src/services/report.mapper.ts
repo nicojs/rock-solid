@@ -3,6 +3,7 @@ import {
   GroupedReport,
   GroupField,
   ProjectReport,
+  ProjectReportFilter,
   ProjectReportType,
   ProjectType,
 } from '@rock-solid/shared';
@@ -17,15 +18,13 @@ export class ReportMapper {
     projectType: ProjectType | undefined,
     groupField: GroupField,
     secondGroupField: GroupField | undefined,
-    enkelNieuwkomers: boolean | undefined,
+    filter: ProjectReportFilter,
   ): Promise<ProjectReport> {
-    const rawResults = await this.db.$queryRawUnsafe<
-      { key1: string; key2?: string; count: number }[]
-    >(`
+    const query = `
     SELECT 
       ${select(groupField)}::text as key1, 
       ${secondGroupField ? `${select(secondGroupField)}::text as key2,` : ''} 
-      COUNT(inschrijving.id)::int as count
+      ${reportTypeAggregator(reportType)}::int as total
     FROM inschrijving
     INNER JOIN project ON inschrijving."projectId" = project.id ${
       projectType ? `AND project.type = '${projectType}'::project_type` : ''
@@ -33,14 +32,18 @@ export class ReportMapper {
     ${reportTypeJoin(reportType)}
     INNER JOIN persoon ON persoon.id = inschrijving."deelnemerId"    
     INNER JOIN plaats ON inschrijving."woonplaatsDeelnemerId" = plaats.id
-    ${enkelNieuwkomers ? 'WHERE inschrijving."eersteInschrijving" = true' : ''}
+    ${filterWhere(filter)}
     GROUP BY ${fieldName(groupField)}${
       secondGroupField ? `, ${fieldName(secondGroupField)}` : ''
     }
     ORDER BY ${fieldName(groupField)} DESC${
       secondGroupField ? `, ${fieldName(secondGroupField)} DESC` : ''
     }
-    `);
+    `;
+    console.log(query);
+    const rawResults = await this.db.$queryRawUnsafe<
+      { key1: string; key2?: string; total: number }[]
+    >(query);
     const inschrijvingen: ProjectReport = [];
     function newReport(key: string) {
       const report: GroupedReport = {
@@ -57,22 +60,58 @@ export class ReportMapper {
         newReport(row.key1);
       if ('key2' in row) {
         const rows = reportItem.rows ?? [];
-        rows.push({ count: row.count, key: row.key2 ?? '' });
+        rows.push({ count: row.total, key: row.key2 ?? '' });
         reportItem.rows = rows;
       }
-      reportItem.total += row.count;
+      reportItem.total += row.total;
     });
 
     return inschrijvingen;
+  }
+}
 
-    function reportTypeJoin(reportType: ProjectReportType): string {
-      switch (reportType) {
-        case 'deelnames':
-          return 'INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0';
-        case 'inschrijvingen':
-          return '';
-      }
-    }
+function reportTypeJoin(reportType: ProjectReportType): string {
+  switch (reportType) {
+    case 'deelnames':
+      return 'INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0';
+    case 'inschrijvingen':
+      return '';
+    case 'deelnemersuren':
+      return `
+      INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0
+      INNER JOIN activiteit ON activiteit.id = deelname."activiteitId"
+      `;
+  }
+}
+
+function filterWhere(filter: ProjectReportFilter): string {
+  const whereClauses: string[] = [];
+  if (filter.enkelEersteInschrijvingen) {
+    whereClauses.push('inschrijving."eersteInschrijving" = true');
+  }
+  if (filter.organisatieonderdeel) {
+    whereClauses.push(
+      `project."organisatieonderdeel" = '${filter.organisatieonderdeel}'`,
+    );
+  }
+  if (filter.type) {
+    whereClauses.push(`project.type = '${filter.type}'`);
+  }
+  if (filter.jaar) {
+    whereClauses.push(`project.jaar = ${filter.jaar}`);
+  }
+  if (whereClauses.length) {
+    return `WHERE ${whereClauses.join(' AND ')}`;
+  }
+  return '';
+}
+function reportTypeAggregator(reportType: ProjectReportType) {
+  switch (reportType) {
+    case 'deelnames':
+    case 'inschrijvingen':
+      return 'COUNT(inschrijving.id)';
+    case 'deelnemersuren':
+      return 'SUM(deelname."effectieveDeelnamePerunage" * activiteit.vormingsuren)';
   }
 }
 
@@ -90,6 +129,8 @@ function fieldName(field: GroupField): string {
       return 'persoon.geslacht';
     case 'organisatieonderdeel':
       return 'project.organisatieonderdeel';
+    case 'project':
+      return 'project.id';
   }
 }
 
@@ -107,5 +148,7 @@ function select(field: GroupField): string {
       return 'geslacht';
     case 'organisatieonderdeel':
       return 'organisatieonderdeel';
+    case 'project':
+      return "CONCAT(project.projectnummer, ' ', project.naam)";
   }
 }

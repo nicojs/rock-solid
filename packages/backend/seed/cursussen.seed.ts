@@ -113,10 +113,10 @@ export async function seedCursussen(
     }
     return deKei
       ? 'deKei'
-      : keiJongBuso
-      ? 'keiJongBuSO'
       : keiJongNietBuso
       ? 'keiJongNietBuSO'
+      : keiJongBuso
+      ? 'keiJongBuSO'
       : undefined;
   }
 
@@ -139,9 +139,31 @@ export async function seedCursussen(
           return {
             van,
             totEnMet,
+            vormingsuren: determineVormingsuren(van, totEnMet),
           };
         });
     }
     return [];
   }
+}
+
+const msInDay = 1000 * 3600 * 24;
+function determineVormingsuren(van: Date, totEnMet: Date): number {
+  const diffMs = totEnMet.getTime() - van.getTime() + msInDay;
+  const diffDays = diffMs / msInDay;
+  // see https://github.com/nicojs/rock-solid/issues/22
+  if (diffDays <= 1) {
+    // 1 day
+    return 8;
+  }
+  if (diffDays <= 3) {
+    // weekend
+    return 19;
+  }
+  if (diffDays <= 4) {
+    // 4-daagse
+    return 36;
+  }
+  // 5-daagse
+  return 46;
 }

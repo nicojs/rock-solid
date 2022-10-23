@@ -17,6 +17,10 @@ export const projectTypes: Options<ProjectType> = Object.freeze({
   vakantie: 'Vakantie',
 });
 
+export function isProjectType(maybe: string): maybe is ProjectType {
+  return maybe in projectTypes;
+}
+
 export interface Cursus extends BaseProject {
   type: 'cursus';
   organisatieonderdeel: Organisatieonderdeel;
@@ -83,11 +87,18 @@ export const vakantieVervoerOptions: Options<VakantieVervoer> = Object.freeze({
 
 export type Organisatieonderdeel = 'keiJongBuSO' | 'keiJongNietBuSO' | 'deKei';
 
-export const bedrijfsonderdelen: Options<Organisatieonderdeel> = Object.freeze({
-  deKei: 'de KEI',
-  keiJongBuSO: 'KEI-JONG BuSO',
-  keiJongNietBuSO: 'KEI-JONG niet BuSO',
-});
+export const organisatieonderdelen: Options<Organisatieonderdeel> =
+  Object.freeze({
+    deKei: 'de KEI',
+    keiJongBuSO: 'KEI-JONG BuSO',
+    keiJongNietBuSO: 'KEI-JONG niet BuSO',
+  });
+
+export function isOrganisatieonderdeel(
+  maybe: string,
+): maybe is Organisatieonderdeel {
+  return maybe in organisatieonderdelen;
+}
 
 export type Project = Cursus | Vakantie;
 

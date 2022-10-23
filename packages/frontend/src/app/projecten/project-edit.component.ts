@@ -1,7 +1,7 @@
 import {
   BaseActiviteit,
   BaseProject,
-  bedrijfsonderdelen,
+  organisatieonderdelen,
   Cursus,
   CursusActiviteit,
   ProjectType,
@@ -113,7 +113,7 @@ const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
 
 const cursusProjectControls: FormControl<Cursus>[] = [
   ...baseProjectControls,
-  selectControl('organisatieonderdeel', bedrijfsonderdelen, {
+  selectControl('organisatieonderdeel', organisatieonderdelen, {
     validators: { required: true },
   }),
   {

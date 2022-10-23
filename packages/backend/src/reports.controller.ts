@@ -2,12 +2,13 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import {
   GroupField,
   ProjectReport,
+  ProjectReportFilter,
   ProjectReportType,
   ProjectType,
 } from '@rock-solid/shared';
 import { JwtAuthGuard } from './auth/index.js';
-import { BooleanPipe } from './pipes/boolean.pipe.js';
 import { GroupingFieldPipe } from './pipes/grouping-field.pipe.js';
+import { ProjectReportFilterPipe } from './pipes/project-report-filter.pipe.js';
 import { ProjectReportTypePipe } from './pipes/project-report-type.pipe.js';
 import { ProjectTypePipe } from './pipes/project-type.pipe.js';
 import { RequiredPipe } from './pipes/required.pipe.js';
@@ -26,15 +27,9 @@ export class ReportsController {
     type: ProjectType | undefined,
     @Query('by', GroupingFieldPipe, RequiredPipe) group1: GroupField,
     @Query('andBy', GroupingFieldPipe) group2: GroupField | undefined,
-    @Query('enkelNieuwkomers', BooleanPipe)
-    enkelNieuwkomers: boolean | undefined,
+    @Query(ProjectReportFilterPipe)
+    filter: ProjectReportFilter,
   ): Promise<ProjectReport> {
-    return this.reportMapper.project(
-      report,
-      type,
-      group1,
-      group2,
-      enkelNieuwkomers,
-    );
+    return this.reportMapper.project(report, type, group1, group2, filter);
   }
 }

@@ -9,7 +9,7 @@ import {
   Options,
   Provincie,
   Organisatieonderdeel,
-  bedrijfsonderdelen,
+  organisatieonderdelen,
 } from '@rock-solid/shared';
 import { html } from 'lit';
 import { decimalSeparator } from './string-utils';
@@ -141,7 +141,7 @@ export function showOrganisatieonderdeel(
   organisatie?: Organisatieonderdeel,
 ): string {
   if (organisatie) {
-    return bedrijfsonderdelen[organisatie];
+    return organisatieonderdelen[organisatie];
   }
   return unknown;
 }
