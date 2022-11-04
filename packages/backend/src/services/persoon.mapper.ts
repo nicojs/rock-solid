@@ -176,13 +176,34 @@ function toFoldervoorkeur(foldervoorkeur: db.Foldervoorkeur): Foldervoorkeur {
 function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
   switch (filter.searchType) {
     case 'persoon':
-      const { searchType, foldersoorten, selectie, ...where } = filter;
+      const {
+        searchType,
+        foldersoorten,
+        selectie,
+        laatsteInschrijvingJaarGeleden,
+        ...where
+      } = filter;
       return {
         ...where,
         ...(foldersoorten?.length
           ? { foldervoorkeuren: { some: { folder: { in: foldersoorten } } } }
           : {}),
         ...(selectie?.length ? { selectie: { hasSome: selectie } } : {}),
+        ...(laatsteInschrijvingJaarGeleden !== undefined
+          ? {
+              inschrijvingen: {
+                some: {
+                  project: {
+                    jaar: {
+                      gte:
+                        new Date().getFullYear() -
+                        laatsteInschrijvingJaarGeleden,
+                    },
+                  },
+                },
+              },
+            }
+          : {}),
       };
     case 'text':
       return {

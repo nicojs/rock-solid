@@ -4,12 +4,14 @@ import { Organisatieonderdeel, ProjectType } from './project';
 export type ProjectReportType =
   | 'inschrijvingen'
   | 'deelnames'
-  | 'deelnemersuren';
+  | 'deelnemersuren'
+  | 'vormingsuren';
 
 export const projectReportTypes: Options<ProjectReportType> = Object.freeze({
   inschrijvingen: 'Inschrijvingen',
   deelnames: 'Deelnames',
   deelnemersuren: 'Deelnemersuren',
+  vormingsuren: 'Vormingsuren',
 });
 
 export function isProjectReportType(maybe: string): maybe is ProjectReportType {
@@ -38,13 +40,13 @@ export type GroupField =
   | 'organisatieonderdeel'
   | 'project';
 export const groupingFieldOptions: Options<GroupField> = {
+  project: 'Project',
   jaar: 'Jaar',
   provincie: 'Provincie',
   woonsituatie: 'Woonsituatie',
   werksituatie: 'Werksituatie',
   geslacht: 'Geslacht',
   organisatieonderdeel: 'Organisatieonderdeel',
-  project: 'Project',
 };
 
 export interface ProjectReportFilter {

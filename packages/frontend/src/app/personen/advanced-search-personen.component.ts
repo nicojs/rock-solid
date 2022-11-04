@@ -15,7 +15,7 @@ import {
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { InputControl, selectControl } from '../forms';
+import { InputControl, InputType, selectControl } from '../forms';
 import {
   showAdres,
   pluralize,
@@ -147,7 +147,7 @@ const overigPersoonSearchControls: InputControl<PersoonDetailsFilter>[] = [
   }),
 ];
 
-const deelnemerSearchControls: InputControl<Deelnemer>[] = [
+const deelnemerSearchControls: InputControl<PersoonDetailsFilter>[] = [
   selectControl('geslacht', geslachten, {
     label: deelnemerLabels.geslacht,
     placeholder: 'Geen filter',
@@ -156,4 +156,10 @@ const deelnemerSearchControls: InputControl<Deelnemer>[] = [
     label: deelnemerLabels.werksituatie,
     placeholder: 'Geen filter',
   }),
+  {
+    type: InputType.number,
+    label: 'Laatste inschrijving',
+    name: 'laatsteInschrijvingJaarGeleden',
+    postfix: 'jaar geleden',
+  },
 ];

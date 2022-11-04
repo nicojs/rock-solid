@@ -28,7 +28,11 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
 
   override render() {
     return html`
-      ${this.renderInput(this.control)}
+      <div class="input-group">
+        ${this.renderInput(this.control)}${this.control.postfix
+          ? html`<span class="input-group-text">${this.control.postfix}</span>`
+          : ''}
+      </div>
       <div class="invalid-feedback">${this.validationMessage}</div>
     `;
   }
@@ -115,8 +119,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
   }
 
   private renderNumberInput(control: NumberInputControl<TEntity>) {
-    return html`<div class="input-group">
-      ${control.type === InputType.currency
+    return html` ${control.type === InputType.currency
         ? html`<span class="input-group-text">€</span>`
         : nothing}
       <input
@@ -146,8 +149,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
           this.updateCustomValidity();
           this.updateValidationMessage();
         }}"
-      />
-    </div>`;
+      />`;
   }
 
   private renderDateInput(control: DateControl<TEntity>) {

@@ -41,6 +41,11 @@ export class RapportagesComponent extends RockElement {
                 >Deelnemersuren</a
               >
             </li>
+            <li class="nav-item">
+              <a class="nav-link" ${routerLink('../vormingsuren')}
+                >Vormingsuren</a
+              >
+            </li>
           </ul>
         </div>
       </div>

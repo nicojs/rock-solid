@@ -110,6 +110,7 @@ export interface BaseInputControl<TEntity, TValue> {
   label?: string | false;
   validators?: Validators<TEntity, TValue>;
   placeholder?: string;
+  postfix?: string;
 }
 
 export type KeysOfType<TEntity, TValue> = keyof {

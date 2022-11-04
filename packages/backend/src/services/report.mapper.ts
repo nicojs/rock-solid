@@ -81,6 +81,8 @@ function reportTypeJoin(reportType: ProjectReportType): string {
       INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0
       INNER JOIN activiteit ON activiteit.id = deelname."activiteitId"
       `;
+    case 'vormingsuren':
+      return `INNER JOIN activiteit ON activiteit."projectId" = project.id`;
   }
 }
 
@@ -105,13 +107,15 @@ function filterWhere(filter: ProjectReportFilter): string {
   }
   return '';
 }
-function reportTypeAggregator(reportType: ProjectReportType) {
+function reportTypeAggregator(reportType: ProjectReportType): string {
   switch (reportType) {
     case 'deelnames':
     case 'inschrijvingen':
       return 'COUNT(inschrijving.id)';
     case 'deelnemersuren':
       return 'SUM(deelname."effectieveDeelnamePerunage" * activiteit.vormingsuren)';
+    case 'vormingsuren':
+      return 'SUM(activiteit.vormingsuren)';
   }
 }
 

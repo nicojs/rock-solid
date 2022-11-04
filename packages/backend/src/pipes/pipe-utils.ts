@@ -1,7 +1,11 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 
-export type Flat<T> = {
-  [K in keyof T]: any[] extends T[K] ? string : T[K];
+export type Queryfied<T> = {
+  [K in keyof T]: T[K] extends string
+    ? T[K]
+    : undefined extends T[K]
+    ? string | undefined
+    : string;
 };
 
 export function filterMetaQuery<T extends Record<string, unknown>>(query: T) {
