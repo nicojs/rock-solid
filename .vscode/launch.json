@@ -11,26 +11,26 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "type": "pwa-node"
+      "type": "node"
     },
     {
-      "name": "Launch Program",
+      "name": "🚀 Launch Program",
       "program": "${file}",
       "request": "launch",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "type": "pwa-node"
+      "type": "node"
     },
     {
-      "name": "Attach to backend",
+      "name": "🧲 Attach to backend",
       "port": 9229,
       "request": "attach",
       "skipFiles": [
         "<node_internals>/**"
       ],
       "restart": true,
-      "type": "pwa-node",
+      "type": "node",
       "outFiles": [
         "${workspaceFolder}/**/*.js",
         "!**/node_modules/**"

@@ -7,7 +7,7 @@ import {
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { foldervoorkeurBadges, pluralize, show, showAdres } from '../shared';
-import { fullName } from './full-name.pipe';
+import { fullName, fullNameWithAge } from './full-name.pipe';
 
 @customElement('rock-personen-list')
 export class PersonenComponent extends LitElement {
@@ -48,7 +48,7 @@ export class PersonenComponent extends LitElement {
       <tbody>
         ${this.personen!.map(
           (persoon) => html`<tr>
-            <td>${fullName(persoon)}</td>
+            <td>${fullNameWithAge(persoon)}</td>
             ${persoon.type === 'overigPersoon'
               ? html`<td>
                   ${persoon.selectie

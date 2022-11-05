@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
-import { fullName } from '../personen/full-name.pipe';
+import { fullName, fullNameWithAge } from '../personen/full-name.pipe';
 import {
   TypeAheadHint,
   pluralize,
@@ -124,8 +124,9 @@ export class ProjectInschrijvingenComponent extends LitElement {
             ${this.inschrijvingen.map(
               (inschrijving) => html`<tr>
                 <td>
-                  ${fullName(
+                  ${fullNameWithAge(
                     inschrijving.deelnemer!,
+                    this.project.activiteiten[0]?.van,
                   )}${inschrijving.eersteInschrijving
                     ? html` <span class="badge rounded-pill text-bg-primary"
                         >Eerste cursus</span
@@ -176,7 +177,10 @@ export class ProjectInschrijvingenComponent extends LitElement {
             })
             .then((personen) =>
               personen.map((persoon) => ({
-                text: fullName(persoon),
+                text: fullNameWithAge(
+                  persoon,
+                  this.project.activiteiten[0]?.van,
+                ),
                 value: persoon.id,
               })),
             )}"
