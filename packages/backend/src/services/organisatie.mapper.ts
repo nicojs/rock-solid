@@ -19,6 +19,7 @@ import {
   toNullableCreateAdresInput,
   toNullableUpdateAdresInput,
 } from './adres.mapper.js';
+import { handleKnownPrismaErrors } from '../errors/prisma.js';
 
 type DBOrganisatieContactAggregate = db.OrganisatieContact & {
   adres: DBAdresWithPlaats | null;
@@ -71,15 +72,17 @@ export class OrganisatieMapper {
     organisatie: UpsertableOrganisatie,
   ): Promise<Organisatie> {
     const { contacten, id, ...organisatieData } = organisatie;
-    const dbOrganisatie = await this.db.organisatie.create({
-      data: {
-        ...organisatieData,
-        contacten: {
-          create: contacten.map(toCreateContactInput),
+    const dbOrganisatie = await handleKnownPrismaErrors(
+      this.db.organisatie.create({
+        data: {
+          ...organisatieData,
+          contacten: {
+            create: contacten.map(toCreateContactInput),
+          },
         },
-      },
-      include: includeContacten(),
-    });
+        include: includeContacten(),
+      }),
+    );
     return toOrganisatie(dbOrganisatie);
   }
 
@@ -92,28 +95,30 @@ export class OrganisatieMapper {
   }): Promise<Organisatie> {
     const { contacten, id, ...props } = data;
 
-    const result = await this.db.organisatie.update({
-      where,
-      data: {
-        ...props,
-        // Update and create contacts that need to be updated or deleted
-        contacten: {
-          deleteMany: {
-            organisatieId: where.id,
-            id: {
-              notIn: contacten.map(({ id }) => id).filter(notEmpty),
+    const result = await handleKnownPrismaErrors(
+      this.db.organisatie.update({
+        where,
+        data: {
+          ...props,
+          // Update and create contacts that need to be updated or deleted
+          contacten: {
+            deleteMany: {
+              organisatieId: where.id,
+              id: {
+                notIn: contacten.map(({ id }) => id).filter(notEmpty),
+              },
             },
+            create: data.contacten
+              .filter((contact) => empty(contact.id))
+              .map(toCreateContactInput),
+            update: data.contacten
+              .filter((contact) => notEmpty(contact.id))
+              .map(toUpdateContactInput),
           },
-          create: data.contacten
-            .filter((contact) => empty(contact.id))
-            .map(toCreateContactInput),
-          update: data.contacten
-            .filter((contact) => notEmpty(contact.id))
-            .map(toUpdateContactInput),
         },
-      },
-      include: includeContacten(),
-    });
+        include: includeContacten(),
+      }),
+    );
 
     // Delete addresses that needs to be deleted
     for (const contact of contacten) {

@@ -22,7 +22,7 @@ import {
 } from '../forms';
 
 @customElement('rock-persoon-edit')
-export class PersonenEditComponent extends LitElement {
+export class PersoonEditComponent extends LitElement {
   @property({ attribute: false })
   private persoon!: UpsertablePersoon;
 

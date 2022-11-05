@@ -35,12 +35,16 @@ export class ProjectEditComponent extends LitElement {
   @property()
   public type: ProjectType = 'cursus';
 
+  @property()
+  public errorMessage: string | undefined;
+
   public override render() {
     return html`<h2>
         ${this.project.id
           ? `${printProject(this.project)} wijzigen`
           : `${capitalize(this.type)} toevoegen`}
       </h2>
+      <rock-alert .message=${this.errorMessage}></rock-alert>
       <rock-reactive-form
         @rock-submit="${this.save}"
         .controls="${this.type === 'cursus'

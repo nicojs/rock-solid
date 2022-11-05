@@ -6,10 +6,16 @@ import {
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { catchError, of } from 'rxjs';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
 import { Query, router } from '../router';
-import { capitalize, pluralize } from '../shared';
+import {
+  capitalize,
+  handleUniquenessError,
+  pluralize,
+  UniquenessFailedError,
+} from '../shared';
 import { projectenStore } from './projecten.store';
 
 @customElement('rock-projecten')
@@ -36,6 +42,12 @@ export class ProjectenComponent extends RockElement {
 
   @state()
   private focussedProject: Project | undefined;
+
+  @state()
+  private newProject: UpsertableProject | undefined;
+
+  @state()
+  private errorMessage: string | undefined;
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -68,24 +80,46 @@ export class ProjectenComponent extends RockElement {
       ) {
         projectenStore.setFocus(projectId);
       }
+      if (projectId === 'new') {
+        const project: UpsertableProject = {
+          naam: '',
+          projectnummer: '',
+          type: 'cursus',
+          activiteiten: [],
+        };
+        if (this.type === 'cursus') {
+          (project as Cursus).organisatieonderdeel = 'deKei';
+        }
+        this.newProject = project;
+      }
     }
     super.update(props);
   }
 
   private async addProject(project: Project) {
     this.loading = true;
-    projectenStore.create(project).subscribe(() => {
-      this.loading = false;
-      router.navigate(`/${pluralize(this.type)}/list`);
-    });
+    projectenStore
+      .create(project)
+      .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
+      .subscribe({
+        next: () => {
+          this.errorMessage = undefined;
+          router.navigate(`/${pluralize(this.type)}/list`);
+        },
+        complete: () => (this.loading = false),
+      });
   }
 
   private async editProject(project: Project) {
     this.loading = true;
-    projectenStore.update(project.id, project).subscribe(() => {
-      this.loading = false;
-      router.navigate(`/${pluralize(this.type)}/list`);
-    });
+    projectenStore
+      .update(project.id, project)
+      .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
+      .subscribe(() => {
+        this.loading = false;
+        this.errorMessage = undefined;
+        router.navigate(`/${pluralize(this.type)}/list`);
+      });
   }
 
   override render() {
@@ -105,20 +139,12 @@ export class ProjectenComponent extends RockElement {
                 <rock-paging .store=${projectenStore}></rock-paging>`
             : html`<rock-loading></rock-loading>`} `;
       case 'new':
-        const project: UpsertableProject = {
-          naam: '',
-          projectnummer: '',
-          type: 'cursus',
-          activiteiten: [],
-        };
-        if (this.type === 'cursus') {
-          (project as Cursus).organisatieonderdeel = 'deKei';
-        }
         return this.loading
           ? html`<rock-loading></rock-loading>`
           : html`<rock-project-edit
               .type=${this.type}
-              .project="${project}"
+              .project="${this.newProject}"
+              .errorMessage=${this.errorMessage}
               @project-submitted="${(event: CustomEvent<Project>) =>
                 this.addProject(event.detail)}"
             ></rock-project-edit>`;
@@ -130,6 +156,7 @@ export class ProjectenComponent extends RockElement {
               case 'edit':
                 return html`<rock-project-edit
                   .project=${this.focussedProject}
+                  .errorMessage=${this.errorMessage}
                   .type=${this.type}
                   @project-submitted="${(event: CustomEvent<Project>) =>
                     this.editProject(event.detail)}"

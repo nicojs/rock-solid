@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
 import { purgeNulls } from './mapper-utils.js';
+import { handleKnownPrismaErrors } from '../errors/prisma.js';
 
 @Injectable()
 export class InschrijvingMapper {
@@ -82,18 +83,20 @@ export class InschrijvingMapper {
       });
     }
 
-    const dbInschrijving = await this.db.inschrijving.create({
-      data: {
-        ...inschrijvingData,
-        eersteInschrijving,
-        woonplaatsDeelnemerId: domicilieadres
-          ? domicilieadres.plaatsId
-          : verblijfadres.plaatsId,
-      },
-      include: {
-        deelnemer: true,
-      },
-    });
+    const dbInschrijving = await handleKnownPrismaErrors(
+      this.db.inschrijving.create({
+        data: {
+          ...inschrijvingData,
+          eersteInschrijving,
+          woonplaatsDeelnemerId: domicilieadres
+            ? domicilieadres.plaatsId
+            : verblijfadres.plaatsId,
+        },
+        include: {
+          deelnemer: true,
+        },
+      }),
+    );
     return toInschrijving(dbInschrijving);
   }
 

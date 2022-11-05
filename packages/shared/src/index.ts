@@ -13,4 +13,5 @@ export * from './adres.js';
 export * from './deep-partial.js';
 export * from './auth.js';
 export * from './decimal.js';
+export * from './error.js';
 export * from './report.js';

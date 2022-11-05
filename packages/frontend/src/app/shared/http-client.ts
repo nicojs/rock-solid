@@ -1,5 +1,6 @@
-import { loginUrl } from '@rock-solid/shared';
+import { loginUrl, UnprocessableEntityBody } from '@rock-solid/shared';
 import { authStore, AuthStore } from '../auth';
+import { UniquenessFailedError } from './errors';
 import { HttpStatus } from './http-status';
 
 export class HttpClient {
@@ -36,7 +37,15 @@ export class HttpClient {
       // Redirect to login page
       window.location.href = loginUrl;
     }
-    return response;
+    if (response.status === HttpStatus.UNPROCESSABLE_ENTITY) {
+      const body: UnprocessableEntityBody = await response.json();
+      switch (body.status) {
+        case 'uniqueness_failed':
+          throw new UniquenessFailedError(body.fields);
+      }
+    } else {
+      return response;
+    }
   }
 }
 

@@ -1,5 +1,4 @@
 import {
-  Activiteit,
   CursusActiviteit,
   Decimal,
   empty,
@@ -13,9 +12,11 @@ import {
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
-import Prisma from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
+import { handleKnownPrismaErrors } from '../errors/index.js';
+import { UniqueKeyFailedError } from '../errors/unique-key-failed-error.js';
 
 const includeAggregate = {
   activiteiten: {
@@ -78,9 +79,7 @@ export class ProjectMapper {
     SELECT activiteit.id, SUM(deelname."effectieveDeelnamePerunage" * vormingsuren) as deelnemersuren
     FROM activiteit
     INNER JOIN deelname ON deelname."activiteitId" = activiteit.id
-    WHERE activiteit.id IN (${Prisma.Prisma.join(
-      activiteiten.map(({ id }) => id),
-    )})
+    WHERE activiteit.id IN (${Prisma.join(activiteiten.map(({ id }) => id))})
     GROUP BY activiteit.id`;
       for (const activiteit of activiteiten) {
         activiteit.aantalDeelnemersuren = deelnemersurenResult.find(
@@ -104,16 +103,18 @@ export class ProjectMapper {
   }
 
   async createProject(newProject: UpsertableProject): Promise<Project> {
-    const project = await this.db.project.create({
-      data: {
-        ...newProject,
-        jaar: determineYear(newProject.activiteiten),
-        activiteiten: {
-          create: newProject.activiteiten.map(toDBActiviteit),
+    const project = await handleKnownPrismaErrors(
+      this.db.project.create({
+        data: {
+          ...newProject,
+          jaar: determineYear(newProject.activiteiten),
+          activiteiten: {
+            create: newProject.activiteiten.map(toDBActiviteit),
+          },
         },
-      },
-      include: includeAggregate,
-    });
+        include: includeAggregate,
+      }),
+    );
     return toProject(project);
   }
 
@@ -122,33 +123,37 @@ export class ProjectMapper {
     project: UpsertableProject,
   ): Promise<Project> {
     const { aantalInschrijvingen, ...data } = project;
-    const result = await this.db.project.update({
-      where: { id },
-      data: {
-        ...data,
-        jaar: determineYear(data.activiteiten),
-        activiteiten: {
-          deleteMany: {
-            projectId: id,
-            id: {
-              notIn: project.activiteiten.map(({ id }) => id).filter(notEmpty),
-            },
-          },
-          create: project.activiteiten
-            .filter((act) => empty(act.id))
-            .map(toDBActiviteit),
-          updateMany: project.activiteiten
-            .filter((act) => notEmpty(act.id))
-            .map((act) => ({
-              where: {
-                id: act.id!,
+    const result = await handleKnownPrismaErrors(
+      this.db.project.update({
+        where: { id },
+        data: {
+          ...data,
+          jaar: determineYear(data.activiteiten),
+          activiteiten: {
+            deleteMany: {
+              projectId: id,
+              id: {
+                notIn: project.activiteiten
+                  .map(({ id }) => id)
+                  .filter(notEmpty),
               },
-              data: toDBActiviteit(act),
-            })),
+            },
+            create: project.activiteiten
+              .filter((act) => empty(act.id))
+              .map(toDBActiviteit),
+            updateMany: project.activiteiten
+              .filter((act) => notEmpty(act.id))
+              .map((act) => ({
+                where: {
+                  id: act.id!,
+                },
+                data: toDBActiviteit(act),
+              })),
+          },
         },
-      },
-      include: includeAggregate,
-    });
+        include: includeAggregate,
+      }),
+    );
     return toProject(result);
   }
 }

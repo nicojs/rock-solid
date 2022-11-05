@@ -38,15 +38,6 @@ export class ReactiveFormArrayComponent<
   public override render() {
     return html`<fieldset>
       <div class="row">
-        <div class="d-flex justify-content-start mb-3">
-          <button
-            type="button"
-            @click=${this.addNew}
-            class="btn btn-outline-primary"
-          >
-            + ${capitalize(singularize(this.control.name))}
-          </button>
-        </div>
         ${this.items.map(
           (item, index) =>
             html`<div class="row mb-3 border">
@@ -71,6 +62,15 @@ export class ReactiveFormArrayComponent<
               )}
             </div>`,
         )}
+        <div class="d-flex justify-content-start mb-3">
+          <button
+            type="button"
+            @click=${this.addNew}
+            class="btn btn-outline-primary"
+          >
+            + ${capitalize(singularize(this.control.name))}
+          </button>
+        </div>
       </div>
     </fieldset>`;
   }

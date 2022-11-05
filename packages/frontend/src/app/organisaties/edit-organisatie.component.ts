@@ -28,12 +28,17 @@ export class EditOrganisatieComponent extends LitElement {
   @property({ attribute: false })
   public organisatie!: UpsertableOrganisatie;
 
+  @property()
+  public errorMessage: string | undefined;
+
   public override render() {
     return html`<h2>
         ${this.organisatie.id
           ? `${printOrganisatie(this.organisatie)} wijzigen`
           : `Organisatie toevoegen`}
       </h2>
+      <rock-alert .message=${this.errorMessage}></rock-alert>
+
       <rock-reactive-form
         @rock-submit="${this.save}"
         .controls="${createControls(this.organisatie)}"

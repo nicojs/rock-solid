@@ -8,6 +8,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
 import { router } from '../router';
+import { handleUniquenessError } from '../shared';
 import { organisatieStore } from './organisatie.store';
 
 @customElement('rock-organisaties')
@@ -24,10 +25,16 @@ export class OrganisatiesComponent extends RockElement {
   private organisatieToEdit: Organisatie | undefined;
 
   @state()
+  private newOrganisatie = newOrganisatie();
+
+  @state()
   private totalCount = 0;
 
   @state()
   private loading = false;
+
+  @state()
+  private errorMessage: string | undefined;
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -50,6 +57,10 @@ export class OrganisatiesComponent extends RockElement {
 
   override update(props: PropertyValues<OrganisatiesComponent>): void {
     if (props.has('path')) {
+      this.errorMessage = undefined;
+      if (this.path[0] === 'new') {
+        this.newOrganisatie = newOrganisatie();
+      }
       if (this.path[0] === 'edit' && this.path[1]) {
         organisatieStore.setFocus(this.path[1]);
       } else {
@@ -61,19 +72,35 @@ export class OrganisatiesComponent extends RockElement {
 
   private async createOrganisatie(organisatie: UpsertableOrganisatie) {
     this.loading = true;
-    organisatieStore.create(organisatie).subscribe(() => {
-      this.loading = false;
-      router.navigate(`../list`);
-    });
+    this.errorMessage = '';
+    organisatieStore
+      .create(organisatie)
+      .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
+      .subscribe({
+        next: () => {
+          this.errorMessage = '';
+          router.navigate(`../list`);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   private async updateOrganisatie() {
     this.loading = true;
+    this.errorMessage = '';
     organisatieStore
       .update(this.organisatieToEdit!.id, this.organisatieToEdit!)
-      .subscribe(() => {
-        this.loading = false;
-        router.navigate('../../list');
+      .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
+      .subscribe({
+        next: () => {
+          this.errorMessage = '';
+          router.navigate('../../list');
+        },
+        complete: () => {
+          this.loading = false;
+        },
       });
   }
 
@@ -103,13 +130,11 @@ export class OrganisatiesComponent extends RockElement {
             : html`<rock-loading></rock-loading>`}
         `;
       case 'new':
-        const organisatie: DeepPartial<Organisatie> = {
-          contacten: [],
-        };
         return this.loading
           ? html`<rock-loading></rock-loading>`
           : html`<rock-edit-organisatie
-              .organisatie="${organisatie}"
+              .organisatie="${this.newOrganisatie}"
+              .errorMessage=${this.errorMessage}
               @organisatie-submitted="${(event: CustomEvent<Organisatie>) =>
                 this.createOrganisatie(event.detail)}"
             ></rock-edit-organisatie>`;
@@ -117,6 +142,7 @@ export class OrganisatiesComponent extends RockElement {
         return html`${this.organisatieToEdit
           ? html`<rock-edit-organisatie
               .organisatie="${this.organisatieToEdit}"
+              .errorMessage=${this.errorMessage}
               @organisatie-submitted=${this.updateOrganisatie}
             ></rock-edit-organisatie>`
           : html`<rock-loading></rock-loading>`}`;
@@ -126,4 +152,8 @@ export class OrganisatiesComponent extends RockElement {
         router.navigate(`/organisaties/list`);
     }
   }
+}
+
+function newOrganisatie(): DeepPartial<Organisatie> {
+  return { contacten: [] };
 }
