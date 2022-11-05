@@ -24,7 +24,6 @@ export function isProjectType(maybe: string): maybe is ProjectType {
 export interface Cursus extends BaseProject {
   type: 'cursus';
   organisatieonderdeel: Organisatieonderdeel;
-  overnachting: boolean;
   activiteiten: CursusActiviteit[];
 }
 
@@ -42,6 +41,7 @@ export interface BaseActiviteit {
   id: number;
   van: Date;
   totEnMet: Date;
+  metOvernachting: boolean;
   aantalDeelnames?: number;
 }
 

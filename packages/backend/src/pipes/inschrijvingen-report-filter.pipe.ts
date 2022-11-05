@@ -1,6 +1,7 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
 import {
   isOrganisatieonderdeel,
+  isOvernachtingDescription,
   isProjectType,
   ProjectReportFilter,
 } from '@rock-solid/shared';
@@ -25,6 +26,10 @@ export class ProjectReportFilterPipe
     const jaar = value[key('jaar')];
     if (jaar) {
       filter.jaar = parseInt(jaar);
+    }
+    const overnachting = value[key('overnachting')];
+    if (overnachting && isOvernachtingDescription(overnachting)) {
+      filter.overnachting = overnachting;
     }
     return filter;
   }

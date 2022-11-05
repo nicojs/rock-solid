@@ -135,10 +135,15 @@ export async function seedCursussen(
               .map((i) => parseInt(i));
             return new Date(jaar ?? 0, (maand ?? 1) - 1, dag);
           }) as [Date, Date];
+          const metOvernachting =
+            van.getFullYear() !== totEnMet.getFullYear() ||
+            van.getMonth() !== totEnMet.getMonth() ||
+            van.getDate() !== totEnMet.getDate();
 
           return {
             van,
             totEnMet,
+            metOvernachting,
             vormingsuren: determineVormingsuren(van, totEnMet),
           };
         });

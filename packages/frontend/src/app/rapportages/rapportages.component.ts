@@ -4,7 +4,7 @@ import { RockElement } from '../rock-element';
 
 import { bootstrap } from '../../styles';
 import { router } from '../router';
-import { isProjectReportType } from '@rock-solid/shared';
+import { isInschrijvingenReportType } from '@rock-solid/shared';
 import { routerLink } from '../shared';
 
 @customElement('rock-rapportages')
@@ -41,11 +41,6 @@ export class RapportagesComponent extends RockElement {
                 >Deelnemersuren</a
               >
             </li>
-            <li class="nav-item">
-              <a class="nav-link" ${routerLink('../vormingsuren')}
-                >Vormingsuren</a
-              >
-            </li>
           </ul>
         </div>
       </div>
@@ -53,7 +48,7 @@ export class RapportagesComponent extends RockElement {
   }
 
   private renderView() {
-    if (this.path[0] && isProjectReportType(this.path[0])) {
+    if (this.path[0] && isInschrijvingenReportType(this.path[0])) {
       return html`<rock-project-rapportage
         .reportType=${this.path[0]}
       ></rock-project-rapportage>`;

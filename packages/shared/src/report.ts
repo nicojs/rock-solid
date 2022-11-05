@@ -1,21 +1,23 @@
 import { Options } from './options';
 import { Organisatieonderdeel, ProjectType } from './project';
 
-export type ProjectReportType =
+export type InschrijvingenReportType =
   | 'inschrijvingen'
   | 'deelnames'
-  | 'deelnemersuren'
-  | 'vormingsuren';
+  | 'deelnemersuren';
 
-export const projectReportTypes: Options<ProjectReportType> = Object.freeze({
-  inschrijvingen: 'Inschrijvingen',
-  deelnames: 'Deelnames',
-  deelnemersuren: 'Deelnemersuren',
-  vormingsuren: 'Vormingsuren',
-});
+export const inschrijvingenReportTypes: Options<InschrijvingenReportType> =
+  Object.freeze({
+    inschrijvingen: 'Inschrijvingen',
+    deelnames: 'Deelnames',
+    deelnemersuren: 'Deelnemersuren',
+    vormingsuren: 'Vormingsuren',
+  });
 
-export function isProjectReportType(maybe: string): maybe is ProjectReportType {
-  return maybe in projectReportTypes;
+export function isInschrijvingenReportType(
+  maybe: string,
+): maybe is InschrijvingenReportType {
+  return maybe in inschrijvingenReportTypes;
 }
 
 export type ProjectReport = GroupedReport[];
@@ -54,4 +56,19 @@ export interface ProjectReportFilter {
   organisatieonderdeel?: Organisatieonderdeel;
   type?: ProjectType;
   jaar?: number;
+  overnachting?: OvernachtingDescription;
+}
+
+export type OvernachtingDescription = 'met' | 'zonder';
+
+export const overnachtingDescriptions: Options<OvernachtingDescription> =
+  Object.freeze({
+    met: 'Enkel met overnachting',
+    zonder: 'Enkel zonder overnachting',
+  });
+
+export function isOvernachtingDescription(
+  maybe: string,
+): maybe is OvernachtingDescription {
+  return maybe in overnachtingDescriptions;
 }

@@ -11,8 +11,10 @@ import {
   ReportRow,
   Werksituatie,
   werksituaties,
-  ProjectReportType,
+  InschrijvingenReportType,
   organisatieonderdelen,
+  OvernachtingDescription,
+  overnachtingDescriptions,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, PropertyValues } from 'lit';
@@ -29,7 +31,7 @@ export class ProjectRapportageComponent extends RockElement {
   static override styles = [bootstrap];
 
   @property()
-  public reportType!: ProjectReportType;
+  public reportType!: InschrijvingenReportType;
 
   @state()
   public report?: ProjectReport;
@@ -50,6 +52,9 @@ export class ProjectRapportageComponent extends RockElement {
   public enkelOrganisatieonderdeel?: Organisatieonderdeel;
 
   @state()
+  public overnachting?: OvernachtingDescription;
+
+  @state()
   public enkelJaar?: number;
 
   @state()
@@ -63,17 +68,24 @@ export class ProjectRapportageComponent extends RockElement {
         props.has('group2') ||
         props.has('enkelEersteInschrijvingen') ||
         props.has('enkelJaar') ||
-        props.has('enkelOrganisatieonderdeel')) &&
+        props.has('enkelOrganisatieonderdeel') ||
+        props.has('overnachting')) &&
       this.group1
     ) {
       this.isLoading = true;
       reportsClient
-        .get(`reports/projecten/${this.reportType}`, this.group1, this.group2, {
-          enkelEersteInschrijvingen: this.enkelEersteInschrijvingen,
-          organisatieonderdeel: this.enkelOrganisatieonderdeel,
-          type: this.projectType,
-          jaar: this.enkelJaar,
-        })
+        .get(
+          `reports/inschrijvingen/${this.reportType}`,
+          this.group1,
+          this.group2,
+          {
+            enkelEersteInschrijvingen: this.enkelEersteInschrijvingen,
+            organisatieonderdeel: this.enkelOrganisatieonderdeel,
+            type: this.projectType,
+            jaar: this.enkelJaar,
+            overnachting: this.overnachting,
+          },
+        )
         .then((report) => (this.report = report))
         .finally(() => {
           this.isLoading = false;
@@ -117,6 +129,11 @@ export class ProjectRapportageComponent extends RockElement {
         <rock-reactive-form-input-control
           class="col-12 col-md-4 col-sm-6"
           .control=${enkelNieuwkomersControl}
+          .entity=${this}
+        ></rock-reactive-form-input-control>
+        <rock-reactive-form-input-control
+          class="col-12 col-md-4 col-sm-6"
+          .control=${overnachtingControl}
           .entity=${this}
         ></rock-reactive-form-input-control>
       </fieldset>
@@ -189,6 +206,14 @@ const projectJaarControl: NumberInputControl<ProjectRapportageComponent> = {
   placeholder: 'Enkel in jaar...',
   step: 1,
 };
+
+const overnachtingControl = selectControl<
+  ProjectRapportageComponent,
+  'overnachting'
+>('overnachting', overnachtingDescriptions, {
+  placeholder: 'Met en zonder overnachting',
+  label: 'Overnachting',
+});
 
 const organisatieonderdeelFilterControl = selectControl<
   ProjectRapportageComponent,

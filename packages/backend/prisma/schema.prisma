@@ -90,7 +90,6 @@ model Project {
 
   // Cursus
   organisatieonderdeel Organisatieonderdeel?
-  overnachting         Boolean?
 
   // Vakantie
   prijs     Decimal?         @db.Money
@@ -123,13 +122,14 @@ model Inschrijving {
 }
 
 model Activiteit {
-  id           Int        @id @default(autoincrement())
-  project      Project    @relation(fields: [projectId], references: [id])
-  projectId    Int
-  van          DateTime   @db.Date
-  totEnMet     DateTime   @db.Date
-  vormingsuren Float?
-  deelnames    Deelname[]
+  id              Int        @id @default(autoincrement())
+  project         Project    @relation(fields: [projectId], references: [id])
+  projectId       Int
+  van             DateTime   @db.Date
+  totEnMet        DateTime   @db.Date
+  vormingsuren    Float?
+  metOvernachting Boolean    @default(false)
+  deelnames       Deelname[]
 
   // Vakanties
   verblijf VakantieVerblijf?

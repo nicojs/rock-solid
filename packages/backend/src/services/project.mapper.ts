@@ -1,4 +1,5 @@
 import {
+  Activiteit,
   CursusActiviteit,
   Decimal,
   empty,
@@ -108,7 +109,7 @@ export class ProjectMapper {
         ...newProject,
         jaar: determineYear(newProject.activiteiten),
         activiteiten: {
-          create: newProject.activiteiten,
+          create: newProject.activiteiten.map(toDBActiviteit),
         },
       },
       include: includeAggregate,
@@ -133,24 +134,43 @@ export class ProjectMapper {
               notIn: project.activiteiten.map(({ id }) => id).filter(notEmpty),
             },
           },
-          create: project.activiteiten.filter((act) => empty(act.id)),
+          create: project.activiteiten
+            .filter((act) => empty(act.id))
+            .map(toDBActiviteit),
           updateMany: project.activiteiten
             .filter((act) => notEmpty(act.id))
-            .map((act) => {
-              const { aantalDeelnemersuren, aantalDeelnames, ...data } = act;
-              return {
-                where: {
-                  id: act.id!,
-                },
-                data,
-              };
-            }),
+            .map((act) => ({
+              where: {
+                id: act.id!,
+              },
+              data: toDBActiviteit(act),
+            })),
         },
       },
       include: includeAggregate,
     });
     return toProject(result);
   }
+}
+
+function toDBActiviteit(
+  activiteit: UpsertableActiviteit,
+): db.Prisma.ActiviteitCreateWithoutProjectInput {
+  const {
+    aantalDeelnemersuren,
+    aantalDeelnames,
+    metOvernachting: unused,
+    ...data
+  } = activiteit;
+  const { van, totEnMet } = data;
+  const metOvernachting =
+    van.getFullYear() !== totEnMet.getFullYear() ||
+    van.getMonth() !== totEnMet.getMonth() ||
+    van.getDate() !== totEnMet.getDate();
+  return {
+    ...data,
+    metOvernachting,
+  };
 }
 
 function determineYear(activiteiten: UpsertableActiviteit[]) {
@@ -184,7 +204,6 @@ function toProject(val: DBProjectAggregate): Project {
         type,
         activiteiten: val.activiteiten?.map(toCursusActiviteit) ?? [],
         organisatieonderdeel: val.organisatieonderdeel!,
-        overnachting: val.overnachting!,
       };
     case 'vakantie':
       return {

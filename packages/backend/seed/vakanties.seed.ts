@@ -98,6 +98,7 @@ export async function seedVakanties(
         {
           van: new Date(jaar, maand, 1),
           totEnMet: new Date(jaar, maand, 1),
+          metOvernachting: true, // 🤷‍♀️
           verblijf: verblijfFromRaw(raw.verblijf),
           vervoer: vervoerFromRaw(raw.vervoer),
         },

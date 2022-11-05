@@ -116,11 +116,6 @@ const cursusProjectControls: FormControl<Cursus>[] = [
   selectControl('organisatieonderdeel', organisatieonderdelen, {
     validators: { required: true },
   }),
-  {
-    name: 'overnachting',
-    type: InputType.checkbox,
-    label: 'Met overnachting',
-  },
   formArray('activiteiten', cursusActiviteitenControls),
 ];
 

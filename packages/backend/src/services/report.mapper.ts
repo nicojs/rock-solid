@@ -4,7 +4,7 @@ import {
   GroupField,
   ProjectReport,
   ProjectReportFilter,
-  ProjectReportType,
+  InschrijvingenReportType,
   ProjectType,
 } from '@rock-solid/shared';
 import { DBService } from './db.service.js';
@@ -13,8 +13,8 @@ import { DBService } from './db.service.js';
 export class ReportMapper {
   constructor(private db: DBService) {}
 
-  async project(
-    reportType: ProjectReportType,
+  async inschrijvingen(
+    reportType: InschrijvingenReportType,
     projectType: ProjectType | undefined,
     groupField: GroupField,
     secondGroupField: GroupField | undefined,
@@ -70,7 +70,7 @@ export class ReportMapper {
   }
 }
 
-function reportTypeJoin(reportType: ProjectReportType): string {
+function reportTypeJoin(reportType: InschrijvingenReportType): string {
   switch (reportType) {
     case 'deelnames':
       return 'INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0';
@@ -81,8 +81,6 @@ function reportTypeJoin(reportType: ProjectReportType): string {
       INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0
       INNER JOIN activiteit ON activiteit.id = deelname."activiteitId"
       `;
-    case 'vormingsuren':
-      return `INNER JOIN activiteit ON activiteit."projectId" = project.id`;
   }
 }
 
@@ -102,20 +100,25 @@ function filterWhere(filter: ProjectReportFilter): string {
   if (filter.jaar) {
     whereClauses.push(`project.jaar = ${filter.jaar}`);
   }
+  if (filter.overnachting !== undefined) {
+    whereClauses.push(
+      `project.id IN (SELECT "projectId" FROM activiteit WHERE activiteit."metOvernachting" = ${
+        filter.overnachting === 'met' ? 'true' : 'false'
+      })`,
+    );
+  }
   if (whereClauses.length) {
     return `WHERE ${whereClauses.join(' AND ')}`;
   }
   return '';
 }
-function reportTypeAggregator(reportType: ProjectReportType): string {
+function reportTypeAggregator(reportType: InschrijvingenReportType): string {
   switch (reportType) {
     case 'deelnames':
     case 'inschrijvingen':
       return 'COUNT(inschrijving.id)';
     case 'deelnemersuren':
       return 'SUM(deelname."effectieveDeelnamePerunage" * activiteit.vormingsuren)';
-    case 'vormingsuren':
-      return 'SUM(activiteit.vormingsuren)';
   }
 }
 
