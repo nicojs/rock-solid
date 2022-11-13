@@ -57,7 +57,7 @@ export function uncapitalize<T extends string>(value: T): Uncapitalize<T> {
 
 export function singularize(value: string): string {
   if (value.endsWith('en')) {
-    return value.substr(0, value.length - 2);
+    return value.substring(0, value.length - 2);
   }
   return value;
 }
@@ -81,16 +81,22 @@ export function toDateString(
   if (val === undefined || typeof val === 'number') {
     return;
   }
-  function leadingZeroIfNeeded(n: number): string {
-    if (n < 10) {
-      return `0${n}`;
-    } else {
-      return `${n}`;
-    }
+  return `${val.getFullYear()}-${(val.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${val.getDate().toString().padStart(2, '0')}`;
+}
+export function toDateTimeString(
+  val: Date | number | undefined,
+): string | undefined {
+  if (val === undefined || typeof val === 'number') {
+    return;
   }
-  return `${val.getFullYear()}-${leadingZeroIfNeeded(
-    val.getMonth(),
-  )}-${leadingZeroIfNeeded(val.getDate())}`;
+
+  // 2017-06-01T08:30
+  return `${toDateString(val)}T${val
+    .getHours()
+    .toString()
+    .padStart(2, '0')}:${val.getMinutes().toString().padStart(2, '0')}`;
 }
 
 export function showDatum(val: Date | undefined): string {

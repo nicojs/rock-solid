@@ -37,40 +37,38 @@ export class ReactiveFormArrayComponent<
 
   public override render() {
     return html`<fieldset>
-      <div class="row">
-        ${this.items.map(
-          (item, index) =>
-            html`<div class="row mb-3 border">
-              <div class="d-flex justify-content-between">
-                <span class="form-text"
-                  >${capitalize(singularize(this.control.name))}</span
-                >
-                <button
-                  type="button"
-                  class="btn-close"
-                  aria-label="Close"
-                  title="Verwijder"
-                  @click=${() => this.removeItem(item)}
-                ></button>
-              </div>
-              ${this.control.controls.map(
-                (control) => html`<rock-reactive-form-control
-                  .control="${control}"
-                  .entity="${item}"
-                  .path="${this.name}_${index}"
-                ></rock-reactive-form-control>`,
-              )}
-            </div>`,
-        )}
-        <div class="d-flex justify-content-start mb-3">
-          <button
-            type="button"
-            @click=${this.addNew}
-            class="btn btn-outline-primary"
-          >
-            + ${capitalize(singularize(this.control.name))}
-          </button>
-        </div>
+      ${this.items.map(
+        (item, index) =>
+          html`<div class="row mb-3 border">
+            <div class="d-flex justify-content-between">
+              <span class="form-text"
+                >${capitalize(singularize(this.control.name))}</span
+              >
+              <button
+                type="button"
+                class="btn-close"
+                aria-label="Close"
+                title="Verwijder"
+                @click=${() => this.removeItem(item)}
+              ></button>
+            </div>
+            ${this.control.controls.map(
+              (control) => html`<rock-reactive-form-control
+                .control="${control}"
+                .entity="${item}"
+                .path="${this.name}_${index}"
+              ></rock-reactive-form-control>`,
+            )}
+          </div>`,
+      )}
+      <div class="d-flex justify-content-start mb-3">
+        <button
+          type="button"
+          @click=${this.addNew}
+          class="btn btn-outline-primary"
+        >
+          + ${capitalize(singularize(this.control.name))}
+        </button>
       </div>
     </fieldset>`;
   }

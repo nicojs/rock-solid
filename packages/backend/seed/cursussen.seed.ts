@@ -128,13 +128,30 @@ export async function seedCursussen(
         .split(',')
         .map((range) => range.trim())
         .map((range) => {
-          const [van, totEnMet] = range.split(' tot ').map((str) => {
-            const [jaar, maand, dag] = str
-              .split(' ')[0]!
-              .split('-')
-              .map((i) => parseInt(i));
-            return new Date(jaar ?? 0, (maand ?? 1) - 1, dag);
-          }) as [Date, Date];
+          const [van, totEnMet] = range
+            .split(' tot ')
+            .map((dateAndTimeString) => {
+              // example: "2021-10-29 16:30:00"
+              const [dateString, timeString] = dateAndTimeString.split(' ') as [
+                string,
+                string,
+              ];
+              const [jaar, maand, dag] = dateString
+                .split('-')
+                .map((i) => parseInt(i));
+              const [uur, minuut, seconde] = timeString
+                .split(':')
+                .map((i) => parseInt(i));
+              timeString;
+              return new Date(
+                jaar ?? 0,
+                (maand ?? 1) - 1,
+                dag,
+                uur,
+                minuut,
+                seconde,
+              );
+            }) as [Date, Date];
           const metOvernachting =
             van.getFullYear() !== totEnMet.getFullYear() ||
             van.getMonth() !== totEnMet.getMonth() ||

@@ -11,6 +11,7 @@ import {
   vakantieSeizoenen,
   vakantieVerblijven,
   vakantieVervoerOptions,
+  DeepPartial,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -84,16 +85,19 @@ const baseProjectControls: InputControl<BaseProject>[] = [
   },
 ];
 
+const HALF_HOUR_SECONDS = 60 * 30;
 const baseActiviteitenControls: FormControl<BaseActiviteit>[] = [
   {
     name: 'van',
-    type: InputType.date,
+    type: InputType.dateTimeLocal,
+    step: HALF_HOUR_SECONDS,
     validators: { required: true },
   },
   {
     name: 'totEnMet',
     label: 'Tot en met',
-    type: InputType.date,
+    step: HALF_HOUR_SECONDS,
+    type: InputType.dateTimeLocal,
     validators: { required: true },
   },
 ];
@@ -120,7 +124,7 @@ const cursusProjectControls: FormControl<Cursus>[] = [
   selectControl('organisatieonderdeel', organisatieonderdelen, {
     validators: { required: true },
   }),
-  formArray('activiteiten', cursusActiviteitenControls),
+  formArray('activiteiten', cursusActiviteitenControls, newActiviteit),
 ];
 
 const vakantieProjectControls: FormControl<Vakantie>[] = [
@@ -130,3 +134,16 @@ const vakantieProjectControls: FormControl<Vakantie>[] = [
   selectControl('seizoen', vakantieSeizoenen),
   formArray('activiteiten', vakantieActiviteitenControls),
 ];
+export function newActiviteit(): DeepPartial<CursusActiviteit> {
+  // Default is next weekend
+  const van = new Date();
+  const totEnMet = new Date();
+  const offsetTillNextFriday = (van.getDay() + 5) % 7 || 7;
+  van.setDate(van.getDate() + offsetTillNextFriday);
+  totEnMet.setDate(van.getDate() + 3);
+  van.setHours(20);
+  van.setMinutes(0);
+  totEnMet.setHours(16);
+  totEnMet.setMinutes(0);
+  return { van, totEnMet, vormingsuren: 19 };
+}

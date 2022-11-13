@@ -3,6 +3,7 @@ import {
   ProjectType,
   UpsertableProject,
   Cursus,
+  DeepPartial,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -16,6 +17,7 @@ import {
   pluralize,
   UniquenessFailedError,
 } from '../shared';
+import { newActiviteit } from './project-edit.component';
 import { projectenStore } from './projecten.store';
 
 @customElement('rock-projecten')
@@ -44,7 +46,7 @@ export class ProjectenComponent extends RockElement {
   private focussedProject: Project | undefined;
 
   @state()
-  private newProject: UpsertableProject | undefined;
+  private newProject: DeepPartial<Project> | undefined;
 
   @state()
   private errorMessage: string | undefined;
@@ -81,11 +83,11 @@ export class ProjectenComponent extends RockElement {
         projectenStore.setFocus(projectId);
       }
       if (projectId === 'new') {
-        const project: UpsertableProject = {
+        const project: DeepPartial<Project> = {
           naam: '',
           projectnummer: '',
           type: 'cursus',
-          activiteiten: [],
+          activiteiten: [newActiviteit()],
         };
         if (this.type === 'cursus') {
           (project as Cursus).organisatieonderdeel = 'deKei';

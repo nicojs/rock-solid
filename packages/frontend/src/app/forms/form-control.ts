@@ -16,6 +16,7 @@ export enum InputType {
   checkbox = 'checkbox',
   select = 'select',
   date = 'date',
+  dateTimeLocal = 'datetime-local',
 
   // Grouping types:
   array = 'array',
@@ -104,7 +105,7 @@ export type InputControl<TEntity> =
   | NumberInputControl<TEntity>
   | CheckboxInputControl<TEntity>
   | SelectControl<TEntity, any>
-  | DateControl<TEntity>;
+  | TemporalInput<TEntity>;
 
 export interface BaseInputControl<TEntity, TValue> {
   label?: string | false;
@@ -147,9 +148,22 @@ export interface NumberInputControl<TEntity>
   step?: number;
 }
 
+export type TemporalInput<TEntity> =
+  | DateControl<TEntity>
+  | DateTimeLocalControl<TEntity>;
+
 export interface DateControl<TEntity> extends BaseInputControl<TEntity, Date> {
   name: KeysOfType<TEntity, Date>;
   type: InputType.date;
+}
+export interface DateTimeLocalControl<TEntity>
+  extends BaseInputControl<TEntity, Date> {
+  name: KeysOfType<TEntity, Date>;
+  /**
+   * Value in seconds, with a scaling factor of 1000 (since the underlying numeric value is in milliseconds). The default value of step is 60, indicating 60 seconds (or 1 minute, or 60,000 milliseconds).
+   */
+  step?: number;
+  type: InputType.dateTimeLocal;
 }
 
 export interface CheckboxInputControl<TEntity>

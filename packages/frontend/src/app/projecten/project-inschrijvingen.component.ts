@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
-import { fullName, fullNameWithAge } from '../personen/full-name.pipe';
+import { fullNameWithAge } from '../personen/full-name.pipe';
 import {
   TypeAheadHint,
   pluralize,

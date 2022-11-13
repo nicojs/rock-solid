@@ -2,18 +2,18 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, nothing, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
-  DateControl,
   InputType,
   KeysOfType,
   NumberInputControl,
   SelectControl,
+  TemporalInput,
 } from './form-control';
 import {
   CheckboxInputControl,
   InputControl,
   StringInputControl,
 } from './form-control';
-import { capitalize, toDateString } from '../shared';
+import { capitalize, toDateString, toDateTimeString } from '../shared';
 import { Decimal } from '@rock-solid/shared';
 import { FormElement } from './form-element';
 import { ref, createRef } from 'lit/directives/ref.js';
@@ -32,8 +32,8 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
         ${this.renderInput(this.control)}${this.control.postfix
           ? html`<span class="input-group-text">${this.control.postfix}</span>`
           : ''}
+        <div class="invalid-feedback">${this.validationMessage}</div>
       </div>
-      <div class="invalid-feedback">${this.validationMessage}</div>
     `;
   }
 
@@ -67,7 +67,8 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       case InputType.currency:
         return this.renderNumberInput(control);
       case InputType.date:
-        return this.renderDateInput(control);
+      case InputType.dateTimeLocal:
+        return this.renderTemporalInput(control);
       case InputType.select:
         return this.renderSelect(control);
     }
@@ -152,17 +153,25 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       />`;
   }
 
-  private renderDateInput(control: DateControl<TEntity>) {
+  private renderTemporalInput(control: TemporalInput<TEntity>) {
+    const dateToString =
+      control.type === InputType.dateTimeLocal
+        ? toDateTimeString
+        : toDateString;
+
     return html`<input
       type="${control.type}"
       class="form-control"
       id="${this.name}"
       ${ref(this.inputRef)}
       name="${control.name}"
-      value="${toDateString(this.entity[control.name] as unknown as Date)}"
+      value="${dateToString(this.entity[control.name] as unknown as Date)}"
       ?required=${control.validators?.required}
-      min="${ifDefined(toDateString(control.validators?.min))}"
-      max="${ifDefined(toDateString(control.validators?.max))}"
+      min="${ifDefined(dateToString(control.validators?.min))}"
+      max="${ifDefined(dateToString(control.validators?.max))}"
+      step="${ifDefined(
+        control.type === InputType.dateTimeLocal && control.step,
+      )}"
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
         const inputEl = e.target as HTMLInputElement;

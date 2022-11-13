@@ -125,8 +125,8 @@ model Activiteit {
   id              Int        @id @default(autoincrement())
   project         Project    @relation(fields: [projectId], references: [id])
   projectId       Int
-  van             DateTime   @db.Date
-  totEnMet        DateTime   @db.Date
+  van             DateTime
+  totEnMet        DateTime
   vormingsuren    Float?
   metOvernachting Boolean    @default(false)
   deelnames       Deelname[]
