@@ -48,4 +48,9 @@ const inschrijvingControls: InputControl<Inschrijving>[] = [
     label: 'Staat op de wachtlijst?',
     type: InputType.checkbox,
   },
+  {
+    name: 'rekeninguittrekselNummer',
+    label: 'Rekeninguittreksel nummer',
+    type: InputType.text,
+  },
 ];

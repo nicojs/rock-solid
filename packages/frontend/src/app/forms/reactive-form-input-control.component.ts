@@ -112,7 +112,8 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
         const inputEl = e.target as HTMLInputElement;
-        (this.entity[control.name] as unknown as string) = inputEl.value;
+        (this.entity[control.name] as unknown as string | undefined) =
+          inputEl.value || undefined;
         this.updateCustomValidity();
         this.updateValidationMessage();
       }}"

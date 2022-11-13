@@ -100,22 +100,20 @@ model Project {
 }
 
 model Inschrijving {
-  id                             Int        @id @default(autoincrement())
-  projectId                      Int
-  project                        Project    @relation(fields: [projectId], references: [id])
-  deelnemerId                    Int
-  deelnemer                      Persoon    @relation(fields: [deelnemerId], references: [id])
-  deelnames                      Deelname[]
-  woonplaatsDeelnemerId          Int
-  woonplaatsDeelnemer            Plaats     @relation(fields: [woonplaatsDeelnemerId], references: [id])
-  opmerking                      String?    @db.VarChar(1024)
-  tijdstipVanInschrijving        DateTime   @default(now())
-  tijdstipVanAnnuleren           DateTime?
-  tijdstipVanBevestiging         DateTime?
-  tijdstipVerzendenVervoersbrief DateTime?
-  toestemmingFotos               Boolean    @default(false)
-  wachtlijst                     Boolean    @default(false)
-  eersteInschrijving             Boolean    @default(false)
+  id                       Int        @id @default(autoincrement())
+  projectId                Int
+  project                  Project    @relation(fields: [projectId], references: [id])
+  deelnemerId              Int
+  deelnemer                Persoon    @relation(fields: [deelnemerId], references: [id])
+  deelnames                Deelname[]
+  woonplaatsDeelnemerId    Int
+  woonplaatsDeelnemer      Plaats     @relation(fields: [woonplaatsDeelnemerId], references: [id])
+  rekeninguittrekselNummer String?    @db.VarChar(32)
+  opmerking                String?    @db.VarChar(1024)
+  tijdstipVanInschrijving  DateTime   @default(now())
+  toestemmingFotos         Boolean    @default(false)
+  wachtlijst               Boolean    @default(false)
+  eersteInschrijving       Boolean    @default(false)
 
   @@unique([projectId, deelnemerId])
   @@map("inschrijving")

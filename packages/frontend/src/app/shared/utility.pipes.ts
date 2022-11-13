@@ -18,9 +18,9 @@ export const unknown = 'onbekend';
 export const notAvailable = 'n/a';
 export const none = 'geen';
 
-export function show<T>(value: T): string {
+export function show<T>(value: T, nullishValue = notAvailable): string {
   if (value === undefined || value === null) {
-    return notAvailable;
+    return nullishValue;
   } else if (Array.isArray(value)) {
     if (value.length) {
       return value.join(', ');

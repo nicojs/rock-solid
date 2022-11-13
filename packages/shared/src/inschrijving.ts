@@ -7,9 +7,8 @@ export interface Inschrijving {
   deelnemerId: number;
   eersteInschrijving: boolean;
   tijdstipVanInschrijving: Date;
-  tijdstipVanBevestiging?: Date;
-  tijdstipVerzendenVervoersbrief?: Date;
   toestemmingFotos: boolean;
+  rekeninguittrekselNummer?: string;
   opmerking?: string;
   deelnemer?: Deelnemer;
   wachtlijst: boolean;

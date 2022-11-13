@@ -110,7 +110,11 @@ export class InschrijvingMapper {
       ...inschrijvingData
     } = inschrijving;
     const dbInschrijving = await this.db.inschrijving.update({
-      data: inschrijvingData,
+      data: {
+        ...inschrijvingData,
+        rekeninguittrekselNummer:
+          inschrijvingData.rekeninguittrekselNummer ?? null,
+      },
       where: {
         id,
       },

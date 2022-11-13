@@ -1,16 +1,18 @@
 import { Inschrijving, Project } from '@rock-solid/shared';
-import { html, LitElement, PropertyValues } from 'lit';
+import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
-import { fullNameWithAge } from '../personen/full-name.pipe';
+import { fullName, fullNameWithAge } from '../personen/full-name.pipe';
 import {
   TypeAheadHint,
   pluralize,
   showBoolean,
   showDatum,
   UniquenessFailedError,
+  show,
+  none,
 } from '../shared';
 import { router } from '../router';
 import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
@@ -115,8 +117,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
             <tr>
               <th>Naam</th>
               <th>Ingeschreven op</th>
-              <th>Wachtlijst?</th>
-              <th>Toestemming voor fotos?</th>
+              <th>Rekeninguittreksel</th>
               <th>Acties</th>
             </tr>
           </thead>
@@ -131,11 +132,26 @@ export class ProjectInschrijvingenComponent extends LitElement {
                     ? html` <span class="badge rounded-pill text-bg-primary"
                         >Eerste cursus</span
                       >`
-                    : ''}
+                    : nothing}
+                  ${inschrijving.toestemmingFotos
+                    ? html`<rock-icon
+                        title="${fullName(
+                          inschrijving.deelnemer!,
+                        )} geeft toestemming voor fotos"
+                        icon="camera"
+                      ></rock-icon>`
+                    : nothing}
+                  ${inschrijving.wachtlijst
+                    ? html`<rock-icon
+                        title="${fullName(
+                          inschrijving.deelnemer!,
+                        )} staat op de wachtlijst"
+                        icon="hourglass"
+                      ></rock-icon>`
+                    : nothing}
                 </td>
                 <td>${showDatum(inschrijving.tijdstipVanInschrijving)}</td>
-                <td>${showBoolean(inschrijving.wachtlijst)}</td>
-                <td>${showBoolean(inschrijving.toestemmingFotos)}</td>
+                <td>${show(inschrijving.rekeninguittrekselNummer, none)}</td>
                 <td>
                   <rock-link
                     btn
