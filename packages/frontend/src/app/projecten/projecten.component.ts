@@ -88,6 +88,7 @@ export class ProjectenComponent extends RockElement {
           projectnummer: '',
           type: 'cursus',
           activiteiten: [newActiviteit()],
+          begeleiders: [],
         };
         if (this.type === 'cursus') {
           (project as Cursus).organisatieonderdeel = 'deKei';

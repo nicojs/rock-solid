@@ -1,5 +1,6 @@
 import Decimal from 'decimal.js';
 import { Options } from './options.js';
+import { OverigPersoon } from './persoon.js';
 import { Upsertable } from './upsertable.js';
 
 export interface BaseProject {
@@ -8,6 +9,7 @@ export interface BaseProject {
   type: ProjectType;
   naam: string;
   aantalInschrijvingen?: number;
+  begeleiders: OverigPersoon[];
 }
 
 export type ProjectType = 'cursus' | 'vakantie';
@@ -114,4 +116,7 @@ export type UpsertableProject = Upsertable<
   activiteiten: UpsertableActiviteit[];
 };
 
-export type ProjectFilter = Pick<Project, 'type'>;
+export type ProjectFilter = Pick<Project, 'type'> & {
+  inschrijvingPersoonId?: number;
+  begeleidDoorPersoonId?: number;
+};

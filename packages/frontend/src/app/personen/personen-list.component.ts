@@ -66,6 +66,9 @@ export class PersonenComponent extends LitElement {
                 : foldervoorkeurBadges(persoon.foldervoorkeuren)}
             </td>
             <td>
+              <rock-link btn btnSecondary href="../display/${persoon.id}"
+                ><rock-icon icon="eye"></rock-icon
+              ></rock-link>
               <rock-link btn btnSecondary href="../edit/${persoon.id}"
                 ><rock-icon icon="pencil"></rock-icon
               ></rock-link>

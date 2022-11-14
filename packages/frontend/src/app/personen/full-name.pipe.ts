@@ -17,7 +17,7 @@ export function fullNameWithAge(
   }`;
 }
 
-function age(geboortedatum: Date, now = new Date()) {
+export function age(geboortedatum: Date, now = new Date()) {
   const then = geboortedatum;
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   return (

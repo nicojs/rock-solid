@@ -26,6 +26,12 @@ export class ReactiveFormControl<TEntity> extends FormElement<TEntity> {
           .entity=${this.entity}
           .path=${this.path}
         ></rock-reactive-form-plaats>`;
+      case InputType.tags:
+        return html`<rock-reactive-form-tags
+          .control=${this.control}
+          .entity=${this.entity}
+          .path=${this.path}
+        ></rock-reactive-form-tags>`;
       default:
         return this.renderInputControl(this.control);
     }

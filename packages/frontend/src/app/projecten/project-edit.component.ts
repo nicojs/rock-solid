@@ -12,6 +12,7 @@ import {
   vakantieVerblijven,
   vakantieVervoerOptions,
   DeepPartial,
+  OverigPersoon,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -22,7 +23,10 @@ import {
   InputControl,
   InputType,
   selectControl,
+  tagsControl,
 } from '../forms';
+import { fullName } from '../personen/full-name.pipe';
+import { persoonService } from '../personen/persoon.service';
 import { capitalize } from '../shared';
 import { printProject } from './project.pipes';
 
@@ -65,7 +69,7 @@ export class ProjectEditComponent extends LitElement {
   }
 }
 
-const baseProjectControls: InputControl<BaseProject>[] = [
+const baseProjectControls: FormControl<BaseProject>[] = [
   {
     name: 'projectnummer',
     type: InputType.text,
@@ -83,6 +87,21 @@ const baseProjectControls: InputControl<BaseProject>[] = [
       required: true,
     },
   },
+  tagsControl(
+    'begeleiders',
+    (tag) => fullName(tag),
+    async (search) => {
+      const personen = await persoonService.getAll({
+        type: 'overigPersoon',
+        searchType: 'text',
+        search,
+      });
+      return personen.map((persoon) => ({
+        text: fullName(persoon),
+        value: persoon as OverigPersoon,
+      }));
+    },
+  ),
 ];
 
 const HALF_HOUR_SECONDS = 60 * 30;

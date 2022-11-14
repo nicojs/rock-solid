@@ -1,6 +1,8 @@
+import { persoonTypeToPath } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../styles';
+import { routesByPersoonType } from './personen';
 import { router } from './router';
 
 @customElement('rock-nav')
@@ -27,17 +29,19 @@ export class NavComponent extends LitElement {
       </li>
       <li class="nav-item">
         <a
-          class="nav-link ${this.activeClass('deelnemers')}"
+          class="nav-link ${this.activeClass(routesByPersoonType.deelnemer)}"
           @click="${router.linkClick}"
-          href="/deelnemers"
+          href="/${routesByPersoonType.deelnemer}"
           >Deelnemers</a
         >
       </li>
       <li class="nav-item">
         <a
-          class="nav-link ${this.activeClass('overige-personen')}"
+          class="nav-link ${this.activeClass(
+            routesByPersoonType.overigPersoon,
+          )}"
           @click="${router.linkClick}"
-          href="/overige-personen"
+          href="/${routesByPersoonType.overigPersoon}"
           >Overige personen</a
         >
       </li>

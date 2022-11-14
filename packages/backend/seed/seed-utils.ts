@@ -11,7 +11,7 @@ export async function readImportJson<T>(relativeFileName: string) {
 
 export async function writeOutputJson(
   relativeFileName: string,
-  obj: unknown,
+  obj: object,
   readonly: boolean,
 ) {
   if (readonly) {

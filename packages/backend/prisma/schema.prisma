@@ -41,8 +41,10 @@ model Persoon {
   inschrijvingen        Inschrijving[]
 
   // OverigePersonen
-  foldervoorkeuren Foldervoorkeur[]
-  selectie         OverigPersoonSelectie[]
+  foldervoorkeuren   Foldervoorkeur[]
+  selectie           OverigPersoonSelectie[]
+  begeleidtProjecten Project[]
+  projectId          Int?
 
   @@map("persoon")
 }
@@ -86,6 +88,7 @@ model Project {
   naam           String         @db.VarChar(256)
   activiteiten   Activiteit[]
   inschrijvingen Inschrijving[]
+  begeleiders    Persoon[]
   jaar           Int
 
   // Cursus

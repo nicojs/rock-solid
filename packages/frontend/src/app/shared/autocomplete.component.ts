@@ -105,15 +105,7 @@ export class AutocompleteComponent extends LitElement {
 
   public override connectedCallback(): void {
     super.connectedCallback();
-    const container = this.parentElement!;
-    const searchInput = container.querySelector('input');
-    if (!searchInput) {
-      throw new Error(
-        `Cannot locate input for auto complete from ${
-          this.parentElement!.tagName
-        }`,
-      );
-    }
+    const searchInput = this.findSearchInput();
     this.searchInput = searchInput;
     this.subscription = new Subscription();
 
@@ -167,6 +159,7 @@ export class AutocompleteComponent extends LitElement {
               break;
             case 'Enter':
               this.submit(this.selectedHint);
+              keydown.preventDefault(); // Don't submit the form!
               break;
             case 'Escape':
               this.searchInput.blur();
@@ -198,6 +191,23 @@ export class AutocompleteComponent extends LitElement {
         )
         .subscribe((hints) => (this.hints = hints)),
     );
+  }
+
+  private findSearchInput() {
+    let searchInput: HTMLInputElement | null = null;
+    let container = this.parentElement;
+    while (searchInput === null && container) {
+      searchInput = container.querySelector('input');
+      container = container.parentElement;
+    }
+    if (!searchInput) {
+      throw new Error(
+        `Cannot locate input for auto complete from ${
+          this.parentElement!.tagName
+        }`,
+      );
+    }
+    return searchInput;
   }
 
   public override disconnectedCallback(): void {

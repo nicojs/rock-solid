@@ -22,7 +22,9 @@ export type FilterFrom<TRoute extends keyof RestRoutes> =
 
 export type RestRoutes = TopRoutes &
   ProjectenInschrijvingRoute &
-  ActiviteitDeelnamesRoute;
+  ActiviteitDeelnamesRoute &
+  PersoonInschrijvingenRoute &
+  PersoonBegeleidRoute;
 
 type TopRoutes = {
   personen: {
@@ -51,7 +53,22 @@ type ProjectenInschrijvingRoute = {
   [K in `projecten/${string}/inschrijvingen`]: {
     entity: Inschrijving;
     upsertableEntity: UpsertableInschrijving;
-    filter: Record<string, never>;
+    filter: Omit<ProjectFilter, 'inschrijvingPersoonId'>;
+  };
+};
+
+type PersoonInschrijvingenRoute = {
+  [K in `personen/${string}/inschrijvingen`]: {
+    entity: Project;
+    filter: ProjectFilter;
+    upsertableEntity: never;
+  };
+};
+type PersoonBegeleidRoute = {
+  [K in `personen/${string}/begeleid`]: {
+    entity: Project;
+    filter: ProjectFilter;
+    upsertableEntity: never;
   };
 };
 

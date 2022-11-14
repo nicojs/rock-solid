@@ -1,4 +1,10 @@
-import { parse, RestRoutes, TOTAL_COUNT_HEADER } from '@rock-solid/shared';
+import {
+  EntityFrom,
+  FilterFrom,
+  parse,
+  RestRoutes,
+  TOTAL_COUNT_HEADER,
+} from '@rock-solid/shared';
 import { httpClient, HttpClient } from './http-client';
 import { HttpStatus } from './http-status';
 
@@ -12,10 +18,10 @@ export class RestClient {
 
   async getAll<TRoute extends keyof RestRoutes>(
     route: TRoute,
-    query?: Record<string, unknown>,
-  ): Promise<RestRoutes[TRoute]['entity'][]> {
+    filter?: FilterFrom<TRoute>,
+  ): Promise<EntityFrom<TRoute>[]> {
     const response = await this.http.fetch(
-      `/api/${route}${toQueryString(query)}`,
+      `/api/${route}${toQueryString(filter)}`,
     );
     const bodyText = await response.text();
     return parse(bodyText);
@@ -24,9 +30,9 @@ export class RestClient {
   async getPage<TRoute extends keyof RestRoutes>(
     route: TRoute,
     page = 0,
-    query: Record<string, unknown> = {},
+    filter?: FilterFrom<TRoute>,
   ): Promise<Page<TRoute>> {
-    query['_page'] = page;
+    const query = { ...filter, _page: page };
     const response = await this.http.fetch(
       `/api/${route}${toQueryString(query)}`,
     );
@@ -106,7 +112,7 @@ export class RestClient {
 
 export const restClient = new RestClient();
 
-function toQueryString(query: Record<string, unknown> | undefined) {
+function toQueryString(query: object | undefined) {
   if (query) {
     return `?${Object.entries(query)
       .filter(

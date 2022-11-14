@@ -13,6 +13,7 @@ export interface BasePersoon {
   emailadres?: string;
   geboortedatum?: Date;
   geboorteplaats?: string;
+  voedingswens: Voedingswens;
   geslacht: Geslacht;
   rekeningnummer?: string;
   rijksregisternummer?: string;
@@ -90,6 +91,7 @@ export const persoonLabels: Record<keyof Persoon, string> = {
   rekeningnummer: 'Rekeningnummer',
   rijksregisternummer: 'Rijksregisternummer',
   telefoonnummer: 'Telefoonnummer',
+  voedingswens: 'Voedingswens',
   type: 'type',
   opmerking: 'Opmerking',
   voornaam: 'Voornaam',

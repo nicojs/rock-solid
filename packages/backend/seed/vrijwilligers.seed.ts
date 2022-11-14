@@ -40,12 +40,21 @@ export async function seedVrijwilligers(
   await adresSeeder.init();
 
   const vrijwilligers = vrijwilligersRaw.map(fromRaw);
+  const persoonIdByTitle = new Map<string, number>();
 
-  for (const vrijwilliger of vrijwilligers) {
-    await client.persoon.create({
+  for (const [titel, vrijwilliger] of vrijwilligers) {
+    const { id } = await client.persoon.create({
       data: vrijwilliger,
     });
+    persoonIdByTitle.set(titel, id);
   }
+  await writeOutputJson(
+    'vrijwilligers-lookup.json',
+    Object.fromEntries(persoonIdByTitle.entries()),
+    readonly,
+  );
+  console.log(`✅ vrijwilligers-lookup.json (${persoonIdByTitle.size})`);
+
   console.log(`Seeded ${vrijwilligers.length} vrijwilligers`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
@@ -53,28 +62,34 @@ export async function seedVrijwilligers(
     importErrors,
     readonly,
   );
+  return persoonIdByTitle;
 
-  function fromRaw(raw: RawVrijwilliger): db.Prisma.PersoonCreateInput {
+  function fromRaw(
+    raw: RawVrijwilliger,
+  ): [title: string, createInput: db.Prisma.PersoonCreateInput] {
     const volledigeNaam = `${raw.naam} ${raw.achternaam}`;
     const [dag, maand, jaar] = raw.geboortedatum
       .split('-')
       .map((i) => parseInt(i));
     const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput =
       adresSeeder.fromRawOrOnbekend(raw, raw.adres, raw.postcode);
-    return {
-      achternaam: raw.achternaam,
-      voornaam: raw.naam,
-      volledigeNaam,
-      emailadres: raw['e-mail'],
-      geboortedatum: new Date(jaar ?? 0, (maand ?? 1) - 1, dag),
-      verblijfadres,
-      gsmNummer: stringFromRaw(raw.GSM),
-      telefoonnummer: stringFromRaw(raw.telefoon),
-      type: 'overigPersoon',
-      foldervoorkeuren,
-      selectie: ['vakantieVrijwilliger'],
-      opmerking: stringFromRaw(raw.opmerkingen),
-    };
+    return [
+      raw.titel,
+      {
+        achternaam: raw.achternaam,
+        voornaam: raw.naam,
+        volledigeNaam,
+        emailadres: raw['e-mail'],
+        geboortedatum: new Date(jaar ?? 0, (maand ?? 1) - 1, dag),
+        verblijfadres,
+        gsmNummer: stringFromRaw(raw.GSM),
+        telefoonnummer: stringFromRaw(raw.telefoon),
+        type: 'overigPersoon',
+        foldervoorkeuren,
+        selectie: ['vakantieVrijwilliger'],
+        opmerking: stringFromRaw(raw.opmerkingen),
+      },
+    ];
   }
 }
 

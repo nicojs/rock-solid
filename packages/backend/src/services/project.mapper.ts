@@ -3,6 +3,7 @@ import {
   Decimal,
   empty,
   notEmpty,
+  OverigPersoon,
   Project,
   ProjectFilter,
   UpsertableActiviteit,
@@ -16,7 +17,11 @@ import { Prisma } from '@prisma/client';
 import { purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 import { handleKnownPrismaErrors } from '../errors/index.js';
-import { UniqueKeyFailedError } from '../errors/unique-key-failed-error.js';
+import {
+  DBPersonAggregate,
+  includePersoonAggregate,
+  toPersoon,
+} from './persoon.mapper.js';
 
 const includeAggregate = {
   activiteiten: {
@@ -32,6 +37,9 @@ const includeAggregate = {
         },
       },
     },
+  },
+  begeleiders: {
+    include: includePersoonAggregate,
   },
   _count: {
     select: {
@@ -111,6 +119,9 @@ export class ProjectMapper {
           activiteiten: {
             create: newProject.activiteiten.map(toDBActiviteit),
           },
+          begeleiders: {
+            connect: newProject.begeleiders?.map(({ id }) => ({ id })),
+          },
         },
         include: includeAggregate,
       }),
@@ -122,7 +133,8 @@ export class ProjectMapper {
     id: number,
     project: UpsertableProject,
   ): Promise<Project> {
-    const { aantalInschrijvingen, ...data } = project;
+    const { aantalInschrijvingen, begeleiders, ...data } = project;
+    const begeleiderIds = begeleiders?.map(({ id }) => ({ id })) ?? [];
     const result = await handleKnownPrismaErrors(
       this.db.project.update({
         where: { id },
@@ -150,6 +162,7 @@ export class ProjectMapper {
                 data: toDBActiviteit(act),
               })),
           },
+          begeleiders: { set: begeleiderIds },
         },
         include: includeAggregate,
       }),
@@ -190,15 +203,17 @@ type DBActiviteitAggregate = db.Activiteit & {
 
 interface DBProjectAggregate extends db.Project {
   activiteiten: DBActiviteitAggregate[];
+  begeleiders: DBPersonAggregate[];
   _count: {
     inschrijvingen: number;
   } | null;
 }
 
 function toProject(val: DBProjectAggregate): Project {
-  const { type, _count, ...projectProperties } = val;
+  const { type, _count, begeleiders, ...projectProperties } = val;
   const project = purgeNulls({
     type,
+    begeleiders: begeleiders.map(toPersoon) as OverigPersoon[],
     ...projectProperties,
     aantalInschrijvingen: _count?.inschrijvingen,
   });
@@ -241,5 +256,16 @@ function toVakantieActiviteit(val: DBActiviteitAggregate): VakantieActiviteit {
 }
 
 function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
-  return { type: filter.type };
+  const whereClause: db.Prisma.ProjectWhereInput = { type: filter.type };
+  if (filter.inschrijvingPersoonId) {
+    whereClause.inschrijvingen = {
+      some: { deelnemerId: filter.inschrijvingPersoonId },
+    };
+  }
+  if (filter.begeleidDoorPersoonId) {
+    whereClause.begeleiders = {
+      some: { id: filter.begeleidDoorPersoonId },
+    };
+  }
+  return whereClause;
 }

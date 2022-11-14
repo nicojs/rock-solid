@@ -5,6 +5,7 @@ import {
   Options,
   Plaats,
 } from '@rock-solid/shared';
+import { TypeAheadHint } from '../shared';
 
 export enum InputType {
   // Native input types:
@@ -25,6 +26,7 @@ export enum InputType {
   // Custom types:
   plaats = 'plaats',
   currency = 'currency',
+  tags = 'tags',
 }
 
 interface Validators<TEntity, TValue> {
@@ -45,7 +47,8 @@ export type FormControl<TEntity> =
   | InputControl<TEntity>
   | FormArray<TEntity, any>
   | FormGroup<TEntity, any>
-  | PlaatsControl<TEntity>;
+  | PlaatsControl<TEntity>
+  | TagsControl<TEntity, any>;
 
 export function formGroup<TEntity, TKey extends keyof TEntity & string>(
   name: TKey,
@@ -76,11 +79,36 @@ export function formArray<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   };
 }
 
+export function tagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
+  name: TKey,
+  tagText: (tag: ArrayItem<TEntity[TKey]>) => string,
+  searchAction: (
+    text: string,
+  ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>,
+): TagsControl<TEntity, TKey> {
+  return {
+    type: InputType.tags,
+    name,
+    tagText,
+    searchAction,
+  };
+}
+
 export interface FormArray<TEntity, TKey extends KeysOfType<TEntity, any[]>> {
   type: InputType.array;
   name: TKey;
   factory: () => DeepPartial<ArrayItem<TEntity[TKey]>>;
   controls: readonly FormControl<ArrayItem<TEntity[TKey]>>[];
+}
+
+export interface TagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>
+  extends BaseInputControl<TEntity, ArrayItem<TEntity[TKey]>[]> {
+  name: TKey;
+  searchAction: (
+    text: string,
+  ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>;
+  tagText: (tag: ArrayItem<TEntity[TKey]>) => string;
+  type: InputType.tags;
 }
 
 export interface FormGroup<TEntity, TKey extends keyof TEntity> {

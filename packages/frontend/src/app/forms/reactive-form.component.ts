@@ -1,11 +1,29 @@
-import { html, LitElement } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl } from './form-control';
 
 @customElement('rock-reactive-form')
 export class ReactiveFormComponent<TEntity> extends LitElement {
-  static override styles = [bootstrap];
+  static override styles = [
+    bootstrap,
+    css`
+      .tags-input {
+        cursor: text;
+      }
+      .tags-input input {
+        display: inline-block;
+        border: none;
+        box-shadow: none;
+        outline: none;
+        background-color: transparent;
+        padding: 0 6px;
+        margin: 0;
+        width: auto;
+        max-width: inherit;
+      }
+    `,
+  ];
 
   @property({ attribute: false })
   public entity!: TEntity;

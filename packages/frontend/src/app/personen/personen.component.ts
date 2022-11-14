@@ -15,6 +15,7 @@ import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { fullName } from './full-name.pipe';
 import { RockElement } from '../rock-element';
 import { personenStore } from './personen.store';
+import { routesByPersoonType } from './routing-helper';
 
 @customElement('rock-personen')
 export class PersonenComponent extends RockElement {
@@ -24,7 +25,7 @@ export class PersonenComponent extends RockElement {
   private personen: BasePersoon[] | undefined;
 
   @property({ attribute: false })
-  private persoonToEdit: Persoon | undefined;
+  private focussedPersoon: Persoon | undefined;
 
   @property({})
   public type: PersoonType = 'deelnemer';
@@ -44,7 +45,7 @@ export class PersonenComponent extends RockElement {
     }
     if (
       changedProperties.has('path') &&
-      this.path[0] === 'edit' &&
+      ['edit', 'display'].includes(this.path[0] ?? '') &&
       this.path[1]
     ) {
       personenStore.setFocus(this.path[1]);
@@ -67,7 +68,7 @@ export class PersonenComponent extends RockElement {
     );
     this.subscription.add(
       personenStore.focussedItem$.subscribe(
-        (item) => (this.persoonToEdit = item),
+        (item) => (this.focussedPersoon = item),
       ),
     );
   }
@@ -96,7 +97,7 @@ export class PersonenComponent extends RockElement {
   private async updatePersoon() {
     this.editIsLoading = true;
     personenStore
-      .update(this.persoonToEdit!.id, this.persoonToEdit!)
+      .update(this.focussedPersoon!.id, this.focussedPersoon!)
       .subscribe(() => {
         this.editIsLoading = false;
         router.navigate('../../list');
@@ -154,35 +155,46 @@ export class PersonenComponent extends RockElement {
       case 'new':
         const persoon: DeepPartial<Persoon> = {
           type: this.type,
+          voedingswens: 'geen',
           verblijfadres: {},
         };
         if (persoon.type === 'overigPersoon') {
           persoon.foldervoorkeuren = [];
         }
-        return html` <h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
+        return html`<h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading
             ? html`<rock-loading></rock-loading>`
-            : html`<rock-persoon-edit
+            : html`<rock-edit-persoon
                 .persoon="${persoon}"
                 @persoon-submitted=${this.createNewPersoon}
-              ></rock-persoon-edit>`}`;
+              ></rock-edit-persoon>`}`;
       case 'edit':
-        return html`${this.persoonToEdit
+        return html`${this.focussedPersoon
           ? html`<h2>
-                ${capitalize(this.type)} ${fullName(this.persoonToEdit)}
-                wijzigen
+                ${capitalize(persoonTypes[this.type])}
+                ${fullName(this.focussedPersoon)} wijzigen
               </h2>
-              <rock-persoon-edit
-                .persoon="${this.persoonToEdit}"
+              <rock-edit-persoon
+                .persoon="${this.focussedPersoon}"
                 @persoon-submitted=${this.updatePersoon}
-              ></rock-persoon-edit>`
+              ></rock-edit-persoon>`
+          : html`<rock-loading></rock-loading>`}`;
+      case 'display':
+        return html`${this.focussedPersoon
+          ? html`<h2>
+                ${capitalize(persoonTypes[this.type])}
+                ${fullName(this.focussedPersoon)} bekijken
+              </h2>
+              <rock-display-persoon
+                .persoon="${this.focussedPersoon}"
+              ></rock-display-persoon>`
           : html`<rock-loading></rock-loading>`}`;
       case 'zoeken':
         return html`<rock-advanced-search-personen
           .type=${this.type}
         ></rock-advanced-search-personen>`;
       default:
-        router.navigate('./list');
+        router.navigate(`/${routesByPersoonType[this.type]}/list`);
         return html``;
     }
   }

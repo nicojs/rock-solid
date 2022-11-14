@@ -8,6 +8,7 @@ import {
   BasePersoon,
   OverigPersoon,
   overigPersoonSelecties,
+  voedingswensen,
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -21,8 +22,8 @@ import {
   foldervoorkeurControls,
 } from '../forms';
 
-@customElement('rock-persoon-edit')
-export class PersoonEditComponent extends LitElement {
+@customElement('rock-edit-persoon')
+export class EditPersoonComponent extends LitElement {
   @property({ attribute: false })
   private persoon!: UpsertablePersoon;
 
@@ -69,6 +70,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
       max: new Date(new Date().getFullYear() - 5, 1, 1),
     },
   },
+  selectControl('voedingswens', voedingswensen),
   formGroup(
     'verblijfadres',
     [
