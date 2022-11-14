@@ -1,0 +1,19 @@
+name: 💡 Idee
+description: Heb je een nieuw idee? Iets dat beter kan?
+title: "[Nieuwe Idee] <titel>"
+labels: [enhancement]
+body:
+- type: input
+  id: url
+  attributes:
+    label: URL
+    description: Copy en paste de URL hier (eventueel)
+    placeholder: https://acc-rock-solid-web-app.azurewebsites.net/cursussen/101/edit/
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Idee
+    description: Beschrijf wat je idee is om het beter te maken.
+  validations:
+    required: true
