@@ -13,14 +13,14 @@ body:
     required: false
 - type: textarea
   attributes:
-    label: Huidige gedrag
-    description: Beschrijf wat er nu gebeurd
+    label: Dit gebeurt er nu
+    description: Beschrijf wat er nu gebeurt.
   validations:
     required: false
 - type: textarea
   attributes:
-    label: Verwachtte gedrag
-    description: Beschrijf welk gedrag je had verwacht
+    label: Dit had ik verwacht
+    description: Beschrijf wat je had verwacht dat er zou gebeuren.
   validations:
     required: false
 - type: textarea
