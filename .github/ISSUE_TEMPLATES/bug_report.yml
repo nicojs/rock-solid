@@ -1,0 +1,32 @@
+name: 🐛 Bug
+description: Vertel me over een fout in de applicatie
+title: "[BUG] <title>"
+labels: [Bug, Needs Triage]
+body:
+- type: input
+  id: url
+  attributes:
+    label: URL
+    description: Copy en paste de URL hier
+    placeholder: https://acc-rock-solid-web-app.azurewebsites.net/cursussen/101/edit/
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Huidige gedrag
+    description: Beschrijf wat er nu gebeurd
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Verwachtte gedrag
+    description: Beschrijf welk gedrag je had verwacht
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Wat wil je me nog meer vertellen?
+    description: |
+      Achtergrond informatie, screenshots, etc.
+  validations:
+    required: false
