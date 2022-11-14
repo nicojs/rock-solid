@@ -5,7 +5,7 @@ import { bootstrap } from '../../styles';
 import {
   show,
   showAdres,
-  foldervoorkeurBadges as foldervoorkeurBadges,
+  showFoldervoorkeurBadges as showFoldervoorkeurBadges,
 } from '../shared';
 
 @customElement('rock-organisaties-list')
@@ -67,7 +67,7 @@ export class OrganisatiesListComponent extends LitElement {
         <td>${show(contact.telefoonnummer)}</td>
         <td>${show(contact.emailadres)}</td>
         <td>${showAdres(contact.adres)}</td>
-        <td>${foldervoorkeurBadges(contact.foldervoorkeuren)}</td>`;
+        <td>${showFoldervoorkeurBadges(contact.foldervoorkeuren)}</td>`;
     }
   }
 }

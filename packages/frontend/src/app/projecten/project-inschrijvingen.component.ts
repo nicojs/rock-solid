@@ -8,7 +8,6 @@ import { fullName, fullNameWithAge } from '../personen/full-name.pipe';
 import {
   TypeAheadHint,
   pluralize,
-  showBoolean,
   showDatum,
   UniquenessFailedError,
   show,

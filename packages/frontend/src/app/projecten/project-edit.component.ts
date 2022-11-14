@@ -20,7 +20,6 @@ import { bootstrap } from '../../styles';
 import {
   FormControl,
   formArray,
-  InputControl,
   InputType,
   selectControl,
   tagsControl,

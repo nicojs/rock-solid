@@ -12,7 +12,14 @@ import { html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
-import { restClient, show, showAdres, showDatum } from '../shared';
+import {
+  showFoldervoorkeurBadges,
+  restClient,
+  show,
+  showAdres,
+  showDatum,
+  showOverigPersoonSelectie,
+} from '../shared';
 import { age, fullName } from './full-name.pipe';
 
 @customElement('rock-display-persoon')
@@ -67,15 +74,15 @@ export class DisplayPersoonComponent extends RockElement {
               : nothing}
           </dd>
           ${this.renderDefinition('geslacht')}
-          <dt>Voedingswens</dt>
-          <dd>${voedingswensen[this.persoon.voedingswens]}</dd>
+          ${this.persoon.type === 'deelnemer'
+            ? this.renderDeelnemerProperties(this.persoon)
+            : this.renderOverigPersoonProperties(this.persoon)}
         </dl>
         <dl class="col-sm-6">
           ${this.renderDefinition('rijksregisternummer')}
           ${this.renderDefinition('telefoonnummer')}
-          ${this.persoon.type === 'deelnemer'
-            ? this.renderDeelnemerProperties(this.persoon)
-            : this.renderOverigPersoonProperties(this.persoon)}
+          <dt>Voedingswens</dt>
+          <dd>${voedingswensen[this.persoon.voedingswens]}</dd>
           <dt>Verblijfadres</dt>
           <dl>${showAdres(this.persoon.verblijfadres)}</dl>
           <dt>Domicilieadres</dt>
@@ -107,11 +114,13 @@ export class DisplayPersoonComponent extends RockElement {
 
   private renderProjectListRow(projecten: Project[] | undefined) {
     return html`<div class="row">
-      ${projecten
-        ? html`<rock-projecten-list
-            .projecten=${projecten}
-          ></rock-projecten-list>`
-        : html`<rock-loading></rock-loading>`}
+      <div class="col">
+        ${projecten
+          ? html`<rock-projecten-list
+              .projecten=${projecten}
+            ></rock-projecten-list>`
+          : html`<rock-loading></rock-loading>`}
+      </div>
     </div>`;
   }
 
@@ -133,6 +142,11 @@ export class DisplayPersoonComponent extends RockElement {
     `;
   }
   private renderOverigPersoonProperties(persoon: OverigPersoon) {
-    return html``;
+    return html`
+      <dt>Selectie</dt>
+      <dd>${showOverigPersoonSelectie(persoon.selectie)}</dd>
+      <dt>Foldervoorkeuren</dt>
+      <dd>${showFoldervoorkeurBadges(persoon.foldervoorkeuren)}</dd>
+    `;
   }
 }

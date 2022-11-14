@@ -1,22 +1,10 @@
-import {
-  Project,
-  ProjectType,
-  UpsertableProject,
-  Cursus,
-  DeepPartial,
-} from '@rock-solid/shared';
+import { Project, ProjectType, Cursus, DeepPartial } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { catchError, of } from 'rxjs';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
 import { Query, router } from '../router';
-import {
-  capitalize,
-  handleUniquenessError,
-  pluralize,
-  UniquenessFailedError,
-} from '../shared';
+import { capitalize, handleUniquenessError, pluralize } from '../shared';
 import { newActiviteit } from './project-edit.component';
 import { projectenStore } from './projecten.store';
 

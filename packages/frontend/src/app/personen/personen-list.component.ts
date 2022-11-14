@@ -1,13 +1,15 @@
 import { html, LitElement, nothing } from 'lit';
-import {
-  overigPersoonSelecties,
-  Persoon,
-  PersoonType,
-} from '@rock-solid/shared';
+import { Persoon, PersoonType } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { foldervoorkeurBadges, pluralize, show, showAdres } from '../shared';
-import { fullName, fullNameWithAge } from './full-name.pipe';
+import {
+  showFoldervoorkeurBadges,
+  pluralize,
+  show,
+  showAdres,
+  showOverigPersoonSelectie,
+} from '../shared';
+import { fullNameWithAge } from './full-name.pipe';
 
 @customElement('rock-personen-list')
 export class PersonenComponent extends LitElement {
@@ -50,11 +52,7 @@ export class PersonenComponent extends LitElement {
           (persoon) => html`<tr>
             <td>${fullNameWithAge(persoon)}</td>
             ${persoon.type === 'overigPersoon'
-              ? html`<td>
-                  ${persoon.selectie
-                    .map((item) => overigPersoonSelecties[item])
-                    .join(', ')}
-                </td>`
+              ? html`<td>${showOverigPersoonSelectie(persoon.selectie)}</td>`
               : nothing}
             <td>${show(persoon.emailadres)}</td>
             <td>${show(persoon.geslacht)}</td>
@@ -63,7 +61,7 @@ export class PersonenComponent extends LitElement {
             <td>
               ${persoon.type === 'deelnemer'
                 ? showAdres(persoon.verblijfadres)
-                : foldervoorkeurBadges(persoon.foldervoorkeuren)}
+                : showFoldervoorkeurBadges(persoon.foldervoorkeuren)}
             </td>
             <td>
               <rock-link btn btnSecondary href="../display/${persoon.id}"

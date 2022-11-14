@@ -1,4 +1,3 @@
-import { persoonTypeToPath } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../styles';

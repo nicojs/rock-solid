@@ -10,6 +10,8 @@ import {
   Provincie,
   Organisatieonderdeel,
   organisatieonderdelen,
+  OverigPersoonSelectie,
+  overigPersoonSelecties,
 } from '@rock-solid/shared';
 import { html } from 'lit';
 import { decimalSeparator } from './string-utils';
@@ -152,7 +154,11 @@ export function showOrganisatieonderdeel(
   return unknown;
 }
 
-export function foldervoorkeurBadges(
+export function showOverigPersoonSelectie(selectie: OverigPersoonSelectie[]) {
+  return selectie.map((item) => overigPersoonSelecties[item]).join(', ');
+}
+
+export function showFoldervoorkeurBadges(
   folderVoorkeur: Foldervoorkeur[] | undefined,
 ) {
   if (folderVoorkeur) {
