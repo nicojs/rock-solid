@@ -1,23 +1,26 @@
-import { showDatum } from './utility.pipes';
+import {
+  Adres,
+  BasePersoon,
+  Deelnemer,
+  deelnemerLabels,
+  Organisatie,
+  organisatieColumnNames,
+  organisatieContactColumnNames,
+  organisatieSoorten,
+  OverigPersoon,
+  overigPersoonLabels,
+} from '@rock-solid/shared';
+import {
+  capitalize,
+  foldervoorkeurenCsv,
+  optionsCsv,
+  show,
+  showDatum,
+} from './utility.pipes';
 
 export type ValueFactory<T> = {
   [Prop in keyof T]?: (val: T[Prop]) => string;
 };
-
-export function toCsvDownloadUrl<T>(
-  values: T[],
-  columns: Array<keyof T & string>,
-  columnLabels: Record<keyof T, string>,
-  valueFactory: ValueFactory<T>,
-) {
-  const csv = toCsv(values, columns, columnLabels, valueFactory);
-  // BOM is needed, see https://stackoverflow.com/questions/18249290/generate-csv-for-excel-via-javascript-with-unicode-characters#answer-48818418
-  const BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
-  const href = URL.createObjectURL(
-    new Blob([BOM, csv], { type: 'data:text/csv;charset=utf-8' }),
-  );
-  return href;
-}
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat
@@ -27,17 +30,155 @@ export function decimalSeparator(): ',' | '.' {
   return new Intl.NumberFormat().format(1.2).substring(1, 2) as ',' | '.';
 }
 
+export function downloadCsv(csv: string, fileName = 'download') {
+  // Creating a Blob for having a csv file format
+  // and passing the data with type
+  const blob = new Blob([csv], { type: 'text/csv' });
+
+  // Creating an object for downloading url
+  const url = window.URL.createObjectURL(blob);
+
+  // Creating an anchor(a) tag of HTML
+  const a = document.createElement('a');
+
+  // Passing the blob downloading url
+  a.setAttribute('href', url);
+
+  // Setting the anchor tag attribute for downloading
+  // and passing the download file name
+  a.setAttribute('download', `${fileName}`);
+
+  // Performing a download with click
+  a.click();
+}
+
+const basePersoonColumns = Object.freeze([
+  'voornaam',
+  'achternaam',
+  'emailadres',
+  'geboortedatum',
+  'geslacht',
+  'gsmNummer',
+  'telefoonnummer',
+  'rekeningnummer',
+  'rijksregisternummer',
+  'opmerking',
+] as const) satisfies readonly (keyof BasePersoon)[];
+
+const adresCsvColumns = Object.freeze([
+  'postcode',
+  'adres',
+  'gemeente',
+  'deelgemeente',
+] as const) satisfies readonly (keyof ReturnType<typeof adresCsvFields>)[];
+
+export function toOverigePersonenCsv(personen: OverigPersoon[]) {
+  return toCsv(
+    personen.map(
+      ({
+        verblijfadres: {
+          plaats: { postcode, gemeente, deelgemeente },
+          straatnaam,
+          huisnummer,
+          busnummer,
+        },
+        domicilieadres,
+        ...deelnemer
+      }) => ({
+        ...deelnemer,
+        postcode,
+        adres: `${straatnaam} ${huisnummer}${
+          busnummer ? ` bus ${busnummer}` : ''
+        }`,
+        gemeente,
+        deelgemeente,
+      }),
+    ),
+    [...basePersoonColumns, ...adresCsvColumns, 'selectie', 'foldervoorkeuren'],
+    overigPersoonLabels,
+    {
+      selectie: show,
+      foldervoorkeuren: foldervoorkeurenCsv,
+    },
+  );
+}
+
+function adresCsvFields({
+  plaats: { postcode, gemeente, deelgemeente },
+  straatnaam,
+  huisnummer,
+  busnummer,
+}: Adres) {
+  return {
+    postcode,
+    adres: toStraatEnHuisnummer({ straatnaam, huisnummer, busnummer }),
+    gemeente,
+    deelgemeente,
+  };
+}
+
+/**
+ * To personen csv for mailings
+ */
+export function toDeelnemersCsv(personen: Deelnemer[]): string {
+  return toCsv(
+    personen.map(({ verblijfadres, domicilieadres, ...deelnemer }) => ({
+      ...deelnemer,
+      ...adresCsvFields(verblijfadres),
+    })),
+    [...basePersoonColumns, ...adresCsvColumns],
+    deelnemerLabels,
+    {},
+  );
+}
+
+function toStraatEnHuisnummer({
+  straatnaam,
+  huisnummer,
+  busnummer,
+}: Pick<Adres, 'straatnaam' | 'busnummer' | 'huisnummer'>): string {
+  return `${straatnaam} ${huisnummer}${busnummer ? ` bus ${busnummer}` : ''}`;
+}
+
+export function toOrganisatiesCsv(organisaties: Organisatie[]): string {
+  return toCsv(
+    organisaties.flatMap((org) =>
+      org.contacten.map(({ adres, ...contact }) => ({
+        ...(adres ? adresCsvFields(adres) : {}),
+        ...org,
+        ...contact,
+      })),
+    ),
+    [
+      'naam',
+      'website',
+      'terAttentieVan',
+      'foldervoorkeuren',
+      'adres',
+      'emailadres',
+      'telefoonnummer',
+      'soorten',
+      ...adresCsvColumns,
+    ],
+    { ...organisatieColumnNames, ...organisatieContactColumnNames },
+    {
+      foldervoorkeuren: foldervoorkeurenCsv,
+      soorten: optionsCsv(organisatieSoorten),
+    },
+  );
+}
+
 export function toCsv<T>(
   values: T[],
-  columns: Array<keyof T & string>,
-  columnLabels: Record<keyof T, string>,
+  columns: ReadonlyArray<keyof T & string>,
+  columnLabels: Partial<Record<keyof T, string>>,
   valueFactory: ValueFactory<T>,
 ): string {
   // The excel csv delimiter is the opposite of the decimal separator, see https://www.ablebits.com/office-addins-blog/change-excel-csv-delimiter/
   const delimiter = decimalSeparator() === ',' ? ';' : ',';
 
   let csv = columns
-    .map((column) => columnLabels[column])
+    .map((column) => columnLabels[column] ?? capitalize(column))
     .map(escape)
     .join(delimiter);
   csv += '\n';

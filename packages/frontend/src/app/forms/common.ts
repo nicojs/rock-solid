@@ -26,10 +26,11 @@ export const adresControls: readonly FormControl<Adres>[] = Object.freeze([
   Object.freeze({ name: 'busnummer', type: InputType.text }),
 ]);
 
-export const foldervoorkeurControls: readonly FormControl<Foldervoorkeur>[] =
-  Object.freeze([
-    selectControl('folder', foldersoorten, { validators: { required: true } }),
-    selectControl('communicatie', communicatievoorkeuren, {
-      validators: { required: true },
-    }),
-  ]);
+export const foldervoorkeurControls: readonly FormControl<Foldervoorkeur>[] = [
+  selectControl('folder', foldersoorten, {
+    validators: { required: true },
+  }),
+  selectControl('communicatie', communicatievoorkeuren, {
+    validators: { required: true },
+  }),
+];

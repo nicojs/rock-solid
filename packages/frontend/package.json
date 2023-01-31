@@ -14,20 +14,20 @@
   "devDependencies": {
     "@rock-solid/shared": "0.1.0",
     "@popperjs/core": "^2.11.6",
-    "bootstrap": "^5.2.2",
+    "bootstrap": "^5.2.3",
     "copy-webpack-plugin": "^11.0.0",
-    "css-loader": "^6.7.1",
-    "lit": "^2.4.0",
-    "rxjs": "^7.5.7",
-    "sass": "^1.55.0",
-    "sass-loader": "^13.1.0",
-    "ts-loader": "^9.4.1",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
+    "css-loader": "^6.7.3",
+    "lit": "^2.6.1",
+    "rxjs": "^7.8.0",
+    "sass": "^1.57.1",
+    "sass-loader": "^13.2.0",
+    "ts-loader": "^9.4.2",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
     "webpack-livereload-plugin": "^3.0.2",
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "bootstrap-icons": "^1.9.1"
+    "bootstrap-icons": "^1.10.3"
   }
 }

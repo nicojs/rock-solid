@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
 import { fullName } from '../personen/full-name.pipe';
+import { printProject } from './project.pipes';
 
 @customElement('rock-project-inschrijving-edit')
 export class ProjectInschrijvingEditComponent extends LitElement {
@@ -18,7 +19,7 @@ export class ProjectInschrijvingEditComponent extends LitElement {
   public override render() {
     return html`<h2>
         Inschrijving van ${fullName(this.inschrijving.deelnemer!)} voor
-        ${this.project.id}
+        ${printProject(this.project)}
       </h2>
       <rock-reactive-form
         @rock-submit="${this.save}"

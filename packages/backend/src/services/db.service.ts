@@ -15,9 +15,9 @@ export class DBService
         },
       ],
     });
-    this.$on('query', async (/*e*/) => {
-      // console.log(`${e.query} ${e.params}`);
-    });
+    // this.$on('query', async (e) => {
+    //   console.log(`${e.query} ${e.params}`);
+    // });
   }
   async onModuleInit() {
     await this.$connect();

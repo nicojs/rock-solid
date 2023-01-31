@@ -64,6 +64,7 @@ export class ProjectMapper {
       include: includeAggregate,
       where: where(filter),
       ...toPage(pageNumber),
+      orderBy: [{ jaar: 'desc' }, { projectnummer: 'desc' }],
     });
     const projecten = dbProjecten.map(toProject);
     await this.enrichWithDeelnemersuren(

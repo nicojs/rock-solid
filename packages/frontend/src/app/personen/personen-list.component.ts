@@ -35,7 +35,7 @@ export class PersonenComponent extends LitElement {
     return html`<table class="table table-hover">
       <thead>
         <tr>
-          <th>Naam</th>
+          <th>Naam (leeftijd)</th>
           ${this.type === 'overigPersoon' ? html`<th>Selectie</th>` : nothing}
           <th>Emailadres</th>
           <th>Geslacht</th>

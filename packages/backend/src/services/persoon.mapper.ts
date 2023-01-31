@@ -224,7 +224,7 @@ export const includePersoonAggregate = Object.freeze({
       plaats: true,
     }),
   }),
-  foldervoorkeuren: true as const,
+  foldervoorkeuren: true,
 } as const);
 
 function toFoldervoorkeurInput(

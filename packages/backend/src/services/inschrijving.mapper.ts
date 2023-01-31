@@ -1,9 +1,28 @@
-import { Inschrijving, UpsertableInschrijving } from '@rock-solid/shared';
+import {
+  Deelnemer,
+  Inschrijving,
+  UpsertableInschrijving,
+} from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
 import { purgeNulls } from './mapper-utils.js';
 import { handleKnownPrismaErrors } from '../errors/prisma.js';
+import {
+  DBPersonAggregate,
+  includePersoonAggregate,
+  toPersoon,
+} from './persoon.mapper.js';
+
+type DBInschrijvingAggregate = db.Inschrijving & {
+  deelnemer: DBPersonAggregate;
+};
+
+const includeDeelnemer = Object.freeze({
+  deelnemer: Object.freeze({
+    include: includePersoonAggregate,
+  }),
+});
 
 @Injectable()
 export class InschrijvingMapper {
@@ -12,9 +31,7 @@ export class InschrijvingMapper {
   public async getAll(filter: { projectId: number }): Promise<Inschrijving[]> {
     const inschrijvingen = await this.db.inschrijving.findMany({
       where: filter,
-      include: {
-        deelnemer: true,
-      },
+      include: includeDeelnemer,
       orderBy: { deelnemer: { volledigeNaam: 'asc' } },
     });
     return inschrijvingen.map(toInschrijving);
@@ -92,9 +109,7 @@ export class InschrijvingMapper {
             ? domicilieadres.plaatsId
             : verblijfadres.plaatsId,
         },
-        include: {
-          deelnemer: true,
-        },
+        include: includeDeelnemer,
       }),
     );
     return toInschrijving(dbInschrijving);
@@ -118,12 +133,16 @@ export class InschrijvingMapper {
       where: {
         id,
       },
+      include: includeDeelnemer,
     });
     return toInschrijving(dbInschrijving);
   }
 }
 
-function toInschrijving(raw: db.Inschrijving): Inschrijving {
-  const { woonplaatsDeelnemerId, ...inschrijving } = raw;
-  return purgeNulls(inschrijving);
+function toInschrijving(raw: DBInschrijvingAggregate): Inschrijving {
+  const { woonplaatsDeelnemerId, deelnemer, ...inschrijving } = raw;
+  return {
+    ...purgeNulls(inschrijving),
+    deelnemer: toPersoon(deelnemer) as Deelnemer,
+  };
 }

@@ -10,19 +10,16 @@ import {
   werksituaties,
   overigPersoonLabels,
   foldersoorten,
-  BasePersoon,
 } from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType, selectControl } from '../forms';
 import {
-  showAdres,
+  downloadCsv,
   pluralize,
-  toCsvDownloadUrl,
-  ValueFactory,
-  show,
-  foldervoorkeurenCsv,
+  toDeelnemersCsv,
+  toOverigePersonenCsv,
 } from '../shared';
 import { persoonService } from './persoon.service';
 
@@ -44,49 +41,17 @@ export class AdvancedSearchPersonenComponent extends LitElement {
   @property()
   public type: PersoonType = 'deelnemer';
 
-  get csvDataUrl(): string | undefined {
+  private downloadCsv(): void {
     if (this.personen) {
-      const persoonColumns = [
-        'voornaam',
-        'achternaam',
-        'emailadres',
-        'geboortedatum',
-        'verblijfadres',
-        'domicilieadres',
-        'geslacht',
-        'gsmNummer',
-        'telefoonnummer',
-        'rekeningnummer',
-        'rijksregisternummer',
-        'opmerking',
-      ] as const;
-      const adresValueFactories: ValueFactory<BasePersoon> = {
-        verblijfadres: showAdres,
-        domicilieadres: showAdres,
-      };
       if (this.type === 'deelnemer') {
-        return toCsvDownloadUrl<Deelnemer>(
-          this.personen as Deelnemer[],
-          [
-            ...persoonColumns,
-            'werksituatie',
-            'werksituatieOpmerking',
-            'woonsituatie',
-            'woonsituatieOpmerking',
-          ],
-          deelnemerLabels,
-          adresValueFactories,
+        downloadCsv(
+          toDeelnemersCsv(this.personen as Deelnemer[]),
+          pluralize(this.type),
         );
       } else {
-        return toCsvDownloadUrl<OverigPersoon>(
-          this.personen as OverigPersoon[],
-          [...persoonColumns, 'selectie', 'foldervoorkeuren'],
-          overigPersoonLabels,
-          {
-            ...adresValueFactories,
-            selectie: show,
-            foldervoorkeuren: foldervoorkeurenCsv,
-          },
+        downloadCsv(
+          toOverigePersonenCsv(this.personen as OverigPersoon[]),
+          pluralize(this.type),
         );
       }
     }
@@ -119,19 +84,17 @@ export class AdvancedSearchPersonenComponent extends LitElement {
       ${this.isLoading
         ? html`<rock-loading></rock-loading>`
         : this.personen
-        ? html`
-        <a href="${
-          this.csvDataUrl
-        }" class="btn btn-outline-secondary" download="${pluralize(
-            this.type,
-          )}.csv">
+        ? html` <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click=${() => this.downloadCsv()}
+            >
               <rock-icon icon="download"></rock-icon> Export
             </button>
-            </a>
-        <rock-personen-list
-            .type=${this.type}
-            .personen=${this.personen}
-          ></rock-personen-list>`
+            <rock-personen-list
+              .type=${this.type}
+              .personen=${this.personen}
+            ></rock-personen-list>`
         : ''}`;
   }
 }

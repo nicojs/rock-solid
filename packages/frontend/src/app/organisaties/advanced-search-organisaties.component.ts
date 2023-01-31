@@ -1,21 +1,13 @@
 import {
   OrganisatieFilter,
   Organisatie,
-  organisatieColumnNames,
   foldersoorten,
-  organisatieContactColumnNames,
-  organisatieSoorten,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, selectControl } from '../forms';
-import {
-  foldervoorkeurenCsv,
-  optionsCsv,
-  showAdres,
-  toCsvDownloadUrl,
-} from '../shared';
+import { downloadCsv, toOrganisatiesCsv } from '../shared';
 import { organisatieService } from './organisatie.service';
 
 @customElement('rock-advanced-search-organisaties')
@@ -30,29 +22,9 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
   @state()
   private isLoading = false;
 
-  get csvDataUrl(): string | undefined {
+  private download(): void {
     if (this.organisaties) {
-      return toCsvDownloadUrl(
-        this.organisaties.flatMap((org) =>
-          org.contacten.map((contact) => ({ ...org, ...contact })),
-        ),
-        [
-          'naam',
-          'website',
-          'terAttentieVan',
-          'foldervoorkeuren',
-          'adres',
-          'emailadres',
-          'telefoonnummer',
-          'soorten',
-        ],
-        { ...organisatieColumnNames, ...organisatieContactColumnNames },
-        {
-          foldervoorkeuren: foldervoorkeurenCsv,
-          soorten: optionsCsv(organisatieSoorten),
-          adres: showAdres,
-        },
-      );
+      downloadCsv(toOrganisatiesCsv(this.organisaties), 'organisaties');
     }
     return undefined;
   }
@@ -75,13 +47,12 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
       ${this.isLoading
         ? html`<rock-loading></rock-loading>`
         : this.organisaties
-        ? html`<a
-              href="${this.csvDataUrl}"
+        ? html`<button
+              @click=${() => this.download()}
               class="btn btn-outline-secondary"
-              download="organisaties.csv"
             >
               <rock-icon icon="download"></rock-icon> Export
-            </a>
+            </button>
             <rock-organisaties-list
               .organisaties=${this.organisaties}
             ></rock-organisaties-list>`

@@ -1,4 +1,5 @@
 import {
+  notEmpty,
   organisatieonderdelen,
   Project,
   vakantieSeizoenen,
@@ -6,7 +7,15 @@ import {
 import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { notAvailable, pluralize, showDatum, showMoney } from '../shared';
+import {
+  downloadCsv,
+  notAvailable,
+  pluralize,
+  showDatum,
+  showMoney,
+  toDeelnemersCsv,
+} from '../shared';
+import { projectService } from './project.service';
 import style from './projecten-list.component.scss';
 
 @customElement('rock-projecten-list')
@@ -22,6 +31,17 @@ export class ProjectenListComponent extends LitElement {
         ? this.renderTable()
         : html`<div class="mb-3">Geen projecten gevonden 🤷‍♂️</div>`}`}
     </div>`;
+  }
+
+  private downloadDeelnemersLijst(project: Project) {
+    projectService.getInschrijvingen(project.id).then((inschrijvingen) => {
+      downloadCsv(
+        toDeelnemersCsv(
+          inschrijvingen.map(({ deelnemer }) => deelnemer).filter(notEmpty),
+        ),
+        `Deelnemerslijst ${project.naam}`,
+      );
+    });
   }
 
   private renderTable() {
@@ -71,31 +91,38 @@ export class ProjectenListComponent extends LitElement {
                 const inPast = activiteit.totEnMet < new Date();
                 const isComplete =
                   activiteit.aantalDeelnames! >= project.aantalInschrijvingen!;
-                return html`<div class="mt-2">
-                  ${inPast
-                    ? html`<rock-link
-                        title="Open activiteit"
-                        btn
-                        ?btnWarning=${!isComplete}
-                        ?btnOutlinePrimary=${isComplete}
-                        href="/${pluralize(
-                          project.type,
-                        )}/${project.id}/deelnames/${activiteit.id}"
-                        ><rock-icon icon="calendar"></rock-icon> ${showDatum(
-                          activiteit.van,
-                        )}</rock-link
-                      >`
-                    : html`<span
-                        title="Activiteit vindt plaats in de toekomst"
-                        class="no-button-date"
-                        ><rock-icon icon="calendar"></rock-icon> ${showDatum(
-                          activiteit.van,
-                        )}</span
-                      >`}
-                </div>`;
+                return html` ${inPast
+                  ? html`<rock-link
+                      title="Open activiteit"
+                      btn
+                      ?btnWarning=${!isComplete}
+                      ?btnOutlinePrimary=${isComplete}
+                      href="/${pluralize(
+                        project.type,
+                      )}/${project.id}/deelnames/${activiteit.id}"
+                      ><rock-icon icon="calendar"></rock-icon> ${showDatum(
+                        activiteit.van,
+                      )}</rock-link
+                    >`
+                  : html`<span
+                      title="Activiteit vindt plaats in de toekomst"
+                      class="no-button-date"
+                      ><rock-icon icon="calendar"></rock-icon> ${showDatum(
+                        activiteit.van,
+                      )}</span
+                    >`}`;
               })}
             </td>
             <td>
+              <button
+                title="Deelnemerslijst downloaden (voor mailing)"
+                class="btn btn-outline-primary "
+                type="button"
+                @click=${() => this.downloadDeelnemersLijst(project)}
+              >
+                <rock-icon icon="download"></rock-icon>
+              </button>
+
               <rock-link
                 btn
                 btnOutlinePrimary
