@@ -57,15 +57,12 @@ export class InschrijvingMapper {
           inschrijvingen: {
             some: {
               deelnemerId: inschrijvingData.deelnemerId,
-              projectId: inschrijvingData.projectId,
               eersteInschrijving: true,
             },
           },
         },
       },
-      orderBy: {
-        van: 'asc',
-      },
+      orderBy: { van: 'asc' },
       include: {
         project: {
           select: {

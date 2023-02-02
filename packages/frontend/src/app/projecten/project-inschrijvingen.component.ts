@@ -1,6 +1,9 @@
 import { Inschrijving, Project } from '@rock-solid/shared';
 import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
+import { createRef, ref } from 'lit/directives/ref.js';
+import { printProject } from './project.pipes';
 import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
@@ -14,8 +17,6 @@ import {
   none,
 } from '../shared';
 import { router } from '../router';
-import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
-import { createRef, ref } from 'lit/directives/ref.js';
 
 @customElement('rock-project-inschrijvingen')
 export class ProjectInschrijvingenComponent extends LitElement {
@@ -100,9 +101,7 @@ export class ProjectInschrijvingenComponent extends LitElement {
   }
 
   private renderProjectInschrijvingen() {
-    return html`<h2>
-        Inschrijvingen voor ${this.project.id} ${this.project.naam}
-      </h2>
+    return html`<h2>Inschrijvingen voor ${printProject(this.project)}</h2>
       ${this.renderCreateInschrijvingForm()}
       ${this.inschrijvingen
         ? this.renderInschrijvingenTable()
