@@ -1,23 +1,23 @@
 import { Options } from './options';
 import { Organisatieonderdeel, ProjectType } from './project';
 
-export type InschrijvingenReportType =
-  | 'inschrijvingen'
+export type AanmeldingenReportType =
+  | 'aanmeldingen'
   | 'deelnames'
   | 'deelnemersuren';
 
-export const inschrijvingenReportTypes: Options<InschrijvingenReportType> =
+export const aanmeldingenReportTypes: Options<AanmeldingenReportType> =
   Object.freeze({
-    inschrijvingen: 'Inschrijvingen',
+    aanmeldingen: 'Aanmeldingen',
     deelnames: 'Deelnames',
     deelnemersuren: 'Deelnemersuren',
     vormingsuren: 'Vormingsuren',
   });
 
-export function isInschrijvingenReportType(
+export function isAanmeldingenReportType(
   maybe: string,
-): maybe is InschrijvingenReportType {
-  return maybe in inschrijvingenReportTypes;
+): maybe is AanmeldingenReportType {
+  return maybe in aanmeldingenReportTypes;
 }
 
 export type ProjectReport = GroupedReport[];
@@ -52,7 +52,7 @@ export const groupingFieldOptions: Options<GroupField> = {
 };
 
 export interface ProjectReportFilter {
-  enkelEersteInschrijvingen?: boolean;
+  enkelEersteAanmeldingen?: boolean;
   organisatieonderdeel?: Organisatieonderdeel;
   type?: ProjectType;
   jaar?: number;

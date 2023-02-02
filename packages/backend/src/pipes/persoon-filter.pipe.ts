@@ -10,7 +10,7 @@ export class PersoonFilterPipe implements PipeTransform {
       const {
         selectie,
         foldersoorten,
-        laatsteInschrijvingJaarGeleden,
+        laatsteAanmeldingJaarGeleden,
         ...filter
       } = value;
       return {
@@ -18,10 +18,10 @@ export class PersoonFilterPipe implements PipeTransform {
         selectie: selectie?.split(',') as OverigPersoonSelectie[],
         foldersoorten: foldersoorten?.split(',') as Foldersoort[],
         ...{
-          laatsteInschrijvingJaarGeleden:
-            laatsteInschrijvingJaarGeleden === undefined
+          laatsteAanmeldingJaarGeleden:
+            laatsteAanmeldingJaarGeleden === undefined
               ? undefined
-              : parseInt(laatsteInschrijvingJaarGeleden),
+              : parseInt(laatsteAanmeldingJaarGeleden),
         },
       } as PersoonFilter;
     }

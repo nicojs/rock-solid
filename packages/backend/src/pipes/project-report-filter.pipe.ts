@@ -13,8 +13,7 @@ export class ProjectReportFilterPipe
 {
   transform(value: Record<string, string | undefined>): ProjectReportFilter {
     const filter: ProjectReportFilter = {};
-    filter.enkelEersteInschrijvingen =
-      key('enkelEersteInschrijvingen') in value;
+    filter.enkelEersteAanmeldingen = key('enkelEersteAanmeldingen') in value;
     const onderdeel = value[key('organisatieonderdeel')];
     if (onderdeel && isOrganisatieonderdeel(onderdeel)) {
       filter.organisatieonderdeel = onderdeel;

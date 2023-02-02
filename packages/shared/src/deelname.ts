@@ -4,7 +4,7 @@ import { Upsertable } from './upsertable.js';
 export interface Deelname {
   id: number;
   activiteitId: number;
-  inschrijvingId: number;
+  aanmeldingId: number;
   deelnemer: Deelnemer;
   effectieveDeelnamePerunage: number;
   opmerking?: string;
@@ -12,5 +12,5 @@ export interface Deelname {
 
 export type UpsertableDeelname = Upsertable<
   Deelname,
-  'activiteitId' | 'inschrijvingId' | 'effectieveDeelnamePerunage'
+  'activiteitId' | 'aanmeldingId' | 'effectieveDeelnamePerunage'
 >;

@@ -44,24 +44,24 @@ export class ProjectDeelnamesComponent extends LitElement {
       );
 
       Promise.all([
-        projectService.getInschrijvingen(this.project.id),
+        projectService.getAanmeldingen(this.project.id),
         projectService.getDeelnames(this.project.id, activiteitId),
-      ]).then(([inschrijvingen, deelnames]) => {
+      ]).then(([aanmeldingen, deelnames]) => {
         this.deelnames = [
           ...deelnames,
-          ...inschrijvingen
+          ...aanmeldingen
             .filter(
-              (inschrijving) =>
+              (aanmelding) =>
                 !deelnames.find(
-                  ({ inschrijvingId }) => inschrijvingId === inschrijving.id,
+                  ({ aanmeldingId }) => aanmeldingId === aanmelding.id,
                 ),
             )
             .map(
-              (inschrijving): DeelnameRow => ({
+              (aanmelding): DeelnameRow => ({
                 activiteitId,
-                inschrijvingId: inschrijving.id,
+                aanmeldingId: aanmelding.id,
                 effectieveDeelnamePerunage: 1,
-                deelnemer: inschrijving.deelnemer!,
+                deelnemer: aanmelding.deelnemer!,
               }),
             ),
         ];

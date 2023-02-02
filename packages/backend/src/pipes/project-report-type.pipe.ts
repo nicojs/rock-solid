@@ -1,15 +1,15 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
 import {
-  isInschrijvingenReportType,
-  InschrijvingenReportType,
+  isAanmeldingenReportType,
+  AanmeldingenReportType,
 } from '@rock-solid/shared';
 
 @Injectable()
-export class InschrijvingenReportTypePipe
-  implements PipeTransform<string, InschrijvingenReportType | undefined>
+export class ProjectReportTypePipe
+  implements PipeTransform<string, AanmeldingenReportType | undefined>
 {
-  transform(value: string | undefined): InschrijvingenReportType | undefined {
-    if (value && isInschrijvingenReportType(value)) {
+  transform(value: string | undefined): AanmeldingenReportType | undefined {
+    if (value && isAanmeldingenReportType(value)) {
       return value;
     }
     return;

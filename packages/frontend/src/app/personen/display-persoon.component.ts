@@ -37,12 +37,12 @@ export class DisplayPersoonComponent extends RockElement {
   protected override firstUpdated(): void {
     if (this.persoon.type === 'deelnemer') {
       restClient
-        .getAll(`personen/${this.persoon.id}/inschrijvingen`, {
+        .getAll(`personen/${this.persoon.id}/aanmeldingen`, {
           type: 'cursus',
         })
         .then((cursussen) => (this.cursussen = cursussen as Cursus[]));
       restClient
-        .getAll(`personen/${this.persoon.id}/inschrijvingen`, {
+        .getAll(`personen/${this.persoon.id}/aanmeldingen`, {
           type: 'vakantie',
         })
         .then((vakanties) => (this.vakanties = vakanties as Vakantie[]));
@@ -94,11 +94,11 @@ export class DisplayPersoonComponent extends RockElement {
         </dl>
       </div>
       ${this.persoon.type === 'deelnemer'
-        ? this.renderInschrijvingen()
+        ? this.renderAanmeldingen()
         : this.renderBegeleiding()}`;
   }
 
-  private renderInschrijvingen() {
+  private renderAanmeldingen() {
     return html`<h3>Ingeschreven in cursussen</h3>
       ${this.renderProjectListRow(this.cursussen)}
       <h3>Ingeschreven in vakanties</h3>

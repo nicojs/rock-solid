@@ -62,13 +62,13 @@ export class PersonenController {
     }
   }
 
-  @Get(`:id/inschrijvingen`)
-  async getProjectInschrijvingen(
+  @Get(`:id/aanmeldingen`)
+  async getProjectAanmeldingen(
     @Param('id', NumberPipe) id: number,
     @Query(MetaFilterPipe) filter: ProjectFilter,
   ): Promise<Project[]> {
     const projecten = await this.projectMapper.getAll(
-      { ...filter, inschrijvingPersoonId: id },
+      { ...filter, aanmeldingPersoonId: id },
       undefined,
     );
     return projecten;

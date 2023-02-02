@@ -5,7 +5,7 @@ const dateWhitelist = Object.freeze([
   'tot',
   'totEnMet',
   'geboortedatum',
-  'tijdstipVanInschrijving',
+  'tijdstipVanAanmelden',
   'tijdstipVanBevestiging',
   'tijdstipVerzendenVervoersbrief',
 ]);

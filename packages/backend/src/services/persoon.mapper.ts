@@ -180,7 +180,7 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
         searchType,
         foldersoorten,
         selectie,
-        laatsteInschrijvingJaarGeleden,
+        laatsteAanmeldingJaarGeleden,
         ...where
       } = filter;
       return {
@@ -189,15 +189,14 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
           ? { foldervoorkeuren: { some: { folder: { in: foldersoorten } } } }
           : {}),
         ...(selectie?.length ? { selectie: { hasSome: selectie } } : {}),
-        ...(laatsteInschrijvingJaarGeleden !== undefined
+        ...(laatsteAanmeldingJaarGeleden !== undefined
           ? {
-              inschrijvingen: {
+              aanmeldingen: {
                 some: {
                   project: {
                     jaar: {
                       gte:
-                        new Date().getFullYear() -
-                        laatsteInschrijvingJaarGeleden,
+                        new Date().getFullYear() - laatsteAanmeldingJaarGeleden,
                     },
                   },
                 },

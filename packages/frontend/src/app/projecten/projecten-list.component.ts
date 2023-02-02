@@ -34,10 +34,10 @@ export class ProjectenListComponent extends LitElement {
   }
 
   private downloadDeelnemersLijst(project: Project) {
-    projectService.getInschrijvingen(project.id).then((inschrijvingen) => {
+    projectService.getAanmeldingen(project.id).then((aanmelding) => {
       downloadCsv(
         toDeelnemersCsv(
-          inschrijvingen.map(({ deelnemer }) => deelnemer).filter(notEmpty),
+          aanmelding.map(({ deelnemer }) => deelnemer).filter(notEmpty),
         ),
         `Deelnemerslijst ${project.naam}`,
       );
@@ -90,7 +90,7 @@ export class ProjectenListComponent extends LitElement {
               ${project.activiteiten.map((activiteit) => {
                 const inPast = activiteit.totEnMet < new Date();
                 const isComplete =
-                  activiteit.aantalDeelnames! >= project.aantalInschrijvingen!;
+                  activiteit.aantalDeelnames! >= project.aantalAanmeldingen!;
                 return html` ${inPast
                   ? html`<rock-link
                       title="Open activiteit"
@@ -133,15 +133,15 @@ export class ProjectenListComponent extends LitElement {
               <rock-link
                 btn
                 btnOutlinePrimary
-                title="Inschrijvingen"
-                href="/${pluralize(project.type)}/${project.id}/inschrijvingen"
+                title="Aanmeldingen"
+                href="/${pluralize(project.type)}/${project.id}/aanmeldingen"
               >
                 <rock-icon icon="pencilSquare"></rock-icon>
                 <span
-                  class="badge ${(project.aantalInschrijvingen ?? 0) > 0
+                  class="badge ${(project.aantalAanmeldingen ?? 0) > 0
                     ? 'bg-success'
                     : 'bg-secondary'}"
-                  >${project.aantalInschrijvingen}</span
+                  >${project.aantalAanmeldingen}</span
                 >
               </rock-link>
             </td>

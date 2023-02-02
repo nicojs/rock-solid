@@ -7,7 +7,7 @@ import { PersoonMapper } from './services/persoon.mapper.js';
 import { DBService } from './services/db.service.js';
 import { ProjectenController } from './projecten.controller.js';
 import { ProjectMapper } from './services/project.mapper.js';
-import { InschrijvingMapper } from './services/inschrijving.mapper.js';
+import { AanmeldingMapper } from './services/aanmelding.mapper.js';
 import { DeelnameMapper } from './services/deelname.mapper.js';
 import { OrganisatieMapper } from './services/organisatie.mapper.js';
 import { OrganisatiesController } from './organisaties.controller.js';
@@ -40,7 +40,7 @@ const rootPath = fileURLToPath(
   providers: [
     PersoonMapper,
     ProjectMapper,
-    InschrijvingMapper,
+    AanmeldingMapper,
     PlaatsMapper,
     OrganisatieMapper,
     DeelnameMapper,

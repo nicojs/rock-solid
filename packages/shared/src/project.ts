@@ -8,7 +8,7 @@ export interface BaseProject {
   projectnummer: string;
   type: ProjectType;
   naam: string;
-  aantalInschrijvingen?: number;
+  aantalAanmeldingen?: number;
   begeleiders: OverigPersoon[];
 }
 
@@ -117,6 +117,6 @@ export type UpsertableProject = Upsertable<
 };
 
 export type ProjectFilter = Pick<Project, 'type'> & {
-  inschrijvingPersoonId?: number;
+  aanmeldingPersoonId?: number;
   begeleidDoorPersoonId?: number;
 };

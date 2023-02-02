@@ -1,5 +1,5 @@
 import db from '@prisma/client';
-import { seedCursusInschrijvingen } from './cursus-inschrijvingen.seed.js';
+import { seedCursusAanmeldingen } from './cursus-aanmeldingen.seed.js';
 import { seedCursussen } from './cursussen.seed.js';
 import { seedOrganisaties } from './organisaties.seed.js';
 import { seedDeelnemers } from './deelnemers.seed.js';
@@ -7,7 +7,7 @@ import { seedPlaatsen } from './plaatsen.seed.js';
 import { seedVrijwilligers } from './vrijwilligers.seed.js';
 import { seedExtraPersonen } from './extra-personen.seed.js';
 import { seedVakanties } from './vakanties.seed.js';
-import { seedVakantieInschrijvingen } from './vakantie-inschrijvingen.seed.js';
+import { seedVakantieAanmeldingen } from './vakantie-aanmeldingen.seed.js';
 import { seedVakantieVrijwilligers } from './vakantie-vrijwilligers.seed.js';
 
 async function main() {
@@ -19,12 +19,12 @@ async function main() {
     const deelnemersLookup = await seedDeelnemers(client, readonly);
     await seedOrganisaties(client, readonly);
     await seedCursussen(client, readonly);
-    await seedCursusInschrijvingen(client, deelnemersLookup, readonly);
+    await seedCursusAanmeldingen(client, deelnemersLookup, readonly);
     const vrijwilligersLookup = await seedVrijwilligers(client, readonly);
     await seedExtraPersonen(client, readonly);
     await seedVakanties(client, readonly);
     await seedVakantieVrijwilligers(client, vrijwilligersLookup, readonly);
-    await seedVakantieInschrijvingen(client, deelnemersLookup, readonly);
+    await seedVakantieAanmeldingen(client, deelnemersLookup, readonly);
   } finally {
     await client.$disconnect();
   }

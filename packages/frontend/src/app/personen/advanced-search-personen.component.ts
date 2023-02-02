@@ -121,8 +121,8 @@ const deelnemerSearchControls: InputControl<PersoonDetailsFilter>[] = [
   }),
   {
     type: InputType.number,
-    label: 'Laatste inschrijving',
-    name: 'laatsteInschrijvingJaarGeleden',
+    label: 'Laatste aanmelding',
+    name: 'laatsteAanmeldingJaarGeleden',
     postfix: 'jaar geleden',
   },
 ];

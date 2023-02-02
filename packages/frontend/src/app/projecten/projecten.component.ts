@@ -64,10 +64,7 @@ export class ProjectenComponent extends RockElement {
     }
     if (props.has('path')) {
       const [projectId, page] = this.path;
-      if (
-        projectId &&
-        ['edit', 'inschrijvingen', 'deelnames'].includes(page!)
-      ) {
+      if (projectId && ['edit', 'aanmeldingen', 'deelnames'].includes(page!)) {
         projectenStore.setFocus(projectId);
       }
       if (projectId === 'new') {
@@ -152,11 +149,11 @@ export class ProjectenComponent extends RockElement {
                   @project-submitted="${(event: CustomEvent<Project>) =>
                     this.editProject(event.detail)}"
                 ></rock-project-edit>`;
-              case 'inschrijvingen':
-                return html`<rock-project-inschrijvingen
+              case 'aanmeldingen':
+                return html`<rock-project-aanmeldingen
                   .project="${this.focussedProject}"
                   .path="${rest}"
-                ></rock-project-inschrijvingen>`;
+                ></rock-project-aanmeldingen>`;
               case 'deelnames':
                 return html`<rock-project-deelnames
                   .project="${this.focussedProject}"

@@ -21,7 +21,7 @@ const projectnummerRegex = /([^ -]*)(?:-([^ -]*))?.*$/;
 
 const importErrors = new ImportErrors<RawCursusInschrijving>();
 
-export async function seedCursusInschrijvingen(
+export async function seedCursusAanmeldingen(
   client: db.PrismaClient,
   deelnemersLookup: Map<string, number> | undefined,
   readonly: boolean,
@@ -58,24 +58,24 @@ export async function seedCursusInschrijvingen(
     return acc;
   }, new Map<string, { id: number; jaar: number; activiteiten: db.Activiteit[] }>());
 
-  const inschrijvingen = inschrijvingenRaw
+  const aanmeldingen = inschrijvingenRaw
     .map(fromRaw)
     .filter(notEmpty)
     .filter(
       deduplicate(
-        ([, inschrijving]) =>
-          `${inschrijving.deelnemer.connect!.id!}-${
-            inschrijving.project.connect!.id
+        ([, aanmelding]) =>
+          `${aanmelding.deelnemer.connect!.id!}-${
+            aanmelding.project.connect!.id
           }`,
-        ([inschrijving]) =>
-          importErrors.addWarning('duplicate_inschrijving', {
-            item: inschrijving,
+        ([aanmelding]) =>
+          importErrors.addWarning('duplicate_aanmelding', {
+            item: aanmelding,
             detail: `Already exists`,
           }),
       ),
     );
 
-  const eersteCursusByDeelnemer = inschrijvingen.reduce(
+  const eersteCursusByDeelnemer = aanmeldingen.reduce(
     (map, [, inschrijving, projectnummer]) => {
       const deelnemerId = inschrijving.deelnemer.connect!.id!;
       const eersteCursusCode = map.get(deelnemerId);
@@ -90,18 +90,18 @@ export async function seedCursusInschrijvingen(
     new Map<number, string>(),
   );
 
-  for (const [, inschrijving, projectnummer] of inschrijvingen) {
-    const deelnemerId = inschrijving.deelnemer.connect!.id!;
-    inschrijving.eersteInschrijving =
+  for (const [, aanmelding, projectnummer] of aanmeldingen) {
+    const deelnemerId = aanmelding.deelnemer.connect!.id!;
+    aanmelding.eersteAanmelding =
       eersteCursusByDeelnemer.get(deelnemerId) === projectnummer;
-    await client.inschrijving.create({
-      data: inschrijving,
+    await client.aanmelding.create({
+      data: aanmelding,
     });
   }
-  console.log(`Seeded ${inschrijvingen.length} cursus inschrijvingen`);
+  console.log(`Seeded ${aanmeldingen.length} cursus aanmeldingen`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
-    'cursus-inschrijvingen-import-errors.json',
+    'cursus-aanmeldingen-import-errors.json',
     importErrors,
     readonly,
   );
@@ -111,7 +111,7 @@ export async function seedCursusInschrijvingen(
   ):
     | [
         raw: RawCursusInschrijving,
-        createInput: db.Prisma.InschrijvingCreateInput,
+        createInput: db.Prisma.AanmeldingCreateInput,
         projectNummer: string,
       ]
     | undefined {
@@ -163,6 +163,7 @@ export async function seedCursusInschrijvingen(
           },
         },
         woonplaatsDeelnemer: { connect: { id: deelnemer.woonplaatsId } },
+        status: raw.deelgenomen === 'Ja' ? 'Bevestigd' : 'Geannuleerd',
       },
       projectnummer,
     ];

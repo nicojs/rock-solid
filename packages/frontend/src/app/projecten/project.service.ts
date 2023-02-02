@@ -1,8 +1,8 @@
 import {
   Deelname,
-  Inschrijving,
+  Aanmelding,
   UpsertableDeelname,
-  UpsertableInschrijving,
+  UpsertableAanmelding,
 } from '@rock-solid/shared';
 import { restClient, RestClient } from '../shared/rest-client';
 import { RestService } from '../shared/rest-service';
@@ -12,8 +12,8 @@ export class ProjectService extends RestService<'projecten'> {
     super(restClient, 'projecten');
   }
 
-  getInschrijvingen(projectId: number | string): Promise<Inschrijving[]> {
-    return this.restClient.getAll(`projecten/${projectId}/inschrijvingen`);
+  getAanmeldingen(projectId: number | string): Promise<Aanmelding[]> {
+    return this.restClient.getAll(`projecten/${projectId}/aanmeldingen`);
   }
 
   updateDeelnames(
@@ -33,24 +33,36 @@ export class ProjectService extends RestService<'projecten'> {
     );
   }
 
-  createInschrijving(
+  createAanmelding(
     projectId: number | string,
-    inschrijving: UpsertableInschrijving,
-  ): Promise<Inschrijving> {
+    aanmelding: UpsertableAanmelding,
+  ): Promise<Aanmelding> {
     return this.restClient.create(
-      `projecten/${projectId}/inschrijvingen`,
-      inschrijving,
+      `projecten/${projectId}/aanmeldingen`,
+      aanmelding,
     );
   }
 
-  updateInschrijving(
+  updateAanmelding(
     projectId: number | string,
-    inschrijving: Inschrijving,
-  ): Promise<Inschrijving> {
+    aanmelding: Aanmelding,
+  ): Promise<Aanmelding> {
     return this.restClient.update(
-      `projecten/${projectId}/inschrijvingen`,
-      inschrijving.id,
-      inschrijving,
+      `projecten/${projectId}/aanmeldingen`,
+      aanmelding.id,
+      aanmelding,
+    );
+  }
+
+  patchAanmelding(
+    projectId: number | string,
+    aanmeldingId: number,
+    aanmelding: Partial<Aanmelding>,
+  ): Promise<Aanmelding> {
+    return this.restClient.patch(
+      `projecten/${projectId}/aanmeldingen`,
+      aanmeldingId,
+      aanmelding,
     );
   }
 }

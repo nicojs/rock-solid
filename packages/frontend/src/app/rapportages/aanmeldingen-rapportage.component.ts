@@ -11,7 +11,7 @@ import {
   ReportRow,
   Werksituatie,
   werksituaties,
-  InschrijvingenReportType,
+  AanmeldingenReportType,
   organisatieonderdelen,
   OvernachtingDescription,
   overnachtingDescriptions,
@@ -31,7 +31,7 @@ export class ProjectRapportageComponent extends RockElement {
   static override styles = [bootstrap];
 
   @property()
-  public reportType!: InschrijvingenReportType;
+  public reportType!: AanmeldingenReportType;
 
   @state()
   public report?: ProjectReport;
@@ -46,7 +46,7 @@ export class ProjectRapportageComponent extends RockElement {
   public group2?: GroupField;
 
   @state()
-  public enkelEersteInschrijvingen?: boolean;
+  public enkelEersteAanmeldingen?: boolean;
 
   @state()
   public enkelOrganisatieonderdeel?: Organisatieonderdeel;
@@ -66,7 +66,7 @@ export class ProjectRapportageComponent extends RockElement {
         props.has('projectType') ||
         props.has('group1') ||
         props.has('group2') ||
-        props.has('enkelEersteInschrijvingen') ||
+        props.has('enkelEersteAanmeldingen') ||
         props.has('enkelJaar') ||
         props.has('enkelOrganisatieonderdeel') ||
         props.has('overnachting')) &&
@@ -75,11 +75,11 @@ export class ProjectRapportageComponent extends RockElement {
       this.isLoading = true;
       reportsClient
         .get(
-          `reports/inschrijvingen/${this.reportType}`,
+          `reports/aanmeldingen/${this.reportType}`,
           this.group1,
           this.group2,
           {
-            enkelEersteInschrijvingen: this.enkelEersteInschrijvingen,
+            enkelEersteAanmeldingen: this.enkelEersteAanmeldingen,
             organisatieonderdeel: this.enkelOrganisatieonderdeel,
             type: this.projectType,
             jaar: this.enkelJaar,
@@ -224,9 +224,9 @@ const organisatieonderdeelFilterControl = selectControl<
 
 const enkelNieuwkomersControl: CheckboxInputControl<ProjectRapportageComponent> =
   {
-    name: 'enkelEersteInschrijvingen',
+    name: 'enkelEersteAanmeldingen',
     type: InputType.checkbox,
-    label: 'Enkel eerste inschrijvingen',
+    label: 'Enkel eerste aanmeldingen',
   };
 
 function showGroupKey(group: GroupField, key: string | undefined): string {

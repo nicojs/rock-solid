@@ -3,11 +3,11 @@ import {
   ProjectReport,
   OrganisatieFilter,
   PersoonFilter,
-  InschrijvingenReportType,
+  AanmeldingenReportType,
   UpsertableDeelname,
-  UpsertableInschrijving,
+  UpsertableAanmelding,
 } from './index.js';
-import { Inschrijving } from './inschrijving.js';
+import { Aanmelding } from './aanmelding.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
 import { Persoon, UpsertablePersoon } from './persoon.js';
 import { Plaats, PlaatsFilter } from './adres.js';
@@ -21,9 +21,9 @@ export type FilterFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['filter'];
 
 export type RestRoutes = TopRoutes &
-  ProjectenInschrijvingRoute &
+  ProjectenAanmeldingRoute &
   ActiviteitDeelnamesRoute &
-  PersoonInschrijvingenRoute &
+  PersoonAanmeldingenRoute &
   PersoonBegeleidRoute;
 
 type TopRoutes = {
@@ -49,16 +49,16 @@ type TopRoutes = {
   };
 };
 
-type ProjectenInschrijvingRoute = {
-  [K in `projecten/${string}/inschrijvingen`]: {
-    entity: Inschrijving;
-    upsertableEntity: UpsertableInschrijving;
-    filter: Omit<ProjectFilter, 'inschrijvingPersoonId'>;
+type ProjectenAanmeldingRoute = {
+  [K in `projecten/${string}/aanmeldingen`]: {
+    entity: Aanmelding;
+    upsertableEntity: UpsertableAanmelding;
+    filter: Omit<ProjectFilter, 'aanmeldingPersoonId'>;
   };
 };
 
-type PersoonInschrijvingenRoute = {
-  [K in `personen/${string}/inschrijvingen`]: {
+type PersoonAanmeldingenRoute = {
+  [K in `personen/${string}/aanmeldingen`]: {
     entity: Project;
     filter: ProjectFilter;
     upsertableEntity: never;
@@ -81,7 +81,7 @@ type ActiviteitDeelnamesRoute = {
 };
 
 export type ReportRoutes = {
-  [K in `reports/inschrijvingen/${InschrijvingenReportType}`]: {
+  [K in `reports/aanmeldingen/${AanmeldingenReportType}`]: {
     entity: ProjectReport;
   };
 };

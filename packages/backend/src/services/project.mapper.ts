@@ -43,10 +43,10 @@ const includeAggregate = {
   },
   _count: {
     select: {
-      inschrijvingen: true as const,
+      aanmeldingen: true as const,
     },
   },
-};
+} satisfies Prisma.ProjectInclude;
 
 /**
  * A data mapper for persoon
@@ -134,7 +134,7 @@ export class ProjectMapper {
     id: number,
     project: UpsertableProject,
   ): Promise<Project> {
-    const { aantalInschrijvingen, begeleiders, ...data } = project;
+    const { aantalAanmeldingen, begeleiders, ...data } = project;
     const begeleiderIds = begeleiders?.map(({ id }) => ({ id })) ?? [];
     const result = await handleKnownPrismaErrors(
       this.db.project.update({
@@ -206,7 +206,7 @@ interface DBProjectAggregate extends db.Project {
   activiteiten: DBActiviteitAggregate[];
   begeleiders: DBPersonAggregate[];
   _count: {
-    inschrijvingen: number;
+    aanmeldingen: number;
   } | null;
 }
 
@@ -216,7 +216,7 @@ function toProject(val: DBProjectAggregate): Project {
     type,
     begeleiders: begeleiders.map(toPersoon) as OverigPersoon[],
     ...projectProperties,
-    aantalInschrijvingen: _count?.inschrijvingen,
+    aantalAanmeldingen: _count?.aanmeldingen,
   });
   switch (type) {
     case 'cursus':
@@ -258,9 +258,9 @@ function toVakantieActiviteit(val: DBActiviteitAggregate): VakantieActiviteit {
 
 function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
   const whereClause: db.Prisma.ProjectWhereInput = { type: filter.type };
-  if (filter.inschrijvingPersoonId) {
-    whereClause.inschrijvingen = {
-      some: { deelnemerId: filter.inschrijvingPersoonId },
+  if (filter.aanmeldingPersoonId) {
+    whereClause.aanmeldingen = {
+      some: { deelnemerId: filter.aanmeldingPersoonId },
     };
   }
   if (filter.begeleidDoorPersoonId) {

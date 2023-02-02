@@ -1,11 +1,11 @@
 import {
   Deelname,
-  Inschrijving,
+  Aanmelding,
   Project,
   ProjectFilter,
   TOTAL_COUNT_HEADER,
   UpsertableDeelname,
-  UpsertableInschrijving,
+  UpsertableAanmelding,
   UpsertableProject,
 } from '@rock-solid/shared';
 import {
@@ -17,6 +17,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -26,7 +27,7 @@ import {
 import { Response } from 'express';
 import { JwtAuthGuard } from './auth/index.js';
 import { DeelnameMapper } from './services/deelname.mapper.js';
-import { InschrijvingMapper } from './services/inschrijving.mapper.js';
+import { AanmeldingMapper } from './services/aanmelding.mapper.js';
 import { ProjectMapper } from './services/project.mapper.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import { MetaFilterPipe } from './pipes/pipe-utils.js';
@@ -36,7 +37,7 @@ import { MetaFilterPipe } from './pipes/pipe-utils.js';
 export class ProjectenController {
   constructor(
     private readonly projectMapper: ProjectMapper,
-    private readonly inschrijvingenMapper: InschrijvingMapper,
+    private readonly aanmeldingMapper: AanmeldingMapper,
     private readonly deelnameMapper: DeelnameMapper,
   ) {}
 
@@ -65,11 +66,11 @@ export class ProjectenController {
     return projects;
   }
 
-  @Get(':id/inschrijvingen')
-  getInschrijvingen(
+  @Get(':id/aanmeldingen')
+  getAanmeldingen(
     @Param('id', ParseIntPipe) projectId: number,
-  ): Promise<Inschrijving[]> {
-    return this.inschrijvingenMapper.getAll({ projectId });
+  ): Promise<Aanmelding[]> {
+    return this.aanmeldingMapper.getAll({ projectId });
   }
 
   @Get(':projectId/activiteiten/:activiteitId/deelnames')
@@ -100,14 +101,14 @@ export class ProjectenController {
     return this.projectMapper.createProject(project);
   }
 
-  @Post(':id/inschrijvingen')
+  @Post(':id/aanmeldingen')
   @HttpCode(HttpStatus.CREATED)
-  async createInschrijving(
+  async createAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
-    @Body() inschrijving: UpsertableInschrijving,
-  ): Promise<Inschrijving> {
-    inschrijving.projectId = projectId;
-    return this.inschrijvingenMapper.create(inschrijving);
+    @Body() aanmelding: UpsertableAanmelding,
+  ): Promise<Aanmelding> {
+    aanmelding.projectId = projectId;
+    return this.aanmeldingMapper.create(aanmelding);
   }
 
   @Put(':id')
@@ -118,13 +119,23 @@ export class ProjectenController {
     return this.projectMapper.updateProject(+id, project);
   }
 
-  @Put(':id/inschrijvingen/:inschrijvingId')
-  async updateInschrijving(
+  @Put(':id/aanmeldingen/:aanmeldingId')
+  async updateAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
-    @Param('inschrijvingId', ParseIntPipe) inschrijvingId: number,
-    @Body() inschrijving: UpsertableInschrijving,
-  ): Promise<Inschrijving> {
-    inschrijving.projectId = projectId;
-    return this.inschrijvingenMapper.update(inschrijvingId, inschrijving);
+    @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
+    @Body() aanmelding: UpsertableAanmelding,
+  ): Promise<Aanmelding> {
+    aanmelding.projectId = projectId;
+    return this.aanmeldingMapper.update(aanmeldingId, aanmelding);
+  }
+
+  @Patch(':id/aanmeldingen/:aanmeldingId')
+  async partialUpdateAanmelding(
+    @Param('id', ParseIntPipe) projectId: number,
+    @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
+    @Body() aanmelding: Partial<Aanmelding>,
+  ): Promise<Aanmelding> {
+    aanmelding.projectId = projectId;
+    return this.aanmeldingMapper.update(aanmeldingId, aanmelding);
   }
 }

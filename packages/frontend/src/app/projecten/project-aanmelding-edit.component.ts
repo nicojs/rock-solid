@@ -1,4 +1,4 @@
-import { Inschrijving, Project } from '@rock-solid/shared';
+import { Aanmelding, aanmeldingsstatussen, Project } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -6,48 +6,50 @@ import { InputControl, InputType } from '../forms';
 import { fullName } from '../personen/full-name.pipe';
 import { printProject } from './project.pipes';
 
-@customElement('rock-project-inschrijving-edit')
-export class ProjectInschrijvingEditComponent extends LitElement {
+@customElement('rock-project-aanmelding-edit')
+export class ProjectAanmeldingEditComponent extends LitElement {
   static override styles = [bootstrap];
 
   @property()
   public project!: Project;
 
   @property()
-  public inschrijving!: Inschrijving;
+  public aanmelding!: Aanmelding;
 
   public override render() {
     return html`<h2>
-        Inschrijving van ${fullName(this.inschrijving.deelnemer!)} voor
+        Aanmelding van ${fullName(this.aanmelding.deelnemer!)} voor
         ${printProject(this.project)}
       </h2>
       <rock-reactive-form
         @rock-submit="${this.save}"
-        .controls="${inschrijvingControls}"
-        .entity="${this.inschrijving}"
+        .controls="${aanmeldingControls}"
+        .entity="${this.aanmelding}"
       ></rock-reactive-form>`;
   }
 
   private async save() {
-    const event = new CustomEvent('inschrijving-updated', {
+    const event = new CustomEvent('aanmelding-updated', {
       bubbles: true,
       composed: true,
-      detail: this.inschrijving,
+      detail: this.aanmelding,
     });
     this.dispatchEvent(event);
   }
 }
 
-const inschrijvingControls: InputControl<Inschrijving>[] = [
+const aanmeldingControls: InputControl<Aanmelding>[] = [
   {
     name: 'toestemmingFotos',
-    label: 'Toestemming voor gebruik van fotos',
+    label: "Toestemming voor gebruik van foto's",
     type: InputType.checkbox,
   },
   {
-    name: 'wachtlijst',
-    label: 'Staat op de wachtlijst?',
-    type: InputType.checkbox,
+    name: 'status',
+    label: 'Status',
+    type: InputType.select,
+    grouped: false,
+    items: aanmeldingsstatussen,
   },
   {
     name: 'rekeninguittrekselNummer',

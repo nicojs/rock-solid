@@ -4,7 +4,7 @@ import {
   GroupField,
   ProjectReport,
   ProjectReportFilter,
-  InschrijvingenReportType,
+  AanmeldingenReportType,
   ProjectType,
 } from '@rock-solid/shared';
 import { DBService } from './db.service.js';
@@ -13,8 +13,8 @@ import { DBService } from './db.service.js';
 export class ReportMapper {
   constructor(private db: DBService) {}
 
-  async inschrijvingen(
-    reportType: InschrijvingenReportType,
+  async aanmeldingen(
+    reportType: AanmeldingenReportType,
     projectType: ProjectType | undefined,
     groupField: GroupField,
     secondGroupField: GroupField | undefined,
@@ -25,13 +25,13 @@ export class ReportMapper {
       ${select(groupField)}::text as key1, 
       ${secondGroupField ? `${select(secondGroupField)}::text as key2,` : ''} 
       ${reportTypeAggregator(reportType)}::int as total
-    FROM inschrijving
-    INNER JOIN project ON inschrijving."projectId" = project.id ${
+    FROM aanmelding
+    INNER JOIN project ON aanmelding."projectId" = project.id ${
       projectType ? `AND project.type = '${projectType}'::project_type` : ''
     }
     ${reportTypeJoin(reportType)}
-    INNER JOIN persoon ON persoon.id = inschrijving."deelnemerId"    
-    INNER JOIN plaats ON inschrijving."woonplaatsDeelnemerId" = plaats.id
+    INNER JOIN persoon ON persoon.id = aanmelding."deelnemerId"    
+    INNER JOIN plaats ON aanmelding."woonplaatsDeelnemerId" = plaats.id
     ${filterWhere(filter)}
     GROUP BY ${fieldName(groupField)}${
       secondGroupField ? `, ${fieldName(secondGroupField)}` : ''
@@ -44,19 +44,19 @@ export class ReportMapper {
     const rawResults = await this.db.$queryRawUnsafe<
       { key1: string; key2?: string; total: number }[]
     >(query);
-    const inschrijvingen: ProjectReport = [];
+    const aanmeldingen: ProjectReport = [];
     function newReport(key: string) {
       const report: GroupedReport = {
         key,
         total: 0,
       };
-      inschrijvingen.push(report);
+      aanmeldingen.push(report);
       return report;
     }
 
     rawResults.forEach((row) => {
       const reportItem =
-        inschrijvingen.find((report) => report.key === row.key1) ??
+        aanmeldingen.find((report) => report.key === row.key1) ??
         newReport(row.key1);
       if ('key2' in row) {
         const rows = reportItem.rows ?? [];
@@ -66,19 +66,19 @@ export class ReportMapper {
       reportItem.total += row.total;
     });
 
-    return inschrijvingen;
+    return aanmeldingen;
   }
 }
 
-function reportTypeJoin(reportType: InschrijvingenReportType): string {
+function reportTypeJoin(reportType: AanmeldingenReportType): string {
   switch (reportType) {
     case 'deelnames':
-      return 'INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0';
-    case 'inschrijvingen':
+      return 'INNER JOIN deelname ON deelname."aanmeldingId" = aanmelding.id AND deelname."effectieveDeelnamePerunage" > 0';
+    case 'aanmeldingen':
       return '';
     case 'deelnemersuren':
       return `
-      INNER JOIN deelname ON deelname."inschrijvingId" = inschrijving.id AND deelname."effectieveDeelnamePerunage" > 0
+      INNER JOIN deelname ON deelname."aanmeldingId" = aanmelding.id AND deelname."effectieveDeelnamePerunage" > 0
       INNER JOIN activiteit ON activiteit.id = deelname."activiteitId"
       `;
   }
@@ -86,8 +86,8 @@ function reportTypeJoin(reportType: InschrijvingenReportType): string {
 
 function filterWhere(filter: ProjectReportFilter): string {
   const whereClauses: string[] = [];
-  if (filter.enkelEersteInschrijvingen) {
-    whereClauses.push('inschrijving."eersteInschrijving" = true');
+  if (filter.enkelEersteAanmeldingen) {
+    whereClauses.push('aanmelding."eersteAanmelding" = true');
   }
   if (filter.organisatieonderdeel) {
     whereClauses.push(
@@ -112,11 +112,11 @@ function filterWhere(filter: ProjectReportFilter): string {
   }
   return '';
 }
-function reportTypeAggregator(reportType: InschrijvingenReportType): string {
+function reportTypeAggregator(reportType: AanmeldingenReportType): string {
   switch (reportType) {
     case 'deelnames':
-    case 'inschrijvingen':
-      return 'COUNT(inschrijving.id)';
+    case 'aanmeldingen':
+      return 'COUNT(aanmelding.id)';
     case 'deelnemersuren':
       return 'SUM(deelname."effectieveDeelnamePerunage" * activiteit.vormingsuren)';
   }

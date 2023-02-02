@@ -91,6 +91,25 @@ export class RestClient {
     return parse(bodyText);
   }
 
+  async patch<TRoute extends keyof RestRoutes>(
+    route: TRoute,
+    id: string | number,
+    patches: Partial<RestRoutes[TRoute]['entity']>,
+  ): Promise<RestRoutes[TRoute]['entity']> {
+    const response = await this.http.fetch(`/api/${route}/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(patches),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Patch failed (HTTP status code ${response.status})`);
+    }
+    const bodyText = await response.text();
+    return parse(bodyText);
+  }
+
   async create<TRoute extends keyof RestRoutes>(
     route: TRoute,
     entity: RestRoutes[TRoute]['upsertableEntity'],

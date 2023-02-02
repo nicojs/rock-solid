@@ -3,13 +3,13 @@ import {
   GroupField,
   ProjectReport,
   ProjectReportFilter,
-  InschrijvingenReportType,
+  AanmeldingenReportType,
   ProjectType,
 } from '@rock-solid/shared';
 import { JwtAuthGuard } from './auth/index.js';
 import { GroupingFieldPipe } from './pipes/grouping-field.pipe.js';
-import { ProjectReportFilterPipe } from './pipes/inschrijvingen-report-filter.pipe.js';
-import { InschrijvingenReportTypePipe } from './pipes/project-report-type.pipe.js';
+import { ProjectReportFilterPipe } from './pipes/project-report-filter.pipe.js';
+import { ProjectReportTypePipe } from './pipes/project-report-type.pipe.js';
 import { ProjectTypePipe } from './pipes/project-type.pipe.js';
 import { RequiredPipe } from './pipes/required.pipe.js';
 import { ReportMapper } from './services/report.mapper.js';
@@ -19,10 +19,10 @@ import { ReportMapper } from './services/report.mapper.js';
 export class ReportsController {
   constructor(private readonly reportMapper: ReportMapper) {}
 
-  @Get('inschrijvingen/:projectReport')
-  async inschrijvingen(
-    @Param('projectReport', InschrijvingenReportTypePipe, RequiredPipe)
-    report: InschrijvingenReportType,
+  @Get('aanmelding/:projectReport')
+  async aanmelding(
+    @Param('projectReport', ProjectReportTypePipe, RequiredPipe)
+    report: AanmeldingenReportType,
     @Query('type', ProjectTypePipe)
     type: ProjectType | undefined,
     @Query('by', GroupingFieldPipe, RequiredPipe) group1: GroupField,
@@ -30,12 +30,6 @@ export class ReportsController {
     @Query(ProjectReportFilterPipe)
     filter: ProjectReportFilter,
   ): Promise<ProjectReport> {
-    return this.reportMapper.inschrijvingen(
-      report,
-      type,
-      group1,
-      group2,
-      filter,
-    );
+    return this.reportMapper.aanmeldingen(report, type, group1, group2, filter);
   }
 }

@@ -15,12 +15,12 @@ interface RawVakantieInschrijving {
 
 const importErrors = new ImportErrors<RawVakantieInschrijving>();
 
-export async function seedVakantieInschrijvingen(
+export async function seedVakantieAanmeldingen(
   client: db.PrismaClient,
   deelnemersLookup: Map<string, number> | undefined,
   readonly: boolean,
 ) {
-  const inschrijvingenRaw = await readImportJson<RawVakantieInschrijving[]>(
+  const aanmeldingenRaw = await readImportJson<RawVakantieInschrijving[]>(
     'vakantie-inschrijvingen.json',
   );
   const deelnemerIdByTitles =
@@ -51,34 +51,34 @@ export async function seedVakantieInschrijvingen(
     acc.set(projectnummer, { id, activiteiten });
     return acc;
   }, new Map<string, { id: number; activiteiten: db.Activiteit[] }>());
-  const inschrijvingen = inschrijvingenRaw
+  const aanmeldingen = aanmeldingenRaw
     .map(fromRaw)
     .filter(notEmpty)
     .filter(
       deduplicate(
-        ([, inschrijving]) =>
-          `${inschrijving.deelnemer.connect!.id!}-${
-            inschrijving.project.connect!.id
+        ([, aanmelding]) =>
+          `${aanmelding.deelnemer.connect!.id!}-${
+            aanmelding.project.connect!.id
           }`,
-        ([inschrijving]) => {
-          importErrors.addWarning('duplicate_inschrijving', {
-            item: inschrijving,
-            detail: `Inschrijving already exists`,
+        ([aanmelding]) => {
+          importErrors.addWarning('duplicate_aanmelding', {
+            item: aanmelding,
+            detail: `Aanmelding already exists`,
           });
         },
       ),
     )
-    .map(([, inschrijving]) => inschrijving);
+    .map(([, aanmelding]) => aanmelding);
 
-  for (const inschrijving of inschrijvingen) {
-    await client.inschrijving.create({
-      data: inschrijving,
+  for (const aanmelding of aanmeldingen) {
+    await client.aanmelding.create({
+      data: aanmelding,
     });
   }
-  console.log(`Seeded ${inschrijvingen.length} vakantie inschrijvingen`);
+  console.log(`Seeded ${aanmeldingen.length} vakantie aanmeldingen`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
-    'vakantie-inschrijvingen-import-errors.json',
+    'vakantie-aanmeldingen-import-errors.json',
     importErrors,
     readonly,
   );
@@ -88,7 +88,7 @@ export async function seedVakantieInschrijvingen(
   ):
     | [
         raw: RawVakantieInschrijving,
-        createInput: db.Prisma.InschrijvingCreateInput,
+        createInput: db.Prisma.AanmeldingCreateInput,
       ]
     | undefined {
     const project = vakantiesByCode.get(raw.vakantie);
@@ -125,6 +125,7 @@ export async function seedVakantieInschrijvingen(
           },
         },
         woonplaatsDeelnemer: { connect: { id: deelnemer.woonplaatsId } },
+        status: raw.deelgenomen === 'Ja' ? 'Bevestigd' : 'Geannuleerd',
       },
     ];
   }

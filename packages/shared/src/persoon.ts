@@ -59,7 +59,7 @@ export type PersoonDetailsFilter = Partial<
 > & {
   foldersoorten?: Foldersoort[];
   searchType: 'persoon';
-  laatsteInschrijvingJaarGeleden?: number;
+  laatsteAanmeldingJaarGeleden?: number;
 };
 
 export type PersoonFilter = PersoonDetailsFilter | PersoonTextFilter;
