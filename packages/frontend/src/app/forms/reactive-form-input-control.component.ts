@@ -177,7 +177,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       @change="${(e: Event) => {
         const inputEl = e.target as HTMLInputElement;
         (this.entity[control.name] as unknown as Date | undefined) =
-          inputEl.valueAsDate ?? undefined;
+          inputEl.valueAsDate ?? new Date(inputEl.value) ?? undefined;
         this.updateCustomValidity();
         this.updateValidationMessage();
       }}"
