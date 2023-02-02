@@ -206,10 +206,20 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
           : {}),
       };
     case 'text':
-      return {
+      const whereStatement = {
         volledigeNaam: { contains: filter.search, mode: 'insensitive' },
         type: filter.type,
-      };
+      } as const;
+      if (filter.type === 'overigPersoon' && filter.overigePersoonSelectie) {
+        return {
+          ...whereStatement,
+          selectie: {
+            hasSome: filter.overigePersoonSelectie,
+          },
+        };
+      } else {
+        return whereStatement;
+      }
   }
 }
 

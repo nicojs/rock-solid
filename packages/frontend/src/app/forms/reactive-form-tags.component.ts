@@ -41,6 +41,7 @@ export class ReactiveFormTags<
   }
 
   public override render() {
+    console.log(this.control.minCharacters);
     return html`<div class="row mb-3">
       <div class="col-lg-2 col-md-4">
         <label for="${this.name}" class="col-form-label"
@@ -84,6 +85,7 @@ export class ReactiveFormTags<
           <div class="col">
             <rock-autocomplete
               .searchAction=${this.control.searchAction}
+              minCharacters=${ifDefined(this.control.minCharacters)}
               @selected=${(
                 ev: CustomEvent<TypeAheadHint<ArrayItem<TEntity[TKey]>>>,
               ) => {

@@ -85,12 +85,14 @@ export function tagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   searchAction: (
     text: string,
   ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>,
+  additionalOptions?: Pick<TagsControl<TEntity, TKey>, 'minCharacters'>,
 ): TagsControl<TEntity, TKey> {
   return {
     type: InputType.tags,
     name,
     tagText,
     searchAction,
+    ...additionalOptions,
   };
 }
 
@@ -108,6 +110,10 @@ export interface TagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>
     text: string,
   ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>;
   tagText: (tag: ArrayItem<TEntity[TKey]>) => string;
+  /**
+   * The minimal number of characters to type before showing hints
+   */
+  minCharacters?: number;
   type: InputType.tags;
 }
 

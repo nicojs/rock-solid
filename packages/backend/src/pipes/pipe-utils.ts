@@ -3,6 +3,8 @@ import { Injectable, PipeTransform } from '@nestjs/common';
 export type Queryfied<T> = {
   [K in keyof T]: T[K] extends string
     ? T[K]
+    : T[K] extends string | undefined
+    ? T[K]
     : undefined extends T[K]
     ? string | undefined
     : string;

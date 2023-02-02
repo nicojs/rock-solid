@@ -13,6 +13,7 @@ import {
   vakantieVervoerOptions,
   DeepPartial,
   OverigPersoon,
+  OverigPersoonSelectie,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -86,21 +87,6 @@ const baseProjectControls: FormControl<BaseProject>[] = [
       required: true,
     },
   },
-  tagsControl(
-    'begeleiders',
-    (tag) => fullName(tag),
-    async (search) => {
-      const personen = await persoonService.getAll({
-        type: 'overigPersoon',
-        searchType: 'text',
-        search,
-      });
-      return personen.map((persoon) => ({
-        text: fullName(persoon),
-        value: persoon as OverigPersoon,
-      }));
-    },
-  ),
 ];
 
 const HALF_HOUR_SECONDS = 60 * 30;
@@ -129,6 +115,7 @@ const cursusActiviteitenControls: FormControl<CursusActiviteit>[] = [
 ];
 const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
   ...baseActiviteitenControls,
+
   {
     name: 'begeleidingsuren',
     type: InputType.number,
@@ -139,6 +126,7 @@ const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
 
 const cursusProjectControls: FormControl<Cursus>[] = [
   ...baseProjectControls,
+  begeleidersTagsControl('personeel'),
   selectControl('organisatieonderdeel', organisatieonderdelen, {
     validators: { required: true },
   }),
@@ -147,6 +135,7 @@ const cursusProjectControls: FormControl<Cursus>[] = [
 
 const vakantieProjectControls: FormControl<Vakantie>[] = [
   ...baseProjectControls,
+  begeleidersTagsControl('vakantieVrijwilliger', 2),
   { type: InputType.currency, name: 'prijs' },
   { type: InputType.currency, name: 'voorschot' },
   selectControl('seizoen', vakantieSeizoenen),
@@ -164,4 +153,27 @@ export function newActiviteit(): DeepPartial<CursusActiviteit> {
   totEnMet.setHours(16);
   totEnMet.setMinutes(0);
   return { van, totEnMet, vormingsuren: 19 };
+}
+
+function begeleidersTagsControl(
+  overigePersoonSelectie: OverigPersoonSelectie,
+  minCharacters = 0,
+) {
+  return tagsControl<BaseProject, 'begeleiders'>(
+    'begeleiders',
+    (tag) => fullName(tag),
+    async (search) => {
+      const personen = await persoonService.getAll({
+        type: 'overigPersoon',
+        searchType: 'text',
+        search,
+        overigePersoonSelectie,
+      });
+      return personen.map((persoon) => ({
+        text: fullName(persoon),
+        value: persoon as OverigPersoon,
+      }));
+    },
+    { minCharacters },
+  );
 }

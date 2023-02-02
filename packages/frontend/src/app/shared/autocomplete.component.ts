@@ -20,8 +20,6 @@ export interface TypeAheadHint<TValue = number | string> {
   text: string;
 }
 
-const minCharacters = 2;
-
 export enum FocusState {
   None,
   Focus,
@@ -51,6 +49,9 @@ export class AutocompleteComponent extends LitElement {
 
   @property({ attribute: false })
   public searchAction!: (text: string) => Promise<TypeAheadHint[]>;
+
+  @property({ type: Number })
+  public minCharacters = 2;
 
   @property()
   public entityName?: string;
@@ -105,13 +106,14 @@ export class AutocompleteComponent extends LitElement {
 
   public override connectedCallback(): void {
     super.connectedCallback();
+    console.log('min', this.minCharacters);
     const searchInput = this.findSearchInput();
     this.searchInput = searchInput;
     this.subscription = new Subscription();
 
     const updateTypeAheadState = (value: string) => {
-      if (value.length < minCharacters) {
-        this.charactersRemaining = minCharacters - value.length;
+      if (value.length < this.minCharacters) {
+        this.charactersRemaining = this.minCharacters - value.length;
         this.hints = undefined;
       } else {
         this.charactersRemaining = undefined;
@@ -182,10 +184,14 @@ export class AutocompleteComponent extends LitElement {
         .pipe(
           map(() => this.searchInput.value),
           tap(updateTypeAheadState),
-          tap((search) => (this.isLoading = search.length >= minCharacters)),
+          tap(
+            (search) => (this.isLoading = search.length >= this.minCharacters),
+          ),
           debounceTime(200),
           switchMap(async (val) =>
-            val.length >= minCharacters ? this.searchAction(val) : undefined,
+            val.length >= this.minCharacters
+              ? this.searchAction(val)
+              : undefined,
           ),
           tap(() => (this.isLoading = false)),
         )

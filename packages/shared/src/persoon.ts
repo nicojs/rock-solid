@@ -37,11 +37,22 @@ export type UpsertableOverigPersoon = Omit<
 };
 export type Persoon = Deelnemer | OverigPersoon;
 
-export interface PersoonTextFilter {
-  type: PersoonType;
+export type PersoonTextFilter = DeelnemerTextFilter | OverigPersoonTextFilter;
+
+export interface BasePersoonTextFilter {
   searchType: 'text';
   search: string;
 }
+
+export interface DeelnemerTextFilter extends BasePersoonTextFilter {
+  type: 'deelnemer';
+}
+
+export interface OverigPersoonTextFilter extends BasePersoonTextFilter {
+  type: 'overigPersoon';
+  overigePersoonSelectie?: OverigPersoonSelectie;
+}
+
 export type PersoonDetailsFilter = Partial<
   Omit<OverigPersoon, 'type' | 'foldervoorkeuren'> &
     Omit<Deelnemer, 'type'> & { type: PersoonType }
