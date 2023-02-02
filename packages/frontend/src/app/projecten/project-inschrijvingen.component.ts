@@ -172,13 +172,13 @@ export class ProjectInschrijvingenComponent extends LitElement {
       <div class="col">
         <div class="form-floating flex-grow-1">
           <input
-            type="email"
+            type="text"
             class="form-control"
             id="searchPersoonInput"
-            placeholder="Persoon inschrijven"
+            placeholder="Naam persoon"
             ${ref(this.searchInput)}
           />
-          <label for="searchPersoonInput">Persoon inschrijven</label>
+          <label for="searchPersoonInput">Naam persoon</label>
         </div>
       </div>
 
