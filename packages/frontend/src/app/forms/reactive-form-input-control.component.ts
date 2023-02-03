@@ -143,7 +143,6 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
             (this.entity[control.name] as unknown as Decimal) = new Decimal(
               inputEl.value,
             );
-            console.log(`new Decimal(${inputEl.value})`);
           } else {
             (this.entity[control.name] as unknown as number) =
               inputEl.valueAsNumber;

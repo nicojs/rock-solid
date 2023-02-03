@@ -20,6 +20,7 @@ import {
   selectControl,
   formArray,
   foldervoorkeurControls,
+  checkboxesControl,
 } from '../forms';
 
 @customElement('rock-edit-persoon')
@@ -136,7 +137,7 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
     type: InputType.text,
   },
   formArray('foldervoorkeuren', foldervoorkeurControls),
-  selectControl('selectie', overigPersoonSelecties, { multiple: true }),
+  checkboxesControl('selectie', overigPersoonSelecties),
 ];
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [

@@ -21,8 +21,6 @@ class RouterLink extends Directive {
     }
   }
   override update(part: Part, [href]: string[]): unknown {
-    console.log('update requested');
-
     const { element } = part as ElementPart;
     if (router.isActive(href!)) {
       element.classList.add('active');
@@ -44,7 +42,6 @@ class RouterLink extends Directive {
   }
 
   render(href: string): string {
-    console.log('render requested');
     return href;
   }
 

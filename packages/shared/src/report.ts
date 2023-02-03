@@ -1,23 +1,24 @@
 import { Options } from './options';
 import { Organisatieonderdeel, ProjectType } from './project';
 
-export type AanmeldingenReportType =
+export type ProjectenReportType =
   | 'aanmeldingen'
   | 'deelnames'
   | 'deelnemersuren';
 
-export const aanmeldingenReportTypes: Options<AanmeldingenReportType> =
-  Object.freeze({
+export const projectenReportTypes: Options<ProjectenReportType> = Object.freeze(
+  {
     aanmeldingen: 'Aanmeldingen',
     deelnames: 'Deelnames',
     deelnemersuren: 'Deelnemersuren',
     vormingsuren: 'Vormingsuren',
-  });
+  },
+);
 
-export function isAanmeldingenReportType(
+export function isProjectReportType(
   maybe: string,
-): maybe is AanmeldingenReportType {
-  return maybe in aanmeldingenReportTypes;
+): maybe is ProjectenReportType {
+  return maybe in projectenReportTypes;
 }
 
 export type ProjectReport = GroupedReport[];

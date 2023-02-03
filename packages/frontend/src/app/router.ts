@@ -51,10 +51,7 @@ export class Router {
 
   constructor() {
     fromEvent(window, 'popstate')
-      .pipe(
-        map(() => RouteParams.parse(window.location.pathname)),
-        tap((route) => console.log('nav', route.href)),
-      )
+      .pipe(map(() => RouteParams.parse(window.location.pathname)))
       .subscribe(this.navigatorSubject);
   }
 

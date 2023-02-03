@@ -4,7 +4,7 @@ import {
   GroupField,
   ProjectReport,
   ProjectReportFilter,
-  AanmeldingenReportType,
+  ProjectenReportType,
   ProjectType,
 } from '@rock-solid/shared';
 import { DBService } from './db.service.js';
@@ -13,8 +13,8 @@ import { DBService } from './db.service.js';
 export class ReportMapper {
   constructor(private db: DBService) {}
 
-  async aanmeldingen(
-    reportType: AanmeldingenReportType,
+  async projecten(
+    reportType: ProjectenReportType,
     projectType: ProjectType | undefined,
     groupField: GroupField,
     secondGroupField: GroupField | undefined,
@@ -40,7 +40,7 @@ export class ReportMapper {
       secondGroupField ? `, ${fieldName(secondGroupField)} DESC` : ''
     }
     `;
-    console.log(query);
+    // console.log(query);
     const rawResults = await this.db.$queryRawUnsafe<
       { key1: string; key2?: string; total: number }[]
     >(query);
@@ -70,7 +70,7 @@ export class ReportMapper {
   }
 }
 
-function reportTypeJoin(reportType: AanmeldingenReportType): string {
+function reportTypeJoin(reportType: ProjectenReportType): string {
   switch (reportType) {
     case 'deelnames':
       return 'INNER JOIN deelname ON deelname."aanmeldingId" = aanmelding.id AND deelname."effectieveDeelnamePerunage" > 0';
@@ -112,7 +112,7 @@ function filterWhere(filter: ProjectReportFilter): string {
   }
   return '';
 }
-function reportTypeAggregator(reportType: AanmeldingenReportType): string {
+function reportTypeAggregator(reportType: ProjectenReportType): string {
   switch (reportType) {
     case 'deelnames':
     case 'aanmeldingen':

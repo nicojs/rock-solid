@@ -27,6 +27,7 @@ export enum InputType {
   plaats = 'plaats',
   currency = 'currency',
   tags = 'tags',
+  checkboxes = 'checkboxes',
 }
 
 interface Validators<TEntity, TValue> {
@@ -47,8 +48,12 @@ export type FormControl<TEntity> =
   | InputControl<TEntity>
   | FormArray<TEntity, any>
   | FormGroup<TEntity, any>
+  | CustomControl<TEntity>;
+
+export type CustomControl<TEntity> =
   | PlaatsControl<TEntity>
-  | TagsControl<TEntity, any>;
+  | TagsControl<TEntity, any>
+  | CheckboxesControl<TEntity, any>;
 
 export function formGroup<TEntity, TKey extends keyof TEntity & string>(
   name: TKey,
@@ -79,23 +84,6 @@ export function formArray<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   };
 }
 
-export function tagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
-  name: TKey,
-  tagText: (tag: ArrayItem<TEntity[TKey]>) => string,
-  searchAction: (
-    text: string,
-  ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>,
-  additionalOptions?: Pick<TagsControl<TEntity, TKey>, 'minCharacters'>,
-): TagsControl<TEntity, TKey> {
-  return {
-    type: InputType.tags,
-    name,
-    tagText,
-    searchAction,
-    ...additionalOptions,
-  };
-}
-
 export interface FormArray<TEntity, TKey extends KeysOfType<TEntity, any[]>> {
   type: InputType.array;
   name: TKey;
@@ -115,6 +103,44 @@ export interface TagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>
    */
   minCharacters?: number;
   type: InputType.tags;
+}
+
+export function tagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
+  name: TKey,
+  tagText: (tag: ArrayItem<TEntity[TKey]>) => string,
+  searchAction: (
+    text: string,
+  ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>,
+  additionalOptions?: Pick<TagsControl<TEntity, TKey>, 'minCharacters'>,
+): TagsControl<TEntity, TKey> {
+  return {
+    type: InputType.tags,
+    name,
+    tagText,
+    searchAction,
+    ...additionalOptions,
+  };
+}
+export interface CheckboxesControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string[]>,
+> extends BaseInputControl<TEntity, ArrayItem<TEntity[TKey]>[]> {
+  name: TKey;
+  type: InputType.checkboxes;
+  items: Options<TEntity[TKey] & string>;
+}
+export function checkboxesControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string[]>,
+>(
+  name: TKey,
+  items: Options<TEntity[TKey] & string>,
+): CheckboxesControl<TEntity, TKey> {
+  return {
+    type: InputType.checkboxes,
+    name,
+    items,
+  };
 }
 
 export interface FormGroup<TEntity, TKey extends keyof TEntity> {
