@@ -4,7 +4,7 @@ import { RockElement } from '../rock-element';
 
 import { bootstrap } from '../../styles';
 import { router } from '../router';
-import { isAanmeldingenReportType } from '@rock-solid/shared';
+import { isProjectReportType } from '@rock-solid/shared';
 import { routerLink } from '../shared';
 
 @customElement('rock-rapportages')
@@ -29,15 +29,17 @@ export class RapportagesComponent extends RockElement {
               <a
                 class="nav-link"
                 aria-current="page"
-                ${routerLink('../aanmelding')}
+                ${routerLink(`/rapportages/aanmeldingen`)}
                 >Aanmelding</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" ${routerLink('../deelnames')}>Deelnames</a>
+              <a class="nav-link" ${routerLink('/rapportages/deelnames')}
+                >Deelnames</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" ${routerLink('../deelnemersuren')}
+              <a class="nav-link" ${routerLink('/rapportages/deelnemersuren')}
                 >Deelnemersuren</a
               >
             </li>
@@ -48,12 +50,12 @@ export class RapportagesComponent extends RockElement {
   }
 
   private renderView() {
-    if (this.path[0] && isAanmeldingenReportType(this.path[0])) {
+    if (this.path[0] && isProjectReportType(this.path[0])) {
       return html`<rock-project-rapportage
         .reportType=${this.path[0]}
       ></rock-project-rapportage>`;
     } else {
-      router.navigate(`/rapportages/aanmelding`);
+      router.navigate(`/rapportages/aanmeldingen`);
     }
   }
 }

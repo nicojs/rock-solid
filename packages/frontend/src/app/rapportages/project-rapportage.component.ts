@@ -11,7 +11,7 @@ import {
   ReportRow,
   Werksituatie,
   werksituaties,
-  AanmeldingenReportType,
+  ProjectenReportType,
   organisatieonderdelen,
   OvernachtingDescription,
   overnachtingDescriptions,
@@ -31,7 +31,7 @@ export class ProjectRapportageComponent extends RockElement {
   static override styles = [bootstrap];
 
   @property()
-  public reportType!: AanmeldingenReportType;
+  public reportType!: ProjectenReportType;
 
   @state()
   public report?: ProjectReport;
@@ -74,18 +74,13 @@ export class ProjectRapportageComponent extends RockElement {
     ) {
       this.isLoading = true;
       reportsClient
-        .get(
-          `reports/aanmeldingen/${this.reportType}`,
-          this.group1,
-          this.group2,
-          {
-            enkelEersteAanmeldingen: this.enkelEersteAanmeldingen,
-            organisatieonderdeel: this.enkelOrganisatieonderdeel,
-            type: this.projectType,
-            jaar: this.enkelJaar,
-            overnachting: this.overnachting,
-          },
-        )
+        .get(`reports/projecten/${this.reportType}`, this.group1, this.group2, {
+          enkelEersteAanmeldingen: this.enkelEersteAanmeldingen,
+          organisatieonderdeel: this.enkelOrganisatieonderdeel,
+          type: this.projectType,
+          jaar: this.enkelJaar,
+          overnachting: this.overnachting,
+        })
         .then((report) => (this.report = report))
         .finally(() => {
           this.isLoading = false;

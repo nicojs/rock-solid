@@ -106,7 +106,6 @@ export class AutocompleteComponent extends LitElement {
 
   public override connectedCallback(): void {
     super.connectedCallback();
-    console.log('min', this.minCharacters);
     const searchInput = this.findSearchInput();
     this.searchInput = searchInput;
     this.subscription = new Subscription();
@@ -218,19 +217,16 @@ export class AutocompleteComponent extends LitElement {
 
   public override disconnectedCallback(): void {
     super.disconnectedCallback();
-    console.log('Unsubscribe all');
     this.subscription?.unsubscribe();
   }
 
   private async hintClicked(event: MouseEvent, hint: TypeAheadHint) {
-    console.log('hint clicked', hint.text);
     event.preventDefault();
     this.submit(hint);
   }
 
   private submit(hint: TypeAheadHint | undefined) {
     if (hint) {
-      console.log('selected', hint.text);
       this.dispatchEvent(
         new CustomEvent('selected', {
           bubbles: true,
