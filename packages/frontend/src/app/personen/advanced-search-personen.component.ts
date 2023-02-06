@@ -14,7 +14,13 @@ import {
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { InputControl, InputType, selectControl } from '../forms';
+import {
+  checkboxesControl,
+  FormControl,
+  InputControl,
+  InputType,
+  selectControl,
+} from '../forms';
 import {
   downloadCsv,
   pluralize,
@@ -99,14 +105,12 @@ export class AdvancedSearchPersonenComponent extends LitElement {
   }
 }
 
-const overigPersoonSearchControls: InputControl<PersoonDetailsFilter>[] = [
-  selectControl('selectie', overigPersoonSelecties, {
+const overigPersoonSearchControls: FormControl<PersoonDetailsFilter>[] = [
+  checkboxesControl('selectie', false, overigPersoonSelecties, {
     label: overigPersoonLabels.selectie,
-    multiple: true,
   }),
-  selectControl('foldersoorten', foldersoorten, {
-    label: 'folders',
-    multiple: true,
+  checkboxesControl('foldersoorten', false, foldersoorten, {
+    label: 'Folders',
   }),
 ];
 

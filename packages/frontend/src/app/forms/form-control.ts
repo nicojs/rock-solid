@@ -18,6 +18,7 @@ export enum InputType {
   select = 'select',
   date = 'date',
   dateTimeLocal = 'datetime-local',
+  radio = 'radio',
 
   // Grouping types:
   array = 'array',
@@ -121,26 +122,59 @@ export function tagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
     ...additionalOptions,
   };
 }
-export interface CheckboxesControl<
+
+export type CheckboxesControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string[]>,
+> =
+  | GroupedCheckboxesControl<TEntity, TKey>
+  | SingleGroupCheckboxesControl<TEntity, TKey>;
+
+interface BaseCheckboxesControl<
   TEntity,
   TKey extends KeysOfType<TEntity, string[]>,
 > extends BaseInputControl<TEntity, ArrayItem<TEntity[TKey]>[]> {
   name: TKey;
   type: InputType.checkboxes;
+}
+export interface GroupedCheckboxesControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string[]>,
+> extends BaseCheckboxesControl<TEntity, TKey> {
+  grouped: true;
+  items: GroupedOptions<TEntity[TKey] & string>;
+}
+
+export interface SingleGroupCheckboxesControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string[]>,
+> extends BaseCheckboxesControl<TEntity, TKey> {
+  grouped: false;
   items: Options<TEntity[TKey] & string>;
 }
+
 export function checkboxesControl<
   TEntity,
   TKey extends KeysOfType<TEntity, string[]>,
+  TGrouped extends boolean,
 >(
   name: TKey,
-  items: Options<TEntity[TKey] & string>,
+  grouped: TGrouped,
+  items: TGrouped extends true
+    ? GroupedOptions<TEntity[TKey] & string>
+    : Options<TEntity[TKey] & string>,
+  additionalOptions?: Omit<
+    CheckboxesControl<TEntity, TKey>,
+    'name' | 'items' | 'type' | 'grouped'
+  >,
 ): CheckboxesControl<TEntity, TKey> {
   return {
     type: InputType.checkboxes,
+    grouped,
     name,
     items,
-  };
+    ...additionalOptions,
+  } as CheckboxesControl<TEntity, TKey>;
 }
 
 export interface FormGroup<TEntity, TKey extends keyof TEntity> {
@@ -165,6 +199,7 @@ export type InputControl<TEntity> =
   | NumberInputControl<TEntity>
   | CheckboxInputControl<TEntity>
   | SelectControl<TEntity, any>
+  | RadioInputControl<TEntity, any>
   | TemporalInput<TEntity>;
 
 export interface BaseInputControl<TEntity, TValue> {
@@ -230,6 +265,34 @@ export interface CheckboxInputControl<TEntity>
   extends BaseInputControl<TEntity, boolean> {
   name: KeysOfType<TEntity, boolean>;
   type: InputType.checkbox;
+}
+
+export interface RadioInputControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string | string[]>,
+> extends BaseInputControl<TEntity, TEntity[TKey]> {
+  type: InputType.radio;
+  name: TKey;
+  items: Options<TEntity[TKey] & string>;
+}
+
+export function radioControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string | string[]>,
+>(
+  name: TKey,
+  items: Options<TEntity[TKey] & string>,
+  additionalOptions?: Omit<
+    RadioInputControl<TEntity, TKey>,
+    'name' | 'items' | 'type'
+  >,
+): RadioInputControl<TEntity, TKey> {
+  return {
+    type: InputType.radio,
+    name,
+    items,
+    ...additionalOptions,
+  };
 }
 
 interface BaseSelectControl<

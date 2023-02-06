@@ -157,9 +157,14 @@ export class PersonenComponent extends RockElement {
           type: this.type,
           voedingswens: 'geen',
           verblijfadres: {},
+          geslacht: 'onbekend',
         };
         if (persoon.type === 'overigPersoon') {
           persoon.foldervoorkeuren = [];
+        }
+        if (persoon.type === 'deelnemer') {
+          persoon.werksituatie = 'onbekend';
+          persoon.woonsituatie = 'onbekend';
         }
         return html`<h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading

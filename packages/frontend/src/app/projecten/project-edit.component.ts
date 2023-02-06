@@ -14,6 +14,7 @@ import {
   DeepPartial,
   OverigPersoon,
   OverigPersoonSelectie,
+  cursusLabels,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -22,7 +23,7 @@ import {
   FormControl,
   formArray,
   InputType,
-  selectControl,
+  radioControl,
   tagsControl,
 } from '../forms';
 import { fullName } from '../personen/full-name.pipe';
@@ -120,15 +121,20 @@ const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
     name: 'begeleidingsuren',
     type: InputType.number,
   },
-  selectControl('verblijf', vakantieVerblijven),
-  selectControl('vervoer', vakantieVervoerOptions),
+  radioControl('verblijf', vakantieVerblijven, {
+    validators: { required: true },
+  }),
+  radioControl('vervoer', vakantieVervoerOptions, {
+    validators: { required: true },
+  }),
 ];
 
 const cursusProjectControls: FormControl<Cursus>[] = [
   ...baseProjectControls,
   begeleidersTagsControl('personeel'),
-  selectControl('organisatieonderdeel', organisatieonderdelen, {
+  radioControl('organisatieonderdeel', organisatieonderdelen, {
     validators: { required: true },
+    label: cursusLabels.organisatieonderdeel,
   }),
   formArray('activiteiten', cursusActiviteitenControls, newActiviteit),
 ];
@@ -138,7 +144,9 @@ const vakantieProjectControls: FormControl<Vakantie>[] = [
   begeleidersTagsControl('vakantieVrijwilliger', 2),
   { type: InputType.currency, name: 'prijs' },
   { type: InputType.currency, name: 'voorschot' },
-  selectControl('seizoen', vakantieSeizoenen),
+  radioControl('seizoen', vakantieSeizoenen, {
+    validators: { required: true },
+  }),
   formArray('activiteiten', vakantieActiviteitenControls),
 ];
 export function newActiviteit(): DeepPartial<CursusActiviteit> {

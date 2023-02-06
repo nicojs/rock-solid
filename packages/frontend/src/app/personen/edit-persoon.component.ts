@@ -17,10 +17,10 @@ import {
   InputType,
   formGroup,
   adresControls,
-  selectControl,
   formArray,
   foldervoorkeurControls,
   checkboxesControl,
+  radioControl,
 } from '../forms';
 
 @customElement('rock-edit-persoon')
@@ -62,7 +62,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
   },
   { name: 'voornaam', type: InputType.text },
   { name: 'emailadres', type: InputType.email },
-  selectControl('geslacht', geslachten),
+  radioControl('geslacht', geslachten),
   {
     name: 'geboortedatum',
     type: InputType.date,
@@ -71,7 +71,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
       max: new Date(new Date().getFullYear() - 5, 1, 1),
     },
   },
-  selectControl('voedingswens', voedingswensen),
+  radioControl('voedingswens', voedingswensen),
   formGroup(
     'verblijfadres',
     [
@@ -136,8 +136,8 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
     label: 'Vrijwilliger opmerking',
     type: InputType.text,
   },
+  checkboxesControl('selectie', false, overigPersoonSelecties),
   formArray('foldervoorkeuren', foldervoorkeurControls),
-  checkboxesControl('selectie', overigPersoonSelecties),
 ];
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [
@@ -146,16 +146,16 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
     required: false,
     requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
   }),
-  selectControl('woonsituatie', woonsituaties),
+  radioControl('woonsituatie', woonsituaties),
   {
     name: 'woonsituatieOpmerking',
-    label: 'Woonsituatie opmerking',
+    label: 'Opmerking',
     type: InputType.text,
   },
-  selectControl('werksituatie', werksituaties),
+  radioControl('werksituatie', werksituaties),
   {
     name: 'werksituatieOpmerking',
-    label: 'Werksituatie opmerking',
+    label: 'Opmerking',
     type: InputType.text,
   },
 ];

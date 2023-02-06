@@ -1,5 +1,5 @@
 import { fromEvent, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 export type Query = Record<string, string | undefined>;
 

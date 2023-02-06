@@ -25,7 +25,11 @@ export class ReactiveFormTags<
 
   @state()
   get tags(): ArrayItem<TEntity[TKey]>[] {
-    return this.entity[this.control.name] as ArrayItem<TEntity[TKey]>[];
+    return (
+      (this.entity[this.control.name] as
+        | ArrayItem<TEntity[TKey]>[]
+        | undefined) ?? []
+    );
   }
   set tags(val: ArrayItem<TEntity[TKey]>[]) {
     const oldValue = this.tags;

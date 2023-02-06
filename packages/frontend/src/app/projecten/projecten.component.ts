@@ -1,4 +1,4 @@
-import { Project, ProjectType, Cursus, DeepPartial } from '@rock-solid/shared';
+import { Project, ProjectType, DeepPartial } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -75,9 +75,6 @@ export class ProjectenComponent extends RockElement {
           activiteiten: [newActiviteit()],
           begeleiders: [],
         };
-        if (this.type === 'cursus') {
-          (project as Cursus).organisatieonderdeel = 'deKei';
-        }
         this.newProject = project;
       }
     }

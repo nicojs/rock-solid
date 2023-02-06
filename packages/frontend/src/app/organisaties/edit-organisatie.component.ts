@@ -2,7 +2,6 @@ import {
   Organisatie,
   UpsertableOrganisatie,
   doelgroepen,
-  organisatieColumnNames,
   groupedOrganisatieSoorten,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
@@ -15,9 +14,9 @@ import {
   InputType,
   patterns,
   selectControl,
-  groupedSelectControl,
   formArray,
   foldervoorkeurControls,
+  checkboxesControl,
 } from '../forms';
 import { printOrganisatie } from './organisatie.pipes';
 
@@ -70,10 +69,7 @@ function createControls(
       type: InputType.url,
       placeholder: 'https://dekei.be',
     },
-    groupedSelectControl('soorten', groupedOrganisatieSoorten, {
-      label: organisatieColumnNames.soorten,
-      multiple: true,
-    }),
+    checkboxesControl('soorten', true, groupedOrganisatieSoorten),
     formArray(
       'contacten',
       [

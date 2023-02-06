@@ -1,8 +1,5 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
-import {
-  isProjectReportType,
-  ProjectenReportType,
-} from '@rock-solid/shared';
+import { isProjectReportType, ProjectenReportType } from '@rock-solid/shared';
 
 @Injectable()
 export class ProjectReportTypePipe

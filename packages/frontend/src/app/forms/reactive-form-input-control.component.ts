@@ -5,6 +5,7 @@ import {
   InputType,
   KeysOfType,
   NumberInputControl,
+  RadioInputControl,
   SelectControl,
   TemporalInput,
 } from './form-control';
@@ -71,6 +72,8 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
         return this.renderTemporalInput(control);
       case InputType.select:
         return this.renderSelect(control);
+      case InputType.radio:
+        return this.renderRadio(control);
     }
   }
 
@@ -256,5 +259,33 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
               </option>`,
           )}
     </select>`;
+  }
+
+  private renderRadio<TKey extends KeysOfType<TEntity, string | string[]>>(
+    control: RadioInputControl<TEntity, TKey>,
+  ) {
+    const isChecked = (value: string) => {
+      return (
+        (this.entity[control.name] as unknown as string | undefined) === value
+      );
+    };
+
+    return html` ${Object.entries(control.items).map(([key, value]) => {
+      const id = `${this.path}-${key}`;
+      return html`<div class="form-check me-2">
+        <input
+          class="form-check-input"
+          type="radio"
+          name=${this.name}
+          id=${id}
+          ?required=${control.validators?.required}
+          ?checked=${isChecked(key)}
+          @change="${() => {
+            (this.entity[control.name] as unknown as string) = key;
+          }}"
+        />
+        <label class="form-check-label" for=${id}> ${value} </label>
+      </div>`;
+    })}`;
   }
 }

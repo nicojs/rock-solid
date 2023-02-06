@@ -37,6 +37,29 @@ export interface Vakantie extends BaseProject {
   voorschot?: Decimal;
 }
 
+export const projectLabels: Record<keyof BaseProject, string> = {
+  aantalAanmeldingen: 'Aantal aanmeldingen',
+  begeleiders: 'Begeleiders',
+  id: 'id',
+  naam: 'Naam',
+  projectnummer: 'Projectnummer',
+  type: 'type',
+};
+
+export const cursusLabels: Record<keyof Cursus, string> = {
+  ...projectLabels,
+  activiteiten: 'Activiteiten',
+  organisatieonderdeel: 'Organisatie',
+};
+
+export const vakantieLabels: Record<keyof Vakantie, string> = {
+  ...projectLabels,
+  activiteiten: 'Activiteiten',
+  seizoen: 'Seizoen',
+  prijs: 'Prijs',
+  voorschot: 'Voorschot',
+};
+
 export type Activiteit = CursusActiviteit | VakantieActiviteit;
 
 export interface BaseActiviteit {
