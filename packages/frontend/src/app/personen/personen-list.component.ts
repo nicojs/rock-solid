@@ -9,7 +9,8 @@ import {
   showAdres,
   showOverigPersoonSelectie,
 } from '../shared';
-import { fullNameWithAge } from './full-name.pipe';
+import { fullName, fullNameWithAge } from './full-name.pipe';
+import { ModalComponent } from '../shared/modal.component';
 
 @customElement('rock-personen-list')
 export class PersonenComponent extends LitElement {
@@ -21,13 +22,24 @@ export class PersonenComponent extends LitElement {
   @property()
   public type: PersoonType = 'deelnemer';
 
+  private async deletePersoon(persoon: Persoon) {
+    const confirmed = await ModalComponent.instance.confirm(
+      `Weet je zeker dat je ${fullName(persoon)} wilt verwijderen?`,
+    );
+    if (confirmed) {
+      console.log(`DELETE ${fullName(persoon)}`);
+    }
+  }
+
   override render() {
     return html` <div class="row">
-      ${this.personen
-        ? html`${this.personen.length
-            ? this.renderTable()
-            : html`<div>Geen ${pluralize(this.type)} gevonden 🤷‍♂️</div>`}`
-        : html`<rock-loading></rock-loading>`}
+      <div class="col">
+        ${this.personen
+          ? html`${this.personen.length
+              ? this.renderTable()
+              : html`<div>Geen ${pluralize(this.type)} gevonden 🤷‍♂️</div>`}`
+          : html`<rock-loading></rock-loading>`}
+      </div>
     </div>`;
   }
 
@@ -70,6 +82,13 @@ export class PersonenComponent extends LitElement {
               <rock-link btn btnSecondary href="../edit/${persoon.id}"
                 ><rock-icon icon="pencil"></rock-icon
               ></rock-link>
+              <button
+                @click=${() => this.deletePersoon(persoon)}
+                type="button"
+                class="btn btn-danger"
+              >
+                <rock-icon icon="trash"></rock-icon>
+              </button>
             </td>
           </tr>`,
         )}

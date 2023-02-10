@@ -33,24 +33,25 @@ export class RockSolidApp extends LitElement {
 
   public override render() {
     return html`<div class="container-fluid">
-      <nav class="navbar navbar-light bg-light justify-content-between">
-        <span class="navbar-brand mb-0 h1"
-          >RockSolid.
-          <span class="text-muted fs-6"
-            >Steenvast en solide management systeem voor De Kei en
-            Kei-Jong</span
-          ></span
-        >
-        <rock-user></rock-user>
-      </nav>
-      <div class="row">
-        <rock-nav
-          class="col-xs-5 col-sm-4 col-md-3 col-lg-2"
-          .active="${this.route?.path[0]}"
-        ></rock-nav>
-        <main class="col">${this.renderMain()}</main>
+        <nav class="navbar navbar-light bg-light justify-content-between">
+          <span class="navbar-brand mb-0 h1"
+            >RockSolid.
+            <span class="text-muted fs-6"
+              >Steenvast en solide management systeem voor De Kei en
+              Kei-Jong</span
+            ></span
+          >
+          <rock-user></rock-user>
+        </nav>
+        <div class="row">
+          <rock-nav
+            class="col-xs-5 col-sm-4 col-md-3 col-lg-2"
+            .active="${this.route?.path[0]}"
+          ></rock-nav>
+          <main class="col">${this.renderMain()}</main>
+        </div>
       </div>
-    </div>`;
+      <rock-modal></rock-modal>`;
   }
 
   private renderMain() {
