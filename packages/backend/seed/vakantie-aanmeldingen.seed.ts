@@ -57,7 +57,7 @@ export async function seedVakantieAanmeldingen(
     .filter(
       deduplicate(
         ([, aanmelding]) =>
-          `${aanmelding.deelnemer.connect!.id!}-${
+          `${aanmelding.deelnemer!.connect!.id!}-${
             aanmelding.project.connect!.id
           }`,
         ([aanmelding]) => {

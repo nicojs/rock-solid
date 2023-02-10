@@ -64,7 +64,7 @@ export async function seedCursusAanmeldingen(
     .filter(
       deduplicate(
         ([, aanmelding]) =>
-          `${aanmelding.deelnemer.connect!.id!}-${
+          `${aanmelding.deelnemer!.connect!.id!}-${
             aanmelding.project.connect!.id
           }`,
         ([aanmelding]) =>
@@ -77,7 +77,7 @@ export async function seedCursusAanmeldingen(
 
   const eersteCursusByDeelnemer = aanmeldingen.reduce(
     (map, [, inschrijving, projectnummer]) => {
-      const deelnemerId = inschrijving.deelnemer.connect!.id!;
+      const deelnemerId = inschrijving.deelnemer!.connect!.id!;
       const eersteCursusCode = map.get(deelnemerId);
       if (
         !eersteCursusCode ||
@@ -91,7 +91,7 @@ export async function seedCursusAanmeldingen(
   );
 
   for (const [, aanmelding, projectnummer] of aanmeldingen) {
-    const deelnemerId = aanmelding.deelnemer.connect!.id!;
+    const deelnemerId = aanmelding.deelnemer!.connect!.id!;
     aanmelding.eersteAanmelding =
       eersteCursusByDeelnemer.get(deelnemerId) === projectnummer;
     await client.aanmelding.create({

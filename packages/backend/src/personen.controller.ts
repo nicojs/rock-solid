@@ -9,6 +9,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -84,6 +85,15 @@ export class PersonenController {
       undefined,
     );
     return projecten;
+  }
+
+  @Delete(`:id`)
+  async delete(
+    @Param('id', NumberPipe) id: number,
+    @Res({ passthrough: true }) resp: Response,
+  ): Promise<void> {
+    await this.persoonMapper.delete(id);
+    resp.status(HttpStatus.NO_CONTENT);
   }
 
   @Post()

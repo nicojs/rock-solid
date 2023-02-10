@@ -37,4 +37,8 @@ export class RestService<TRoute extends keyof RestRoutes> {
   create(data: UpsertableFrom<TRoute>): Promise<EntityFrom<TRoute>> {
     return this.restClient.create(this.route, data);
   }
+
+  delete(id: string | number): Promise<void> {
+    return this.restClient.delete(this.route, id);
+  }
 }

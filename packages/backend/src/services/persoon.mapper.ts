@@ -58,6 +58,10 @@ export class PersoonMapper {
     return people.map(toPersoon);
   }
 
+  async delete(id: number) {
+    await this.db.persoon.delete({ where: { id } });
+  }
+
   async count(filter: PersoonFilter): Promise<number> {
     const count = await this.db.persoon.count({
       where: where(filter),

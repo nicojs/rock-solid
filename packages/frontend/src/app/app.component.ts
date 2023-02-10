@@ -48,7 +48,9 @@ export class RockSolidApp extends LitElement {
             class="col-xs-5 col-sm-4 col-md-3 col-lg-2"
             .active="${this.route?.path[0]}"
           ></rock-nav>
-          <main class="col">${this.renderMain()}</main>
+          <main class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
+            ${this.renderMain()}
+          </main>
         </div>
       </div>
       <rock-modal></rock-modal>`;

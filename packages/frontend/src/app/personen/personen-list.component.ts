@@ -27,7 +27,13 @@ export class PersonenComponent extends LitElement {
       `Weet je zeker dat je ${fullName(persoon)} wilt verwijderen?`,
     );
     if (confirmed) {
-      console.log(`DELETE ${fullName(persoon)}`);
+      const deleteEvent = new CustomEvent<Persoon>('delete', {
+        bubbles: true,
+        composed: true,
+        detail: persoon,
+      });
+
+      this.dispatchEvent(deleteEvent);
     }
   }
 
@@ -50,13 +56,11 @@ export class PersonenComponent extends LitElement {
           <th>Naam (leeftijd)</th>
           ${this.type === 'overigPersoon' ? html`<th>Selectie</th>` : nothing}
           <th>Emailadres</th>
-          <th>Geslacht</th>
           <th>Telefoonnummer</th>
-          <th>Gsm</th>
           ${this.type === 'deelnemer'
             ? html`<th>Verblijfadres</th>`
             : html`<th>Folders</th>`}
-          <th>Acties</th>
+          <th style="width: 190px">Acties</th>
         </tr>
       </thead>
       <tbody>
@@ -67,9 +71,7 @@ export class PersonenComponent extends LitElement {
               ? html`<td>${showOverigPersoonSelectie(persoon.selectie)}</td>`
               : nothing}
             <td>${show(persoon.emailadres)}</td>
-            <td>${show(persoon.geslacht)}</td>
-            <td>${show(persoon.telefoonnummer)}</td>
-            <td>${show(persoon.gsmNummer)}</td>
+            <td>${show(persoon.gsmNummer ?? persoon.telefoonnummer)}</td>
             <td>
               ${persoon.type === 'deelnemer'
                 ? showAdres(persoon.verblijfadres)

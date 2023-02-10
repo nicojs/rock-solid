@@ -91,6 +91,21 @@ export class RestClient {
     return parse(bodyText);
   }
 
+  async delete<TRoute extends keyof RestRoutes>(
+    route: TRoute,
+    id: string | number,
+  ): Promise<void> {
+    const response = await this.http.fetch(`/api/${route}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Delete failed (HTTP status code ${response.status})`);
+    }
+  }
+
   async patch<TRoute extends keyof RestRoutes>(
     route: TRoute,
     id: string | number,

@@ -104,6 +104,10 @@ export class PersonenComponent extends RockElement {
       });
   }
 
+  private async deletePersoon(ev: CustomEvent<Persoon>) {
+    personenStore.delete(ev.detail.id).subscribe();
+  }
+
   private searchRef: Ref<HTMLInputElement> = createRef();
   override render() {
     switch (this.path[0]) {
@@ -145,6 +149,7 @@ export class PersonenComponent extends RockElement {
             ? html`<rock-personen-list
                   .type=${this.type}
                   .personen=${this.personen}
+                  @delete=${this.deletePersoon}
                 ></rock-personen-list>
                 <rock-paging
                   @navigate-page=${(event: CustomEvent<number>) =>

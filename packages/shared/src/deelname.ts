@@ -5,7 +5,7 @@ export interface Deelname {
   id: number;
   activiteitId: number;
   aanmeldingId: number;
-  deelnemer: Deelnemer;
+  deelnemer?: Deelnemer;
   effectieveDeelnamePerunage: number;
   opmerking?: string;
 }

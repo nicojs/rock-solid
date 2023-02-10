@@ -8,7 +8,7 @@ import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
 import { createRef, ref } from 'lit/directives/ref.js';
-import { printProject } from './project.pipes';
+import { deelnemerVerwijderd, printProject } from './project.pipes';
 import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
@@ -149,10 +149,12 @@ export class ProjectAanmeldingenComponent extends LitElement {
       ? html`<ul class="list-group">
           ${aanmeldingen.map(
             (aanmelding) => html` <li class="list-group-item">
-              ${fullNameWithAge(
-                aanmelding.deelnemer!,
-                this.project.activiteiten[0]?.van,
-              )}
+              ${aanmelding.deelnemer
+                ? fullNameWithAge(
+                    aanmelding.deelnemer,
+                    this.project.activiteiten[0]?.van,
+                  )
+                : deelnemerVerwijderd}
               <button
                 title="Naar aangemeld"
                 class="btn btn-outline-primary float-end"
@@ -184,14 +186,18 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 <td>
                   ${aanmelding.status === 'Bevestigd'
                     ? html`<rock-icon
-                        title="${fullName(aanmelding.deelnemer!)} is bevestigd"
+                        title="${aanmelding.deelnemer
+                          ? fullName(aanmelding.deelnemer)
+                          : 'Deelnemer'} is bevestigd"
                         icon="personLock"
                       ></rock-icon>`
                     : nothing}
-                  ${fullNameWithAge(
-                    aanmelding.deelnemer!,
-                    this.project.activiteiten[0]?.van,
-                  )}${aanmelding.eersteAanmelding
+                  ${aanmelding.deelnemer
+                    ? fullNameWithAge(
+                        aanmelding.deelnemer,
+                        this.project.activiteiten[0]?.van,
+                      )
+                    : deelnemerVerwijderd}${aanmelding.eersteAanmelding
                     ? html` <span class="badge rounded-pill text-bg-primary"
                         >Eerste cursus</span
                       >`

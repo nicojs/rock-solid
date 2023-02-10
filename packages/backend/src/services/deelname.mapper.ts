@@ -69,7 +69,7 @@ export class DeelnameMapper {
 
 interface DeelnameQueryResult extends db.Deelname {
   aanmelding: db.Aanmelding & {
-    deelnemer: DBPersonAggregate;
+    deelnemer: DBPersonAggregate | null;
   };
 }
 
@@ -97,7 +97,9 @@ function toDeelname(val: DeelnameQueryResult): Deelname {
   return {
     id: val.id,
     activiteitId: val.activiteitId,
-    deelnemer: toPersoon(val.aanmelding.deelnemer) as Deelnemer,
+    deelnemer: val.aanmelding.deelnemer
+      ? (toPersoon(val.aanmelding.deelnemer) as Deelnemer)
+      : undefined,
     aanmeldingId: val.aanmeldingId,
     effectieveDeelnamePerunage: val.effectieveDeelnamePerunage,
     opmerking: val.opmerking ?? undefined,

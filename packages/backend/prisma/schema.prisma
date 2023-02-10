@@ -107,8 +107,8 @@ model Aanmelding {
   id                       Int               @id @default(autoincrement())
   projectId                Int
   project                  Project           @relation(fields: [projectId], references: [id])
-  deelnemerId              Int
-  deelnemer                Persoon           @relation(fields: [deelnemerId], references: [id])
+  deelnemerId              Int?
+  deelnemer                Persoon?          @relation(fields: [deelnemerId], references: [id])
   deelnames                Deelname[]
   woonplaatsDeelnemerId    Int
   woonplaatsDeelnemer      Plaats            @relation(fields: [woonplaatsDeelnemerId], references: [id])

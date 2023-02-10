@@ -15,7 +15,7 @@ import {
 } from './persoon.mapper.js';
 
 type DBAanmeldingAggregate = db.Aanmelding & {
-  deelnemer: DBPersonAggregate;
+  deelnemer: DBPersonAggregate | null;
 };
 
 const includeDeelnemer = Object.freeze({
@@ -138,6 +138,6 @@ function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
   const { woonplaatsDeelnemerId, deelnemer, ...aanmelding } = raw;
   return {
     ...purgeNulls(aanmelding),
-    deelnemer: toPersoon(deelnemer) as Deelnemer,
+    deelnemer: deelnemer ? (toPersoon(deelnemer) as Deelnemer) : undefined,
   };
 }

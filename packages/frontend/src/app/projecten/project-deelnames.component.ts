@@ -16,7 +16,7 @@ import { projectService } from './project.service';
 import { projectenStore } from './projecten.store';
 
 interface DeelnameRow extends UpsertableDeelname {
-  deelnemer: Deelnemer;
+  deelnemer?: Deelnemer;
 }
 
 @customElement('rock-project-deelnames')
@@ -105,7 +105,9 @@ export class ProjectDeelnamesComponent extends LitElement {
             ${this.deelnames?.map((deelname) => {
               const deelnameControl: InputControl<UpsertableDeelname> = {
                 name: 'effectieveDeelnamePerunage',
-                label: fullName(deelname.deelnemer),
+                label: deelname.deelnemer
+                  ? fullName(deelname.deelnemer)
+                  : 'Deelnemer verwijderd',
                 type: InputType.number,
                 step: 0.01,
                 validators: {

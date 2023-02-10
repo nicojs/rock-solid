@@ -66,6 +66,20 @@ export class PagedStore<
     );
   }
 
+  delete(id: string | number): Observable<void> {
+    return from(this.service.delete(id)).pipe(
+      tap(() => {
+        const currentPage = this.currentPageItemsSubject.value;
+        if (currentPage) {
+          const idNumber = typeof id === 'number' ? id : parseInt(id);
+          this.currentPageItemsSubject.next(
+            currentPage.filter(({ id }) => id !== idNumber),
+          );
+        }
+      }),
+    );
+  }
+
   setCurrentPage(n: number, filter?: FilterFrom<TRoute>) {
     this.currentPageNumberSubject.next(n);
     if (arguments.length > 1) {
