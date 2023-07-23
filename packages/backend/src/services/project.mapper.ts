@@ -98,7 +98,7 @@ export class ProjectMapper {
     }
   }
 
-  async getOne(where: Partial<Project>): Promise<Project | null> {
+  async getOne(where: { id: number }): Promise<Project | null> {
     const dbProject = await this.db.project.findUnique({
       where,
       include: includeAggregate,

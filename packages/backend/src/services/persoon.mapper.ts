@@ -217,7 +217,9 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
         return {
           ...whereStatement,
           selectie: {
-            hasSome: filter.overigePersoonSelectie,
+            hasSome: filter.overigePersoonSelectie
+              ? [filter.overigePersoonSelectie]
+              : undefined,
           },
         };
       } else {

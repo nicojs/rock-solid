@@ -7,8 +7,7 @@ export abstract class FormElement<TEntity> extends LitElement {
     // Use light dom, so input elements participate in form validation 🤷‍♂️
     return this;
   }
-  @property({ attribute: false })
-  public control!: FormControl<TEntity>;
+  public abstract control: FormControl<TEntity>;
 
   @property({ attribute: false })
   public entity!: TEntity;

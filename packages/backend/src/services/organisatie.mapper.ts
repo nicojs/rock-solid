@@ -38,12 +38,13 @@ export class OrganisatieMapper {
     filter: OrganisatieFilter,
     pageNumber: number | undefined,
   ): Promise<Organisatie[]> {
-    const dbOrganisaties = await this.db.organisatie.findMany({
-      where: toWhere(filter),
-      orderBy: { naam: 'asc' },
-      include: includeContacten(filter),
-      ...toPage(pageNumber),
-    });
+    const dbOrganisaties: DBOrganisatieAggregate[] =
+      await this.db.organisatie.findMany({
+        where: toWhere(filter),
+        orderBy: { naam: 'asc' },
+        include: includeContacten(filter),
+        ...toPage(pageNumber),
+      });
 
     return dbOrganisaties.map(toOrganisatie);
   }
@@ -193,11 +194,7 @@ const includeFoldervoorkeuren = Object.freeze({
   foldervoorkeuren: true as const,
 });
 
-function includeContacten(filter?: OrganisatieFilter): {
-  contacten: Omit<db.Prisma.OrganisatieContactFindManyArgs, 'include'> & {
-    include: typeof includeAdres & typeof includeFoldervoorkeuren;
-  };
-} {
+function includeContacten(filter?: OrganisatieFilter) {
   return {
     contacten: {
       include: {
@@ -217,7 +214,7 @@ function includeContacten(filter?: OrganisatieFilter): {
           }
         : undefined,
     },
-  };
+  } as const;
 }
 
 function toCreateContactInput(

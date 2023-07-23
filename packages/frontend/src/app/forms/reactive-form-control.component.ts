@@ -1,11 +1,14 @@
 import { html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { capitalize } from '../shared';
-import { InputControl, InputType } from './form-control';
+import { FormControl, InputControl, InputType } from './form-control';
 import { FormElement } from './form-element';
 
 @customElement('rock-reactive-form-control')
 export class ReactiveFormControl<TEntity> extends FormElement<TEntity> {
+  @property({ attribute: false })
+  public override control!: FormControl<TEntity>;
+
   override render() {
     switch (this.control.type) {
       case InputType.array:

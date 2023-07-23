@@ -5,7 +5,7 @@ import { Upsertable } from './upsertable.js';
 export interface Aanmelding {
   id: number;
   projectId: number;
-  deelnemerId: number;
+  deelnemerId?: number;
   eersteAanmelding: boolean;
   tijdstipVanAanmelden: Date;
   toestemmingFotos: boolean;

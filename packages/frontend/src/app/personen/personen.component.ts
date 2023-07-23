@@ -77,9 +77,9 @@ export class PersonenComponent extends RockElement {
     event.preventDefault();
     if (this.searchRef.value?.value) {
       personenStore.setCurrentPage(0, {
+        searchType: 'text',
         type: this.type,
         search: this.searchRef.value.value,
-        searchType: 'text',
       });
     } else {
       personenStore.setCurrentPage(0, undefined);

@@ -7,6 +7,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "decimal.js": "^10.4.1"
+    "decimal.js": "^10.4.3"
   }
 }
