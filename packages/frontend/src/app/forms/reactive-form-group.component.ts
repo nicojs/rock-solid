@@ -44,11 +44,12 @@ export class ReactiveFormGroupComponent<
 
   private renderControls() {
     return this.control.controls.map(
-      (control) => html`<rock-reactive-form-control
-        .control="${control}"
-        .entity="${this.value}"
-        .path="${this.name}"
-      ></rock-reactive-form-control>`,
+      (control) =>
+        html`<rock-reactive-form-control
+          .control="${control}"
+          .entity="${this.value}"
+          .path="${this.name}"
+        ></rock-reactive-form-control>`,
     );
   }
 

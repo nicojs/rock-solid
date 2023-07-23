@@ -53,11 +53,12 @@ export class ReactiveFormArrayComponent<
               ></button>
             </div>
             ${this.control.controls.map(
-              (control) => html`<rock-reactive-form-control
-                .control="${control}"
-                .entity="${item}"
-                .path="${this.name}_${index}"
-              ></rock-reactive-form-control>`,
+              (control) =>
+                html`<rock-reactive-form-control
+                  .control="${control}"
+                  .entity="${item}"
+                  .path="${this.name}_${index}"
+                ></rock-reactive-form-control>`,
             )}
           </div>`,
       )}

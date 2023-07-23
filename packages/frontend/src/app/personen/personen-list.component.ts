@@ -65,34 +65,35 @@ export class PersonenComponent extends LitElement {
       </thead>
       <tbody>
         ${this.personen!.map(
-          (persoon) => html`<tr>
-            <td>${fullNameWithAge(persoon)}</td>
-            ${persoon.type === 'overigPersoon'
-              ? html`<td>${showOverigPersoonSelectie(persoon.selectie)}</td>`
-              : nothing}
-            <td>${show(persoon.emailadres)}</td>
-            <td>${show(persoon.gsmNummer ?? persoon.telefoonnummer)}</td>
-            <td>
-              ${persoon.type === 'deelnemer'
-                ? showAdres(persoon.verblijfadres)
-                : showFoldervoorkeurBadges(persoon.foldervoorkeuren)}
-            </td>
-            <td>
-              <rock-link btn btnSecondary href="../display/${persoon.id}"
-                ><rock-icon icon="eye"></rock-icon
-              ></rock-link>
-              <rock-link btn btnSecondary href="../edit/${persoon.id}"
-                ><rock-icon icon="pencil"></rock-icon
-              ></rock-link>
-              <button
-                @click=${() => this.deletePersoon(persoon)}
-                type="button"
-                class="btn btn-danger"
-              >
-                <rock-icon icon="trash"></rock-icon>
-              </button>
-            </td>
-          </tr>`,
+          (persoon) =>
+            html`<tr>
+              <td>${fullNameWithAge(persoon)}</td>
+              ${persoon.type === 'overigPersoon'
+                ? html`<td>${showOverigPersoonSelectie(persoon.selectie)}</td>`
+                : nothing}
+              <td>${show(persoon.emailadres)}</td>
+              <td>${show(persoon.gsmNummer ?? persoon.telefoonnummer)}</td>
+              <td>
+                ${persoon.type === 'deelnemer'
+                  ? showAdres(persoon.verblijfadres)
+                  : showFoldervoorkeurBadges(persoon.foldervoorkeuren)}
+              </td>
+              <td>
+                <rock-link btn btnSecondary href="../display/${persoon.id}"
+                  ><rock-icon icon="eye"></rock-icon
+                ></rock-link>
+                <rock-link btn btnSecondary href="../edit/${persoon.id}"
+                  ><rock-icon icon="pencil"></rock-icon
+                ></rock-link>
+                <button
+                  @click=${() => this.deletePersoon(persoon)}
+                  type="button"
+                  class="btn btn-danger"
+                >
+                  <rock-icon icon="trash"></rock-icon>
+                </button>
+              </td>
+            </tr>`,
         )}
       </tbody>
     </table>`;

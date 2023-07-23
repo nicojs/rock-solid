@@ -1,4 +1,4 @@
-import { html, nothing, PropertyValueMap } from 'lit';
+import { html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { RockElement } from '../rock-element';
 import { bootstrap } from '../../styles';

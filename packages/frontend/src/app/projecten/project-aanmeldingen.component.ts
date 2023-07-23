@@ -148,22 +148,23 @@ export class ProjectAanmeldingenComponent extends LitElement {
     return html`${aanmeldingen.length
       ? html`<ul class="list-group">
           ${aanmeldingen.map(
-            (aanmelding) => html` <li class="list-group-item">
-              ${aanmelding.deelnemer
-                ? fullNameWithAge(
-                    aanmelding.deelnemer,
-                    this.project.activiteiten[0]?.van,
-                  )
-                : deelnemerVerwijderd}
-              <button
-                title="Naar aangemeld"
-                class="btn btn-outline-primary float-end"
-                type="button"
-                @click=${() => this.patchStatus(aanmelding, 'Aangemeld')}
-              >
-                <rock-icon icon="arrowUpSquare"></rock-icon>
-              </button>
-            </li>`,
+            (aanmelding) =>
+              html` <li class="list-group-item">
+                ${aanmelding.deelnemer
+                  ? fullNameWithAge(
+                      aanmelding.deelnemer,
+                      this.project.activiteiten[0]?.van,
+                    )
+                  : deelnemerVerwijderd}
+                <button
+                  title="Naar aangemeld"
+                  class="btn btn-outline-primary float-end"
+                  type="button"
+                  @click=${() => this.patchStatus(aanmelding, 'Aangemeld')}
+                >
+                  <rock-icon icon="arrowUpSquare"></rock-icon>
+                </button>
+              </li>`,
           )}
         </ul>`
       : nothing}`;
@@ -182,83 +183,86 @@ export class ProjectAanmeldingenComponent extends LitElement {
           </thead>
           <tbody>
             ${aanmeldingen.map(
-              (aanmelding) => html`<tr>
-                <td>
-                  ${aanmelding.status === 'Bevestigd'
-                    ? html`<rock-icon
-                        title="${aanmelding.deelnemer
-                          ? fullName(aanmelding.deelnemer)
-                          : 'Deelnemer'} is bevestigd"
-                        icon="personLock"
-                      ></rock-icon>`
-                    : nothing}
-                  ${aanmelding.deelnemer
-                    ? fullNameWithAge(
-                        aanmelding.deelnemer,
-                        this.project.activiteiten[0]?.van,
-                      )
-                    : deelnemerVerwijderd}${aanmelding.eersteAanmelding
-                    ? html` <span class="badge rounded-pill text-bg-primary"
-                        >Eerste cursus</span
-                      >`
-                    : nothing}
-                  ${aanmelding.toestemmingFotos
-                    ? html`<rock-icon
-                        title="${fullName(
-                          aanmelding.deelnemer!,
-                        )} geeft toestemming voor fotos"
-                        icon="camera"
-                      ></rock-icon>`
-                    : nothing}
-                </td>
-                <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
-                <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
-                <td>
-                  <rock-link
-                    btn
-                    title="Wijzigen"
-                    btnOutlinePrimary
-                    href="/${pluralize(this.project.type)}/${this.project
-                      .id}/aanmeldingen/edit/${aanmelding.id}"
-                    ><rock-icon icon="pencil"></rock-icon
-                  ></rock-link>
-                  <button
-                    title="Naar wachtlijst"
-                    class="btn btn-outline-warning"
-                    type="button"
-                    @click=${() => this.patchStatus(aanmelding, 'OpWachtlijst')}
-                  >
-                    <rock-icon icon="hourglass"></rock-icon>
-                  </button>
-                  ${aanmelding.status === 'Aangemeld'
-                    ? html`<button
-                        title="Bevestigen"
-                        class="btn btn-outline-success"
-                        type="button"
-                        @click=${() =>
-                          this.patchStatus(aanmelding, 'Bevestigd')}
-                      >
-                        <rock-icon icon="personLock"></rock-icon>
-                      </button>`
-                    : html`<button
-                        title="Onbevestigen"
-                        class="btn btn-outline-success"
-                        type="button"
-                        @click=${() =>
-                          this.patchStatus(aanmelding, 'Aangemeld')}
-                      >
-                        <rock-icon icon="unlock"></rock-icon>
-                      </button>`}
-                  <button
-                    title="Annuleren"
-                    class="btn btn-outline-danger"
-                    type="button"
-                    @click=${() => this.patchStatus(aanmelding, 'Geannuleerd')}
-                  >
-                    <rock-icon icon="personSlash"></rock-icon>
-                  </button>
-                </td>
-              </tr>`,
+              (aanmelding) =>
+                html`<tr>
+                  <td>
+                    ${aanmelding.status === 'Bevestigd'
+                      ? html`<rock-icon
+                          title="${aanmelding.deelnemer
+                            ? fullName(aanmelding.deelnemer)
+                            : 'Deelnemer'} is bevestigd"
+                          icon="personLock"
+                        ></rock-icon>`
+                      : nothing}
+                    ${aanmelding.deelnemer
+                      ? fullNameWithAge(
+                          aanmelding.deelnemer,
+                          this.project.activiteiten[0]?.van,
+                        )
+                      : deelnemerVerwijderd}${aanmelding.eersteAanmelding
+                      ? html` <span class="badge rounded-pill text-bg-primary"
+                          >Eerste cursus</span
+                        >`
+                      : nothing}
+                    ${aanmelding.toestemmingFotos
+                      ? html`<rock-icon
+                          title="${fullName(
+                            aanmelding.deelnemer!,
+                          )} geeft toestemming voor fotos"
+                          icon="camera"
+                        ></rock-icon>`
+                      : nothing}
+                  </td>
+                  <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
+                  <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
+                  <td>
+                    <rock-link
+                      btn
+                      title="Wijzigen"
+                      btnOutlinePrimary
+                      href="/${pluralize(this.project.type)}/${this.project
+                        .id}/aanmeldingen/edit/${aanmelding.id}"
+                      ><rock-icon icon="pencil"></rock-icon
+                    ></rock-link>
+                    <button
+                      title="Naar wachtlijst"
+                      class="btn btn-outline-warning"
+                      type="button"
+                      @click=${() =>
+                        this.patchStatus(aanmelding, 'OpWachtlijst')}
+                    >
+                      <rock-icon icon="hourglass"></rock-icon>
+                    </button>
+                    ${aanmelding.status === 'Aangemeld'
+                      ? html`<button
+                          title="Bevestigen"
+                          class="btn btn-outline-success"
+                          type="button"
+                          @click=${() =>
+                            this.patchStatus(aanmelding, 'Bevestigd')}
+                        >
+                          <rock-icon icon="personLock"></rock-icon>
+                        </button>`
+                      : html`<button
+                          title="Onbevestigen"
+                          class="btn btn-outline-success"
+                          type="button"
+                          @click=${() =>
+                            this.patchStatus(aanmelding, 'Aangemeld')}
+                        >
+                          <rock-icon icon="unlock"></rock-icon>
+                        </button>`}
+                    <button
+                      title="Annuleren"
+                      class="btn btn-outline-danger"
+                      type="button"
+                      @click=${() =>
+                        this.patchStatus(aanmelding, 'Geannuleerd')}
+                    >
+                      <rock-icon icon="personSlash"></rock-icon>
+                    </button>
+                  </td>
+                </tr>`,
             )}
           </tbody>
         </table>`

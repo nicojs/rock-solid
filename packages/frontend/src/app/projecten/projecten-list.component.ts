@@ -62,90 +62,91 @@ export class ProjectenListComponent extends LitElement {
       </thead>
       <tbody>
         ${this.projecten.map(
-          (project) => html`<tr>
-            <td>${project.projectnummer}</td>
-            <td>${project.naam}</td>
-            ${project.type === 'cursus'
-              ? html`<td>
-                    ${project.type === 'cursus'
-                      ? organisatieonderdelen[project.organisatieonderdeel]
-                      : notAvailable}
-                  </td>
-                  <td>
-                    ${project.type === 'cursus'
-                      ? project.activiteiten
-                          .map((act) => act.aantalDeelnemersuren)
-                          .reduce<number>((acc, cur) => acc + (cur ?? 0), 0)
-                      : notAvailable}
-                  </td>`
-              : html`<td>
-                    ${project.seizoen
-                      ? vakantieSeizoenen[project.seizoen]
-                      : notAvailable}
-                  </td>
-                  <td>${showMoney(project.prijs)}</td>
-                  <td>${showMoney(project.voorschot)}</td>`}
+          (project) =>
+            html`<tr>
+              <td>${project.projectnummer}</td>
+              <td>${project.naam}</td>
+              ${project.type === 'cursus'
+                ? html`<td>
+                      ${project.type === 'cursus'
+                        ? organisatieonderdelen[project.organisatieonderdeel]
+                        : notAvailable}
+                    </td>
+                    <td>
+                      ${project.type === 'cursus'
+                        ? project.activiteiten
+                            .map((act) => act.aantalDeelnemersuren)
+                            .reduce<number>((acc, cur) => acc + (cur ?? 0), 0)
+                        : notAvailable}
+                    </td>`
+                : html`<td>
+                      ${project.seizoen
+                        ? vakantieSeizoenen[project.seizoen]
+                        : notAvailable}
+                    </td>
+                    <td>${showMoney(project.prijs)}</td>
+                    <td>${showMoney(project.voorschot)}</td>`}
 
-            <td>
-              ${project.activiteiten.map((activiteit) => {
-                const inPast = activiteit.totEnMet < new Date();
-                const isComplete =
-                  activiteit.aantalDeelnames! >= project.aantalAanmeldingen!;
-                return html` ${inPast
-                  ? html`<rock-link
-                      title="Open activiteit"
-                      btn
-                      ?btnWarning=${!isComplete}
-                      ?btnOutlinePrimary=${isComplete}
-                      href="/${pluralize(
-                        project.type,
-                      )}/${project.id}/deelnames/${activiteit.id}"
-                      ><rock-icon icon="calendar"></rock-icon> ${showDatum(
-                        activiteit.van,
-                      )}</rock-link
-                    >`
-                  : html`<span
-                      title="Activiteit vindt plaats in de toekomst"
-                      class="no-button-date"
-                      ><rock-icon icon="calendar"></rock-icon> ${showDatum(
-                        activiteit.van,
-                      )}</span
-                    >`}`;
-              })}
-            </td>
-            <td>
-              <button
-                title="Deelnemerslijst downloaden (voor mailing)"
-                class="btn btn-outline-primary "
-                type="button"
-                @click=${() => this.downloadDeelnemersLijst(project)}
-              >
-                <rock-icon icon="download"></rock-icon>
-              </button>
-
-              <rock-link
-                btn
-                btnOutlinePrimary
-                title="Wijzigen"
-                href="/${pluralize(project.type)}/${project.id}/edit"
-                ><rock-icon icon="pencil"></rock-icon
-              ></rock-link>
-              <rock-link
-                btn
-                btnOutlinePrimary
-                title="Aanmeldingen"
-                href="/${pluralize(project.type)}/${project.id}/aanmeldingen"
-              >
-                <rock-icon icon="pencilSquare"></rock-icon>
-                <span
-                  class="badge ${(project.aantalAanmeldingen ?? 0) > 0
-                    ? 'bg-success'
-                    : 'bg-secondary'}"
-                  >${project.aantalAanmeldingen}</span
+              <td>
+                ${project.activiteiten.map((activiteit) => {
+                  const inPast = activiteit.totEnMet < new Date();
+                  const isComplete =
+                    activiteit.aantalDeelnames! >= project.aantalAanmeldingen!;
+                  return html` ${inPast
+                    ? html`<rock-link
+                        title="Open activiteit"
+                        btn
+                        ?btnWarning=${!isComplete}
+                        ?btnOutlinePrimary=${isComplete}
+                        href="/${pluralize(
+                          project.type,
+                        )}/${project.id}/deelnames/${activiteit.id}"
+                        ><rock-icon icon="calendar"></rock-icon> ${showDatum(
+                          activiteit.van,
+                        )}</rock-link
+                      >`
+                    : html`<span
+                        title="Activiteit vindt plaats in de toekomst"
+                        class="no-button-date"
+                        ><rock-icon icon="calendar"></rock-icon> ${showDatum(
+                          activiteit.van,
+                        )}</span
+                      >`}`;
+                })}
+              </td>
+              <td>
+                <button
+                  title="Deelnemerslijst downloaden (voor mailing)"
+                  class="btn btn-outline-primary "
+                  type="button"
+                  @click=${() => this.downloadDeelnemersLijst(project)}
                 >
-              </rock-link>
-            </td>
-          </tr>`,
+                  <rock-icon icon="download"></rock-icon>
+                </button>
+
+                <rock-link
+                  btn
+                  btnOutlinePrimary
+                  title="Wijzigen"
+                  href="/${pluralize(project.type)}/${project.id}/edit"
+                  ><rock-icon icon="pencil"></rock-icon
+                ></rock-link>
+                <rock-link
+                  btn
+                  btnOutlinePrimary
+                  title="Aanmeldingen"
+                  href="/${pluralize(project.type)}/${project.id}/aanmeldingen"
+                >
+                  <rock-icon icon="pencilSquare"></rock-icon>
+                  <span
+                    class="badge ${(project.aantalAanmeldingen ?? 0) > 0
+                      ? 'bg-success'
+                      : 'bg-secondary'}"
+                    >${project.aantalAanmeldingen}</span
+                  >
+                </rock-link>
+              </td>
+            </tr>`,
         )}
       </tbody>
     </table> `;

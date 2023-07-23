@@ -13,10 +13,13 @@ export type Queryfied<T> = {
 export function filterMetaQuery<T extends Record<string, unknown>>(query: T) {
   return Object.entries(query)
     .filter(([key]) => !key.startsWith('_'))
-    .reduce((acc, [k, v]) => {
-      acc[k] = v;
-      return acc;
-    }, {} as Record<string, unknown>) as T;
+    .reduce(
+      (acc, [k, v]) => {
+        acc[k] = v;
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    ) as T;
 }
 
 @Injectable()
