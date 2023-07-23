@@ -13,7 +13,7 @@
     "prisma:push": "node ../../node_modules/prisma/build/index.js db push",
     "prisma:seed": "node dist/seed/all.seed.js",
     "prisma:seed:readonly": "npm run prisma:seed -- --readonly",
-    "dev": "nodemon --inspect -r dotenv/config -r source-map-support/register dist/src/main.js",
+    "dev": "node --inspect -r dotenv/config --enable-source-maps --watch dist/src/main.js",
     "start": "node dist/src/main.js",
     "test": "mocha"
   },
