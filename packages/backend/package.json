@@ -10,7 +10,7 @@
     "prisma:client:generate": "prisma generate",
     "prisma:migrate:create": "prisma migrate dev --name ",
     "prisma:push:force": "npm run prisma:push -- --force-reset",
-    "prisma:push": "node node_modules/prisma/build/index.js db push",
+    "prisma:push": "node ../../node_modules/prisma/build/index.js db push",
     "prisma:seed": "node dist/seed/all.seed.js",
     "prisma:seed:readonly": "npm run prisma:seed -- --readonly",
     "dev": "nodemon --inspect -r dotenv/config -r source-map-support/register dist/src/main.js",

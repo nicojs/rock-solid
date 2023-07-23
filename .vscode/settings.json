@@ -14,6 +14,7 @@
     { "rule": "*", "severity": "warn" }
   ],
   "cSpell.words": [
+    "Aanmelding",
     "Aantal",
     "achternaam",
     "achternamen",
@@ -69,12 +70,15 @@
     "onbekend",
     "Opmerking",
     "Opslaan",
+    "Organisatie",
     "Organisatieonderdeel",
+    "Organisaties",
     "overnachting",
     "Personen",
     "Persoon",
     "Perunage",
     "plaats",
+    "Plaatsen",
     "projecten",
     "projectnummer",
     "Queryfied",
@@ -129,5 +133,5 @@
     "Zonder"
   ],
   "cSpell.ignoreWords": ["transform"],
-  "cSpell.language": "en,nl",
+  "cSpell.language": "en",
 }
