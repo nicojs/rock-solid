@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime/library';
+import { Decimal } from '@prisma/client/runtime/library.js';
 import { Decimal as OtherDecimal } from '@rock-solid/shared';
 
 export type NullsPurged<T> = T extends Array<infer U>
