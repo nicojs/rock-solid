@@ -1,5 +1,5 @@
 import * as db from '@prisma/client';
-import { deduplicate } from '../src/services/mapper-utils.js';
+import { deduplicate } from '../services/mapper-utils.js';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
 

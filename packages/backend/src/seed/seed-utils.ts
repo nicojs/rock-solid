@@ -47,3 +47,11 @@ export function pickNotEmpty<T, TProp extends keyof T>(
 ) {
   return items.map((item) => item[prop]).filter(Boolean)[0];
 }
+
+export function datumFromRaw(datum: string): Date | undefined {
+  const [dag, maand, jaar] = datum.split('-').map((i) => parseInt(i));
+  if (isNaN(dag!) || maand === undefined || jaar === undefined) {
+    return undefined;
+  }
+  return new Date(jaar ?? 0, (maand ?? 1) - 1, dag);
+}

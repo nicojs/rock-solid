@@ -12,7 +12,7 @@ interface RawPlaats {
 export async function seedPlaatsen(client: db.PrismaClient) {
   const plaatsen = JSON.parse(
     await fs.readFile(
-      new URL('../../seed/plaatsen.json', import.meta.url),
+      new URL('../../src/seed/plaatsen.json', import.meta.url),
       'utf-8',
     ),
   ) as RawPlaats[];

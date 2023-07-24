@@ -2,6 +2,7 @@ import db from '@prisma/client';
 import { AdresSeeder } from './adres-seeder.js';
 import { ImportErrors } from './import-errors.js';
 import {
+  datumFromRaw,
   readImportJson,
   stringFromRaw,
   writeOutputJson,
@@ -68,9 +69,6 @@ export async function seedVrijwilligers(
     raw: RawVrijwilliger,
   ): [title: string, createInput: db.Prisma.PersoonCreateInput] {
     const volledigeNaam = `${raw.naam} ${raw.achternaam}`;
-    const [dag, maand, jaar] = raw.geboortedatum
-      .split('-')
-      .map((i) => parseInt(i));
     const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput =
       adresSeeder.fromRawOrOnbekend(raw, raw.adres, raw.postcode);
     return [
@@ -80,7 +78,7 @@ export async function seedVrijwilligers(
         voornaam: raw.naam,
         volledigeNaam,
         emailadres: raw['e-mail'],
-        geboortedatum: new Date(jaar ?? 0, (maand ?? 1) - 1, dag),
+        geboortedatum: datumFromRaw(raw.geboortedatum),
         verblijfadres,
         gsmNummer: stringFromRaw(raw.GSM),
         telefoonnummer: stringFromRaw(raw.telefoon),
