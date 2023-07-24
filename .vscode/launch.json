@@ -14,13 +14,25 @@
       "type": "node"
     },
     {
-      "name": "🚀 Launch Program",
-      "program": "${file}",
+      "name": "🧪 Run Backend Tests",
+      "program": "./node_modules/mocha/bin/mocha",
+      "args": [
+        "--node-option",
+        "enable-source-maps",
+        "--timeout",
+        "0",
+        "--colors",
+        "${workspaceFolder}/packages/backend/dist/**/*.test.js"
+      ],
       "request": "launch",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "type": "node"
+      "type": "node",
+      "outFiles": [
+        "${workspaceFolder}/**/*.js",
+        "!**/node_modules/**"
+      ]
     },
     {
       "name": "🧲 Attach to backend",

@@ -7,9 +7,12 @@
     "packages/*"
   ],
   "scripts": {
+    "all": "npm run clean && npm run build && npm run lint && npm run test",
     "clean": "rimraf packages/*/dist packages/*/*.tsbuildinfo packages/backend/package.release.json packages/backend/import",
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts --ignore-path .gitignore",
-    "build": "npm run build:db && npm run build:tsc:src && npm run build:fe",
+    "build": "npm run build:db && npm run build:tsc && npm run build:fe",
+    "build:src": "npm run build:db && npm run build:tsc:src && npm run build:fe",
+    "build:tsc": "tsc -b",
     "build:tsc:src": "tsc -b packages/backend/tsconfig.src.json ",
     "build:db": "lerna run prisma:client:generate --scope=\"@rock-solid/backend\"",
     "build:fe": "lerna run build --scope=\"@rock-solid/frontend\"",
@@ -26,7 +29,7 @@
     "import:csv2json": "node tasks/import-csv2json.mjs",
     "deploy:prepare": "tasks/prepare-deploy.sh",
     "deploy:acc:az": "az webapp deployment source config-zip --resource-group acc-rock-solid --name acc-rock-solid-web-app --src .deploy/deploy.zip",
-    "deploy:acc": "npm run clean && npm run import:az2csv && npm run import:csv2json && npm run build && npm run deploy:prepare && npm run deploy:acc:az"
+    "deploy:acc": "npm run clean && npm run import:az2csv && npm run import:csv2json && npm run build:src && npm run deploy:prepare && npm run deploy:acc:az"
   },
   "keywords": [],
   "author": "",
@@ -53,6 +56,7 @@
     "source-map-support": "^0.5.21",
     "strip-bom-stream": "^5.0.0",
     "supertest": "^6.3.3",
+    "testcontainers": "^9.12.0",
     "typescript": "^5.1.6"
   }
 }

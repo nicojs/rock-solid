@@ -3,10 +3,10 @@
   "compilerOptions": {
     "outDir": "./dist",
     "lib": ["ES2020"],
-    "rootDir": ".",
+    "rootDir": "./src",
     "types": ["node"],
   },
-  "include": ["src/**/*.ts", "seed/**/*.ts", "seed/plaatsen.json"],
+  "include": ["src/**/*.ts", "src/seed/plaatsen.json"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [{ "path": "../shared" }]
 }

@@ -1,3 +1,4 @@
 {
-  "spec": ["dist/**/*.?(spec|test).js"]
+  "spec": ["dist/**/*.?(spec|test).js"],
+  "timeout": "100000"
 }

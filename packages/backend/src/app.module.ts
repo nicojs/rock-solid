@@ -19,10 +19,7 @@ import { ReportsController } from './reports.controller.js';
 import { ReportMapper } from './services/report.mapper.js';
 
 const rootPath = fileURLToPath(
-  new URL(
-    '../../../../node_modules/@rock-solid/frontend/dist',
-    import.meta.url,
-  ),
+  new URL('../../../node_modules/@rock-solid/frontend/dist', import.meta.url),
 );
 @Module({
   imports: [
@@ -48,6 +45,7 @@ const rootPath = fileURLToPath(
     OrganisatieMapper,
     DeelnameMapper,
     ReportMapper,
+    { provide: 'DatabaseUrl', useValue: process.env['DATABASE_URL'] },
     DBService,
   ],
 })

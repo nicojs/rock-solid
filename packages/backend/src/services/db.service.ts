@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Inject,
+} from '@nestjs/common';
 import prisma, { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -6,8 +11,13 @@ export class DBService
   extends prisma.PrismaClient<Prisma.PrismaClientOptions, 'query'>
   implements OnModuleInit, OnModuleDestroy
 {
-  constructor() {
+  constructor(@Inject('DatabaseUrl') databaseUrl: string) {
     super({
+      datasources: {
+        db: {
+          url: databaseUrl,
+        },
+      },
       log: [
         {
           emit: 'event',
