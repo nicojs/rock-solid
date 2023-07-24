@@ -1,7 +1,0 @@
-{
-  "delay": 200,
-  "verbose": true,
-  "watch": ["dist"],
-  "ext": "*.js",
-  "ignore": ["dist/**/*.test.js", "dist/**/*.spec.js"]
-}
