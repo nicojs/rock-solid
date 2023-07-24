@@ -1,5 +1,5 @@
-import { Options } from './options';
-import { Organisatieonderdeel, ProjectType } from './project';
+import { Options } from './options.js';
+import { Organisatieonderdeel, ProjectType } from './project.js';
 
 export type ProjectenReportType =
   | 'aanmeldingen'

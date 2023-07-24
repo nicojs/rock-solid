@@ -1,4 +1,4 @@
-import { Plaats, PlaatsFilter } from '@rock-solid/shared';
+import type { Plaats, PlaatsFilter } from '@rock-solid/shared';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/index.js';
 import { PlaatsMapper } from './services/plaats.mapper.js';

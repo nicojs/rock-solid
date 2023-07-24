@@ -1,4 +1,4 @@
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 import { Options } from './options.js';
 import { OverigPersoon } from './persoon.js';
 import { Upsertable } from './upsertable.js';

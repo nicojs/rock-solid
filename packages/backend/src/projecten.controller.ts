@@ -1,12 +1,12 @@
 import {
-  Deelname,
-  Aanmelding,
-  Project,
-  ProjectFilter,
+  type Deelname,
+  type Aanmelding,
+  type Project,
+  type ProjectFilter,
   TOTAL_COUNT_HEADER,
-  UpsertableDeelname,
-  UpsertableAanmelding,
-  UpsertableProject,
+  type UpsertableDeelname,
+  type UpsertableAanmelding,
+  type UpsertableProject,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -24,7 +24,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { JwtAuthGuard } from './auth/index.js';
 import { DeelnameMapper } from './services/deelname.mapper.js';
 import { AanmeldingMapper } from './services/aanmelding.mapper.js';

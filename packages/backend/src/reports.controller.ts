@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import {
+import type {
   GroupField,
   ProjectReport,
   ProjectReportFilter,

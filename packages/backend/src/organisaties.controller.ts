@@ -1,8 +1,8 @@
 import {
-  Organisatie,
-  OrganisatieFilter,
+  type Organisatie,
+  type OrganisatieFilter,
   TOTAL_COUNT_HEADER,
-  UpsertableOrganisatie,
+  type UpsertableOrganisatie,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -18,7 +18,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { JwtAuthGuard } from './auth/index.js';
 import { OrganisatieFilterPipe } from './pipes/organisatie-filter.pipe.js';
 import { PagePipe } from './pipes/page.pipe.js';

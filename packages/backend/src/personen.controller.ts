@@ -1,10 +1,10 @@
 import {
-  Persoon,
-  PersoonFilter,
-  UpsertablePersoon,
+  type Persoon,
+  type PersoonFilter,
+  type UpsertablePersoon,
   TOTAL_COUNT_HEADER,
-  Project,
-  ProjectFilter,
+  type Project,
+  type ProjectFilter,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -24,7 +24,7 @@ import {
 import { PagePipe } from './pipes/page.pipe.js';
 import { PersoonFilterPipe } from './pipes/persoon-filter.pipe.js';
 import { PersoonMapper } from './services/persoon.mapper.js';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { JwtAuthGuard } from './auth/index.js';
 import { MetaFilterPipe } from './pipes/pipe-utils.js';
 import { ProjectMapper } from './services/project.mapper.js';
