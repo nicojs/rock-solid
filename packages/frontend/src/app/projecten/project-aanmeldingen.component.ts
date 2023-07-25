@@ -177,6 +177,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
             <tr>
               <th>Naam</th>
               <th>Ingeschreven op</th>
+              <th>Geboortedatum</th>
               <th>Rekeninguittreksel</th>
               <th>Acties</th>
             </tr>
@@ -192,6 +193,14 @@ export class ProjectAanmeldingenComponent extends LitElement {
                             ? fullName(aanmelding.deelnemer)
                             : 'Deelnemer'} is bevestigd"
                           icon="personLock"
+                        ></rock-icon>`
+                      : nothing}
+                    ${aanmelding.status === 'Aangemeld'
+                      ? html`<rock-icon
+                          title="${aanmelding.deelnemer
+                            ? fullName(aanmelding.deelnemer)
+                            : 'Deelnemer'} is aangemeld, maar nog niet bevestigd"
+                          icon="unlock"
                         ></rock-icon>`
                       : nothing}
                     ${aanmelding.deelnemer
@@ -214,6 +223,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       : nothing}
                   </td>
                   <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
+                  <td>${showDatum(aanmelding.deelnemer?.geboortedatum)}</td>
                   <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
                   <td>
                     <rock-link
@@ -244,7 +254,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           <rock-icon icon="personLock"></rock-icon>
                         </button>`
                       : html`<button
-                          title="Onbevestigen"
+                          title="Aanmelden"
                           class="btn btn-outline-success"
                           type="button"
                           @click=${() =>
