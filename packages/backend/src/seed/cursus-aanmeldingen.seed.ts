@@ -91,12 +91,16 @@ export async function seedCursusAanmeldingen(
   );
 
   for (const [, aanmelding, projectnummer] of aanmeldingen) {
-    const deelnemerId = aanmelding.deelnemer!.connect!.id!;
-    aanmelding.eersteAanmelding =
-      eersteCursusByDeelnemer.get(deelnemerId) === projectnummer;
-    await client.aanmelding.create({
+    const createdAanmelding = await client.aanmelding.create({
       data: aanmelding,
     });
+    const deelnemerId = aanmelding.deelnemer!.connect!.id!;
+    if (eersteCursusByDeelnemer.get(deelnemerId) === projectnummer) {
+      await client.persoon.update({
+        where: { id: deelnemerId },
+        data: { eersteCursus: { connect: { id: createdAanmelding.id } } },
+      });
+    }
   }
   console.log(`Seeded ${aanmeldingen.length} cursus aanmeldingen`);
   console.log(`(${importErrors.report})`);

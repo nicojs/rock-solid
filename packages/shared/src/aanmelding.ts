@@ -6,7 +6,6 @@ export interface Aanmelding {
   id: number;
   projectId: number;
   deelnemerId?: number;
-  eersteAanmelding: boolean;
   tijdstipVanAanmelden: Date;
   toestemmingFotos: boolean;
   rekeninguittrekselNummer?: string;

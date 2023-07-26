@@ -24,13 +24,13 @@ export interface BasePersoon {
 
 export type UpsertablePersoon = UpsertableDeelnemer | UpsertableOverigPersoon;
 export type UpsertableDeelnemer = Omit<
-  Upsertable<Deelnemer, 'achternaam'>,
+  Upsertable<Deelnemer, 'achternaam' | 'type'>,
   'verblijfadres'
 > & {
   verblijfadres: UpsertableAdres;
 };
 export type UpsertableOverigPersoon = Omit<
-  Upsertable<OverigPersoon, 'achternaam'>,
+  Upsertable<OverigPersoon, 'achternaam' | 'type'>,
   'verblijfadres'
 > & {
   verblijfadres: UpsertableAdres;
@@ -55,7 +55,9 @@ export interface OverigPersoonTextFilter extends BasePersoonTextFilter {
 
 export type PersoonDetailsFilter = Partial<
   Omit<OverigPersoon, 'type' | 'foldervoorkeuren'> &
-    Omit<Deelnemer, 'type'> & { type: PersoonType }
+    Omit<Deelnemer, 'type' | 'eersteCursus' | 'eersteVakantie'> & {
+      type: PersoonType;
+    }
 > & {
   foldersoorten?: Foldersoort[];
   searchType: 'persoon';
@@ -70,6 +72,8 @@ export interface Deelnemer extends BasePersoon {
   woonsituatieOpmerking?: string;
   werksituatie: Werksituatie;
   werksituatieOpmerking?: string;
+  eersteCursus?: string;
+  eersteVakantie?: string;
 }
 
 export interface OverigPersoon extends BasePersoon {
@@ -110,6 +114,8 @@ export const persoonLabels: Record<keyof Persoon, string> = {
 
 export const deelnemerLabels: Record<keyof Deelnemer, string> = {
   ...persoonLabels,
+  eersteCursus: 'Eerste cursus',
+  eersteVakantie: 'Eerste vakantie',
   woonsituatie: 'Woonsituatie',
   woonsituatieOpmerking: 'Woonsituatie opmerking',
   werksituatie: 'Werksituatie',

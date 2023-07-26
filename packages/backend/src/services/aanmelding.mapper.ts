@@ -39,86 +39,83 @@ export class AanmeldingMapper {
 
   public async create(aanmelding: UpsertableAanmelding): Promise<Aanmelding> {
     const { deelnemer, ...aanmeldingData } = aanmelding;
-    const { verblijfadres, domicilieadres } = (await this.db.persoon.findUnique(
-      {
+    const { verblijfadres, domicilieadres, eersteCursusId, eersteVakantieId } =
+      await this.db.persoon.findUniqueOrThrow({
         where: { id: aanmeldingData.deelnemerId },
-        include: { verblijfadres: true, domicilieadres: true },
-      },
-    ))!;
-    const project = await this.db.project.findUniqueOrThrow({
-      where: { id: aanmeldingData.projectId },
-      include: { activiteiten: { orderBy: { van: 'asc' } } },
-    });
-    const dbEersteAanmeldingen = await this.db.activiteit.findMany({
-      where: {
-        project: {
-          aanmeldingen: {
-            some: {
-              deelnemerId: aanmeldingData.deelnemerId,
-              eersteAanmelding: true,
-            },
-          },
-        },
-      },
-      orderBy: { van: 'asc' },
-      include: {
-        project: {
-          select: {
-            aanmeldingen: {
-              where: {
-                deelnemerId: aanmelding.deelnemerId,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    const firstActiviteit = project.activiteiten[0];
-    const eersteAanmelding =
-      !dbEersteAanmeldingen[0] ||
-      (Boolean(firstActiviteit) &&
-        dbEersteAanmeldingen[0].van > firstActiviteit!.van);
-
-    if (eersteAanmelding) {
-      const aanmeldingIds = dbEersteAanmeldingen.map(
-        ({ project }) =>
-          project.aanmeldingen.find(
-            ({ deelnemerId }) => deelnemerId === aanmeldingData.deelnemerId,
-          )!.id,
-      );
-      await this.db.aanmelding.updateMany({
-        data: { eersteAanmelding: false },
-        where: {
-          id: { in: aanmeldingIds },
+        include: {
+          verblijfadres: true,
+          domicilieadres: true,
+          eersteCursus: true,
+          eersteVakantie: true,
         },
       });
-    }
 
     const dbAanmelding = await handleKnownPrismaErrors(
       this.db.aanmelding.create({
         data: {
           ...aanmeldingData,
-          eersteAanmelding,
           woonplaatsDeelnemerId: domicilieadres
             ? domicilieadres.plaatsId
             : verblijfadres.plaatsId,
         },
-        include: includeDeelnemer,
       }),
     );
-    return toAanmelding(dbAanmelding);
+
+    // Update eerste aanmelding
+    const project = await this.db.project.findUniqueOrThrow({
+      where: { id: aanmeldingData.projectId },
+      include: { activiteiten: { orderBy: { van: 'asc' } } },
+    });
+
+    const dbEersteAanmeldingProjectId =
+      project.type === 'cursus' ? eersteCursusId : eersteVakantieId;
+    const dbEersteAanmelding = dbEersteAanmeldingProjectId
+      ? await this.db.aanmelding.findUnique({
+          where: { id: dbEersteAanmeldingProjectId },
+          include: {
+            project: {
+              include: { activiteiten: { orderBy: { van: 'asc' } } },
+            },
+          },
+        })
+      : undefined;
+
+    const firstActiviteit = project.activiteiten[0];
+    const dbFirstActiviteit = dbEersteAanmelding?.project.activiteiten[0];
+    const isEersteAanmelding = Boolean(
+      !dbFirstActiviteit ||
+        (firstActiviteit && dbFirstActiviteit.van > firstActiviteit.van),
+    );
+
+    if (isEersteAanmelding) {
+      const data: Partial<
+        Pick<db.Persoon, 'eersteCursusId' | 'eersteVakantieId'>
+      > = {};
+      if (project.type === 'cursus') {
+        data.eersteCursusId = dbAanmelding.id;
+      } else {
+        data.eersteVakantieId = dbAanmelding.id;
+      }
+      await this.db.persoon.update({
+        where: { id: aanmeldingData.deelnemerId },
+        data,
+      });
+    }
+
+    // Refetch aanmelding to include deelnemer with fresh eerste deelname
+    const dbAanmeldingWithDeelnemer =
+      await this.db.aanmelding.findUniqueOrThrow({
+        where: { id: dbAanmelding.id },
+        include: includeDeelnemer,
+      });
+    return toAanmelding(dbAanmeldingWithDeelnemer);
   }
 
   public async update(
     id: number,
     aanmelding: Partial<Aanmelding>,
   ): Promise<Aanmelding> {
-    const {
-      deelnemer: persoon,
-      eersteAanmelding,
-      ...aanmeldingData
-    } = aanmelding;
+    const { deelnemer: persoon, ...aanmeldingData } = aanmelding;
     const dbAanmelding = await this.db.aanmelding.update({
       data: {
         ...aanmeldingData,
