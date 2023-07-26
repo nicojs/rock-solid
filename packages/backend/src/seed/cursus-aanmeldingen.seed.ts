@@ -98,7 +98,9 @@ export async function seedCursusAanmeldingen(
     if (eersteCursusByDeelnemer.get(deelnemerId) === projectnummer) {
       await client.persoon.update({
         where: { id: deelnemerId },
-        data: { eersteCursus: { connect: { id: createdAanmelding.id } } },
+        data: {
+          eersteCursusAanmelding: { connect: { id: createdAanmelding.id } },
+        },
       });
     }
   }

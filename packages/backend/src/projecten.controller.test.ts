@@ -1,29 +1,17 @@
 import { Deelnemer, Project } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
-import {
-  IntegrationTestingHarness,
-  RockSolidDBContainer,
-  factory,
-} from './test-utils.test.js';
+import { IntegrationTestingHarness, factory } from './test-utils.test.js';
 import { expect } from 'chai';
 
 describe(ProjectenController.name, () => {
-  let db: RockSolidDBContainer;
   let harness: IntegrationTestingHarness;
 
-  before(async () => {
-    db = await RockSolidDBContainer.start();
-  });
-  after(async () => {
-    await db.stop();
-  });
   beforeEach(async () => {
-    await db.clean();
-    harness = await IntegrationTestingHarness.init(db);
+    harness = await IntegrationTestingHarness.init();
     harness.login();
   });
   afterEach(async () => {
-    await harness.close();
+    await harness.dispose();
   });
 
   describe('Eerste aanmelding', () => {

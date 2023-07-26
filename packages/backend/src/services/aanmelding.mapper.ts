@@ -39,16 +39,20 @@ export class AanmeldingMapper {
 
   public async create(aanmelding: UpsertableAanmelding): Promise<Aanmelding> {
     const { deelnemer, ...aanmeldingData } = aanmelding;
-    const { verblijfadres, domicilieadres, eersteCursusId, eersteVakantieId } =
-      await this.db.persoon.findUniqueOrThrow({
-        where: { id: aanmeldingData.deelnemerId },
-        include: {
-          verblijfadres: true,
-          domicilieadres: true,
-          eersteCursus: true,
-          eersteVakantie: true,
-        },
-      });
+    const {
+      verblijfadres,
+      domicilieadres,
+      eersteCursusAanmeldingId,
+      eersteVakantieAanmeldingId,
+    } = await this.db.persoon.findUniqueOrThrow({
+      where: { id: aanmeldingData.deelnemerId },
+      include: {
+        verblijfadres: true,
+        domicilieadres: true,
+        eersteCursusAanmelding: true,
+        eersteVakantieAanmelding: true,
+      },
+    });
 
     const dbAanmelding = await handleKnownPrismaErrors(
       this.db.aanmelding.create({
@@ -68,7 +72,9 @@ export class AanmeldingMapper {
     });
 
     const dbEersteAanmeldingProjectId =
-      project.type === 'cursus' ? eersteCursusId : eersteVakantieId;
+      project.type === 'cursus'
+        ? eersteCursusAanmeldingId
+        : eersteVakantieAanmeldingId;
     const dbEersteAanmelding = dbEersteAanmeldingProjectId
       ? await this.db.aanmelding.findUnique({
           where: { id: dbEersteAanmeldingProjectId },
@@ -89,12 +95,15 @@ export class AanmeldingMapper {
 
     if (isEersteAanmelding) {
       const data: Partial<
-        Pick<db.Persoon, 'eersteCursusId' | 'eersteVakantieId'>
+        Pick<
+          db.Persoon,
+          'eersteCursusAanmeldingId' | 'eersteVakantieAanmeldingId'
+        >
       > = {};
       if (project.type === 'cursus') {
-        data.eersteCursusId = dbAanmelding.id;
+        data.eersteCursusAanmeldingId = dbAanmelding.id;
       } else {
-        data.eersteVakantieId = dbAanmelding.id;
+        data.eersteVakantieAanmeldingId = dbAanmelding.id;
       }
       await this.db.persoon.update({
         where: { id: aanmeldingData.deelnemerId },

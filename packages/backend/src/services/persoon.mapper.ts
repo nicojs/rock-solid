@@ -25,8 +25,8 @@ export type DBPersonAggregate = db.Persoon & {
   verblijfadres: db.Adres & { plaats: db.Plaats };
   domicilieadres: (db.Adres & { plaats: db.Plaats }) | null;
   foldervoorkeuren: db.Foldervoorkeur[];
-  eersteCursus: (db.Aanmelding & { project: db.Project }) | null;
-  eersteVakantie: (db.Aanmelding & { project: db.Project }) | null;
+  eersteCursusAanmelding: (db.Aanmelding & { project: db.Project }) | null;
+  eersteVakantieAanmelding: (db.Aanmelding & { project: db.Project }) | null;
 };
 
 /**
@@ -177,8 +177,8 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     verblijfadresId,
     volledigeNaam,
     foldervoorkeuren,
-    eersteCursus,
-    eersteVakantie,
+    eersteCursusAanmelding,
+    eersteVakantieAanmelding,
     ...person
   } = p;
   return {
@@ -186,8 +186,8 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     domicilieadres: domicilieadres ? toAdres(domicilieadres) : undefined,
     verblijfadres: toAdres(verblijfadres),
     foldervoorkeuren: foldervoorkeuren.map(toFoldervoorkeur),
-    eersteCursus: eersteCursus?.project.projectnummer,
-    eersteVakantie: eersteVakantie?.project.projectnummer,
+    eersteCursus: eersteCursusAanmelding?.project.projectnummer,
+    eersteVakantie: eersteVakantieAanmelding?.project.projectnummer,
   };
 }
 
@@ -261,12 +261,12 @@ export const includePersoonAggregate = Object.freeze({
     }),
   }),
   foldervoorkeuren: true,
-  eersteCursus: Object.freeze({
+  eersteCursusAanmelding: Object.freeze({
     include: Object.freeze({
       project: true,
     }),
   }),
-  eersteVakantie: Object.freeze({
+  eersteVakantieAanmelding: Object.freeze({
     include: Object.freeze({
       project: true,
     }),

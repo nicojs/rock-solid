@@ -13,8 +13,11 @@ import { JwtService } from '@nestjs/jwt';
 import {
   Aanmelding,
   Deelnemer,
+  GroupField,
   OverigPersoon,
   Project,
+  ProjectReportFilter,
+  ReportRoutes,
   UpsertableAanmelding,
   UpsertableActiviteit,
   UpsertableDeelnemer,
@@ -23,6 +26,7 @@ import {
   UpsertableProject,
   User,
   rockReviver,
+  toQueryString,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -39,10 +43,20 @@ export class RockSolidDBContainer {
 
   static async start() {
     const postgres = await new PostgreSqlContainer().start();
-    return new RockSolidDBContainer(postgres);
+    console.log(`Started database container@${postgres.getConnectionUri()}`);
+    await execAsync('npm run prisma:push:force', {
+      env: {
+        ...process.env,
+        DATABASE_URL: postgres.getConnectionUri(),
+      },
+      cwd,
+    });
+    const db = new RockSolidDBContainer(postgres);
+    await db.init();
+    return db;
   }
 
-  async clean() {
+  private async init() {
     await execAsync('npm run prisma:push:force', {
       env: {
         ...process.env,
@@ -53,16 +67,8 @@ export class RockSolidDBContainer {
     await this.seed();
   }
 
-  async seed() {
-    const client = new PrismaClient({
-      datasources: {
-        db: {
-          url: this.connectionUri,
-        },
-      },
-    });
-    try {
-      await client.$connect();
+  private async seed() {
+    await this.exec(async (client) => {
       const plaatsen: db.Prisma.PlaatsCreateManyInput[] = [
         {
           deelgemeente: 'Onbekend',
@@ -73,6 +79,37 @@ export class RockSolidDBContainer {
         },
       ];
       await client.plaats.createMany({ data: plaatsen });
+    });
+  }
+
+  /**
+   * Clears all state from the database (except seeded data).
+   */
+  clear(): Promise<void> {
+    return this.exec(async (client) => {
+      await client.foldervoorkeur.deleteMany({});
+      await client.aanmelding.deleteMany({});
+      await client.deelname.deleteMany({});
+      await client.activiteit.deleteMany({});
+      await client.organisatieContact.deleteMany({});
+      await client.organisatie.deleteMany({});
+      await client.persoon.deleteMany({});
+      await client.project.deleteMany({});
+      await client.plaats.deleteMany({ where: { id: { not: 1 } } });
+    });
+  }
+
+  private async exec(fn: (client: PrismaClient) => Promise<void>) {
+    const client = new PrismaClient({
+      datasources: {
+        db: {
+          url: this.connectionUri,
+        },
+      },
+    });
+    try {
+      await client.$connect();
+      await fn(client);
     } finally {
       await client.$disconnect();
     }
@@ -87,6 +124,15 @@ export class RockSolidDBContainer {
   }
 }
 
+let rockSolidDBContainer: RockSolidDBContainer;
+
+before(async () => {
+  rockSolidDBContainer = await RockSolidDBContainer.start();
+});
+after(async () => {
+  await rockSolidDBContainer.stop();
+});
+
 export class IntegrationTestingHarness {
   private readonly app;
   private authToken?: string;
@@ -94,12 +140,12 @@ export class IntegrationTestingHarness {
     this.app = app;
   }
 
-  static async init(db: RockSolidDBContainer) {
+  static async init() {
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider('DatabaseUrl')
-      .useValue(db.connectionUri)
+      .useValue(rockSolidDBContainer.connectionUri)
       .compile();
 
     const app = moduleFixture.createNestApplication({
@@ -110,8 +156,9 @@ export class IntegrationTestingHarness {
     return new IntegrationTestingHarness(app);
   }
 
-  close() {
-    return this.app.close();
+  async dispose() {
+    await Promise.all([this.app.close(), rockSolidDBContainer.clear()]);
+    seed = 0;
   }
 
   login(user: User = { name: 'Test User', email: '' }) {
@@ -128,6 +175,22 @@ export class IntegrationTestingHarness {
       );
     }
     return onGoingRequest;
+  }
+
+  public async getReport<TReportRoute extends keyof ReportRoutes>(
+    reportRoute: TReportRoute,
+    group1: GroupField,
+    group2?: GroupField,
+    filter?: ProjectReportFilter,
+  ): Promise<ReportRoutes[TReportRoute]['entity']> {
+    const response = await this.get(
+      `/${reportRoute}${toQueryString({
+        by: group1,
+        andBy: group2,
+        ...filter,
+      })}`,
+    ).expect(200);
+    return response.body;
   }
 
   post(url: string, body?: string | object): request.Test {
@@ -175,7 +238,7 @@ export class IntegrationTestingHarness {
   }
 }
 
-let seed = 0;
+export let seed = 0;
 
 export const factory = {
   deelnemer(overrides?: Partial<UpsertableDeelnemer>): UpsertableDeelnemer {
@@ -199,7 +262,7 @@ export const factory = {
 
   project(overrides?: Partial<UpsertableProject>): UpsertableProject {
     return {
-      projectnummer: `00${seed++}}`,
+      projectnummer: `00${seed++}`,
       naam: `Test project ${seed}`,
       type: 'cursus',
       activiteiten: [this.activiteit()],
@@ -207,7 +270,19 @@ export const factory = {
     };
   },
 
-  activiteit(overrides?: Partial<UpsertableActiviteit>): UpsertableActiviteit {
+  activiteit(
+    overrides?: Partial<UpsertableActiviteit> | Date,
+  ): UpsertableActiviteit {
+    if (overrides instanceof Date) {
+      return {
+        van: overrides,
+        totEnMet: new Date(
+          overrides.getFullYear(),
+          overrides.getMonth(),
+          overrides.getDate() + 2,
+        ),
+      };
+    }
     return {
       van: new Date(2010, 1, 10),
       totEnMet: new Date(2010, 1, 12),

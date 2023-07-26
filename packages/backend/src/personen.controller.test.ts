@@ -1,27 +1,15 @@
 import { PersonenController } from './personen.controller.js';
-import {
-  IntegrationTestingHarness,
-  RockSolidDBContainer,
-} from './test-utils.test.js';
+import { IntegrationTestingHarness } from './test-utils.test.js';
 
 describe(PersonenController.name, () => {
-  let db: RockSolidDBContainer;
   let harness: IntegrationTestingHarness;
 
-  before(async () => {
-    db = await RockSolidDBContainer.start();
-  });
-  after(async () => {
-    await db.stop();
-  });
-
   beforeEach(async () => {
-    await db.clean();
-    harness = await IntegrationTestingHarness.init(db);
+    harness = await IntegrationTestingHarness.init();
     harness.login();
   });
   afterEach(async () => {
-    await harness.close();
+    await harness.dispose();
   });
 
   it('/personen (GET)', () => {

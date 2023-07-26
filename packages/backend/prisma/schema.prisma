@@ -32,18 +32,18 @@ model Persoon {
   type                PersoonType @default(deelnemer)
 
   // Deelnemer
-  woonsituatie          Woonsituatie    @default(onbekend)
-  woonsituatieOpmerking String?
-  werksituatie          Werksituatie    @default(onbekend)
-  opleidingsvorm        Opleidingsvorm?
-  werksituatieOpmerking String?
-  voedingswens          Voedingswens    @default(geen)
-  voedingswensOpmerking String?
-  aanmeldingen          Aanmelding[]
-  eersteCursus          Aanmelding?     @relation("eersteCursus", fields: [eersteCursusId], references: [id])
-  eersteCursusId        Int?
-  eersteVakantie        Aanmelding?     @relation("eersteVakantie", fields: [eersteVakantieId], references: [id])
-  eersteVakantieId      Int?
+  woonsituatie               Woonsituatie    @default(onbekend)
+  woonsituatieOpmerking      String?
+  werksituatie               Werksituatie    @default(onbekend)
+  opleidingsvorm             Opleidingsvorm?
+  werksituatieOpmerking      String?
+  voedingswens               Voedingswens    @default(geen)
+  voedingswensOpmerking      String?
+  aanmeldingen               Aanmelding[]
+  eersteCursusAanmelding     Aanmelding?     @relation("eersteCursusAanmelding", fields: [eersteCursusAanmeldingId], references: [id])
+  eersteCursusAanmeldingId   Int?
+  eersteVakantieAanmelding   Aanmelding?     @relation("eersteVakantieAanmelding", fields: [eersteVakantieAanmeldingId], references: [id])
+  eersteVakantieAanmeldingId Int?
 
   // OverigePersonen
   foldervoorkeuren   Foldervoorkeur[]
@@ -120,8 +120,8 @@ model Aanmelding {
   tijdstipVanAanmelden       DateTime          @default(now())
   status                     Aanmeldingsstatus @default(Aangemeld)
   toestemmingFotos           Boolean           @default(false)
-  EersteCursusAanmeldingen   Persoon[]         @relation("eersteCursus")
-  EersteVakantieAanmeldingen Persoon[]         @relation("eersteVakantie")
+  eersteCursusAanmeldingen   Persoon[]         @relation("eersteCursusAanmelding")
+  eersteVakantieAanmeldingen Persoon[]         @relation("eersteVakantieAanmelding")
 
   @@unique([projectId, deelnemerId])
   @@map("aanmelding")
