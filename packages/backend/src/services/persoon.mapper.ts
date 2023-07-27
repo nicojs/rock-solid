@@ -2,9 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
 import {
+  Deelnemer,
   Foldervoorkeur,
+  OverigPersoon,
   Persoon,
   PersoonFilter,
+  PersoonType,
+  UpsertableDeelnemer,
+  UpsertableOverigPersoon,
   UpsertablePersoon,
 } from '@rock-solid/shared';
 import { purgeNulls } from './mapper-utils.js';
@@ -20,6 +25,8 @@ export type DBPersonAggregate = db.Persoon & {
   verblijfadres: db.Adres & { plaats: db.Plaats };
   domicilieadres: (db.Adres & { plaats: db.Plaats }) | null;
   foldervoorkeuren: db.Foldervoorkeur[];
+  eersteCursusAanmelding: (db.Aanmelding & { project: db.Project }) | null;
+  eersteVakantieAanmelding: (db.Aanmelding & { project: db.Project }) | null;
 };
 
 /**
@@ -70,12 +77,15 @@ export class PersoonMapper {
   }
 
   async createPersoon(persoon: UpsertablePersoon): Promise<Persoon> {
-    const { verblijfadres, domicilieadres, id, ...props } = persoon;
-    let foldervoorkeuren: Foldervoorkeur[] | undefined = undefined;
-    if (props.type === 'overigPersoon') {
-      foldervoorkeuren = props.foldervoorkeuren;
-      delete props.foldervoorkeuren;
-    }
+    const {
+      id,
+      verblijfadres,
+      domicilieadres,
+      foldervoorkeuren,
+      eersteCursus,
+      eersteVakantie,
+      ...props
+    } = fillOutAllUpsertablePersoonFields(persoon);
     const dbPersoon = await this.db.persoon.create({
       data: {
         ...props,
@@ -104,7 +114,14 @@ export class PersoonMapper {
     where: db.Prisma.PersoonWhereUniqueInput;
     persoon: Persoon;
   }): Promise<Persoon> {
-    const { id: personId, verblijfadres, domicilieadres, ...props } = persoon;
+    const {
+      id: personId,
+      verblijfadres,
+      domicilieadres,
+      eersteCursus,
+      eersteVakantie,
+      ...props
+    } = fillOutAllPersoonFields(persoon);
     const result = await this.db.persoon.update({
       where,
       data: {
@@ -160,6 +177,8 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     verblijfadresId,
     volledigeNaam,
     foldervoorkeuren,
+    eersteCursusAanmelding,
+    eersteVakantieAanmelding,
     ...person
   } = p;
   return {
@@ -167,6 +186,8 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     domicilieadres: domicilieadres ? toAdres(domicilieadres) : undefined,
     verblijfadres: toAdres(verblijfadres),
     foldervoorkeuren: foldervoorkeuren.map(toFoldervoorkeur),
+    eersteCursus: eersteCursusAanmelding?.project.projectnummer,
+    eersteVakantie: eersteVakantieAanmelding?.project.projectnummer,
   };
 }
 
@@ -240,6 +261,16 @@ export const includePersoonAggregate = Object.freeze({
     }),
   }),
   foldervoorkeuren: true,
+  eersteCursusAanmelding: Object.freeze({
+    include: Object.freeze({
+      project: true,
+    }),
+  }),
+  eersteVakantieAanmelding: Object.freeze({
+    include: Object.freeze({
+      project: true,
+    }),
+  }),
 } as const);
 
 function toFoldervoorkeurInput(
@@ -266,4 +297,39 @@ function toFoldervoorkeurInput(
     };
   }
   return;
+}
+
+type AllUpsertablePersoonFields = Omit<UpsertableDeelnemer, 'type'> &
+  Omit<UpsertableOverigPersoon, 'type'> & {
+    type: PersoonType;
+  };
+
+type AllPersoonFields = Omit<Deelnemer, 'type'> &
+  Omit<OverigPersoon, 'type'> & {
+    type: PersoonType;
+  };
+
+/**
+ * This is a hack to make it easier to work with the UpsertablePersoon type
+ */
+function fillOutAllUpsertablePersoonFields(
+  persoon: UpsertablePersoon,
+): AllUpsertablePersoonFields {
+  return {
+    foldervoorkeuren: [],
+    selectie: [],
+    ...persoon,
+  };
+}
+/**
+ * This is a hack to make it easier to work with the Persoon type
+ */
+function fillOutAllPersoonFields(persoon: Persoon): AllPersoonFields {
+  return {
+    foldervoorkeuren: [],
+    selectie: [],
+    woonsituatie: 'onbekend',
+    werksituatie: 'onbekend',
+    ...persoon,
+  };
 }

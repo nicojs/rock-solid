@@ -32,20 +32,23 @@ model Persoon {
   type                PersoonType @default(deelnemer)
 
   // Deelnemer
-  woonsituatie          Woonsituatie    @default(onbekend)
-  woonsituatieOpmerking String?
-  werksituatie          Werksituatie    @default(onbekend)
-  opleidingsvorm        Opleidingsvorm?
-  werksituatieOpmerking String?
-  voedingswens          Voedingswens    @default(geen)
-  voedingswensOpmerking String?
-  aanmeldingen          Aanmelding[]
+  woonsituatie               Woonsituatie    @default(onbekend)
+  woonsituatieOpmerking      String?
+  werksituatie               Werksituatie    @default(onbekend)
+  opleidingsvorm             Opleidingsvorm?
+  werksituatieOpmerking      String?
+  voedingswens               Voedingswens    @default(geen)
+  voedingswensOpmerking      String?
+  aanmeldingen               Aanmelding[]
+  eersteCursusAanmelding     Aanmelding?     @relation("eersteCursusAanmelding", fields: [eersteCursusAanmeldingId], references: [id])
+  eersteCursusAanmeldingId   Int?
+  eersteVakantieAanmelding   Aanmelding?     @relation("eersteVakantieAanmelding", fields: [eersteVakantieAanmeldingId], references: [id])
+  eersteVakantieAanmeldingId Int?
 
   // OverigePersonen
   foldervoorkeuren   Foldervoorkeur[]
   selectie           OverigPersoonSelectie[]
   begeleidtProjecten Project[]
-  projectId          Int?
 
   @@map("persoon")
 }
@@ -104,20 +107,21 @@ model Project {
 }
 
 model Aanmelding {
-  id                       Int               @id @default(autoincrement())
-  projectId                Int
-  project                  Project           @relation(fields: [projectId], references: [id])
-  deelnemerId              Int?
-  deelnemer                Persoon?          @relation(fields: [deelnemerId], references: [id])
-  deelnames                Deelname[]
-  woonplaatsDeelnemerId    Int
-  woonplaatsDeelnemer      Plaats            @relation(fields: [woonplaatsDeelnemerId], references: [id])
-  rekeninguittrekselNummer String?           @db.VarChar(32)
-  opmerking                String?           @db.VarChar(1024)
-  tijdstipVanAanmelden     DateTime          @default(now())
-  status                   Aanmeldingsstatus @default(Aangemeld)
-  toestemmingFotos         Boolean           @default(false)
-  eersteAanmelding         Boolean           @default(false)
+  id                         Int               @id @default(autoincrement())
+  projectId                  Int
+  project                    Project           @relation(fields: [projectId], references: [id])
+  deelnemerId                Int?
+  deelnemer                  Persoon?          @relation(fields: [deelnemerId], references: [id])
+  deelnames                  Deelname[]
+  woonplaatsDeelnemerId      Int
+  woonplaatsDeelnemer        Plaats            @relation(fields: [woonplaatsDeelnemerId], references: [id])
+  rekeninguittrekselNummer   String?           @db.VarChar(32)
+  opmerking                  String?           @db.VarChar(1024)
+  tijdstipVanAanmelden       DateTime          @default(now())
+  status                     Aanmeldingsstatus @default(Aangemeld)
+  toestemmingFotos           Boolean           @default(false)
+  eersteCursusAanmeldingen   Persoon[]         @relation("eersteCursusAanmelding")
+  eersteVakantieAanmeldingen Persoon[]         @relation("eersteVakantieAanmelding")
 
   @@unique([projectId, deelnemerId])
   @@map("aanmelding")

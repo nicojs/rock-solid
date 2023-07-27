@@ -32,7 +32,7 @@ export class ReportMapper {
     ${reportTypeJoin(reportType)}
     INNER JOIN persoon ON persoon.id = aanmelding."deelnemerId"    
     INNER JOIN plaats ON aanmelding."woonplaatsDeelnemerId" = plaats.id
-    ${filterWhere(filter)}
+    ${filterWhere(projectType, filter)}
     GROUP BY ${fieldName(groupField)}${
       secondGroupField ? `, ${fieldName(secondGroupField)}` : ''
     }
@@ -84,10 +84,27 @@ function reportTypeJoin(reportType: ProjectenReportType): string {
   }
 }
 
-function filterWhere(filter: ProjectReportFilter): string {
+function filterWhere(
+  projectType: ProjectType | undefined,
+  filter: ProjectReportFilter,
+): string {
   const whereClauses: string[] = [];
   if (filter.enkelEersteAanmeldingen) {
-    whereClauses.push('aanmelding."eersteAanmelding" = true');
+    switch (projectType) {
+      case 'cursus':
+        whereClauses.push('aanmelding.id = persoon."eersteCursusAanmeldingId"');
+        break;
+      case 'vakantie':
+        whereClauses.push(
+          'aanmelding.id = persoon."eersteVakantieAanmeldingId"',
+        );
+        break;
+      default:
+        whereClauses.push(
+          'aanmelding.id IN (persoon."eersteVakantieAanmeldingId", persoon."eersteCursusAanmeldingId")',
+        );
+        break;
+    }
   }
   if (filter.organisatieonderdeel) {
     whereClauses.push(

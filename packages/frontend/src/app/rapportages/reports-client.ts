@@ -3,8 +3,9 @@ import {
   parse,
   ProjectReportFilter,
   ReportRoutes,
+  toQueryString,
 } from '@rock-solid/shared';
-import { httpClient, HttpClient, toQueryString } from '../shared/index';
+import { httpClient, HttpClient } from '../shared/index';
 
 export class ReportsClient {
   constructor(private http: HttpClient = httpClient) {}

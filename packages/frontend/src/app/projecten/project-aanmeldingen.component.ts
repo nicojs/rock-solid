@@ -208,9 +208,12 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           aanmelding.deelnemer,
                           this.project.activiteiten[0]?.van,
                         )
-                      : deelnemerVerwijderd}${aanmelding.eersteAanmelding
+                      : deelnemerVerwijderd}${[
+                      aanmelding.deelnemer?.eersteCursus,
+                      aanmelding.deelnemer?.eersteVakantie,
+                    ].includes(this.project.projectnummer)
                       ? html` <span class="badge rounded-pill text-bg-primary"
-                          >Eerste cursus</span
+                          >Eerste ${this.project.type}</span
                         >`
                       : nothing}
                     ${aanmelding.toestemmingFotos

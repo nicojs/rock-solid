@@ -29,6 +29,7 @@
         "<node_internals>/**"
       ],
       "type": "node",
+      "outputCapture": "std",
       "outFiles": [
         "${workspaceFolder}/**/*.js",
         "!**/node_modules/**"

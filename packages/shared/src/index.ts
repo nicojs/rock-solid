@@ -15,3 +15,4 @@ export * from './auth.js';
 export * from './decimal.js';
 export * from './error.js';
 export * from './report.js';
+export * from './http-helpers.js';
