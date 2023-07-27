@@ -6,7 +6,6 @@ import type {
   ProjectenReportType,
   ProjectType,
 } from '@rock-solid/shared';
-import { JwtAuthGuard } from './auth/index.js';
 import { GroupingFieldPipe } from './pipes/grouping-field.pipe.js';
 import { ProjectReportFilterPipe } from './pipes/project-report-filter.pipe.js';
 import { ProjectReportTypePipe } from './pipes/project-report-type.pipe.js';
@@ -15,7 +14,6 @@ import { RequiredPipe } from './pipes/required.pipe.js';
 import { ReportMapper } from './services/report.mapper.js';
 
 @Controller({ path: 'reports' })
-@UseGuards(JwtAuthGuard)
 export class ReportsController {
   constructor(private readonly reportMapper: ReportMapper) {}
 

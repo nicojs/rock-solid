@@ -1,9 +1,9 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Strategy } from 'passport-oauth2';
 import fetch from 'node-fetch';
 import { authConstants } from './constants.js';
-import { User } from '@rock-solid/shared';
+import { User, UserRole } from '@rock-solid/shared';
 
 interface Office365User {
   displayName: string;
@@ -13,6 +13,9 @@ interface Office365User {
   preferredLanguage: string;
   surname: string;
   userPrincipalName: string;
+}
+interface MemberOfResponse {
+  value: { id: string }[];
 }
 
 @Injectable()
@@ -34,20 +37,48 @@ export class Office365Strategy extends PassportStrategy(
 
   async validate(accessToken: string): Promise<User> {
     // GET https://graph.microsoft.com/v1.0/users/{id | userPrincipalName}
-    const response = await fetch('https://graph.microsoft.com/v1.0/me', {
+    const meResponse = await fetch('https://graph.microsoft.com/v1.0/me', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    if (response.status !== 200) {
+    const memberOf = await fetch(
+      'https://graph.microsoft.com/v1.0/me/memberOf',
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    if (memberOf.status !== 200) {
       throw new Error(
-        `Authentication failed. Response of https://graph.microsoft.com/v1.0/me was with a ${response.status}`,
+        `Authentication failed. Response of https://graph.microsoft.com/v1.0/me/memberOf was with a ${meResponse.status}`,
       );
     }
-    const officeUser = (await response.json()) as Office365User;
+    if (meResponse.status !== 200) {
+      throw new Error(
+        `Authentication failed. Response of https://graph.microsoft.com/v1.0/me was with a ${meResponse.status}`,
+      );
+    }
+    const officeUser = (await meResponse.json()) as Office365User;
+    const memberOfJson = (await memberOf.json()) as MemberOfResponse;
+    const groupIds = memberOfJson.value.map(({ id }) => id);
+    const role: UserRole | undefined = groupIds.includes(
+      authConstants.adminGroupObjectId,
+    )
+      ? 'admin'
+      : groupIds.includes(authConstants.adminGroupObjectId)
+      ? 'projectverantwoordelijke'
+      : undefined;
+    if (!role) {
+      throw new UnauthorizedException(
+        `Not authorized, as the user does not belong to a RockSolid group.`,
+      );
+    }
     return {
       email: officeUser.mail,
       name: officeUser.displayName,
+      role,
     };
   }
 }

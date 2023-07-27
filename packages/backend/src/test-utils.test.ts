@@ -161,7 +161,7 @@ export class IntegrationTestingHarness {
     seed = 0;
   }
 
-  login(user: User = { name: 'Test User', email: '' }) {
+  login(user: User = { name: 'Test User', email: '', role: 'admin' }) {
     const jwtService = this.app.get(JwtService);
     this.authToken = jwtService.sign(user);
   }

@@ -1,10 +1,8 @@
 import type { Plaats, PlaatsFilter } from '@rock-solid/shared';
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from './auth/index.js';
+import { Controller, Get, Query } from '@nestjs/common';
 import { PlaatsMapper } from './services/plaats.mapper.js';
 
 @Controller({ path: 'plaatsen' })
-@UseGuards(JwtAuthGuard)
 export class PlaatsenController {
   constructor(private readonly plaatsMapper: PlaatsMapper) {}
 

@@ -26,8 +26,7 @@ export class UserComponent extends LitElement {
   protected override render() {
     return html` <nav class="navbar navbar-light bg-light">
       Ingelogd als
-      ${this.user ? `${this.user.name} (${this.user.email})` : 'gast'}${this
-        .user
+      ${this.user ? `${this.user.name} (${this.user.role})` : 'gast'}${this.user
         ? html`&nbsp;<a class="text-reset" href="#" @click=${this.logoff}
               >uitloggen</a
             >`

@@ -1,11 +1,12 @@
 import { LoginResponse, loginUrl, User } from '@rock-solid/shared';
 import { Controller, Request, UseGuards, Get } from '@nestjs/common';
-import { Office365AuthGuard, AuthService } from './auth/index.js';
+import { Office365AuthGuard, AuthService, Public } from './auth/index.js';
 
 @Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @UseGuards(Office365AuthGuard)
   @Get(loginUrl)
   async login(@Request() req: { user: User }): Promise<LoginResponse> {

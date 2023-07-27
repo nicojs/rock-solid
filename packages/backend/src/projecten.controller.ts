@@ -22,10 +22,8 @@ import {
   Put,
   Query,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { JwtAuthGuard } from './auth/index.js';
 import { DeelnameMapper } from './services/deelname.mapper.js';
 import { AanmeldingMapper } from './services/aanmelding.mapper.js';
 import { ProjectMapper } from './services/project.mapper.js';
@@ -33,7 +31,6 @@ import { PagePipe } from './pipes/page.pipe.js';
 import { MetaFilterPipe } from './pipes/pipe-utils.js';
 
 @Controller({ path: 'projecten' })
-@UseGuards(JwtAuthGuard)
 export class ProjectenController {
   constructor(
     private readonly projectMapper: ProjectMapper,
