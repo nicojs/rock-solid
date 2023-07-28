@@ -63,13 +63,13 @@ export class Office365Strategy extends PassportStrategy(
     const officeUser = (await meResponse.json()) as Office365User;
     const memberOfJson = (await memberOf.json()) as MemberOfResponse;
     const groupIds = memberOfJson.value.map(({ id }) => id);
-    const role: UserRole | undefined = groupIds.includes(
-      authConstants.adminGroupObjectId,
-    )
-      ? 'admin'
-      : groupIds.includes(authConstants.adminGroupObjectId)
-      ? 'projectverantwoordelijke'
-      : undefined;
+    const role: UserRole | undefined =
+      authConstants.roleOverride ??
+      (groupIds.includes(authConstants.adminGroupObjectId)
+        ? 'admin'
+        : groupIds.includes(authConstants.adminGroupObjectId)
+        ? 'projectverantwoordelijke'
+        : undefined);
     if (!role) {
       throw new UnauthorizedException(
         `Not authorized, as the user does not belong to a RockSolid group.`,

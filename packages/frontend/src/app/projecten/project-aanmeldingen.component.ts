@@ -22,6 +22,7 @@ import {
   none,
 } from '../shared';
 import { router } from '../router';
+import { privilege } from '../auth/privilege.directive';
 
 @customElement('rock-project-aanmeldingen')
 export class ProjectAanmeldingenComponent extends LitElement {
@@ -159,6 +160,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 <button
                   title="Naar aangemeld"
                   class="btn btn-outline-primary float-end"
+                  ${privilege('write:aanmeldingen')}
                   type="button"
                   @click=${() => this.patchStatus(aanmelding, 'Aangemeld')}
                 >
@@ -239,6 +241,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     ></rock-link>
                     <button
                       title="Naar wachtlijst"
+                      ${privilege('write:aanmeldingen')}
                       class="btn btn-outline-warning"
                       type="button"
                       @click=${() =>
@@ -249,6 +252,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     ${aanmelding.status === 'Aangemeld'
                       ? html`<button
                           title="Bevestigen"
+                          ${privilege('write:aanmeldingen')}
                           class="btn btn-outline-success"
                           type="button"
                           @click=${() =>
@@ -258,6 +262,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                         </button>`
                       : html`<button
                           title="Aanmelden"
+                          ${privilege('write:aanmeldingen')}
                           class="btn btn-outline-success"
                           type="button"
                           @click=${() =>
@@ -267,6 +272,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                         </button>`}
                     <button
                       title="Annuleren"
+                      ${privilege('write:aanmeldingen')}
                       class="btn btn-outline-danger"
                       type="button"
                       @click=${() =>
@@ -287,6 +293,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
       <div class="col">
         <div class="form-floating flex-grow-1">
           <input
+            ${privilege('write:aanmeldingen')}
             type="text"
             class="form-control"
             id="searchPersoonInput"

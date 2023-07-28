@@ -15,6 +15,7 @@ import {
   OverigPersoon,
   OverigPersoonSelectie,
   cursusLabels,
+  Privilege,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -53,6 +54,7 @@ export class ProjectEditComponent extends LitElement {
       <rock-alert .message=${this.errorMessage}></rock-alert>
       <rock-reactive-form
         @rock-submit="${this.save}"
+        privilege="${'write:personen' satisfies Privilege}"
         .controls="${this.type === 'cursus'
           ? cursusProjectControls
           : vakantieProjectControls}"

@@ -2,6 +2,8 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl } from './form-control';
+import { Privilege } from '@rock-solid/shared';
+import { privilege } from '../auth/privilege.directive';
 
 @customElement('rock-reactive-form')
 export class ReactiveFormComponent<TEntity> extends LitElement {
@@ -37,6 +39,9 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
   @property({ attribute: false })
   private wasValidated = false;
 
+  @property()
+  public privilege?: Privilege;
+
   override render() {
     return html`<form
       novalidate
@@ -51,7 +56,11 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
       })}
       <div class="row">
         <div class="col offset-lg-2 offset-md-4">
-          <button class="btn btn-primary" type="submit">
+          <button
+            ${privilege(this.privilege)}
+            class="btn btn-primary"
+            type="submit"
+          >
             ${this.submitLabel}
           </button>
         </div>
