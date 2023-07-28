@@ -77,7 +77,6 @@ const adresCsvColumns = Object.freeze([
 
 const aanmeldingCsvColumns = Object.freeze([
   'tijdstipVanAanmelden',
-  'toestemmingFotos',
   'rekeninguittrekselNummer',
   'opmerking',
   'status',
