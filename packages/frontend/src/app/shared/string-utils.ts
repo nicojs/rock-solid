@@ -1,4 +1,6 @@
 import {
+  Aanmelding,
+  aanmeldingLabels,
   Adres,
   BasePersoon,
   Deelnemer,
@@ -15,6 +17,7 @@ import {
   foldervoorkeurenCsv,
   optionsCsv,
   show,
+  showBoolean,
   showDatum,
 } from './utility.pipes';
 
@@ -72,6 +75,14 @@ const adresCsvColumns = Object.freeze([
   'deelgemeente',
 ] as const) satisfies readonly (keyof ReturnType<typeof adresCsvFields>)[];
 
+const aanmeldingCsvColumns = Object.freeze([
+  'tijdstipVanAanmelden',
+  'toestemmingFotos',
+  'rekeninguittrekselNummer',
+  'opmerking',
+  'status',
+] as const) satisfies readonly (keyof Aanmelding)[];
+
 export function toOverigePersonenCsv(personen: OverigPersoon[]) {
   return toCsv(
     personen.map(
@@ -103,12 +114,30 @@ export function toOverigePersonenCsv(personen: OverigPersoon[]) {
   );
 }
 
+function adresCsvFieldsOrDefault(adres?: Adres): AdresCsvFields {
+  return adres
+    ? adresCsvFields(adres)
+    : {
+        adres: '',
+        deelgemeente: '',
+        gemeente: '',
+        postcode: '',
+      };
+}
+
+interface AdresCsvFields {
+  postcode: string;
+  adres: string;
+  gemeente: string;
+  deelgemeente: string;
+}
+
 function adresCsvFields({
   plaats: { postcode, gemeente, deelgemeente },
   straatnaam,
   huisnummer,
   busnummer,
-}: Adres) {
+}: Adres): AdresCsvFields {
   return {
     postcode,
     adres: toStraatEnHuisnummer({ straatnaam, huisnummer, busnummer }),
@@ -128,6 +157,19 @@ export function toDeelnemersCsv(personen: Deelnemer[]): string {
     })),
     [...basePersoonColumns, ...adresCsvColumns],
     deelnemerLabels,
+    {},
+  );
+}
+
+export function toAanmeldingenCsv(aanmeldingen: Aanmelding[]): string {
+  return toCsv(
+    aanmeldingen.map(({ deelnemer, ...aanmelding }) => ({
+      ...aanmelding,
+      ...deelnemer,
+      ...adresCsvFieldsOrDefault(deelnemer?.verblijfadres),
+    })),
+    [...basePersoonColumns, ...adresCsvColumns, ...aanmeldingCsvColumns],
+    { ...deelnemerLabels, ...aanmeldingLabels },
     {},
   );
 }
@@ -197,6 +239,9 @@ export function toCsv<T>(
     const factory = valueFactory[column];
     if (factory) {
       return factory(val);
+    }
+    if (typeof val === 'boolean') {
+      return showBoolean(val);
     }
     if (val instanceof Date) {
       return showDatum(val);

@@ -121,6 +121,7 @@ export const deelnemerLabels: Record<keyof Deelnemer, string> = {
   werksituatie: 'Werksituatie',
   werksituatieOpmerking: 'Werksituatie opmerking',
 };
+
 export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
   ...persoonLabels,
   vrijwilligerOpmerking: 'Vrijwilliger opmerking',
