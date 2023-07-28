@@ -77,7 +77,6 @@ const adresCsvColumns = Object.freeze([
 
 const aanmeldingCsvColumns = Object.freeze([
   'tijdstipVanAanmelden',
-  'toestemmingFotos',
   'rekeninguittrekselNummer',
   'opmerking',
   'status',
@@ -168,7 +167,12 @@ export function toAanmeldingenCsv(aanmeldingen: Aanmelding[]): string {
       ...deelnemer,
       ...adresCsvFieldsOrDefault(deelnemer?.verblijfadres),
     })),
-    [...basePersoonColumns, ...adresCsvColumns, ...aanmeldingCsvColumns],
+    [
+      ...basePersoonColumns,
+      'toestemmingFotos',
+      ...adresCsvColumns,
+      ...aanmeldingCsvColumns,
+    ],
     { ...deelnemerLabels, ...aanmeldingLabels },
     {},
   );

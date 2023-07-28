@@ -74,6 +74,7 @@ export interface Deelnemer extends BasePersoon {
   werksituatieOpmerking?: string;
   eersteCursus?: string;
   eersteVakantie?: string;
+  toestemmingFotos: boolean;
 }
 
 export interface OverigPersoon extends BasePersoon {
@@ -116,6 +117,7 @@ export const deelnemerLabels: Record<keyof Deelnemer, string> = {
   ...persoonLabels,
   eersteCursus: 'Eerste cursus',
   eersteVakantie: 'Eerste vakantie',
+  toestemmingFotos: "Toestemming voor foto's",
   woonsituatie: 'Woonsituatie',
   woonsituatieOpmerking: 'Woonsituatie opmerking',
   werksituatie: 'Werksituatie',

@@ -44,6 +44,7 @@ model Persoon {
   eersteCursusAanmeldingId   Int?
   eersteVakantieAanmelding   Aanmelding?     @relation("eersteVakantieAanmelding", fields: [eersteVakantieAanmeldingId], references: [id])
   eersteVakantieAanmeldingId Int?
+  toestemmingFotos           Boolean         @default(false)
 
   // OverigePersonen
   foldervoorkeuren   Foldervoorkeur[]
@@ -119,7 +120,6 @@ model Aanmelding {
   opmerking                  String?           @db.VarChar(1024)
   tijdstipVanAanmelden       DateTime          @default(now())
   status                     Aanmeldingsstatus @default(Aangemeld)
-  toestemmingFotos           Boolean           @default(false)
   eersteCursusAanmeldingen   Persoon[]         @relation("eersteCursusAanmelding")
   eersteVakantieAanmeldingen Persoon[]         @relation("eersteVakantieAanmelding")
 

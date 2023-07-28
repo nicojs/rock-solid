@@ -7,7 +7,6 @@ export interface Aanmelding {
   projectId: number;
   deelnemerId?: number;
   tijdstipVanAanmelden: Date;
-  toestemmingFotos: boolean;
   rekeninguittrekselNummer?: string;
   opmerking?: string;
   deelnemer?: Deelnemer;
@@ -39,7 +38,6 @@ export const aanmeldingLabels: Record<keyof Aanmelding, string> = {
   projectId: 'projectId',
   deelnemerId: 'deelnemerId',
   tijdstipVanAanmelden: 'Aanmeldingsdatum',
-  toestemmingFotos: "Toestemming voor foto's",
   rekeninguittrekselNummer: 'Rekeninguittreksel nummer',
   opmerking: 'Opmerking',
   deelnemer: 'Deelnemer',
