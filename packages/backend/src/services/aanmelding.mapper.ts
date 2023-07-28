@@ -1,7 +1,8 @@
 import {
   Deelnemer,
   Aanmelding,
-  UpsertableAanmelding,
+  InsertableAanmelding,
+  UpdatableAanmelding,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
@@ -37,7 +38,7 @@ export class AanmeldingMapper {
     return aanmeldingen.map(toAanmelding);
   }
 
-  public async create(aanmelding: UpsertableAanmelding): Promise<Aanmelding> {
+  public async create(aanmelding: InsertableAanmelding): Promise<Aanmelding> {
     const { deelnemer, ...aanmeldingData } = aanmelding;
     const {
       verblijfadres,
@@ -124,7 +125,12 @@ export class AanmeldingMapper {
     id: number,
     aanmelding: Partial<Aanmelding>,
   ): Promise<Aanmelding> {
-    const { deelnemer: persoon, ...aanmeldingData } = aanmelding;
+    const {
+      deelnemer: persoon,
+      deelnemerId,
+      projectId,
+      ...aanmeldingData
+    } = aanmelding;
     const dbAanmelding = await this.db.aanmelding.update({
       data: {
         ...aanmeldingData,
@@ -137,6 +143,12 @@ export class AanmeldingMapper {
       include: includeDeelnemer,
     });
     return toAanmelding(dbAanmelding);
+  }
+
+  public updateAll(aanmeldingen: UpdatableAanmelding[]): Promise<Aanmelding[]> {
+    return Promise.all(
+      aanmeldingen.map((aanmelding) => this.update(aanmelding.id, aanmelding)),
+    );
   }
 }
 

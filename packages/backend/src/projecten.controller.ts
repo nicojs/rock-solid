@@ -5,8 +5,9 @@ import {
   type ProjectFilter,
   TOTAL_COUNT_HEADER,
   type UpsertableDeelname,
-  type UpsertableAanmelding,
+  type InsertableAanmelding,
   type UpsertableProject,
+  UpdatableAanmelding,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -115,7 +116,7 @@ export class ProjectenController {
   @HttpCode(HttpStatus.CREATED)
   async createAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
-    @Body() aanmelding: UpsertableAanmelding,
+    @Body() aanmelding: InsertableAanmelding,
   ): Promise<Aanmelding> {
     aanmelding.projectId = projectId;
     return this.aanmeldingMapper.create(aanmelding);
@@ -126,10 +127,20 @@ export class ProjectenController {
   async updateAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
     @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
-    @Body() aanmelding: UpsertableAanmelding,
+    @Body() aanmelding: InsertableAanmelding,
   ): Promise<Aanmelding> {
     aanmelding.projectId = projectId;
     return this.aanmeldingMapper.update(aanmeldingId, aanmelding);
+  }
+
+  @Patch(':id/aanmeldingen')
+  @Privileges('write:aanmeldingen')
+  async partialUpdateAanmeldingen(
+    @Param('id', ParseIntPipe) projectId: number,
+    @Body() aanmeldingen: UpdatableAanmelding[],
+  ): Promise<Aanmelding[]> {
+    aanmeldingen.forEach((aanmelding) => (aanmelding.projectId = projectId));
+    return this.aanmeldingMapper.updateAll(aanmeldingen);
   }
 
   @Patch(':id/aanmeldingen/:aanmeldingId')

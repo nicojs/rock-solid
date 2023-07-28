@@ -1,4 +1,9 @@
-import { Deelnemer, Project, UpsertableDeelname } from '@rock-solid/shared';
+import {
+  Deelnemer,
+  Project,
+  UpsertableDeelname,
+  Aanmelding,
+} from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory } from './test-utils.test.js';
 import { expect } from 'chai';
@@ -36,6 +41,10 @@ describe(ProjectenController.name, () => {
     it('PATCH /projecten/:id/aanmeldingen/:id should not be allowed for projectverantwoordelijke', async () => {
       harness.login({ role: 'projectverantwoordelijke' });
       await harness.patch('/projecten/1/aanmeldingen/1').expect(403);
+    });
+    it('PATCH /projecten/:id/aanmeldingen should not be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.patch('/projecten/1/aanmeldingen').expect(403);
     });
 
     it('PUT /projecten/:id/deelnames should be allowed for projectverantwoordelijke', async () => {
@@ -156,6 +165,69 @@ describe(ProjectenController.name, () => {
         deelnemerId: deelnemer1.id,
       });
       expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
+    });
+  });
+
+  describe('PATCH /projecten/:id/aanmeldingen', () => {
+    let project: Project;
+    let deelnemer1: Deelnemer;
+    let deelnemer2: Deelnemer;
+    let aanmelding1: Aanmelding;
+    let aanmelding2: Aanmelding;
+    beforeEach(async () => {
+      // Arrange
+      [project, deelnemer1, deelnemer2] = await Promise.all([
+        harness.createProject(factory.project()),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      [aanmelding1, aanmelding2] = await Promise.all([
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer1.id,
+        }),
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer2.id,
+        }),
+      ]);
+    });
+
+    it('should be able to update rekeninguittreksel nummers', async () => {
+      // Act
+      const aanmeldingen = await harness.partialUpdateAanmeldingen(project.id, [
+        { id: aanmelding1.id, rekeninguittrekselNummer: '123' },
+        { id: aanmelding2.id, rekeninguittrekselNummer: '456' },
+      ]);
+
+      // Assert
+      const expectedAanmeldingen: Aanmelding[] = [
+        { ...aanmelding1, rekeninguittrekselNummer: '123' },
+        { ...aanmelding2, rekeninguittrekselNummer: '456' },
+      ];
+      expect(aanmeldingen).deep.eq(expectedAanmeldingen);
+    });
+
+    it('should be able to clear the rekeninguittreksel nummers', async () => {
+      // Arrange
+      await harness.partialUpdateAanmeldingen(project.id, [
+        { id: aanmelding1.id, rekeninguittrekselNummer: '123' },
+        { id: aanmelding2.id, rekeninguittrekselNummer: '456' },
+      ]);
+
+      // Act
+      const aanmeldingen = await harness.partialUpdateAanmeldingen(project.id, [
+        { id: aanmelding1.id, rekeninguittrekselNummer: '123' },
+        { id: aanmelding2.id, rekeninguittrekselNummer: undefined },
+      ]);
+
+      // Assert
+      const { rekeninguittrekselNummer, ...aanmelding2Data } = aanmelding2;
+      const expectedAanmeldingen: Aanmelding[] = [
+        { ...aanmelding1, rekeninguittrekselNummer: '123' },
+        aanmelding2Data,
+      ];
+      expect(aanmeldingen).deep.eq(expectedAanmeldingen);
     });
   });
 });

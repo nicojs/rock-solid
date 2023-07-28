@@ -2,7 +2,8 @@ import {
   Deelname,
   Aanmelding,
   UpsertableDeelname,
-  UpsertableAanmelding,
+  InsertableAanmelding,
+  UpdatableAanmelding,
 } from '@rock-solid/shared';
 import { restClient, RestClient } from '../shared/rest-client';
 import { RestService } from '../shared/rest-service';
@@ -35,7 +36,7 @@ export class ProjectService extends RestService<'projecten'> {
 
   createAanmelding(
     projectId: number | string,
-    aanmelding: UpsertableAanmelding,
+    aanmelding: InsertableAanmelding,
   ): Promise<Aanmelding> {
     return this.restClient.create(
       `projecten/${projectId}/aanmeldingen`,
@@ -63,6 +64,15 @@ export class ProjectService extends RestService<'projecten'> {
       `projecten/${projectId}/aanmeldingen`,
       aanmeldingId,
       aanmelding,
+    );
+  }
+  patchAanmeldingen(
+    projectId: number | string,
+    aanmeldingen: UpdatableAanmelding[],
+  ): Promise<Aanmelding[]> {
+    return this.restClient.patchAll(
+      `projecten/${projectId}/aanmeldingen`,
+      aanmeldingen,
     );
   }
 }

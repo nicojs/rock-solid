@@ -18,7 +18,7 @@ import {
   Project,
   ProjectReportFilter,
   ReportRoutes,
-  UpsertableAanmelding,
+  InsertableAanmelding,
   UpsertableActiviteit,
   UpsertableDeelnemer,
   UpsertableOverigPersoon,
@@ -27,6 +27,7 @@ import {
   User,
   rockReviver,
   toQueryString,
+  UpdatableAanmelding,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -216,7 +217,7 @@ class IntegrationTestingHarness {
   }
 
   async createAanmelding(
-    aanmelding: UpsertableAanmelding,
+    aanmelding: InsertableAanmelding,
   ): Promise<Aanmelding> {
     const response = await this.post(
       `/projecten/${aanmelding.projectId}/aanmeldingen`,
@@ -237,6 +238,17 @@ class IntegrationTestingHarness {
     overigPersoon: UpsertableOverigPersoon,
   ): Promise<OverigPersoon> {
     return await this.createPersoon(overigPersoon);
+  }
+
+  async partialUpdateAanmeldingen(
+    projectId: number,
+    aanmeldingen: UpdatableAanmelding[],
+  ): Promise<Aanmelding[]> {
+    const response = await this.patch(
+      `/projecten/${projectId}/aanmeldingen`,
+      aanmeldingen,
+    ).expect(200);
+    return response.body;
   }
 
   private async createPersoon(persoon: UpsertablePersoon) {

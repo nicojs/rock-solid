@@ -27,10 +27,12 @@ export const aanmeldingsstatussen: Options<Aanmeldingsstatus> = {
   OpWachtlijst: 'Op wachtlijst',
 };
 
-export type UpsertableAanmelding = Upsertable<
+export type InsertableAanmelding = Upsertable<
   Aanmelding,
   'deelnemerId' | 'projectId'
 >;
+
+export type UpdatableAanmelding = Upsertable<Aanmelding, 'id'>;
 
 export const aanmeldingLabels: Record<keyof Aanmelding, string> = {
   id: 'id',

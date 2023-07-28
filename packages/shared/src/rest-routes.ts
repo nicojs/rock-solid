@@ -5,7 +5,7 @@ import {
   PersoonFilter,
   ProjectenReportType,
   UpsertableDeelname,
-  UpsertableAanmelding,
+  InsertableAanmelding,
 } from './index.js';
 import { Aanmelding } from './aanmelding.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
@@ -52,7 +52,7 @@ type TopRoutes = {
 type ProjectenAanmeldingRoute = {
   [K in `projecten/${string}/aanmeldingen`]: {
     entity: Aanmelding;
-    upsertableEntity: UpsertableAanmelding;
+    upsertableEntity: InsertableAanmelding;
     filter: Omit<ProjectFilter, 'aanmeldingPersoonId'>;
   };
 };
