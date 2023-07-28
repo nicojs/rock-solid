@@ -175,6 +175,10 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       step="${ifDefined(
         control.type === InputType.dateTimeLocal && control.step,
       )}"
+      @focus="${(e: Event) => {
+        const inputEl = e.target as HTMLInputElement;
+        inputEl.showPicker();
+      }}"
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
         const inputEl = e.target as HTMLInputElement;
