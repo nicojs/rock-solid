@@ -21,6 +21,7 @@ import type { Response } from 'express';
 import { OrganisatieFilterPipe } from './pipes/organisatie-filter.pipe.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import { OrganisatieMapper } from './services/organisatie.mapper.js';
+import { Privileges } from './auth/privileges.guard.js';
 
 @Controller({ path: 'organisaties' })
 export class OrganisatiesController {
@@ -51,12 +52,14 @@ export class OrganisatiesController {
   }
 
   @Post()
+  @Privileges('write:organisaties')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() org: UpsertableOrganisatie) {
     return this.organisatieMapper.create(org);
   }
 
   @Put(':id')
+  @Privileges('write:organisaties')
   async update(
     @Param('id') id: string,
     @Body() org: Organisatie,

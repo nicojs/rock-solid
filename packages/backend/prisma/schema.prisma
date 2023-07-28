@@ -237,7 +237,7 @@ model Foldervoorkeur {
   @@unique([folder, persoonId])
   @@unique([folder, organisatieContactId])
   @@index([folder])
-  @@map("folder_voorkeur")
+  @@map("foldervoorkeur")
 }
 
 enum Communicatievoorkeur {

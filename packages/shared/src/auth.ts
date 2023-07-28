@@ -7,11 +7,11 @@ export interface User {
 export type UserRole = 'admin' | 'projectverantwoordelijke';
 export type Privilege =
   | 'read'
-  | 'manageProjecten'
-  | 'manageOrganisaties'
-  | 'manageInschrijvingen'
-  | 'manageDeelnames'
-  | 'manageDeelnemers';
+  | 'write:projecten'
+  | 'write:organisaties'
+  | 'write:aanmeldingen'
+  | 'write:deelnames'
+  | 'write:personen';
 
 export interface LoginResponse {
   user: User;
@@ -22,11 +22,11 @@ export const loginUrl = '/auth/login';
 export const privileges: Record<UserRole, Privilege[]> = {
   admin: [
     'read',
-    'manageProjecten',
-    'manageOrganisaties',
-    'manageInschrijvingen',
-    'manageDeelnames',
-    'manageDeelnemers',
+    'write:projecten',
+    'write:organisaties',
+    'write:aanmeldingen',
+    'write:deelnames',
+    'write:personen',
   ],
-  projectverantwoordelijke: ['read', 'manageDeelnames'],
+  projectverantwoordelijke: ['read', 'write:deelnames'],
 };

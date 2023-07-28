@@ -17,14 +17,24 @@ export class PrivilegesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredPrivilege = this.reflector.getAllAndOverride<Privilege>(
-      authConstants.requiredPrivilege,
+    const isPublic = this.reflector.getAllAndOverride<boolean | undefined>(
+      authConstants.public,
       [context.getHandler(), context.getClass()],
     );
+    if (isPublic) {
+      return true;
+    }
+    const req = context.switchToHttp().getRequest<express.Request>();
+    const requiredPrivilege =
+      this.reflector.getAllAndOverride<Privilege>(
+        authConstants.requiredPrivilege,
+        [context.getHandler(), context.getClass()],
+      ) ?? (req.method === 'GET' ? 'read' : undefined);
+
     if (!requiredPrivilege) {
       return true;
     }
-    const { user } = context.switchToHttp().getRequest<express.Request>();
+    const { user } = req;
     if (!user) {
       return false;
     }
