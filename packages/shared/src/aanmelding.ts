@@ -31,3 +31,15 @@ export type UpsertableAanmelding = Upsertable<
   Aanmelding,
   'deelnemerId' | 'projectId'
 >;
+
+export const aanmeldingLabels: Record<keyof Aanmelding, string> = {
+  id: 'id',
+  projectId: 'projectId',
+  deelnemerId: 'deelnemerId',
+  tijdstipVanAanmelden: 'Aanmeldingsdatum',
+  toestemmingFotos: "Toestemming voor foto's",
+  rekeninguittrekselNummer: 'Rekeninguittreksel nummer',
+  opmerking: 'Opmerking',
+  deelnemer: 'Deelnemer',
+  status: 'Status',
+};
