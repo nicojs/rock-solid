@@ -46,11 +46,6 @@ export class ProjectAanmeldingEditComponent extends LitElement {
 
 const aanmeldingControls: InputControl<Aanmelding>[] = [
   {
-    name: 'toestemmingFotos',
-    label: "Toestemming voor gebruik van foto's",
-    type: InputType.checkbox,
-  },
-  {
     name: 'status',
     label: 'Status',
     type: InputType.select,

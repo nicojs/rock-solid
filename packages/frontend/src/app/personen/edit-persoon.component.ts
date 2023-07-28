@@ -144,6 +144,11 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [
   ...basePersoonFormControls,
+  {
+    name: 'toestemmingFotos',
+    label: "Toestemming voor gebruik van foto's",
+    type: InputType.checkbox,
+  },
   formGroup('domicilieadres', adresControls, {
     required: false,
     requiredLabel: 'Domicilieadres is anders dan het verblijfadres',

@@ -279,6 +279,19 @@ export class ProjectAanmeldingenComponent extends LitElement {
                             icon="unlock"
                           ></rock-icon>`
                         : nothing}
+                      ${aanmelding.deelnemer?.toestemmingFotos
+                        ? html` <rock-icon
+                            title="${fullName(
+                              aanmelding.deelnemer!,
+                            )} geeft toestemming voor foto's"
+                            icon="camera"
+                          ></rock-icon>`
+                        : html` <rock-icon
+                            title="${fullName(
+                              aanmelding.deelnemer!,
+                            )} geeft geen toestemming voor foto's"
+                            icon="cameraVideoOff"
+                          ></rock-icon>`}
                       ${aanmelding.deelnemer
                         ? fullNameWithAge(
                             aanmelding.deelnemer,
@@ -288,17 +301,11 @@ export class ProjectAanmeldingenComponent extends LitElement {
                         aanmelding.deelnemer?.eersteCursus,
                         aanmelding.deelnemer?.eersteVakantie,
                       ].includes(this.project.projectnummer)
-                        ? html` <span class="badge rounded-pill text-bg-primary"
-                            >Eerste ${this.project.type}</span
-                          >`
-                        : nothing}
-                      ${aanmelding.toestemmingFotos
-                        ? html`<rock-icon
-                            title="${fullName(
-                              aanmelding.deelnemer!,
-                            )} geeft toestemming voor fotos"
-                            icon="camera"
-                          ></rock-icon>`
+                        ? html`
+                            <span class="badge rounded-pill text-bg-primary"
+                              >Eerste ${this.project.type}</span
+                            >
+                          `
                         : nothing}
                     </td>
                     <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>

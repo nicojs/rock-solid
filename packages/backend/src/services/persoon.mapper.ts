@@ -179,6 +179,8 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     foldervoorkeuren,
     eersteCursusAanmelding,
     eersteVakantieAanmelding,
+    eersteCursusAanmeldingId,
+    eersteVakantieAanmeldingId,
     ...person
   } = p;
   return {
@@ -330,6 +332,7 @@ function fillOutAllPersoonFields(persoon: Persoon): AllPersoonFields {
     selectie: [],
     woonsituatie: 'onbekend',
     werksituatie: 'onbekend',
+    toestemmingFotos: true,
     ...persoon,
   };
 }
