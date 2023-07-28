@@ -78,6 +78,25 @@ export class ProjectAanmeldingenComponent extends LitElement {
     }
   }
 
+  private async pathRekeninguittreksels(aanmeldingen: Aanmelding[]) {
+    projectService
+      .patchAanmeldingen(
+        this.project.id,
+        aanmeldingen.map(({ id, rekeninguittrekselNummer }) => ({
+          id,
+          rekeninguittrekselNummer,
+        })),
+      )
+      .then((aanmeldingen) => {
+        this.aanmeldingen$.next(
+          this.aanmeldingen!.map(
+            (a) => aanmeldingen.find((b) => a.id === b.id) ?? a,
+          ),
+        );
+        this.navigateToAanmeldingenList();
+      });
+  }
+
   private async patchStatus(aanmelding: Aanmelding, status: Aanmeldingsstatus) {
     projectService
       .patchAanmelding(this.project.id, aanmelding.id, { status })
@@ -94,11 +113,15 @@ export class ProjectAanmeldingenComponent extends LitElement {
     projectService
       .updateAanmelding(this.project.id, this.aanmeldingInScope!)
       .then(() => {
-        router.navigate(
-          `/${pluralize(this.project.type)}/${this.project.id}/aanmeldingen/`,
-        );
+        this.navigateToAanmeldingenList();
       });
   };
+
+  private navigateToAanmeldingenList() {
+    router.navigate(
+      `/${pluralize(this.project.type)}/${this.project.id}/aanmeldingen/`,
+    );
+  }
 
   override render() {
     switch (this.path[0]) {
@@ -110,6 +133,18 @@ export class ProjectAanmeldingenComponent extends LitElement {
               .aanmelding=${this.aanmeldingInScope}
             ></rock-project-aanmelding-edit>`
           : html`<rock-loading></rock-loading>`}`;
+      case 'rekeninguittreksels':
+        return this.aanmeldingen
+          ? html`<rock-project-rekeninguittreksels
+              .project=${this.project}
+              @rekeninguittreksels-updated=${(
+                event: CustomEvent<Aanmelding[]>,
+              ) => this.pathRekeninguittreksels(event.detail)}
+              .aanmeldingen=${this.aanmeldingen?.filter(
+                ({ status }) => status === 'Bevestigd',
+              )}
+            ></rock-project-rekeninguittreksels>`
+          : html`<rock-loading></rock-loading>`;
       case undefined:
         return this.renderProjectAanmeldingen();
       default:
@@ -205,6 +240,14 @@ export class ProjectAanmeldingenComponent extends LitElement {
           >
             <rock-icon icon="download"></rock-icon> Export
           </button>
+          <rock-link
+            btn
+            btnOutlineSecondary
+            href="/${pluralize(this.project.type)}/${this.project
+              .id}/aanmeldingen/rekeninguittreksels"
+            ><rock-icon icon="cashCoin"></rock-icon> Rekeninguittreksels
+            inullen</rock-link
+          >
           <table class="table table-hover">
             <thead>
               <tr>
