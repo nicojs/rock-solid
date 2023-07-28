@@ -1,18 +1,19 @@
 import { ProjectReport } from '@rock-solid/shared';
 import { ReportsController } from './reports.controller.js';
-import { IntegrationTestingHarness, factory } from './test-utils.test.js';
+import { harness, factory } from './test-utils.test.js';
 import { expect } from 'chai';
 
 describe(ReportsController.name, () => {
-  let harness: IntegrationTestingHarness;
-
-  beforeEach(async () => {
-    harness = await IntegrationTestingHarness.init();
+  beforeEach(() => {
     harness.login();
   });
-
   afterEach(async () => {
-    await harness.dispose();
+    await harness.clear();
+  });
+
+  it('should be allowed for projectverantwoordelijke', async () => {
+    harness.login({ role: 'projectverantwoordelijke' });
+    await harness.getReport('reports/projecten/aanmeldingen', 'jaar');
   });
 
   describe('grouping', () => {

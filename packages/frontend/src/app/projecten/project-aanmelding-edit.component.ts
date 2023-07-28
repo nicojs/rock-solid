@@ -1,4 +1,9 @@
-import { Aanmelding, aanmeldingsstatussen, Project } from '@rock-solid/shared';
+import {
+  Aanmelding,
+  aanmeldingsstatussen,
+  Privilege,
+  Project,
+} from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -23,6 +28,7 @@ export class ProjectAanmeldingEditComponent extends LitElement {
       </h2>
       <rock-reactive-form
         @rock-submit="${this.save}"
+        privilege="${'write:aanmeldingen' satisfies Privilege}"
         .controls="${aanmeldingControls}"
         .entity="${this.aanmelding}"
       ></rock-reactive-form>`;

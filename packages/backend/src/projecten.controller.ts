@@ -22,18 +22,16 @@ import {
   Put,
   Query,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { JwtAuthGuard } from './auth/index.js';
 import { DeelnameMapper } from './services/deelname.mapper.js';
 import { AanmeldingMapper } from './services/aanmelding.mapper.js';
 import { ProjectMapper } from './services/project.mapper.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import { MetaFilterPipe } from './pipes/pipe-utils.js';
+import { Privileges } from './auth/privileges.guard.js';
 
 @Controller({ path: 'projecten' })
-@UseGuards(JwtAuthGuard)
 export class ProjectenController {
   constructor(
     private readonly projectMapper: ProjectMapper,
@@ -82,6 +80,7 @@ export class ProjectenController {
   }
 
   @Put(':projectId/activiteiten/:activiteitId/deelnames')
+  @Privileges('write:deelnames')
   @HttpCode(HttpStatus.NO_CONTENT)
   updateDeelnames(
     @Param('projectId', ParseIntPipe) projectId: number,
@@ -96,12 +95,23 @@ export class ProjectenController {
   }
 
   @Post()
+  @Privileges('write:projecten')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() project: UpsertableProject) {
     return this.projectMapper.createProject(project);
   }
 
+  @Put(':id')
+  @Privileges('write:projecten')
+  async update(
+    @Param('id') id: string,
+    @Body() project: UpsertableProject,
+  ): Promise<Project> {
+    return this.projectMapper.updateProject(+id, project);
+  }
+
   @Post(':id/aanmeldingen')
+  @Privileges('write:aanmeldingen')
   @HttpCode(HttpStatus.CREATED)
   async createAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
@@ -111,15 +121,8 @@ export class ProjectenController {
     return this.aanmeldingMapper.create(aanmelding);
   }
 
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() project: UpsertableProject,
-  ): Promise<Project> {
-    return this.projectMapper.updateProject(+id, project);
-  }
-
   @Put(':id/aanmeldingen/:aanmeldingId')
+  @Privileges('write:aanmeldingen')
   async updateAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
     @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
@@ -130,6 +133,7 @@ export class ProjectenController {
   }
 
   @Patch(':id/aanmeldingen/:aanmeldingId')
+  @Privileges('write:aanmeldingen')
   async partialUpdateAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
     @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,

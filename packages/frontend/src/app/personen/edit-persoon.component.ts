@@ -9,6 +9,7 @@ import {
   OverigPersoon,
   overigPersoonSelecties,
   voedingswensen,
+  Privilege,
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -42,6 +43,7 @@ export class EditPersoonComponent extends LitElement {
   override render() {
     return html`<rock-reactive-form
       @rock-submit="${this.submit}"
+      privilege="${'write:personen' satisfies Privilege}"
       .controls="${this.persoon.type === 'deelnemer'
         ? deelnemerFormControls
         : overigPersoonFormControls}"

@@ -14,6 +14,7 @@ import { pluralize, showDatum } from '../shared';
 import { printProject } from './project.pipes';
 import { projectService } from './project.service';
 import { projectenStore } from './projecten.store';
+import { privilege } from '../auth/privilege.directive';
 
 interface DeelnameRow extends UpsertableDeelname {
   deelnemer?: Deelnemer;
@@ -137,7 +138,11 @@ export class ProjectDeelnamesComponent extends LitElement {
                 ></rock-reactive-form-input-control>
               </div>`;
             })}
-            <button class="btn btn-primary offset-sm-2" type="submit">
+            <button
+              ${privilege('write:deelnames')}
+              class="btn btn-primary offset-sm-2"
+              type="submit"
+            >
               Deelnames bevestigen
             </button>
           </form>`}`;

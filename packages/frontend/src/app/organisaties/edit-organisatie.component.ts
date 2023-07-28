@@ -1,5 +1,6 @@
 import {
   Organisatie,
+  Privilege,
   UpsertableOrganisatie,
   doelgroepen,
   groupedOrganisatieSoorten,
@@ -19,7 +20,6 @@ import {
   checkboxesControl,
 } from '../forms';
 import { printOrganisatie } from './organisatie.pipes';
-
 @customElement('rock-edit-organisatie')
 export class EditOrganisatieComponent extends LitElement {
   static override styles = [bootstrap];
@@ -40,6 +40,7 @@ export class EditOrganisatieComponent extends LitElement {
 
       <rock-reactive-form
         @rock-submit="${this.save}"
+        privilege="${'write:organisaties' satisfies Privilege}"
         .controls="${createControls(this.organisatie)}"
         .entity="${this.organisatie}"
       ></rock-reactive-form>`;

@@ -11,6 +11,7 @@ import {
 } from '../shared';
 import { fullName, fullNameWithAge } from './full-name.pipe';
 import { ModalComponent } from '../shared/modal.component';
+import { privilege } from '../auth/privilege.directive';
 
 @customElement('rock-personen-list')
 export class PersonenComponent extends LitElement {
@@ -85,13 +86,16 @@ export class PersonenComponent extends LitElement {
                 <rock-link btn btnSecondary href="../edit/${persoon.id}"
                   ><rock-icon icon="pencil"></rock-icon
                 ></rock-link>
-                <button
-                  @click=${() => this.deletePersoon(persoon)}
-                  type="button"
-                  class="btn btn-danger"
-                >
-                  <rock-icon icon="trash"></rock-icon>
-                </button>
+                <span>
+                  <button
+                    @click=${() => this.deletePersoon(persoon)}
+                    type="button"
+                    ${privilege('write:personen')}
+                    class="btn btn-danger"
+                  >
+                    <rock-icon icon="trash"></rock-icon>
+                  </button>
+                </span>
               </td>
             </tr>`,
         )}

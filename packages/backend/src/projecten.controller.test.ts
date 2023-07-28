@@ -1,17 +1,69 @@
-import { Deelnemer, Project } from '@rock-solid/shared';
+import { Deelnemer, Project, UpsertableDeelname } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
-import { IntegrationTestingHarness, factory } from './test-utils.test.js';
+import { harness, factory } from './test-utils.test.js';
 import { expect } from 'chai';
 
 describe(ProjectenController.name, () => {
-  let harness: IntegrationTestingHarness;
-
-  beforeEach(async () => {
-    harness = await IntegrationTestingHarness.init();
+  beforeEach(() => {
     harness.login();
   });
   afterEach(async () => {
-    await harness.dispose();
+    await harness.clear();
+  });
+
+  describe('auth', () => {
+    it('GET /projecten should be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.get('/projecten').expect(200);
+    });
+    it('POST /projecten should not be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.post('/projecten').expect(403);
+    });
+    it('PUT /projecten/:id should not be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.put('/projecten/1').expect(403);
+    });
+
+    it('POST /projecten/:id/aanmeldingen should not be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.post('/projecten/1/aanmeldingen').expect(403);
+    });
+    it('PUT /projecten/:id/aanmeldingen/:id should not be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.put('/projecten/1/aanmeldingen/1').expect(403);
+    });
+    it('PATCH /projecten/:id/aanmeldingen/:id should not be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.patch('/projecten/1/aanmeldingen/1').expect(403);
+    });
+
+    it('PUT /projecten/:id/deelnames should be allowed for projectverantwoordelijke', async () => {
+      // Arrange
+      const project = await harness.createProject(factory.project());
+      const deelnemer = await harness.createDeelnemer(factory.deelnemer());
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+      harness.login({ role: 'projectverantwoordelijke' });
+
+      // Act
+      const activiteitId = project.activiteiten[0]!.id;
+      const deelnames: UpsertableDeelname[] = [
+        {
+          aanmeldingId: aanmelding.id,
+          effectieveDeelnamePerunage: 1,
+          activiteitId,
+        },
+      ];
+      await harness
+        .put(
+          `/projecten/${project.id}/activiteiten/${activiteitId}/deelnames`,
+          deelnames,
+        )
+        .expect(204);
+    });
   });
 
   describe('Eerste aanmelding', () => {

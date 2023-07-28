@@ -16,16 +16,14 @@ import {
   Put,
   Query,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { JwtAuthGuard } from './auth/index.js';
 import { OrganisatieFilterPipe } from './pipes/organisatie-filter.pipe.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import { OrganisatieMapper } from './services/organisatie.mapper.js';
+import { Privileges } from './auth/privileges.guard.js';
 
 @Controller({ path: 'organisaties' })
-@UseGuards(JwtAuthGuard)
 export class OrganisatiesController {
   constructor(private organisatieMapper: OrganisatieMapper) {}
 
@@ -54,12 +52,14 @@ export class OrganisatiesController {
   }
 
   @Post()
+  @Privileges('write:organisaties')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() org: UpsertableOrganisatie) {
     return this.organisatieMapper.create(org);
   }
 
   @Put(':id')
+  @Privileges('write:organisaties')
   async update(
     @Param('id') id: string,
     @Body() org: Organisatie,

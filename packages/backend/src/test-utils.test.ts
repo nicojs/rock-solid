@@ -36,9 +36,26 @@ const cwd = new URL('..', import.meta.url);
 
 export class RockSolidDBContainer {
   private readonly db;
+  private client;
 
   private constructor(db: StartedPostgreSqlContainer) {
     this.db = db;
+    this.client = new PrismaClient({
+      datasources: {
+        db: {
+          url: this.connectionUri,
+        },
+      },
+      log: [
+        {
+          emit: 'event',
+          level: 'query',
+        },
+      ],
+    });
+    // this.client.$on('query', async (e) => {
+    //   console.log(`${e.query} ${e.params}`);
+    // });
   }
 
   static async start() {
@@ -64,59 +81,35 @@ export class RockSolidDBContainer {
       },
       cwd,
     });
+    await this.client.$connect();
     await this.seed();
   }
 
   private async seed() {
-    await this.exec(async (client) => {
-      const plaatsen: db.Prisma.PlaatsCreateManyInput[] = [
-        {
-          deelgemeente: 'Onbekend',
-          gemeente: 'Onbekend',
-          postcode: '0',
-          provincieId: 1,
-          volledigeNaam: 'Onbekend',
-        },
-      ];
-      await client.plaats.createMany({ data: plaatsen });
-    });
+    const plaatsen: db.Prisma.PlaatsCreateManyInput[] = [
+      {
+        deelgemeente: 'Onbekend',
+        gemeente: 'Onbekend',
+        postcode: '0',
+        provincieId: 1,
+        volledigeNaam: 'Onbekend',
+      },
+    ];
+    await this.client.plaats.createMany({ data: plaatsen });
   }
 
   /**
    * Clears all state from the database (except seeded data).
    */
-  clear(): Promise<void> {
-    return this.exec(async (client) => {
-      await client.foldervoorkeur.deleteMany({});
-      await client.aanmelding.deleteMany({});
-      await client.deelname.deleteMany({});
-      await client.activiteit.deleteMany({});
-      await client.organisatieContact.deleteMany({});
-      await client.organisatie.deleteMany({});
-      await client.persoon.deleteMany({});
-      await client.project.deleteMany({});
-      await client.plaats.deleteMany({ where: { id: { not: 1 } } });
-    });
+  async clear(): Promise<void> {
+    await this.client.$queryRaw`
+      TRUNCATE TABLE foldervoorkeur, aanmelding, deelname, activiteit, organisatie_contact, organisatie, "_PersoonToProject", persoon, project RESTART IDENTITY;`;
+    await this.client.$queryRaw`DELETE FROM plaats WHERE id > 1;`;
   }
 
-  private async exec(fn: (client: PrismaClient) => Promise<void>) {
-    const client = new PrismaClient({
-      datasources: {
-        db: {
-          url: this.connectionUri,
-        },
-      },
-    });
-    try {
-      await client.$connect();
-      await fn(client);
-    } finally {
-      await client.$disconnect();
-    }
-  }
-
-  stop() {
-    return this.db.stop();
+  async stop() {
+    await this.client.$disconnect();
+    await this.db.stop();
   }
 
   get connectionUri() {
@@ -124,16 +117,7 @@ export class RockSolidDBContainer {
   }
 }
 
-let rockSolidDBContainer: RockSolidDBContainer;
-
-before(async () => {
-  rockSolidDBContainer = await RockSolidDBContainer.start();
-});
-after(async () => {
-  await rockSolidDBContainer.stop();
-});
-
-export class IntegrationTestingHarness {
+class IntegrationTestingHarness {
   private readonly app;
   private authToken?: string;
   constructor(app: INestApplication) {
@@ -157,24 +141,62 @@ export class IntegrationTestingHarness {
   }
 
   async dispose() {
-    await Promise.all([this.app.close(), rockSolidDBContainer.clear()]);
+    await Promise.all([this.app.close(), this.clear()]);
     seed = 0;
   }
 
-  login(user: User = { name: 'Test User', email: '' }) {
+  login(overrides?: Partial<User>) {
     const jwtService = this.app.get(JwtService);
-    this.authToken = jwtService.sign(user);
+    this.authToken = jwtService.sign(factory.user(overrides));
+  }
+
+  async clear() {
+    this.authToken = undefined;
+    await rockSolidDBContainer.clear();
   }
 
   get(url: string): request.Test {
-    let onGoingRequest = request(this.app.getHttpServer()).get(url);
+    return this.authenticateRequest(request(this.app.getHttpServer()).get(url));
+  }
+
+  delete(url: string): request.Test {
+    return this.authenticateRequest(
+      request(this.app.getHttpServer()).delete(url),
+    );
+  }
+
+  post(url: string, body?: string | object): request.Test {
+    return this.wrapBodyRequest(
+      request(this.app.getHttpServer()).post(url),
+      body,
+    );
+  }
+
+  put(url: string, body?: string | object): request.Test {
+    return this.wrapBodyRequest(
+      request(this.app.getHttpServer()).put(url),
+      body,
+    );
+  }
+  patch(url: string, body?: string | object): request.Test {
+    return this.wrapBodyRequest(
+      request(this.app.getHttpServer()).patch(url),
+      body,
+    );
+  }
+
+  private wrapBodyRequest(req: request.Test, body?: string | object) {
+    req = req
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .send(body);
+    return this.authenticateRequest(req);
+  }
+  private authenticateRequest(req: request.Test) {
     if (this.authToken) {
-      onGoingRequest = onGoingRequest.set(
-        'Authorization',
-        `Bearer ${this.authToken}`,
-      );
+      req = req.set('Authorization', `Bearer ${this.authToken}`);
     }
-    return onGoingRequest;
+    return req;
   }
 
   public async getReport<TReportRoute extends keyof ReportRoutes>(
@@ -191,21 +213,6 @@ export class IntegrationTestingHarness {
       })}`,
     ).expect(200);
     return response.body;
-  }
-
-  post(url: string, body?: string | object): request.Test {
-    let onGoingRequest = request(this.app.getHttpServer())
-      .post(url)
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
-      .send(body);
-    if (this.authToken) {
-      onGoingRequest = onGoingRequest.set(
-        'Authorization',
-        `Bearer ${this.authToken}`,
-      );
-    }
-    return onGoingRequest;
   }
 
   async createAanmelding(
@@ -241,6 +248,10 @@ export class IntegrationTestingHarness {
 export let seed = 0;
 
 export const factory = {
+  user(overrides?: Partial<User>): User {
+    return { name: 'Test User', email: '', role: 'admin', ...overrides };
+  },
+
   deelnemer(overrides?: Partial<UpsertableDeelnemer>): UpsertableDeelnemer {
     return {
       achternaam: 'Deelnemer2',
@@ -290,3 +301,15 @@ export const factory = {
     };
   },
 };
+
+let rockSolidDBContainer: RockSolidDBContainer;
+export let harness: IntegrationTestingHarness;
+
+before(async () => {
+  rockSolidDBContainer = await RockSolidDBContainer.start();
+  harness = await IntegrationTestingHarness.init();
+});
+after(async () => {
+  await harness.dispose();
+  await rockSolidDBContainer.stop();
+});

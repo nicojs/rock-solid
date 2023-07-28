@@ -19,19 +19,17 @@ import {
   Put,
   Query,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import { PagePipe } from './pipes/page.pipe.js';
 import { PersoonFilterPipe } from './pipes/persoon-filter.pipe.js';
 import { PersoonMapper } from './services/persoon.mapper.js';
 import type { Response } from 'express';
-import { JwtAuthGuard } from './auth/index.js';
 import { MetaFilterPipe } from './pipes/pipe-utils.js';
 import { ProjectMapper } from './services/project.mapper.js';
 import { NumberPipe } from './pipes/number.pipe.js';
+import { Privileges } from './auth/privileges.guard.js';
 
 @Controller({ path: 'personen' })
-@UseGuards(JwtAuthGuard)
 export class PersonenController {
   constructor(
     private readonly persoonMapper: PersoonMapper,
@@ -88,6 +86,7 @@ export class PersonenController {
   }
 
   @Delete(`:id`)
+  @Privileges('write:personen')
   async delete(
     @Param('id', NumberPipe) id: number,
     @Res({ passthrough: true }) resp: Response,
@@ -97,12 +96,14 @@ export class PersonenController {
   }
 
   @Post()
+  @Privileges('write:personen')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() persoon: UpsertablePersoon) {
     return this.persoonMapper.createPersoon(persoon);
   }
 
   @Put(':id')
+  @Privileges('write:personen')
   async update(
     @Param('id') id: string,
     @Body() persoon: Persoon,
