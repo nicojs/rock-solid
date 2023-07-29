@@ -175,11 +175,11 @@ model OrganisatieContact {
   doelgroepen      Doelgroep[]
   emailadres       String?          @db.VarChar(256)
   telefoonnummer   String?          @db.VarChar(256)
-  adres            Adres?           @relation(fields: [adresId], references: [id])
+  adres            Adres?           @relation(fields: [adresId], references: [id], onDelete: Cascade)
   adresId          Int?
   opmerking        String?          @db.VarChar(1024)
   foldervoorkeuren Foldervoorkeur[]
-  organisatie      Organisatie      @relation(fields: [organisatieId], references: [id])
+  organisatie      Organisatie      @relation(fields: [organisatieId], references: [id], onDelete: Cascade)
 
   @@unique([organisatieId, terAttentieVan])
   @@map("organisatie_contact")

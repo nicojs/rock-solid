@@ -28,6 +28,10 @@ import {
   rockReviver,
   toQueryString,
   UpdatableAanmelding,
+  UpsertableOrganisatie,
+  Organisatie,
+  UpsertableOrganisatieContact,
+  Plaats,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -35,6 +39,13 @@ import { PrismaClient } from '@prisma/client';
 const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
 
+export const onbekendePlaats: Readonly<Plaats> = Object.freeze({
+  deelgemeente: 'Onbekend',
+  gemeente: 'Onbekend',
+  postcode: '0',
+  provincie: 1,
+  id: 1,
+});
 export class RockSolidDBContainer {
   private readonly db;
   private client;
@@ -87,12 +98,11 @@ export class RockSolidDBContainer {
   }
 
   private async seed() {
+    const { provincie, ...plaatsData } = onbekendePlaats;
     const plaatsen: db.Prisma.PlaatsCreateManyInput[] = [
       {
-        deelgemeente: 'Onbekend',
-        gemeente: 'Onbekend',
-        postcode: '0',
-        provincieId: 1,
+        ...plaatsData,
+        provincieId: provincie,
         volledigeNaam: 'Onbekend',
       },
     ];
@@ -255,6 +265,16 @@ class IntegrationTestingHarness {
     const response = await this.post(`/personen`, persoon).expect(201);
     return response.body;
   }
+
+  async createOrganisatie(
+    org?: Partial<UpsertableOrganisatie>,
+  ): Promise<Organisatie> {
+    const response = await this.post(
+      '/organisaties',
+      factory.organisatie(org),
+    ).expect(201);
+    return response.body;
+  }
 }
 
 export let seed = 0;
@@ -264,6 +284,25 @@ export const factory = {
     return { name: 'Test User', email: '', role: 'admin', ...overrides };
   },
 
+  organisatie(
+    overrides?: Partial<UpsertableOrganisatie>,
+  ): UpsertableOrganisatie {
+    return {
+      naam: `Test organisatie ${seed++}`,
+      contacten: [this.organisatieContact()],
+      ...overrides,
+    };
+  },
+
+  organisatieContact(
+    overrides?: Partial<UpsertableOrganisatieContact>,
+  ): UpsertableOrganisatieContact {
+    return {
+      doelgroepen: [],
+      ...overrides,
+    };
+  },
+
   deelnemer(overrides?: Partial<UpsertableDeelnemer>): UpsertableDeelnemer {
     return {
       achternaam: 'Deelnemer2',
@@ -271,13 +310,7 @@ export const factory = {
       verblijfadres: {
         straatnaam: 'Onbekend',
         huisnummer: '1',
-        plaats: {
-          deelgemeente: 'Onbekend',
-          gemeente: 'Onbekend',
-          postcode: '0',
-          provincie: 1,
-          id: 1,
-        },
+        plaats: onbekendePlaats,
       },
       ...overrides,
     };

@@ -29,7 +29,6 @@ export class OrganisatiesListComponent extends LitElement {
         <thead>
           <tr>
             <th>Naam</th>
-            <th>Website</th>
             <th>TAV</th>
             <th>Telefoonnummer</th>
             <th>Emailadres</th>
@@ -44,7 +43,6 @@ export class OrganisatiesListComponent extends LitElement {
               org.contacten.length === 0 ? 1 : org.contacten.length;
             return html`<tr>
                 <td rowspan="${rowSpan}">${org.naam}</td>
-                <td rowspan="${rowSpan}">${show(org.website)}</td>
                 ${renderContactTableData(org.contacten[0]!)}
                 <td rowspan="${rowSpan}">
                   <rock-link btn btnSecondary href="../edit/${org.id}"

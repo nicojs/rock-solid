@@ -7,6 +7,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -22,6 +23,7 @@ import { OrganisatieFilterPipe } from './pipes/organisatie-filter.pipe.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import { OrganisatieMapper } from './services/organisatie.mapper.js';
 import { Privileges } from './auth/privileges.guard.js';
+import { NumberPipe } from './pipes/number.pipe.js';
 
 @Controller({ path: 'organisaties' })
 export class OrganisatiesController {
@@ -68,5 +70,12 @@ export class OrganisatiesController {
       where: { id: +id },
       data: org,
     });
+  }
+
+  @Delete(':id')
+  @Privileges('write:organisaties')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('id', NumberPipe) id: number): Promise<void> {
+    await this.organisatieMapper.delete(id);
   }
 }
