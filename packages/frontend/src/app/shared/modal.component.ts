@@ -32,7 +32,7 @@ export class ModalComponent extends RockElement {
   };
 
   public confirm(
-    question: string |  TemplateResult,
+    question: string | TemplateResult,
     title = 'Weet je het zeker?',
   ): Promise<boolean> {
     return new Promise((res) => {
