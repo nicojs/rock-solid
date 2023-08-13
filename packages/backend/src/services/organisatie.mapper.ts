@@ -142,6 +142,14 @@ export class OrganisatieMapper {
 
     return toOrganisatie(result);
   }
+
+  async delete(id: number): Promise<void> {
+    await handleKnownPrismaErrors(
+      this.db.organisatie.delete({
+        where: { id },
+      }),
+    );
+  }
 }
 
 function toWhere({

@@ -7,6 +7,8 @@ import {
   showAdres,
   showFoldervoorkeurBadges as showFoldervoorkeurBadges,
 } from '../shared';
+import { privilege } from '../auth/privilege.directive';
+import { ModalComponent } from '../shared/modal.component';
 
 @customElement('rock-organisaties-list')
 export class OrganisatiesListComponent extends LitElement {
@@ -14,6 +16,29 @@ export class OrganisatiesListComponent extends LitElement {
 
   @property({ attribute: false })
   private organisaties: Organisatie[] | undefined;
+
+  private deleteOrganisatie(org: Organisatie) {
+    ModalComponent.instance
+      .confirm(
+        html`Weet je zeker dat je organisatie <strong>${org.naam}</strong> ${org
+            .contacten.length > 1
+            ? html`met
+                <strong>${org.contacten.length} contactpersonen</strong> `
+            : ''}wilt
+          verwijderen?`,
+      )
+      .then((confirmed) => {
+        if (confirmed) {
+          const deleteEvent = new CustomEvent<Organisatie>('delete', {
+            bubbles: true,
+            composed: true,
+            detail: org,
+          });
+
+          this.dispatchEvent(deleteEvent);
+        }
+      });
+  }
 
   override render() {
     return html` ${this.organisaties
@@ -29,13 +54,12 @@ export class OrganisatiesListComponent extends LitElement {
         <thead>
           <tr>
             <th>Naam</th>
-            <th>Website</th>
             <th>TAV</th>
             <th>Telefoonnummer</th>
             <th>Emailadres</th>
             <th>Adres</th>
             <th>Folder voorkeur</th>
-            <th>Acties</th>
+            <th style="width: 190px">Acties</th>
           </tr>
         </thead>
         <tbody>
@@ -44,12 +68,19 @@ export class OrganisatiesListComponent extends LitElement {
               org.contacten.length === 0 ? 1 : org.contacten.length;
             return html`<tr>
                 <td rowspan="${rowSpan}">${org.naam}</td>
-                <td rowspan="${rowSpan}">${show(org.website)}</td>
                 ${renderContactTableData(org.contacten[0]!)}
                 <td rowspan="${rowSpan}">
                   <rock-link btn btnSecondary href="../edit/${org.id}"
                     ><rock-icon icon="pencil"></rock-icon
                   ></rock-link>
+                  <button
+                    @click=${() => this.deleteOrganisatie(org)}
+                    type="button"
+                    ${privilege('write:organisaties')}
+                    class="btn btn-danger"
+                  >
+                    <rock-icon icon="trash"></rock-icon>
+                  </button>
                 </td>
               </tr>
               ${org.contacten.slice(1).map(

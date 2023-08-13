@@ -9,6 +9,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import {
   downloadCsv,
+  entities,
   notAvailable,
   pluralize,
   showDatum,
@@ -17,6 +18,9 @@ import {
 } from '../shared';
 import { projectService } from './project.service';
 import style from './projecten-list.component.scss';
+import { privilege } from '../auth/privilege.directive';
+import { ModalComponent } from '../shared/modal.component';
+import { printProject } from './project.pipes';
 
 @customElement('rock-projecten-list')
 export class ProjectenListComponent extends LitElement {
@@ -44,6 +48,25 @@ export class ProjectenListComponent extends LitElement {
     });
   }
 
+  private async deleteProject(project: Project) {
+    const confirmed = await ModalComponent.instance.confirm(
+      html`Weet je zeker dat je <strong>${printProject(project)}</strong> met
+        <strong>${entities(project.activiteiten.length, 'activiteit')}</strong>
+        en
+        <strong>${entities(project.aantalAanmeldingen, 'aanmelding')}</strong>
+        verwijderen?`,
+    );
+    if (confirmed) {
+      const deleteEvent = new CustomEvent<Project>('delete', {
+        bubbles: true,
+        composed: true,
+        detail: project,
+      });
+
+      this.dispatchEvent(deleteEvent);
+    }
+  }
+
   private renderTable() {
     return html`<table class="table table-hover table-sm">
       <thead>
@@ -57,7 +80,7 @@ export class ProjectenListComponent extends LitElement {
                 <th>Prijs</th>
                 <th>Voorschot</th>`}
           <th>Activiteiten</th>
-          <th>Acties</th>
+          <th style="width: 230px">Acties</th>
         </tr>
       </thead>
       <tbody>
@@ -145,6 +168,17 @@ export class ProjectenListComponent extends LitElement {
                     >${project.aantalAanmeldingen}</span
                   >
                 </rock-link>
+                <span>
+                  <button
+                    @click=${() => this.deleteProject(project)}
+                    title="${printProject(project)} Verwijderen"
+                    type="button"
+                    ${privilege('write:projecten')}
+                    class="btn btn-danger"
+                  >
+                    <rock-icon icon="trash"></rock-icon>
+                  </button>
+                </span>
               </td>
             </tr>`,
         )}

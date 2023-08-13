@@ -100,11 +100,23 @@ export class ProjectenComponent extends RockElement {
     projectenStore
       .update(project.id, project)
       .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
-      .subscribe(() => {
-        this.loading = false;
-        this.errorMessage = undefined;
-        router.navigate(`/${pluralize(this.type)}/list`);
+      .subscribe({
+        next: () => {
+          this.errorMessage = undefined;
+          router.navigate(`/${pluralize(this.type)}/list`);
+        },
+        complete: () => (this.loading = false),
       });
+  }
+
+  private async deleteProject(event: CustomEvent<Project>) {
+    this.loading = true;
+    projectenStore.delete(event.detail.id).subscribe({
+      next: () => {
+        this.errorMessage = undefined;
+      },
+      complete: () => (this.loading = false),
+    });
   }
 
   override render() {
@@ -119,7 +131,8 @@ export class ProjectenComponent extends RockElement {
                   ${capitalize(this.type)}</rock-link
                 >
                 <rock-projecten-list
-                  .projecten="${this.projecten}"
+                  .projecten=${this.projecten}
+                  @delete=${this.deleteProject}
                 ></rock-projecten-list>
                 <rock-paging .store=${projectenStore}></rock-paging>`
             : html`<rock-loading></rock-loading>`} `;

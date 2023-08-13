@@ -73,6 +73,11 @@ describe(ProjectenController.name, () => {
         )
         .expect(204);
     });
+
+    it('DELETE /projecten/:id should not be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.delete('/projecten/1').expect(403);
+    });
   });
 
   describe('Eerste aanmelding', () => {
@@ -228,6 +233,54 @@ describe(ProjectenController.name, () => {
         aanmelding2Data,
       ];
       expect(aanmeldingen).deep.eq(expectedAanmeldingen);
+    });
+  });
+
+  describe('DELETE /projecten/:id', () => {
+    it('should delete the project and all related aanmeldingen and deelnames', async () => {
+      // Arrange
+      const [project, deelnemer1, deelnemer2] = await Promise.all([
+        harness.createProject(
+          factory.project({
+            activiteiten: [factory.activiteit(), factory.activiteit()],
+          }),
+        ),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      const [aanmelding1, aanmelding2] = await Promise.all([
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer1.id,
+        }),
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer2.id,
+        }),
+      ]);
+      await Promise.all([
+        harness.updateDeelnames(project.id, project.activiteiten[0]!.id, [
+          {
+            activiteitId: project.activiteiten[0]!.id,
+            aanmeldingId: aanmelding1.id,
+            effectieveDeelnamePerunage: 1,
+          },
+        ]),
+        harness.updateDeelnames(project.id, project.activiteiten[1]!.id, [
+          {
+            activiteitId: project.activiteiten[1]!.id,
+            aanmeldingId: aanmelding2.id,
+            effectieveDeelnamePerunage: 0.5,
+          },
+        ]),
+        harness.updateDeelnames(project.id, project.activiteiten[1]!.id, []),
+      ]);
+
+      // Act
+      await harness.delete(`/projecten/${project.id}`).expect(204);
+
+      // Assert
+      await harness.get(`/projecten/${project.id}`).expect(404);
     });
   });
 });

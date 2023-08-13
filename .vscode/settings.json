@@ -135,6 +135,6 @@
     "Zoeken",
     "Zonder"
   ],
-  "cSpell.ignoreWords": ["transform"],
+  "cSpell.ignoreWords": ["transform", "bootstrap"],
   "cSpell.language": "en,nl",
 }

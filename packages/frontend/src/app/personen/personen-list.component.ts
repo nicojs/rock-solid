@@ -25,7 +25,8 @@ export class PersonenComponent extends LitElement {
 
   private async deletePersoon(persoon: Persoon) {
     const confirmed = await ModalComponent.instance.confirm(
-      `Weet je zeker dat je ${fullName(persoon)} wilt verwijderen?`,
+      html`Weet je zeker dat je <strong>${fullName(persoon)}</strong> wilt
+        verwijderen?`,
     );
     if (confirmed) {
       const deleteEvent = new CustomEvent<Persoon>('delete', {

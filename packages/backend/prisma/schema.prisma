@@ -92,7 +92,7 @@ model Project {
   type          ProjectType
   naam          String       @db.VarChar(256)
   activiteiten  Activiteit[]
-  aanmeldingen  Aanmelding[]
+  aanmeldingen  Aanmelding[] 
   begeleiders   Persoon[]
   jaar          Int
 
@@ -110,7 +110,7 @@ model Project {
 model Aanmelding {
   id                         Int               @id @default(autoincrement())
   projectId                  Int
-  project                    Project           @relation(fields: [projectId], references: [id])
+  project                    Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   deelnemerId                Int?
   deelnemer                  Persoon?          @relation(fields: [deelnemerId], references: [id])
   deelnames                  Deelname[]
@@ -129,7 +129,7 @@ model Aanmelding {
 
 model Activiteit {
   id              Int        @id @default(autoincrement())
-  project         Project    @relation(fields: [projectId], references: [id])
+  project         Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId       Int
   van             DateTime
   totEnMet        DateTime
@@ -175,11 +175,11 @@ model OrganisatieContact {
   doelgroepen      Doelgroep[]
   emailadres       String?          @db.VarChar(256)
   telefoonnummer   String?          @db.VarChar(256)
-  adres            Adres?           @relation(fields: [adresId], references: [id])
+  adres            Adres?           @relation(fields: [adresId], references: [id], onDelete: Cascade)
   adresId          Int?
   opmerking        String?          @db.VarChar(1024)
   foldervoorkeuren Foldervoorkeur[]
-  organisatie      Organisatie      @relation(fields: [organisatieId], references: [id])
+  organisatie      Organisatie      @relation(fields: [organisatieId], references: [id], onDelete: Cascade)
 
   @@unique([organisatieId, terAttentieVan])
   @@map("organisatie_contact")

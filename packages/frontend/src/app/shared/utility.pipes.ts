@@ -64,6 +64,13 @@ export function singularize(value: string): string {
   return value;
 }
 
+export function entities(amount: number | undefined, entityName: string) {
+  if (amount === 1) {
+    return `${amount} ${entityName}`;
+  }
+  return `${amount ?? 0} ${pluralize(entityName)}`;
+}
+
 export function pluralize(val: string) {
   switch (val) {
     case 'cursus':
@@ -71,7 +78,9 @@ export function pluralize(val: string) {
     case 'overigPersoon':
       return 'overige personen';
     case 'plaats':
-      return 'plaatsen';
+    case 'activiteit':
+    case 'aanmelding':
+      return `${val}en`;
     default:
       return `${val}s`;
   }
