@@ -93,7 +93,12 @@ describe(OrganisatiesController.name, () => {
   });
   describe('DELETE /organisaties/:id', () => {
     it('should delete the organisatie and organisatie contacten', async () => {
-      const org = await harness.createOrganisatie();
+      const org = await harness.createOrganisatie({
+        contacten: [
+          factory.organisatieContact({ terAttentieVan: 'Hans' }),
+          factory.organisatieContact({ terAttentieVan: 'Piet' }),
+        ],
+      });
       await harness.delete(`/organisaties/${org.id}`).expect(204);
       await harness.get(`/organisaties/${org.id}`).expect(404);
     });

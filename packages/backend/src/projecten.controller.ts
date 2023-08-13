@@ -12,6 +12,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -152,5 +153,12 @@ export class ProjectenController {
   ): Promise<Aanmelding> {
     aanmelding.projectId = projectId;
     return this.aanmeldingMapper.update(aanmeldingId, aanmelding);
+  }
+
+  @Delete(':id')
+  @Privileges('write:projecten')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.projectMapper.delete(id);
   }
 }

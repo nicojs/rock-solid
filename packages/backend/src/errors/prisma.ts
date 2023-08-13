@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
-import { RecordNotFoundError, UniqueKeyFailedError } from './errors.js';
+import { UniqueKeyFailedError } from './errors.js';
+import { NotFoundException } from '@nestjs/common';
 
 export async function handleKnownPrismaErrors<T>(
   onGoingQuery: Promise<T>,
@@ -13,7 +14,7 @@ export async function handleKnownPrismaErrors<T>(
         case PrismaErrorCodes.UniqueConstraintFailed:
           throw new UniqueKeyFailedError(err.meta!['target'] as string[]);
         case PrismaErrorCodes.OneOrMoreRecordsRequiredButNotFound:
-          throw new RecordNotFoundError(
+          throw new NotFoundException(
             'One or more records required but not found',
           );
       }

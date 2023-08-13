@@ -7,6 +7,8 @@ import {
   showAdres,
   showFoldervoorkeurBadges as showFoldervoorkeurBadges,
 } from '../shared';
+import { privilege } from '../auth/privilege.directive';
+import { ModalComponent } from '../shared/modal.component';
 
 @customElement('rock-organisaties-list')
 export class OrganisatiesListComponent extends LitElement {
@@ -14,6 +16,29 @@ export class OrganisatiesListComponent extends LitElement {
 
   @property({ attribute: false })
   private organisaties: Organisatie[] | undefined;
+
+  private deleteOrganisatie(org: Organisatie) {
+    ModalComponent.instance
+      .confirm(
+        html`Weet je zeker dat je organisatie <strong>${org.naam}</strong> ${org
+            .contacten.length > 1
+            ? html`met
+                <strong>${org.contacten.length} contactpersonen</strong> `
+            : ''}wilt
+          verwijderen?`,
+      )
+      .then((confirmed) => {
+        if (confirmed) {
+          const deleteEvent = new CustomEvent<Organisatie>('delete', {
+            bubbles: true,
+            composed: true,
+            detail: org,
+          });
+
+          this.dispatchEvent(deleteEvent);
+        }
+      });
+  }
 
   override render() {
     return html` ${this.organisaties
@@ -34,7 +59,7 @@ export class OrganisatiesListComponent extends LitElement {
             <th>Emailadres</th>
             <th>Adres</th>
             <th>Folder voorkeur</th>
-            <th>Acties</th>
+            <th style="width: 190px">Acties</th>
           </tr>
         </thead>
         <tbody>
@@ -48,6 +73,14 @@ export class OrganisatiesListComponent extends LitElement {
                   <rock-link btn btnSecondary href="../edit/${org.id}"
                     ><rock-icon icon="pencil"></rock-icon
                   ></rock-link>
+                  <button
+                    @click=${() => this.deleteOrganisatie(org)}
+                    type="button"
+                    ${privilege('write:organisaties')}
+                    class="btn btn-danger"
+                  >
+                    <rock-icon icon="trash"></rock-icon>
+                  </button>
                 </td>
               </tr>
               ${org.contacten.slice(1).map(

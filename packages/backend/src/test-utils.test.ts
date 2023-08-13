@@ -32,6 +32,7 @@ import {
   Organisatie,
   UpsertableOrganisatieContact,
   Plaats,
+  UpsertableDeelname,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -234,6 +235,17 @@ class IntegrationTestingHarness {
       aanmelding,
     ).expect(201);
     return response.body;
+  }
+
+  async updateDeelnames(
+    projectId: number,
+    activiteitId: number,
+    deelnames: UpsertableDeelname[],
+  ): Promise<void> {
+    await this.put(
+      `/projecten/${projectId}/activiteiten/${activiteitId}/deelnames`,
+      deelnames,
+    ).expect(204);
   }
 
   async createProject(project: UpsertableProject): Promise<Project> {

@@ -170,6 +170,10 @@ export class ProjectMapper {
     );
     return toProject(result);
   }
+
+  async delete(id: number) {
+    await handleKnownPrismaErrors(this.db.project.delete({ where: { id } }));
+  }
 }
 
 function toDBActiviteit(

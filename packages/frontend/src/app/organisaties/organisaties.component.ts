@@ -103,6 +103,9 @@ export class OrganisatiesComponent extends RockElement {
         },
       });
   }
+  private async deleteOrganisatie(ev: CustomEvent<Organisatie>) {
+    organisatieStore.delete(ev.detail.id).subscribe();
+  }
 
   override render() {
     switch (this.path[0]) {
@@ -124,6 +127,7 @@ export class OrganisatiesComponent extends RockElement {
                 <rock-organisaties-list
                   class="row"
                   .organisaties=${this.organisaties}
+                  @delete=${this.deleteOrganisatie}
                 ></rock-organisaties-list>
                 <rock-paging .store=${organisatieStore}></rock-paging>
               `

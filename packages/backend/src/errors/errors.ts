@@ -1,7 +1,4 @@
-import {
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { UnprocessableEntityException } from '@nestjs/common';
 import { UnprocessableEntityBody } from '@rock-solid/shared';
 
 export class UniqueKeyFailedError extends UnprocessableEntityException {
@@ -13,5 +10,3 @@ export class UniqueKeyFailedError extends UnprocessableEntityException {
     super(errorBody);
   }
 }
-
-export class RecordNotFoundError extends NotFoundException {}

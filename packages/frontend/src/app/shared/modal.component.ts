@@ -1,4 +1,4 @@
-import { html, nothing } from 'lit';
+import { TemplateResult, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { RockElement } from '../rock-element';
 import { bootstrap } from '../../styles';
@@ -32,7 +32,7 @@ export class ModalComponent extends RockElement {
   };
 
   public confirm(
-    question: string,
+    question: string |  TemplateResult,
     title = 'Weet je het zeker?',
   ): Promise<boolean> {
     return new Promise((res) => {
@@ -51,7 +51,7 @@ export class ModalComponent extends RockElement {
   private shown = false;
 
   @state()
-  private modalBody = '';
+  private modalBody: string | TemplateResult = '';
 
   @state()
   private modalTitle = '';
