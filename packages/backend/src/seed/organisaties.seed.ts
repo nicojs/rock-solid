@@ -71,39 +71,6 @@ export async function seedOrganisaties(
     return org;
   });
 
-  orgs.forEach((org) => {
-    const contactenByTav = org.contacten.create.reduce(
-      ...groupBy<db.Prisma.OrganisatieContactCreateWithoutOrganisatieInput>(
-        (contact) => contact.terAttentieVan.toLocaleLowerCase(),
-      ),
-    );
-
-    org.contacten.create = [...contactenByTav.values()].map((contacten) => {
-      if (contacten.length === 1) {
-        return contacten[0]!;
-      }
-      importErrors.addWarning('duplicate_contact', {
-        // @ts-expect-error Don't have origin here
-        item: {},
-        detail: `Merging duplicate contacts ${contacten
-          .map(({ terAttentieVan }) => `"${terAttentieVan}"`)
-          .join(', ')}`,
-      });
-      const contact = contacten[0]!;
-
-      // Pick the useful information
-      contact.emailadres = pickNotEmpty(contacten, 'emailadres');
-      contact.adres = pickNotEmpty(contacten, 'adres');
-      contact.telefoonnummer = pickNotEmpty(contacten, 'telefoonnummer');
-      contact.opmerking = contacten
-        .map(({ opmerking }) => opmerking)
-        .filter(Boolean)
-        .join(', ');
-
-      return contact;
-    });
-  });
-
   for (const org of orgs) {
     await client.organisatie.create({ data: org });
   }

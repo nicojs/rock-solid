@@ -182,7 +182,6 @@ model OrganisatieContact {
   foldervoorkeuren Foldervoorkeur[]
   organisatie      Organisatie      @relation(fields: [organisatieId], references: [id], onDelete: Cascade)
 
-  @@unique([organisatieId, terAttentieVan])
   @@map("organisatie_contact")
 }
 

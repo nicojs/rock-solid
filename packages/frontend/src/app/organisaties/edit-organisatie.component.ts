@@ -41,7 +41,7 @@ export class EditOrganisatieComponent extends LitElement {
       <rock-reactive-form
         @rock-submit="${this.save}"
         privilege="${'write:organisaties' satisfies Privilege}"
-        .controls="${createControls(this.organisatie)}"
+        .controls=${organisatieControls}
         .entity="${this.organisatie}"
       ></rock-reactive-form>`;
   }
@@ -56,69 +56,50 @@ export class EditOrganisatieComponent extends LitElement {
   }
 }
 
-function createControls(
-  organisatie: UpsertableOrganisatie,
-): FormControl<Organisatie>[] {
-  return [
-    {
-      name: 'naam',
-      type: InputType.text,
-      validators: { required: true },
-    },
-    {
-      name: 'website',
-      type: InputType.url,
-      placeholder: 'https://dekei.be',
-    },
-    checkboxesControl('soorten', true, groupedOrganisatieSoorten),
-    formArray(
-      'contacten',
-      [
-        {
-          name: 'terAttentieVan',
-          type: InputType.text,
-          label: 'Ter attentie van',
-          validators: {
-            custom: (val, contact) => {
-              if (
-                organisatie.contacten.some(
-                  (c) => c.terAttentieVan === val && c !== contact,
-                )
-              ) {
-                return `Contact ${
-                  val.length ? `"${val}"` : 'met lege TAV'
-                } bestaat al`;
-              } else {
-                return '';
-              }
-            },
-          },
-        },
-        {
-          name: 'afdeling',
-          type: InputType.text,
-        },
-        selectControl('doelgroepen', doelgroepen, {
-          validators: { required: true },
-          multiple: true,
-        }),
-        formArray('foldervoorkeuren', foldervoorkeurControls),
-        {
-          name: 'emailadres',
-          type: InputType.email,
-          validators: { pattern: patterns.email },
-        },
-        {
-          name: 'telefoonnummer',
-          type: InputType.tel,
-          validators: { pattern: patterns.tel },
-        },
-        formGroup('adres', adresControls, {
-          required: false,
-          requiredLabel: 'Met adres',
-        }),
-      ],
-      () => ({ terAttentieVan: '' }),
-    ),
-  ];
-}
+const organisatieControls: FormControl<Organisatie>[] = [
+  {
+    name: 'naam',
+    type: InputType.text,
+    validators: { required: true },
+  },
+  {
+    name: 'website',
+    type: InputType.url,
+    placeholder: 'https://dekei.be',
+  },
+  checkboxesControl('soorten', true, groupedOrganisatieSoorten),
+  formArray(
+    'contacten',
+    [
+      {
+        name: 'terAttentieVan',
+        type: InputType.text,
+        label: 'Ter attentie van',
+      },
+      {
+        name: 'afdeling',
+        type: InputType.text,
+      },
+      selectControl('doelgroepen', doelgroepen, {
+        validators: { required: true },
+        multiple: true,
+      }),
+      formArray('foldervoorkeuren', foldervoorkeurControls),
+      {
+        name: 'emailadres',
+        type: InputType.email,
+        validators: { pattern: patterns.email },
+      },
+      {
+        name: 'telefoonnummer',
+        type: InputType.tel,
+        validators: { pattern: patterns.tel },
+      },
+      formGroup('adres', adresControls, {
+        required: false,
+        requiredLabel: 'Met adres',
+      }),
+    ],
+    () => ({ terAttentieVan: '' }),
+  ),
+];
