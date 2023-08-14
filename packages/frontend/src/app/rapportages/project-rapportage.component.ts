@@ -27,7 +27,13 @@ import {
   NumberInputControl,
   selectControl,
 } from '../forms';
-import { show, showOrganisatieonderdeel, showProvincie } from '../shared';
+import {
+  downloadCsv,
+  show,
+  showOrganisatieonderdeel,
+  showProvincie,
+  toCsv,
+} from '../shared';
 
 @customElement('rock-project-rapportage')
 export class ProjectRapportageComponent extends RockElement {
@@ -96,6 +102,47 @@ export class ProjectRapportageComponent extends RockElement {
     }
   }
 
+  private downloadReport = () => {
+    if (this.report && this.group1) {
+      let csv;
+      if (this.group2) {
+        csv = toCsv(
+          this.report.flatMap((group) =>
+            group.rows!.map((row) => ({
+              ...group,
+              rowKey: row.key,
+              rowCount: row.count,
+            })),
+          ),
+          ['key', 'total', 'rowKey', 'rowCount'],
+          {
+            key: groupingFieldOptions[this.group1],
+            total: 'Totaal',
+            rowKey: groupingFieldOptions[this.group2],
+            rowCount: 'Aantal',
+          },
+          {},
+        );
+      } else {
+        csv = toCsv(
+          this.report,
+          ['key', 'total'],
+          {
+            key: groupingFieldOptions[this.group1],
+            total: 'Totaal',
+          },
+          {},
+        );
+      }
+      downloadCsv(
+        csv,
+        `${this.reportType}-per-${groupingFieldOptions[this.group1]}${
+          this.group2 ? `-en-${groupingFieldOptions[this.group2]}` : ''
+        }`,
+      );
+    }
+  };
+
   override render() {
     return html`<div class="row">
       <fieldset class="row mt-3 mb-3 ">
@@ -151,36 +198,42 @@ export class ProjectRapportageComponent extends RockElement {
           ${this.isLoading
             ? html`<rock-loading></rock-loading>`
             : this.report && this.group1
-            ? html` <table class="table table-hover table-sm">
-                <thead>
-                  <tr>
-                    <th>${groupingFieldOptions[this.group1]}</th>
-                    <th>Totaal</th>
-                    ${this.group2
-                      ? html`<th>${groupingFieldOptions[this.group2]}</th>
-                          <th>Aantal</th>`
-                      : ''}
-                  </tr>
-                </thead>
-                <tbody>
-                  ${this.report.map(
-                    ({ key, rows, total }) =>
-                      html`<tr>
-                          <th rowspan="${rows?.length}">
-                            ${showGroupKey(this.group1!, key)}
-                          </th>
-                          <td rowspan="${rows?.length}">${total}</td>
-                          ${renderRowData(this.group2!, rows?.[0])}
-                        </tr>
-                        ${rows?.slice(1).map(
-                          (row) =>
-                            html`<tr>
-                              ${renderRowData(this.group2!, row)}
-                            </tr>`,
-                        )}`,
-                  )}
-                </tbody>
-              </table>`
+            ? html` <button
+                  @click=${this.downloadReport}
+                  class="btn btn-outline-secondary"
+                >
+                  <rock-icon icon="download"></rock-icon> Export
+                </button>
+                <table class="table table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th>${groupingFieldOptions[this.group1]}</th>
+                      <th>Totaal</th>
+                      ${this.group2
+                        ? html`<th>${groupingFieldOptions[this.group2]}</th>
+                            <th>Aantal</th>`
+                        : ''}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${this.report.map(
+                      ({ key, rows, total }) =>
+                        html`<tr>
+                            <th rowspan="${rows?.length}">
+                              ${showGroupKey(this.group1!, key)}
+                            </th>
+                            <td rowspan="${rows?.length}">${total}</td>
+                            ${renderRowData(this.group2!, rows?.[0])}
+                          </tr>
+                          ${rows?.slice(1).map(
+                            (row) =>
+                              html`<tr>
+                                ${renderRowData(this.group2!, row)}
+                              </tr>`,
+                          )}`,
+                    )}
+                  </tbody>
+                </table>`
             : html`Kies een groep`}
         </div>
       </div>
