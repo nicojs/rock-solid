@@ -145,6 +145,12 @@ export class AanmeldingMapper {
     return toAanmelding(dbAanmelding);
   }
 
+  async delete(projectId: number, aanmeldingId: number): Promise<void> {
+    await handleKnownPrismaErrors(
+      this.db.aanmelding.delete({ where: { id: aanmeldingId, projectId } }),
+    );
+  }
+
   public updateAll(aanmeldingen: UpdatableAanmelding[]): Promise<Aanmelding[]> {
     return Promise.all(
       aanmeldingen.map((aanmelding) => this.update(aanmelding.id, aanmelding)),

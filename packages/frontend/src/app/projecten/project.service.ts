@@ -55,6 +55,16 @@ export class ProjectService extends RestService<'projecten'> {
     );
   }
 
+  deleteAanmelding(
+    projectId: number | string,
+    aanmelding: Aanmelding,
+  ): Promise<void> {
+    return this.restClient.delete(
+      `projecten/${projectId}/aanmeldingen`,
+      aanmelding.id,
+    );
+  }
+
   patchAanmelding(
     projectId: number | string,
     aanmeldingId: number,
