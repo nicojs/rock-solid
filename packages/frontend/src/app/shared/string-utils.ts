@@ -61,6 +61,7 @@ const basePersoonColumns = Object.freeze([
   'emailadres',
   'geboortedatum',
   'geslacht',
+  'geslachtOpmerking',
   'gsmNummer',
   'telefoonnummer',
   'rekeningnummer',

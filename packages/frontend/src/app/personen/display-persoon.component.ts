@@ -73,7 +73,12 @@ export class DisplayPersoonComponent extends RockElement {
               ? ` (${age(this.persoon.geboortedatum)} jaar)`
               : nothing}
           </dd>
-          ${this.renderDefinition('geslacht')}
+          <dt>${persoonLabels.geslacht}</dt>
+          <dd>
+            ${show(this.persoon.geslacht)}${this.persoon.geslachtOpmerking
+              ? ` (${this.persoon.geslachtOpmerking})`
+              : nothing}
+          </dd>
           ${this.persoon.type === 'deelnemer'
             ? this.renderDeelnemerProperties(this.persoon)
             : this.renderOverigPersoonProperties(this.persoon)}

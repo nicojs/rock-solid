@@ -12,7 +12,11 @@ import { deelnemerVerwijderd, printProject } from './project.pipes';
 import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
-import { fullName, fullNameWithAge } from '../personen/full-name.pipe';
+import {
+  fullName,
+  fullNameWithAge,
+  geslachtIcons,
+} from '../personen/full-name.pipe';
 import {
   TypeAheadHint,
   pluralize,
@@ -271,7 +275,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/rekeninguittreksels"
             ><rock-icon icon="cashCoin"></rock-icon> Rekeninguittreksels
-            inullen</rock-link
+            invullen</rock-link
           >
           <table class="table table-hover">
             <thead>
@@ -320,10 +324,20 @@ export class ProjectAanmeldingenComponent extends LitElement {
                             icon="cameraVideoOff"
                           ></rock-icon>`}
                       ${aanmelding.deelnemer
-                        ? fullNameWithAge(
-                            aanmelding.deelnemer,
-                            this.project.activiteiten[0]?.van,
-                          )
+                        ? html`${fullNameWithAge(
+                              aanmelding.deelnemer,
+                              this.project.activiteiten[0]?.van,
+                            )}
+                            <rock-icon
+                              title="Geslacht: ${aanmelding.deelnemer
+                                .geslacht}${aanmelding.deelnemer
+                                .geslachtOpmerking
+                                ? ` (${aanmelding.deelnemer.geslachtOpmerking})`
+                                : nothing}"
+                              icon="${geslachtIcons[
+                                aanmelding.deelnemer.geslacht
+                              ]}"
+                            ></rock-icon>`
                         : deelnemerVerwijderd}${[
                         aanmelding.deelnemer?.eersteCursus,
                         aanmelding.deelnemer?.eersteVakantie,

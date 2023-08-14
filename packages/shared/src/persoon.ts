@@ -15,6 +15,7 @@ export interface BasePersoon {
   geboorteplaats?: string;
   voedingswens: Voedingswens;
   geslacht: Geslacht;
+  geslachtOpmerking?: string;
   rekeningnummer?: string;
   rijksregisternummer?: string;
   telefoonnummer?: string;
@@ -103,6 +104,7 @@ export const persoonLabels: Record<keyof Persoon, string> = {
   geboortedatum: 'Geboortedatum',
   geboorteplaats: 'Geboorteplaats',
   geslacht: 'Geslacht',
+  geslachtOpmerking: 'Geslacht opmerking',
   gsmNummer: 'GSM nummer',
   rekeningnummer: 'Rekeningnummer',
   rijksregisternummer: 'Rijksregisternummer',
@@ -182,11 +184,12 @@ export const woonsituaties: Options<Woonsituatie> = Object.freeze({
     'zelfstandig met professionele begeleiding',
 });
 
-export type Geslacht = 'onbekend' | 'man' | 'vrouw';
+export type Geslacht = 'onbekend' | 'man' | 'vrouw' | 'x';
 export const geslachten: Options<Geslacht> = Object.freeze({
   onbekend: 'onbekend',
   man: 'man',
   vrouw: 'vrouw',
+  x: 'X',
 });
 
 export type OverigPersoonSelectie =

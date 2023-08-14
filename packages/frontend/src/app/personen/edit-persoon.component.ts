@@ -10,6 +10,7 @@ import {
   overigPersoonSelecties,
   voedingswensen,
   Privilege,
+  persoonLabels,
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -65,6 +66,11 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
   { name: 'voornaam', type: InputType.text },
   { name: 'emailadres', type: InputType.email },
   radioControl('geslacht', geslachten),
+  {
+    name: 'geslachtOpmerking',
+    type: InputType.text,
+    label: persoonLabels.geslachtOpmerking,
+  },
   {
     name: 'geboortedatum',
     type: InputType.date,

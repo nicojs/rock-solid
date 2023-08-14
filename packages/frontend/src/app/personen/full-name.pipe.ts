@@ -1,4 +1,4 @@
-import { UpsertablePersoon } from '@rock-solid/shared';
+import { Geslacht, UpsertablePersoon } from '@rock-solid/shared';
 
 export function fullName(
   persoon: Pick<UpsertablePersoon, 'achternaam' | 'voornaam'>,
@@ -16,6 +16,13 @@ export function fullNameWithAge(
     persoon.geboortedatum ? ` (${age(persoon.geboortedatum, now)})` : ''
   }`;
 }
+
+export const geslachtIcons: Record<Geslacht, string> = {
+  man: 'genderMale',
+  vrouw: 'genderFemale',
+  x: 'genderTrans',
+  onbekend: 'genderAmbiguous',
+};
 
 export function age(geboortedatum: Date, now = new Date()) {
   const then = geboortedatum;
