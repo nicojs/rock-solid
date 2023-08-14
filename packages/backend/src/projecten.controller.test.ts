@@ -8,7 +8,7 @@ import { ProjectenController } from './projecten.controller.js';
 import { harness, factory } from './test-utils.test.js';
 import { expect } from 'chai';
 
-describe.only(ProjectenController.name, () => {
+describe(ProjectenController.name, () => {
   beforeEach(() => {
     harness.login();
   });
