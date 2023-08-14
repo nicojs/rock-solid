@@ -1,5 +1,4 @@
 import { Geslacht, UpsertablePersoon } from '@rock-solid/shared';
-import { html } from 'lit';
 
 export function fullName(
   persoon: Pick<UpsertablePersoon, 'achternaam' | 'voornaam'>,
