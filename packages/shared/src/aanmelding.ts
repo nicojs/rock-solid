@@ -26,6 +26,10 @@ export const aanmeldingsstatussen: Options<Aanmeldingsstatus> = {
   OpWachtlijst: 'Op wachtlijst',
 };
 
+export function isAanmeldingsstatus(maybe: string): maybe is Aanmeldingsstatus {
+  return maybe in aanmeldingsstatussen;
+}
+
 export type InsertableAanmelding = Upsertable<
   Aanmelding,
   'deelnemerId' | 'projectId'

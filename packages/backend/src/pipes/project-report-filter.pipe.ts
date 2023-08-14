@@ -1,5 +1,6 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
 import {
+  isAanmeldingsstatus,
   isOrganisatieonderdeel,
   isOvernachtingDescription,
   isProjectType,
@@ -29,6 +30,10 @@ export class ProjectReportFilterPipe
     const overnachting = value[key('overnachting')];
     if (overnachting && isOvernachtingDescription(overnachting)) {
       filter.overnachting = overnachting;
+    }
+    const aanmeldingsstatus = value[key('aanmeldingsstatus')];
+    if (aanmeldingsstatus && isAanmeldingsstatus(aanmeldingsstatus)) {
+      filter.aanmeldingsstatus = aanmeldingsstatus;
     }
     return filter;
   }
