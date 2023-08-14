@@ -111,6 +111,38 @@ describe(ReportsController.name, () => {
         expect(report).deep.eq(expectedReport);
       });
     });
+
+    describe('aanmeldingsstatus', () => {
+      beforeEach(async () => {
+        await arrangeCursussenTestSet();
+      });
+
+      it('should be able to filter on aanmeldingsstatus', async () => {
+        const [aangemeldReport, bevestigdReport] = await Promise.all([
+          harness.getReport(
+            'reports/projecten/aanmeldingen',
+            'jaar',
+            undefined,
+            { aanmeldingsstatus: 'Aangemeld' },
+          ),
+          harness.getReport(
+            'reports/projecten/aanmeldingen',
+            'jaar',
+            undefined,
+            { aanmeldingsstatus: 'Bevestigd' },
+          ),
+        ]);
+        const expectedAangemeldReport: ProjectReport = [
+          { key: '2021', total: 1 },
+          { key: '2020', total: 1 },
+        ];
+        const expectedBevestigdReport: ProjectReport = [
+          { key: '2021', total: 1 },
+        ];
+        expect(aangemeldReport).deep.eq(expectedAangemeldReport);
+        expect(bevestigdReport).deep.eq(expectedBevestigdReport);
+      });
+    });
   });
 
   async function arrangeCursussenTestSet() {
@@ -134,18 +166,24 @@ describe(ReportsController.name, () => {
         }),
       ),
     ]);
-    await harness.createAanmelding({
+
+    const aanmelding1 = await harness.createAanmelding({
       deelnemerId: deelnemerA.id,
       projectId: projectA.id,
     });
-    await harness.createAanmelding({
+    const aanmelding2 = await harness.createAanmelding({
       deelnemerId: deelnemerA.id,
       projectId: projectB.id,
     });
-    await harness.createAanmelding({
+    const aanmelding3 = await harness.createAanmelding({
       deelnemerId: deelnemerB.id,
       projectId: projectA.id,
     });
+    await harness.partialUpdateAanmeldingen(projectA.id, [
+      { id: aanmelding1.id, status: 'Aangemeld' },
+      { id: aanmelding2.id, status: 'Aangemeld' },
+      { id: aanmelding3.id, status: 'Bevestigd' },
+    ]);
   }
   async function arrangeVakantiesTestSet() {
     const [deelnemerC, deelnemerD] = await Promise.all([

@@ -117,6 +117,9 @@ function filterWhere(
   if (filter.jaar) {
     whereClauses.push(`project.jaar = ${filter.jaar}`);
   }
+  if (filter.aanmeldingsstatus) {
+    whereClauses.push(`aanmelding.status = '${filter.aanmeldingsstatus}'`);
+  }
   if (filter.overnachting !== undefined) {
     whereClauses.push(
       `project.id IN (SELECT "projectId" FROM activiteit WHERE activiteit."metOvernachting" = ${

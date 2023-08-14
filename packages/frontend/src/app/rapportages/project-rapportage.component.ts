@@ -15,6 +15,9 @@ import {
   organisatieonderdelen,
   OvernachtingDescription,
   overnachtingDescriptions,
+  Aanmeldingsstatus,
+  aanmeldingLabels,
+  aanmeldingsstatussen,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, PropertyValues } from 'lit';
@@ -58,6 +61,9 @@ export class ProjectRapportageComponent extends RockElement {
   public enkelJaar?: number;
 
   @state()
+  public aanmeldingsstatus?: Aanmeldingsstatus;
+
+  @state()
   public isLoading = false;
 
   public override updated(props: PropertyValues<ProjectRapportageComponent>) {
@@ -69,6 +75,7 @@ export class ProjectRapportageComponent extends RockElement {
         props.has('enkelEersteAanmeldingen') ||
         props.has('enkelJaar') ||
         props.has('enkelOrganisatieonderdeel') ||
+        props.has('aanmeldingsstatus') ||
         props.has('overnachting')) &&
       this.group1
     ) {
@@ -80,6 +87,7 @@ export class ProjectRapportageComponent extends RockElement {
           type: this.projectType,
           jaar: this.enkelJaar,
           overnachting: this.overnachting,
+          aanmeldingsstatus: this.aanmeldingsstatus,
         })
         .then((report) => (this.report = report))
         .finally(() => {
@@ -129,6 +137,11 @@ export class ProjectRapportageComponent extends RockElement {
         <rock-reactive-form-input-control
           class="col-12 col-md-4 col-sm-6"
           .control=${overnachtingControl}
+          .entity=${this}
+        ></rock-reactive-form-input-control>
+        <rock-reactive-form-input-control
+          class="col-12 col-md-4 col-sm-6"
+          .control=${aanmeldingsstatusControl}
           .entity=${this}
         ></rock-reactive-form-input-control>
       </fieldset>
@@ -208,6 +221,14 @@ const overnachtingControl = selectControl<
 >('overnachting', overnachtingDescriptions, {
   placeholder: 'Met en zonder overnachting',
   label: 'Overnachting',
+});
+
+const aanmeldingsstatusControl = selectControl<
+  ProjectRapportageComponent,
+  'aanmeldingsstatus'
+>('aanmeldingsstatus', aanmeldingsstatussen, {
+  placeholder: 'Alle aanmeldingsstatussen',
+  label: aanmeldingLabels.status,
 });
 
 const organisatieonderdeelFilterControl = selectControl<
