@@ -123,6 +123,16 @@ export class ProjectenController {
     return this.aanmeldingMapper.create(aanmelding);
   }
 
+  @Patch(':id/aanmeldingen')
+  @Privileges('write:aanmeldingen')
+  async partialUpdateAanmeldingen(
+    @Param('id', ParseIntPipe) projectId: number,
+    @Body() aanmeldingen: UpdatableAanmelding[],
+  ): Promise<Aanmelding[]> {
+    aanmeldingen.forEach((aanmelding) => (aanmelding.projectId = projectId));
+    return this.aanmeldingMapper.updateAll(aanmeldingen);
+  }
+
   @Put(':id/aanmeldingen/:aanmeldingId')
   @Privileges('write:aanmeldingen')
   async updateAanmelding(
@@ -134,16 +144,6 @@ export class ProjectenController {
     return this.aanmeldingMapper.update(aanmeldingId, aanmelding);
   }
 
-  @Patch(':id/aanmeldingen')
-  @Privileges('write:aanmeldingen')
-  async partialUpdateAanmeldingen(
-    @Param('id', ParseIntPipe) projectId: number,
-    @Body() aanmeldingen: UpdatableAanmelding[],
-  ): Promise<Aanmelding[]> {
-    aanmeldingen.forEach((aanmelding) => (aanmelding.projectId = projectId));
-    return this.aanmeldingMapper.updateAll(aanmeldingen);
-  }
-
   @Patch(':id/aanmeldingen/:aanmeldingId')
   @Privileges('write:aanmeldingen')
   async partialUpdateAanmelding(
@@ -153,6 +153,16 @@ export class ProjectenController {
   ): Promise<Aanmelding> {
     aanmelding.projectId = projectId;
     return this.aanmeldingMapper.update(aanmeldingId, aanmelding);
+  }
+
+  @Delete(':id/aanmeldingen/:aanmeldingId')
+  @Privileges('write:aanmeldingen')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteAanmelding(
+    @Param('id', ParseIntPipe) projectId: number,
+    @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
+  ): Promise<void> {
+    await this.aanmeldingMapper.delete(projectId, aanmeldingId);
   }
 
   @Delete(':id')

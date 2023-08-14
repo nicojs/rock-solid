@@ -46,6 +46,10 @@ describe(ProjectenController.name, () => {
       harness.login({ role: 'projectverantwoordelijke' });
       await harness.patch('/projecten/1/aanmeldingen').expect(403);
     });
+    it('DELETE /projecten/:id/aanmeldingen/:id should not be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.delete('/projecten/1/aanmeldingen/1').expect(403);
+    });
 
     it('PUT /projecten/:id/deelnames should be allowed for projectverantwoordelijke', async () => {
       // Arrange
@@ -281,6 +285,49 @@ describe(ProjectenController.name, () => {
 
       // Assert
       await harness.get(`/projecten/${project.id}`).expect(404);
+    });
+  });
+
+  describe('DELETE /projecten/:id/aanmeldingen/:id', () => {
+    it('should delete the aanmelding and deelnames', async () => {
+      // Arrange
+      const [project, deelnemer] = await Promise.all([
+        harness.createProject(
+          factory.project({
+            activiteiten: [factory.activiteit(), factory.activiteit()],
+          }),
+        ),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+      await Promise.all([
+        harness.updateDeelnames(project.id, project.activiteiten[0]!.id, [
+          {
+            activiteitId: project.activiteiten[0]!.id,
+            aanmeldingId: aanmelding.id,
+            effectieveDeelnamePerunage: 1,
+          },
+        ]),
+        harness.updateDeelnames(project.id, project.activiteiten[1]!.id, [
+          {
+            activiteitId: project.activiteiten[1]!.id,
+            aanmeldingId: aanmelding.id,
+            effectieveDeelnamePerunage: 0.5,
+          },
+        ]),
+      ]);
+
+      // Act
+      await harness
+        .delete(`/projecten/${project.id}/aanmeldingen/${aanmelding.id}`)
+        .expect(204);
+
+      // Assert
+      const actualProject = await harness.getProject(project.id);
+      expect(actualProject.aantalAanmeldingen).eq(0);
     });
   });
 });

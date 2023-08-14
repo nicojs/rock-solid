@@ -227,6 +227,11 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
+  public async getProject(id: number): Promise<Project> {
+    const response = await this.get(`/projecten/${id}`).expect(200);
+    return response.body;
+  }
+
   async createAanmelding(
     aanmelding: InsertableAanmelding,
   ): Promise<Aanmelding> {

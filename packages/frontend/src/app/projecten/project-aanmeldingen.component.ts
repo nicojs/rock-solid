@@ -26,6 +26,7 @@ import {
 } from '../shared';
 import { router } from '../router';
 import { privilege } from '../auth/privilege.directive';
+import { ModalComponent } from '../shared/modal.component';
 
 @customElement('rock-project-aanmeldingen')
 export class ProjectAanmeldingenComponent extends LitElement {
@@ -115,6 +116,28 @@ export class ProjectAanmeldingenComponent extends LitElement {
       .then(() => {
         this.navigateToAanmeldingenList();
       });
+  };
+
+  private deleteAanmelding = async (aanmelding: Aanmelding) => {
+    const confirm = await ModalComponent.instance.confirm(
+      html`Weet je zeker dat je de
+        aanmelding${aanmelding.deelnemer
+          ? html` van <strong>${fullName(aanmelding.deelnemer)}</strong>`
+          : nothing}
+        aan <strong>${printProject(this.project)}</strong> wilt verwijderen?`,
+    );
+    if (confirm) {
+      await projectService
+        .deleteAanmelding(this.project.id, aanmelding)
+        .then(() => {
+          this.aanmeldingen$.next(
+            this.aanmeldingen!.filter((a) => a.id !== aanmelding.id),
+          );
+        });
+      this.aanmeldingen$.next(
+        this.aanmeldingen!.filter((a) => a.id !== aanmelding.id),
+      );
+    }
   };
 
   private navigateToAanmeldingenList() {
@@ -213,9 +236,11 @@ export class ProjectAanmeldingenComponent extends LitElement {
                         this.project.activiteiten[0]?.van,
                       )
                     : deelnemerVerwijderd}
+                  ${this.renderDeleteButton(aanmelding, /* floatEnd */ true)}
+
                   <button
                     title="Naar aangemeld"
-                    class="btn btn-outline-primary float-end"
+                    class="btn btn-outline-primary float-end me-2"
                     ${privilege('write:aanmeldingen')}
                     type="button"
                     @click=${() => this.patchStatus(aanmelding, 'Aangemeld')}
@@ -251,7 +276,9 @@ export class ProjectAanmeldingenComponent extends LitElement {
           <table class="table table-hover">
             <thead>
               <tr>
-                <th>Naam</th>
+                <th>
+                  Naam (leeftijd op de startdatum van de ${this.project.type})
+                </th>
                 <th>Ingeschreven op</th>
                 <th>Geboortedatum</th>
                 <th>Rekeninguittreksel</th>
@@ -361,12 +388,26 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       >
                         <rock-icon icon="personSlash"></rock-icon>
                       </button>
+                      ${this.renderDeleteButton(aanmelding)}
                     </td>
                   </tr>`,
               )}
             </tbody>
           </table>`
       : nothing}`;
+  }
+
+  private renderDeleteButton(aanmelding: Aanmelding, floatEnd = false) {
+    return html`<span
+      ><button
+        title="Verwijderen"
+        class="btn btn-danger ${floatEnd ? 'float-end' : ''}"
+        type="button"
+        ${privilege('write:aanmeldingen')}
+        @click=${() => this.deleteAanmelding(aanmelding)}
+      >
+        <rock-icon icon="trash"></rock-icon></button
+    ></span>`;
   }
 
   private renderCreateAanmeldingForm() {
