@@ -143,7 +143,7 @@ describe(ReportsController.name, () => {
       });
     });
   });
-  describe.only('activiteiten report', () => {
+  describe('activiteiten report', () => {
     it('should be allowed for projectverantwoordelijke', async () => {
       harness.login({ role: 'projectverantwoordelijke' });
       await harness.getReport('reports/activiteiten/vormingsuren', 'jaar');
