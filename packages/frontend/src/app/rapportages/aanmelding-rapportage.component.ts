@@ -2,16 +2,16 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { RockElement } from '../rock-element';
 import { bootstrap } from '../../styles';
 import {
-  GroupField,
-  groupingFieldOptions,
-  ProjectReport,
+  AanmeldingGroupField,
+  aanmeldingGroupingFieldOptions,
+  Report,
   Organisatieonderdeel,
   ProjectType,
   projectTypes,
   ReportRow,
   Werksituatie,
   werksituaties,
-  ProjectenReportType,
+  AanmeldingReportType,
   organisatieonderdelen,
   OvernachtingDescription,
   overnachtingDescriptions,
@@ -38,24 +38,24 @@ import {
 const GROUP1_TITLE = 'Totaal';
 const GROUP2_TITLE = 'Aantal';
 
-@customElement('rock-project-rapportage')
-export class ProjectRapportageComponent extends RockElement {
+@customElement('rock-aanmelding-rapportage')
+export class AanmeldingRapportageComponent extends RockElement {
   static override styles = [bootstrap];
 
   @property()
-  public reportType!: ProjectenReportType;
+  public reportType!: AanmeldingReportType;
 
   @state()
-  public report?: ProjectReport;
+  public report?: Report;
 
   @state()
   public projectType?: ProjectType;
 
   @state()
-  public group1?: GroupField;
+  public group1?: AanmeldingGroupField;
 
   @state()
-  public group2?: GroupField;
+  public group2?: AanmeldingGroupField;
 
   @state()
   public enkelEersteAanmeldingen?: boolean;
@@ -75,7 +75,9 @@ export class ProjectRapportageComponent extends RockElement {
   @state()
   public isLoading = false;
 
-  public override updated(props: PropertyValues<ProjectRapportageComponent>) {
+  public override updated(
+    props: PropertyValues<AanmeldingRapportageComponent>,
+  ) {
     if (
       (props.has('reportType') ||
         props.has('projectType') ||
@@ -90,14 +92,19 @@ export class ProjectRapportageComponent extends RockElement {
     ) {
       this.isLoading = true;
       reportsClient
-        .get(`reports/projecten/${this.reportType}`, this.group1, this.group2, {
-          enkelEersteAanmeldingen: this.enkelEersteAanmeldingen,
-          organisatieonderdeel: this.enkelOrganisatieonderdeel,
-          type: this.projectType,
-          jaar: this.enkelJaar,
-          overnachting: this.overnachting,
-          aanmeldingsstatus: this.aanmeldingsstatus,
-        })
+        .get(
+          `reports/aanmeldingen/${this.reportType}`,
+          this.group1,
+          this.group2,
+          {
+            enkelEersteAanmeldingen: this.enkelEersteAanmeldingen,
+            organisatieonderdeel: this.enkelOrganisatieonderdeel,
+            type: this.projectType,
+            jaar: this.enkelJaar,
+            overnachting: this.overnachting,
+            aanmeldingsstatus: this.aanmeldingsstatus,
+          },
+        )
         .then((report) => (this.report = report))
         .finally(() => {
           this.isLoading = false;
@@ -119,9 +126,9 @@ export class ProjectRapportageComponent extends RockElement {
           ),
           ['key', 'total', 'rowKey', 'rowCount'],
           {
-            key: groupingFieldOptions[this.group1],
+            key: aanmeldingGroupingFieldOptions[this.group1],
             total: GROUP1_TITLE,
-            rowKey: groupingFieldOptions[this.group2],
+            rowKey: aanmeldingGroupingFieldOptions[this.group2],
             rowCount: GROUP2_TITLE,
           },
           {},
@@ -131,7 +138,7 @@ export class ProjectRapportageComponent extends RockElement {
           this.report,
           ['key', 'total'],
           {
-            key: groupingFieldOptions[this.group1],
+            key: aanmeldingGroupingFieldOptions[this.group1],
             total: GROUP1_TITLE,
           },
           {},
@@ -210,10 +217,12 @@ export class ProjectRapportageComponent extends RockElement {
                 <table class="table table-hover table-sm">
                   <thead>
                     <tr>
-                      <th>${groupingFieldOptions[this.group1]}</th>
+                      <th>${aanmeldingGroupingFieldOptions[this.group1]}</th>
                       <th>${GROUP1_TITLE}</th>
                       ${this.group2
-                        ? html`<th>${groupingFieldOptions[this.group2]}</th>
+                        ? html`<th>
+                              ${aanmeldingGroupingFieldOptions[this.group2]}
+                            </th>
                             <th>${GROUP2_TITLE}</th>`
                         : ''}
                     </tr>
@@ -242,7 +251,10 @@ export class ProjectRapportageComponent extends RockElement {
       </div>
     </div>`;
 
-    function renderRowData(group: GroupField, row: ReportRow | undefined) {
+    function renderRowData(
+      group: AanmeldingGroupField,
+      row: ReportRow | undefined,
+    ) {
       if (row) {
         const { key, count } = row;
         return html`<td>${showGroupKey(group, key)}</td>
@@ -253,17 +265,17 @@ export class ProjectRapportageComponent extends RockElement {
 }
 
 function groupingControl<TName extends 'group1' | 'group2'>(name: TName) {
-  return selectControl<ProjectRapportageComponent, TName>(
+  return selectControl<AanmeldingRapportageComponent, TName>(
     name,
-    groupingFieldOptions,
+    aanmeldingGroupingFieldOptions,
     { placeholder: name === 'group1' ? 'Groepeer op...' : '...en daarna op' },
   );
 }
 const projectTypeControl = selectControl<
-  ProjectRapportageComponent,
+  AanmeldingRapportageComponent,
   'projectType'
 >('projectType', projectTypes, { placeholder: 'Project type...' });
-const projectJaarControl: NumberInputControl<ProjectRapportageComponent> = {
+const projectJaarControl: NumberInputControl<AanmeldingRapportageComponent> = {
   name: 'enkelJaar',
   type: InputType.number,
   label: 'Enkel in jaar...',
@@ -272,7 +284,7 @@ const projectJaarControl: NumberInputControl<ProjectRapportageComponent> = {
 };
 
 const overnachtingControl = selectControl<
-  ProjectRapportageComponent,
+  AanmeldingRapportageComponent,
   'overnachting'
 >('overnachting', overnachtingDescriptions, {
   placeholder: 'Met en zonder overnachting',
@@ -280,7 +292,7 @@ const overnachtingControl = selectControl<
 });
 
 const aanmeldingsstatusControl = selectControl<
-  ProjectRapportageComponent,
+  AanmeldingRapportageComponent,
   'aanmeldingsstatus'
 >('aanmeldingsstatus', aanmeldingsstatussen, {
   placeholder: 'Alle aanmeldingen',
@@ -288,20 +300,23 @@ const aanmeldingsstatusControl = selectControl<
 });
 
 const organisatieonderdeelFilterControl = selectControl<
-  ProjectRapportageComponent,
+  AanmeldingRapportageComponent,
   'enkelOrganisatieonderdeel'
 >('enkelOrganisatieonderdeel', organisatieonderdelen, {
   placeholder: 'Enkel organisatieonderdeel...',
 });
 
-const enkelNieuwkomersControl: CheckboxInputControl<ProjectRapportageComponent> =
+const enkelNieuwkomersControl: CheckboxInputControl<AanmeldingRapportageComponent> =
   {
     name: 'enkelEersteAanmeldingen',
     type: InputType.checkbox,
     label: 'Enkel eerste aanmeldingen',
   };
 
-function showGroupKey(group: GroupField, key: string | undefined): string {
+function showGroupKey(
+  group: AanmeldingGroupField,
+  key: string | undefined,
+): string {
   switch (group) {
     case 'jaar':
     case 'project':

@@ -1,9 +1,9 @@
 import {
   Deelname,
-  ProjectReport,
+  Report,
   OrganisatieFilter,
   PersoonFilter,
-  ProjectenReportType,
+  AanmeldingReportType,
   UpsertableDeelname,
   InsertableAanmelding,
 } from './index.js';
@@ -81,8 +81,8 @@ type ActiviteitDeelnamesRoute = {
 };
 
 export type ReportRoutes = {
-  [K in `reports/projecten/${ProjectenReportType}`]: {
-    entity: ProjectReport;
+  [K in `reports/aanmeldingen/${AanmeldingReportType}`]: {
+    entity: Report;
   };
 };
 

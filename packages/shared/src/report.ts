@@ -2,27 +2,25 @@ import { Aanmeldingsstatus } from './aanmelding.js';
 import { Options } from './options.js';
 import { Organisatieonderdeel, ProjectType } from './project.js';
 
-export type ProjectenReportType =
+export type AanmeldingReportType =
   | 'aanmeldingen'
   | 'deelnames'
   | 'deelnemersuren';
 
-export const projectenReportTypes: Options<ProjectenReportType> = Object.freeze(
-  {
+export const aanmeldingReportTypes: Options<AanmeldingReportType> =
+  Object.freeze({
     aanmeldingen: 'Aanmeldingen',
     deelnames: 'Deelnames',
     deelnemersuren: 'Deelnemersuren',
-    vormingsuren: 'Vormingsuren',
-  },
-);
+  });
 
-export function isProjectReportType(
+export function isAanmeldingReportType(
   maybe: string,
-): maybe is ProjectenReportType {
-  return maybe in projectenReportTypes;
+): maybe is AanmeldingReportType {
+  return maybe in aanmeldingReportTypes;
 }
 
-export type ProjectReport = GroupedReport[];
+export type Report = GroupedReport[];
 
 export interface ReportRow {
   key: string;
@@ -35,7 +33,7 @@ export interface GroupedReport {
   total: number;
 }
 
-export type GroupField =
+export type AanmeldingGroupField =
   | 'jaar'
   | 'provincie'
   | 'woonsituatie'
@@ -43,7 +41,7 @@ export type GroupField =
   | 'werksituatie'
   | 'organisatieonderdeel'
   | 'project';
-export const groupingFieldOptions: Options<GroupField> = {
+export const aanmeldingGroupingFieldOptions: Options<AanmeldingGroupField> = {
   project: 'Project',
   jaar: 'Jaar',
   provincie: 'Provincie',
@@ -53,7 +51,7 @@ export const groupingFieldOptions: Options<GroupField> = {
   organisatieonderdeel: 'Organisatieonderdeel',
 };
 
-export interface ProjectReportFilter {
+export interface AanmeldingReportFilter {
   enkelEersteAanmeldingen?: boolean;
   organisatieonderdeel?: Organisatieonderdeel;
   type?: ProjectType;

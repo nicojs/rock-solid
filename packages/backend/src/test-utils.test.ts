@@ -13,10 +13,10 @@ import { JwtService } from '@nestjs/jwt';
 import {
   Aanmelding,
   Deelnemer,
-  GroupField,
+  AanmeldingGroupField,
   OverigPersoon,
   Project,
-  ProjectReportFilter,
+  AanmeldingReportFilter,
   ReportRoutes,
   InsertableAanmelding,
   UpsertableActiviteit,
@@ -215,9 +215,9 @@ class IntegrationTestingHarness {
 
   public async getReport<TReportRoute extends keyof ReportRoutes>(
     reportRoute: TReportRoute,
-    group1: GroupField,
-    group2?: GroupField,
-    filter?: ProjectReportFilter,
+    group1: AanmeldingGroupField,
+    group2?: AanmeldingGroupField,
+    filter?: AanmeldingReportFilter,
   ): Promise<ReportRoutes[TReportRoute]['entity']> {
     const response = await this.get(
       `/${reportRoute}${toQueryString({

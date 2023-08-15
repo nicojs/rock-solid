@@ -1,4 +1,4 @@
-import { ProjectReport } from '@rock-solid/shared';
+import { Report } from '@rock-solid/shared';
 import { ReportsController } from './reports.controller.js';
 import { harness, factory } from './test-utils.test.js';
 import { expect } from 'chai';
@@ -13,17 +13,17 @@ describe(ReportsController.name, () => {
 
   it('should be allowed for projectverantwoordelijke', async () => {
     harness.login({ role: 'projectverantwoordelijke' });
-    await harness.getReport('reports/projecten/aanmeldingen', 'jaar');
+    await harness.getReport('reports/aanmeldingen/aanmeldingen', 'jaar');
   });
 
   describe('grouping', () => {
     it('should support grouping by year', async () => {
       await arrangeCursussenTestSet();
       const report = await harness.getReport(
-        'reports/projecten/aanmeldingen',
+        'reports/aanmeldingen/aanmeldingen',
         'jaar',
       );
-      const expectedReport: ProjectReport = [
+      const expectedReport: Report = [
         { key: '2021', total: 2 },
         { key: '2020', total: 1 },
       ];
@@ -33,11 +33,11 @@ describe(ReportsController.name, () => {
     it('should support grouping by year and project', async () => {
       await arrangeCursussenTestSet();
       const report = await harness.getReport(
-        'reports/projecten/aanmeldingen',
+        'reports/aanmeldingen/aanmeldingen',
         'jaar',
         'project',
       );
-      const expectedReport: ProjectReport = [
+      const expectedReport: Report = [
         {
           key: '2021',
           total: 2,
@@ -72,12 +72,12 @@ describe(ReportsController.name, () => {
 
       it('should only count eerste aanmeldingen', async () => {
         const report = await harness.getReport(
-          'reports/projecten/aanmeldingen',
+          'reports/aanmeldingen/aanmeldingen',
           'jaar',
           undefined,
           { enkelEersteAanmeldingen: true },
         );
-        const expectedReport: ProjectReport = [
+        const expectedReport: Report = [
           { key: '2021', total: 2 },
           { key: '2020', total: 1 },
           { key: '2019', total: 1 },
@@ -86,12 +86,12 @@ describe(ReportsController.name, () => {
       });
       it('should be able to filter only cursussen', async () => {
         const report = await harness.getReport(
-          'reports/projecten/aanmeldingen',
+          'reports/aanmeldingen/aanmeldingen',
           'jaar',
           undefined,
           { enkelEersteAanmeldingen: true, type: 'cursus' },
         );
-        const expectedReport: ProjectReport = [
+        const expectedReport: Report = [
           { key: '2021', total: 1 },
           { key: '2020', total: 1 },
         ];
@@ -99,12 +99,12 @@ describe(ReportsController.name, () => {
       });
       it('should be able to filter only vakanties', async () => {
         const report = await harness.getReport(
-          'reports/projecten/aanmeldingen',
+          'reports/aanmeldingen/aanmeldingen',
           'jaar',
           undefined,
           { enkelEersteAanmeldingen: true, type: 'vakantie' },
         );
-        const expectedReport: ProjectReport = [
+        const expectedReport: Report = [
           { key: '2021', total: 1 },
           { key: '2019', total: 1 },
         ];
@@ -120,25 +120,23 @@ describe(ReportsController.name, () => {
       it('should be able to filter on aanmeldingsstatus', async () => {
         const [aangemeldReport, bevestigdReport] = await Promise.all([
           harness.getReport(
-            'reports/projecten/aanmeldingen',
+            'reports/aanmeldingen/aanmeldingen',
             'jaar',
             undefined,
             { aanmeldingsstatus: 'Aangemeld' },
           ),
           harness.getReport(
-            'reports/projecten/aanmeldingen',
+            'reports/aanmeldingen/aanmeldingen',
             'jaar',
             undefined,
             { aanmeldingsstatus: 'Bevestigd' },
           ),
         ]);
-        const expectedAangemeldReport: ProjectReport = [
+        const expectedAangemeldReport: Report = [
           { key: '2021', total: 1 },
           { key: '2020', total: 1 },
         ];
-        const expectedBevestigdReport: ProjectReport = [
-          { key: '2021', total: 1 },
-        ];
+        const expectedBevestigdReport: Report = [{ key: '2021', total: 1 }];
         expect(aangemeldReport).deep.eq(expectedAangemeldReport);
         expect(bevestigdReport).deep.eq(expectedBevestigdReport);
       });

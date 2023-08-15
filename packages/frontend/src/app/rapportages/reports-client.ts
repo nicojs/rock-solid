@@ -1,7 +1,7 @@
 import {
-  GroupField,
+  AanmeldingGroupField,
   parse,
-  ProjectReportFilter,
+  AanmeldingReportFilter,
   ReportRoutes,
   toQueryString,
 } from '@rock-solid/shared';
@@ -12,9 +12,9 @@ export class ReportsClient {
 
   public async get<TReportRoute extends keyof ReportRoutes>(
     reportRoute: TReportRoute,
-    group1: GroupField,
-    group2: GroupField | undefined,
-    filter: ProjectReportFilter,
+    group1: AanmeldingGroupField,
+    group2: AanmeldingGroupField | undefined,
+    filter: AanmeldingReportFilter,
   ): Promise<ReportRoutes[TReportRoute]['entity']> {
     const response = await this.http.fetch(
       `/api/${reportRoute}${toQueryString({

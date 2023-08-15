@@ -4,16 +4,16 @@ import {
   isOrganisatieonderdeel,
   isOvernachtingDescription,
   isProjectType,
-  ProjectReportFilter,
+  AanmeldingReportFilter,
 } from '@rock-solid/shared';
 
 @Injectable()
-export class ProjectReportFilterPipe
+export class AanmeldingReportFilterPipe
   implements
-    PipeTransform<Record<string, string | undefined>, ProjectReportFilter>
+    PipeTransform<Record<string, string | undefined>, AanmeldingReportFilter>
 {
-  transform(value: Record<string, string | undefined>): ProjectReportFilter {
-    const filter: ProjectReportFilter = {};
+  transform(value: Record<string, string | undefined>): AanmeldingReportFilter {
+    const filter: AanmeldingReportFilter = {};
     filter.enkelEersteAanmeldingen = key('enkelEersteAanmeldingen') in value;
     const onderdeel = value[key('organisatieonderdeel')];
     if (onderdeel && isOrganisatieonderdeel(onderdeel)) {
@@ -39,6 +39,6 @@ export class ProjectReportFilterPipe
   }
 }
 
-function key<T extends keyof ProjectReportFilter>(k: T): T {
+function key<T extends keyof AanmeldingReportFilter>(k: T): T {
   return k;
 }

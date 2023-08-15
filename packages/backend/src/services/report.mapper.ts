@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {
   GroupedReport,
-  GroupField,
-  ProjectReport,
-  ProjectReportFilter,
-  ProjectenReportType,
+  AanmeldingGroupField,
+  Report,
+  AanmeldingReportFilter,
+  AanmeldingReportType,
   ProjectType,
 } from '@rock-solid/shared';
 import { DBService } from './db.service.js';
@@ -13,13 +13,13 @@ import { DBService } from './db.service.js';
 export class ReportMapper {
   constructor(private db: DBService) {}
 
-  async projecten(
-    reportType: ProjectenReportType,
+  async aanmeldingen(
+    reportType: AanmeldingReportType,
     projectType: ProjectType | undefined,
-    groupField: GroupField,
-    secondGroupField: GroupField | undefined,
-    filter: ProjectReportFilter,
-  ): Promise<ProjectReport> {
+    groupField: AanmeldingGroupField,
+    secondGroupField: AanmeldingGroupField | undefined,
+    filter: AanmeldingReportFilter,
+  ): Promise<Report> {
     const query = `
     SELECT 
       ${select(groupField)}::text as key1, 
@@ -44,7 +44,7 @@ export class ReportMapper {
     const rawResults = await this.db.$queryRawUnsafe<
       { key1: string; key2?: string; total: number }[]
     >(query);
-    const aanmeldingen: ProjectReport = [];
+    const aanmeldingen: Report = [];
     function newReport(key: string) {
       const report: GroupedReport = {
         key,
@@ -70,7 +70,7 @@ export class ReportMapper {
   }
 }
 
-function reportTypeJoin(reportType: ProjectenReportType): string {
+function reportTypeJoin(reportType: AanmeldingReportType): string {
   switch (reportType) {
     case 'deelnames':
       return 'INNER JOIN deelname ON deelname."aanmeldingId" = aanmelding.id AND deelname."effectieveDeelnamePerunage" > 0';
@@ -86,7 +86,7 @@ function reportTypeJoin(reportType: ProjectenReportType): string {
 
 function filterWhere(
   projectType: ProjectType | undefined,
-  filter: ProjectReportFilter,
+  filter: AanmeldingReportFilter,
 ): string {
   const whereClauses: string[] = [];
   if (filter.enkelEersteAanmeldingen) {
@@ -132,7 +132,7 @@ function filterWhere(
   }
   return '';
 }
-function reportTypeAggregator(reportType: ProjectenReportType): string {
+function reportTypeAggregator(reportType: AanmeldingReportType): string {
   switch (reportType) {
     case 'deelnames':
     case 'aanmeldingen':
@@ -142,7 +142,7 @@ function reportTypeAggregator(reportType: ProjectenReportType): string {
   }
 }
 
-function fieldName(field: GroupField): string {
+function fieldName(field: AanmeldingGroupField): string {
   switch (field) {
     case 'jaar':
       return 'project.jaar';
@@ -161,7 +161,7 @@ function fieldName(field: GroupField): string {
   }
 }
 
-function select(field: GroupField): string {
+function select(field: AanmeldingGroupField): string {
   switch (field) {
     case 'jaar':
       return 'jaar';
