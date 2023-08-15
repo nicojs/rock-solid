@@ -72,13 +72,6 @@ export type UpsertableOrganisatieContact = Upsertable<
   }
 >;
 
-export type Doelgroep = 'deKei' | 'keiJong';
-
-export const doelgroepen: Options<Doelgroep> = Object.freeze({
-  deKei: 'De Kei',
-  keiJong: 'Kei-Jong',
-});
-
 export type Communicatievoorkeur = 'post' | 'email' | 'postEnEmail';
 
 export type Foldersoort =

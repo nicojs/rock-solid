@@ -54,7 +54,6 @@
     "geslacht",
     "geslachten",
     "gevonden",
-    "HOUR",
     "ILIKE",
     "Ingeschreven",
     "Inschrijven",
@@ -136,6 +135,6 @@
     "Zoeken",
     "Zonder"
   ],
-  "cSpell.ignoreWords": ["transform", "bootstrap"],
+  "cSpell.ignoreWords": ["transform", "bootstrap", "hour"],
   "cSpell.language": "en,nl",
 }

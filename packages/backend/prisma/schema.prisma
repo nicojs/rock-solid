@@ -93,7 +93,7 @@ model Project {
   type          ProjectType
   naam          String       @db.VarChar(256)
   activiteiten  Activiteit[]
-  aanmeldingen  Aanmelding[] 
+  aanmeldingen  Aanmelding[]
   begeleiders   Persoon[]
   jaar          Int
 
@@ -129,14 +129,15 @@ model Aanmelding {
 }
 
 model Activiteit {
-  id              Int        @id @default(autoincrement())
-project         Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId       Int
-  van             DateTime
-  totEnMet        DateTime
-  vormingsuren    Float?
-  metOvernachting Boolean    @default(false)
-  deelnames       Deelname[]
+  id               Int        @id @default(autoincrement())
+  project          Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId        Int
+  van              DateTime
+  totEnMet         DateTime
+  vormingsuren     Float?
+  begeleidingsuren Float?
+  metOvernachting  Boolean    @default(false)
+  deelnames        Deelname[]
 
   // Vakanties
   verblijf VakantieVerblijf?

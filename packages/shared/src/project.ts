@@ -8,8 +8,9 @@ export interface BaseProject {
   projectnummer: string;
   type: ProjectType;
   naam: string;
-  aantalAanmeldingen?: number;
+  aantalAanmeldingen: number;
   begeleiders: OverigPersoon[];
+  jaar: number;
 }
 
 export type ProjectType = 'cursus' | 'vakantie';
@@ -44,6 +45,7 @@ export const projectLabels: Record<keyof BaseProject, string> = {
   naam: 'Naam',
   projectnummer: 'Projectnummer',
   type: 'type',
+  jaar: 'Jaar',
 };
 
 export const cursusLabels: Record<keyof Cursus, string> = {
@@ -67,16 +69,15 @@ export interface BaseActiviteit {
   van: Date;
   totEnMet: Date;
   metOvernachting: boolean;
-  aantalDeelnames?: number;
+  aantalDeelnames: number;
+  vormingsuren?: number;
+  begeleidingsuren?: number;
+  aantalDeelnemersuren: number;
 }
 
-export interface CursusActiviteit extends BaseActiviteit {
-  vormingsuren?: number;
-  aantalDeelnemersuren?: number;
-}
+export interface CursusActiviteit extends BaseActiviteit {}
 
 export interface VakantieActiviteit extends BaseActiviteit {
-  begeleidingsuren?: number;
   verblijf?: VakantieVerblijf;
   vervoer?: VakantieVervoer;
 }

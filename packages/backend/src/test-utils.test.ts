@@ -33,6 +33,7 @@ import {
   UpsertableOrganisatieContact,
   Plaats,
   UpsertableDeelname,
+  parse,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -201,6 +202,7 @@ class IntegrationTestingHarness {
     req = req
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
+      .parse(parseJson)
       .send(body);
     return this.authenticateRequest(req);
   }
@@ -374,3 +376,39 @@ after(async () => {
   await harness.dispose();
   await rockSolidDBContainer.stop();
 });
+
+/**
+ * Parses the response body as JSON using the Rock Solid reviver.
+ * Grabbed from superagent, but altered for RockSolid
+ * @see https://github.com/ladjs/superagent/blob/master/src/node/parsers/json.js
+ * @param res The supertest response
+ * @param cb The callback to invoke when response is parsed
+ */
+function parseJson(
+  res: request.Response,
+  cb: (err: Error | null, body: any) => void,
+) {
+  res.text = '';
+  res.setEncoding('utf8');
+  res.on('data', (chunk) => {
+    res.text += chunk;
+  });
+  res.on('end', () => {
+    let body;
+    type SupertestError = Error & {
+      rawResponse: string | null;
+      statusCode: number;
+    };
+
+    let error: SupertestError | null = null;
+    try {
+      body = res.text && parse(res.text);
+    } catch (err: any) {
+      error = err as SupertestError;
+      error.rawResponse = res.text || null;
+      error.statusCode = res.statusCode;
+    } finally {
+      cb(error, body);
+    }
+  });
+}
