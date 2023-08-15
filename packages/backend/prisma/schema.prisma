@@ -173,7 +173,6 @@ model OrganisatieContact {
   organisatieId    Int
   terAttentieVan   String           @db.VarChar(256)
   afdeling         String?          @db.VarChar(256)
-  doelgroepen      Doelgroep[]
   emailadres       String?          @db.VarChar(256)
   telefoonnummer   String?          @db.VarChar(256)
   adres            Adres?           @relation(fields: [adresId], references: [id], onDelete: Cascade)
@@ -345,13 +344,6 @@ enum Voedingswens {
   andere
 
   @@map("voedingswens")
-}
-
-enum Doelgroep {
-  deKei
-  keiJong
-
-  @@map("doelgroep")
 }
 
 enum VakantieVerblijf {

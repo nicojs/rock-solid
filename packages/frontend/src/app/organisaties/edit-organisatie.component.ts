@@ -2,7 +2,6 @@ import {
   Organisatie,
   Privilege,
   UpsertableOrganisatie,
-  doelgroepen,
   groupedOrganisatieSoorten,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
@@ -14,7 +13,6 @@ import {
   FormControl,
   InputType,
   patterns,
-  selectControl,
   formArray,
   foldervoorkeurControls,
   checkboxesControl,
@@ -80,10 +78,6 @@ const organisatieControls: FormControl<Organisatie>[] = [
         name: 'afdeling',
         type: InputType.text,
       },
-      selectControl('doelgroepen', doelgroepen, {
-        validators: { required: true },
-        multiple: true,
-      }),
       formArray('foldervoorkeuren', foldervoorkeurControls),
       {
         name: 'emailadres',

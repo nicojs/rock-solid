@@ -19,7 +19,6 @@ export interface FolderAdressering {
 
 export interface OrganisatieContact extends FolderAdressering {
   id: number;
-  doelgroepen: Doelgroep[];
   afdeling?: string;
   terAttentieVan?: string;
   telefoonnummer?: string;
@@ -39,7 +38,6 @@ export const organisatieColumnNames: Record<keyof Organisatie, string> =
     id: 'id',
     naam: 'Naam',
     opmerking: 'Opmerking',
-    doelgroep: 'Doelgroep',
     website: 'Website',
     emailadres: 'Emailadres',
     adres: 'Adres',
@@ -69,11 +67,10 @@ export type UpsertableOrganisatie = Upsertable<
 > & { contacten: UpsertableOrganisatieContact[] };
 
 export type UpsertableOrganisatieContact = Upsertable<
-  Omit<OrganisatieContact, 'adres'>,
-  'doelgroepen'
-> & {
-  adres?: UpsertableAdres;
-};
+  Omit<OrganisatieContact, 'adres'> & {
+    adres?: UpsertableAdres;
+  }
+>;
 
 export type Doelgroep = 'deKei' | 'keiJong';
 
