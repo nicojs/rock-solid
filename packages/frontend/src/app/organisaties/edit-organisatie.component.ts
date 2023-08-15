@@ -2,7 +2,6 @@ import {
   Organisatie,
   Privilege,
   UpsertableOrganisatie,
-  doelgroepen,
   groupedOrganisatieSoorten,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
@@ -14,7 +13,6 @@ import {
   FormControl,
   InputType,
   patterns,
-  selectControl,
   formArray,
   foldervoorkeurControls,
   checkboxesControl,
