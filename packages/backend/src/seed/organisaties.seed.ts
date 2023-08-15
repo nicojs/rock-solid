@@ -94,7 +94,6 @@ export async function seedOrganisaties(
           {
             terAttentieVan: raw.TAV,
             adres,
-            doelgroepen: ['deKei', 'keiJong'],
             telefoonnummer: stringFromRaw(raw.telefoon),
             emailadres: stringFromRaw(raw['e-mail']),
             opmerking: stringFromRaw(raw.opmerkingen),

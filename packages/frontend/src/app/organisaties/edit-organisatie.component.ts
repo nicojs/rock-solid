@@ -80,10 +80,6 @@ const organisatieControls: FormControl<Organisatie>[] = [
         name: 'afdeling',
         type: InputType.text,
       },
-      selectControl('doelgroepen', doelgroepen, {
-        validators: { required: true },
-        multiple: true,
-      }),
       formArray('foldervoorkeuren', foldervoorkeurControls),
       {
         name: 'emailadres',
