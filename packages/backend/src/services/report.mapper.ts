@@ -5,7 +5,6 @@ import {
   Report,
   AanmeldingReportFilter,
   AanmeldingReportType,
-  ProjectType,
   ActiviteitReportFilter,
   ActiviteitReportType,
   ActiviteitGroupField,

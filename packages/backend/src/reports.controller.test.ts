@@ -197,11 +197,6 @@ describe(ReportsController.name, () => {
         expect(report).deep.eq(expectedReport);
       });
     });
-
-    describe('filter', () => {
-      
-
-    });
   });
 
   async function arrangeCursussenTestSet() {

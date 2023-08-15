@@ -13,10 +13,8 @@ import { JwtService } from '@nestjs/jwt';
 import {
   Aanmelding,
   Deelnemer,
-  AanmeldingGroupField,
   OverigPersoon,
   Project,
-  AanmeldingReportFilter,
   ReportRoutes,
   InsertableAanmelding,
   UpsertableActiviteit,
