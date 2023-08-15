@@ -100,9 +100,9 @@ model Project {
   // Cursus
   organisatieonderdeel Organisatieonderdeel?
 
-  // Vakantie
-  prijs     Decimal?         @db.Money
-  voorschot Decimal?         @db.Money
+  // Vakantie. Total price is saldo + voorschot
+  saldo     Decimal?         @db.Money
+  voorschot Decimal?         @db.Money 
   seizoen   VakantieSeizoen?
 
   @@map("project")

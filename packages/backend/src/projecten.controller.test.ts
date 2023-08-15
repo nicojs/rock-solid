@@ -5,10 +5,12 @@ import {
   Aanmelding,
   Vakantie,
   Activiteit,
+  Decimal,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory } from './test-utils.test.js';
 import { expect } from 'chai';
+import assert from 'assert/strict';
 
 describe(ProjectenController.name, () => {
   beforeEach(() => {
@@ -220,6 +222,17 @@ describe(ProjectenController.name, () => {
           },
         ],
       } satisfies Vakantie);
+    });
+
+    it('should add voorschot and saldo to be the total price', async () => {
+      const vakantie = factory.vakantie({
+        type: 'vakantie',
+        voorschot: new Decimal('41.9'),
+        saldo: new Decimal('0.1'),
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.type, 'vakantie');
+      expect(project.prijs).deep.eq(new Decimal('42'));
     });
   });
 

@@ -34,8 +34,9 @@ export interface Vakantie extends BaseProject {
   type: 'vakantie';
   activiteiten: VakantieActiviteit[];
   seizoen?: VakantieSeizoen;
-  prijs?: Decimal;
+  saldo?: Decimal;
   voorschot?: Decimal;
+  prijs?: Decimal;
 }
 
 export const projectLabels: Record<keyof BaseProject, string> = {
@@ -58,8 +59,9 @@ export const vakantieLabels: Record<keyof Vakantie, string> = {
   ...projectLabels,
   activiteiten: 'Activiteiten',
   seizoen: 'Seizoen',
-  prijs: 'Prijs',
+  saldo: 'Saldo',
   voorschot: 'Voorschot',
+  prijs: 'Prijs',
 };
 
 export type Activiteit = CursusActiviteit | VakantieActiviteit;
@@ -133,10 +135,20 @@ export type UpsertableActiviteit = Upsertable<
   'van' | 'totEnMet'
 >;
 
-export type UpsertableProject = Upsertable<
-  Omit<Project, 'activiteiten'>,
-  'projectnummer' | 'type' | 'naam'
+export type UpsertableProject = UpsertableCursus | UpsertableVakantie;
+
+export type UpsertableCursus = Upsertable<
+  Omit<Cursus, 'activiteiten'>,
+  'projectnummer' | 'naam'
 > & {
+  type: 'cursus';
+  activiteiten: UpsertableActiviteit[];
+};
+export type UpsertableVakantie = Upsertable<
+  Omit<Vakantie, 'activiteiten'>,
+  'projectnummer' | 'naam'
+> & {
+  type: 'vakantie';
   activiteiten: UpsertableActiviteit[];
 };
 

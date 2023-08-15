@@ -7,8 +7,11 @@ import {
   OverigPersoon,
   Project,
   ProjectFilter,
+  ProjectType,
   UpsertableActiviteit,
+  UpsertableCursus,
   UpsertableProject,
+  UpsertableVakantie,
   VakantieActiviteit,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
@@ -137,7 +140,13 @@ export class ProjectMapper {
     id: number,
     projectUpdates: UpsertableProject,
   ): Promise<Project> {
-    const { aantalAanmeldingen, begeleiders, ...data } = projectUpdates;
+    const {
+      aantalAanmeldingen,
+      begeleiders,
+      id: unused,
+      prijs: unused2,
+      ...data
+    } = fillOutAllUpsertableProjectFields(projectUpdates);
     const begeleiderIds = begeleiders?.map(({ id }) => ({ id })) ?? [];
     const result = await handleKnownPrismaErrors(
       this.db.project.update({
@@ -201,6 +210,22 @@ function toDBActiviteit(
   };
 }
 
+type AllUpsertableProjectFields = Omit<UpsertableCursus, 'type'> &
+  Omit<UpsertableVakantie, 'type'> & {
+    type: ProjectType;
+  };
+
+/**
+ * This is a hack to make it easier to work with the UpsertablePersoon type
+ */
+function fillOutAllUpsertableProjectFields(
+  project: UpsertableProject,
+): AllUpsertableProjectFields {
+  return {
+    ...project,
+  };
+}
+
 function determineYear(activiteiten: UpsertableActiviteit[]) {
   return activiteiten[0]?.van.getFullYear() ?? new Date().getFullYear(); // current year as default 🤷‍♂️
 }
@@ -236,11 +261,24 @@ function toProject(val: DBProjectAggregate): Project {
         organisatieonderdeel: val.organisatieonderdeel!,
       };
     case 'vakantie':
+      const saldo = project.saldo as Decimal | undefined;
+      const voorschot = project.voorschot as Decimal | undefined;
+      let prijs: Decimal | undefined;
+      if (saldo !== undefined || voorschot !== undefined) {
+        prijs = new Decimal(0);
+        if (saldo !== undefined) {
+          prijs = saldo;
+        }
+        if (voorschot !== undefined) {
+          prijs = voorschot.add(prijs);
+        }
+      }
       return {
         ...project,
         activiteiten: val.activiteiten?.map(toVakantieActiviteit) ?? [],
-        prijs: project.prijs as Decimal | undefined,
-        voorschot: project.voorschot as Decimal | undefined,
+        saldo,
+        voorschot,
+        prijs,
         type,
       };
     default:

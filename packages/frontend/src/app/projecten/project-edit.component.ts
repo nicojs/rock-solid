@@ -182,8 +182,8 @@ const cursusProjectControls: FormControl<Cursus>[] = [
 const vakantieProjectControls: FormControl<Vakantie>[] = [
   ...baseProjectControls,
   begeleidersTagsControl('vakantieVrijwilliger', 2),
-  { type: InputType.currency, name: 'prijs' },
   { type: InputType.currency, name: 'voorschot' },
+  { type: InputType.currency, name: 'saldo' },
   radioControl('seizoen', vakantieSeizoenen, {
     validators: { required: true },
   }),
