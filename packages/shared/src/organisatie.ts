@@ -66,9 +66,11 @@ export type UpsertableOrganisatie = Upsertable<
   'naam'
 > & { contacten: UpsertableOrganisatieContact[] };
 
-export type UpsertableOrganisatieContact = Omit<OrganisatieContact, 'adres'> & {
-  adres?: UpsertableAdres;
-};
+export type UpsertableOrganisatieContact = Upsertable<
+  Omit<OrganisatieContact, 'adres'> & {
+    adres?: UpsertableAdres;
+  }
+>;
 
 export type Doelgroep = 'deKei' | 'keiJong';
 

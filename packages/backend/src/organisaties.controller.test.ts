@@ -49,7 +49,6 @@ describe(OrganisatiesController.name, () => {
             contacten: [
               {
                 terAttentieVan: 'Foo',
-                doelgroepen: ['deKei'],
                 adres,
                 foldervoorkeuren: [
                   {
@@ -68,7 +67,6 @@ describe(OrganisatiesController.name, () => {
         contacten: [
           {
             id: actualOrganisatie.contacten[0]!.id,
-            doelgroepen: ['deKei'],
             foldervoorkeuren: [
               {
                 folder: 'deKeiCursussen',

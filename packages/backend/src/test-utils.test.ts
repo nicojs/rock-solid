@@ -315,7 +315,6 @@ export const factory = {
     overrides?: Partial<UpsertableOrganisatieContact>,
   ): UpsertableOrganisatieContact {
     return {
-      doelgroepen: [],
       ...overrides,
     };
   },
