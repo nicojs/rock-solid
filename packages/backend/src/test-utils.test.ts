@@ -215,9 +215,9 @@ class IntegrationTestingHarness {
 
   public async getReport<TReportRoute extends keyof ReportRoutes>(
     reportRoute: TReportRoute,
-    group1: AanmeldingGroupField,
-    group2?: AanmeldingGroupField,
-    filter?: AanmeldingReportFilter,
+    group1: ReportRoutes[TReportRoute]['grouping'],
+    group2?: ReportRoutes[TReportRoute]['grouping'],
+    filter?: ReportRoutes[TReportRoute]['filter'],
   ): Promise<ReportRoutes[TReportRoute]['entity']> {
     const response = await this.get(
       `/${reportRoute}${toQueryString({
@@ -344,22 +344,11 @@ export const factory = {
     };
   },
 
-  activiteit(
-    overrides?: Partial<UpsertableActiviteit> | Date,
-  ): UpsertableActiviteit {
-    if (overrides instanceof Date) {
-      return {
-        van: overrides,
-        totEnMet: new Date(
-          overrides.getFullYear(),
-          overrides.getMonth(),
-          overrides.getDate() + 2,
-        ),
-      };
-    }
+  activiteit(overrides?: Partial<UpsertableActiviteit>): UpsertableActiviteit {
+    const van = overrides?.van ?? new Date(2010, 1, 10);
     return {
-      van: new Date(2010, 1, 10),
-      totEnMet: new Date(2010, 1, 12),
+      van,
+      totEnMet: new Date(van.getFullYear(), van.getMonth(), van.getDate() + 2),
       ...overrides,
     };
   },

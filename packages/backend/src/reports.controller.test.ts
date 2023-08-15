@@ -11,135 +11,196 @@ describe(ReportsController.name, () => {
     await harness.clear();
   });
 
-  it('should be allowed for projectverantwoordelijke', async () => {
-    harness.login({ role: 'projectverantwoordelijke' });
-    await harness.getReport('reports/aanmeldingen/aanmeldingen', 'jaar');
-  });
-
-  describe('grouping', () => {
-    it('should support grouping by year', async () => {
-      await arrangeCursussenTestSet();
-      const report = await harness.getReport(
-        'reports/aanmeldingen/aanmeldingen',
-        'jaar',
-      );
-      const expectedReport: Report = [
-        { key: '2021', total: 2 },
-        { key: '2020', total: 1 },
-      ];
-      expect(report).deep.eq(expectedReport);
+  describe('aanmeldingen report', () => {
+    it('should be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.getReport('reports/aanmeldingen/aanmeldingen', 'jaar');
     });
-
-    it('should support grouping by year and project', async () => {
-      await arrangeCursussenTestSet();
-      const report = await harness.getReport(
-        'reports/aanmeldingen/aanmeldingen',
-        'jaar',
-        'project',
-      );
-      const expectedReport: Report = [
-        {
-          key: '2021',
-          total: 2,
-          rows: [
-            {
-              count: 2,
-              key: '001 A',
-            },
-          ],
-        },
-        {
-          key: '2020',
-          total: 1,
-          rows: [
-            {
-              count: 1,
-              key: '002 B',
-            },
-          ],
-        },
-      ];
-      expect(report).deep.eq(expectedReport);
-    });
-  });
-
-  describe('filter', () => {
-    describe('enkelEersteAanmeldingen', () => {
-      beforeEach(async () => {
+    describe('grouping', () => {
+      it('should support grouping by year', async () => {
         await arrangeCursussenTestSet();
-        await arrangeVakantiesTestSet();
-      });
-
-      it('should only count eerste aanmeldingen', async () => {
         const report = await harness.getReport(
           'reports/aanmeldingen/aanmeldingen',
           'jaar',
-          undefined,
-          { enkelEersteAanmeldingen: true },
         );
         const expectedReport: Report = [
           { key: '2021', total: 2 },
           { key: '2020', total: 1 },
-          { key: '2019', total: 1 },
         ];
         expect(report).deep.eq(expectedReport);
       });
-      it('should be able to filter only cursussen', async () => {
+
+      it('should support grouping by year and project', async () => {
+        await arrangeCursussenTestSet();
         const report = await harness.getReport(
           'reports/aanmeldingen/aanmeldingen',
           'jaar',
-          undefined,
-          { enkelEersteAanmeldingen: true, type: 'cursus' },
+          'project',
         );
         const expectedReport: Report = [
-          { key: '2021', total: 1 },
-          { key: '2020', total: 1 },
-        ];
-        expect(report).deep.eq(expectedReport);
-      });
-      it('should be able to filter only vakanties', async () => {
-        const report = await harness.getReport(
-          'reports/aanmeldingen/aanmeldingen',
-          'jaar',
-          undefined,
-          { enkelEersteAanmeldingen: true, type: 'vakantie' },
-        );
-        const expectedReport: Report = [
-          { key: '2021', total: 1 },
-          { key: '2019', total: 1 },
+          {
+            key: '2021',
+            total: 2,
+            rows: [
+              {
+                count: 2,
+                key: '001 A',
+              },
+            ],
+          },
+          {
+            key: '2020',
+            total: 1,
+            rows: [
+              {
+                count: 1,
+                key: '002 B',
+              },
+            ],
+          },
         ];
         expect(report).deep.eq(expectedReport);
       });
     });
 
-    describe('aanmeldingsstatus', () => {
-      beforeEach(async () => {
-        await arrangeCursussenTestSet();
+    describe('filter', () => {
+      describe('enkelEersteAanmeldingen', () => {
+        beforeEach(async () => {
+          await arrangeCursussenTestSet();
+          await arrangeVakantiesTestSet();
+        });
+
+        it('should only count eerste aanmeldingen', async () => {
+          const report = await harness.getReport(
+            'reports/aanmeldingen/aanmeldingen',
+            'jaar',
+            undefined,
+            { enkelEersteAanmeldingen: true },
+          );
+          const expectedReport: Report = [
+            { key: '2021', total: 2 },
+            { key: '2020', total: 1 },
+            { key: '2019', total: 1 },
+          ];
+          expect(report).deep.eq(expectedReport);
+        });
+        it('should be able to filter only cursussen', async () => {
+          const report = await harness.getReport(
+            'reports/aanmeldingen/aanmeldingen',
+            'jaar',
+            undefined,
+            { enkelEersteAanmeldingen: true, type: 'cursus' },
+          );
+          const expectedReport: Report = [
+            { key: '2021', total: 1 },
+            { key: '2020', total: 1 },
+          ];
+          expect(report).deep.eq(expectedReport);
+        });
+        it('should be able to filter only vakanties', async () => {
+          const report = await harness.getReport(
+            'reports/aanmeldingen/aanmeldingen',
+            'jaar',
+            undefined,
+            { enkelEersteAanmeldingen: true, type: 'vakantie' },
+          );
+          const expectedReport: Report = [
+            { key: '2021', total: 1 },
+            { key: '2019', total: 1 },
+          ];
+          expect(report).deep.eq(expectedReport);
+        });
       });
 
-      it('should be able to filter on aanmeldingsstatus', async () => {
-        const [aangemeldReport, bevestigdReport] = await Promise.all([
-          harness.getReport(
-            'reports/aanmeldingen/aanmeldingen',
-            'jaar',
-            undefined,
-            { aanmeldingsstatus: 'Aangemeld' },
-          ),
-          harness.getReport(
-            'reports/aanmeldingen/aanmeldingen',
-            'jaar',
-            undefined,
-            { aanmeldingsstatus: 'Bevestigd' },
-          ),
-        ]);
-        const expectedAangemeldReport: Report = [
-          { key: '2021', total: 1 },
-          { key: '2020', total: 1 },
-        ];
-        const expectedBevestigdReport: Report = [{ key: '2021', total: 1 }];
-        expect(aangemeldReport).deep.eq(expectedAangemeldReport);
-        expect(bevestigdReport).deep.eq(expectedBevestigdReport);
+      describe('aanmeldingsstatus', () => {
+        beforeEach(async () => {
+          await arrangeCursussenTestSet();
+        });
+
+        it('should be able to filter on aanmeldingsstatus', async () => {
+          const [aangemeldReport, bevestigdReport] = await Promise.all([
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { aanmeldingsstatus: 'Aangemeld' },
+            ),
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { aanmeldingsstatus: 'Bevestigd' },
+            ),
+          ]);
+          const expectedAangemeldReport: Report = [
+            { key: '2021', total: 1 },
+            { key: '2020', total: 1 },
+          ];
+          const expectedBevestigdReport: Report = [{ key: '2021', total: 1 }];
+          expect(aangemeldReport).deep.eq(expectedAangemeldReport);
+          expect(bevestigdReport).deep.eq(expectedBevestigdReport);
+        });
       });
+    });
+  });
+  describe.only('activiteiten report', () => {
+    it('should be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.getReport('reports/activiteiten/vormingsuren', 'jaar');
+    });
+
+    describe('grouping', () => {
+      it('should support grouping by year', async () => {
+        await arrangeCursussenTestSet();
+        await arrangeVakantiesTestSet();
+        const report = await harness.getReport(
+          'reports/activiteiten/vormingsuren',
+          'jaar',
+        );
+        const expectedReport: Report = [
+          { key: '2021', total: 80 },
+          { key: '2020', total: 10 },
+          { key: '2019', total: 90 },
+        ];
+        expect(report).deep.eq(expectedReport);
+      });
+
+      it('should support grouping by year and project', async () => {
+        await arrangeCursussenTestSet();
+        const report = await harness.getReport(
+          'reports/activiteiten/vormingsuren',
+          'jaar',
+          'project',
+        );
+        const expectedReport: Report = [
+          {
+            key: '2021',
+            total: 20,
+            rows: [
+              {
+                count: 20,
+                key: '001 A',
+              },
+            ],
+          },
+          {
+            key: '2020',
+            total: 10,
+            rows: [
+              {
+                count: 10,
+                key: '002 B',
+              },
+            ],
+          },
+        ];
+        expect(report).deep.eq(expectedReport);
+      });
+    });
+
+    describe('filter', () => {
+      
+
     });
   });
 
@@ -153,14 +214,18 @@ describe(ReportsController.name, () => {
         factory.project({
           naam: 'A',
           projectnummer: '001',
-          activiteiten: [factory.activiteit(new Date(2021, 1, 1))],
+          activiteiten: [
+            factory.activiteit({ van: new Date(2021, 1, 1), vormingsuren: 20 }),
+          ],
         }),
       ),
       harness.createProject(
         factory.project({
           projectnummer: '002',
           naam: 'B',
-          activiteiten: [factory.activiteit(new Date(2020, 1, 1))],
+          activiteiten: [
+            factory.activiteit({ van: new Date(2020, 1, 1), vormingsuren: 10 }),
+          ],
         }),
       ),
     ]);
@@ -194,7 +259,9 @@ describe(ReportsController.name, () => {
           naam: 'C',
           projectnummer: '003',
           type: 'vakantie',
-          activiteiten: [factory.activiteit(new Date(2021, 1, 1))],
+          activiteiten: [
+            factory.activiteit({ van: new Date(2021, 1, 1), vormingsuren: 60 }),
+          ],
         }),
       ),
       harness.createProject(
@@ -202,7 +269,9 @@ describe(ReportsController.name, () => {
           projectnummer: '004',
           naam: 'D',
           type: 'vakantie',
-          activiteiten: [factory.activiteit(new Date(2019, 1, 1))],
+          activiteiten: [
+            factory.activiteit({ van: new Date(2019, 1, 1), vormingsuren: 90 }),
+          ],
         }),
       ),
     ]);

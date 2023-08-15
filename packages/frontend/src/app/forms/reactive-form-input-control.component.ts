@@ -196,11 +196,14 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
   private renderSelect<TKey extends KeysOfType<TEntity, string | string[]>>(
     control: SelectControl<TEntity, TKey>,
   ) {
-    const isSelected = (value: string) => {
+    const isSelected = (value: string | undefined) => {
       if (control.multiple) {
-        return (
-          this.entity[control.name] as unknown as string[] | undefined
-        )?.includes(value);
+        const selectedValues = this.entity[control.name] as unknown as
+          | string[]
+          | undefined;
+        return value === undefined
+          ? (selectedValues?.length ?? 0) === 0
+          : selectedValues?.includes(value);
       } else {
         return (
           (this.entity[control.name] as unknown as string | undefined) === value
@@ -244,7 +247,9 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       }}"
     >
       ${control.placeholder
-        ? html`<option value="">${control.placeholder}</option>`
+        ? html`<option ?selected=${isSelected(undefined)} value="">
+            ${control.placeholder}
+          </option>`
         : nothing}
       ${control.grouped
         ? Object.entries(control.items).flatMap(

@@ -1,2 +1,2 @@
 import './rapportages.component';
-import './aanmelding-rapportage.component';
+import './rapportage.component';

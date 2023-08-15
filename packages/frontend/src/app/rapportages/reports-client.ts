@@ -1,7 +1,6 @@
 import {
   AanmeldingGroupField,
   parse,
-  AanmeldingReportFilter,
   ReportRoutes,
   toQueryString,
 } from '@rock-solid/shared';
@@ -14,7 +13,7 @@ export class ReportsClient {
     reportRoute: TReportRoute,
     group1: AanmeldingGroupField,
     group2: AanmeldingGroupField | undefined,
-    filter: AanmeldingReportFilter,
+    filter: ReportRoutes[TReportRoute]['filter'],
   ): Promise<ReportRoutes[TReportRoute]['entity']> {
     const response = await this.http.fetch(
       `/api/${reportRoute}${toQueryString({

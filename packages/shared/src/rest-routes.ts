@@ -6,6 +6,11 @@ import {
   AanmeldingReportType,
   UpsertableDeelname,
   InsertableAanmelding,
+  ActiviteitReportType,
+  AanmeldingReportFilter,
+  ActiviteitReportFilter,
+  AanmeldingGroupField,
+  ActiviteitGroupField,
 } from './index.js';
 import { Aanmelding } from './aanmelding.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
@@ -80,9 +85,19 @@ type ActiviteitDeelnamesRoute = {
   };
 };
 
-export type ReportRoutes = {
+export type ReportRoutes = AanmeldingReportRoutes & ActiviteitReportRoutes;
+export type AanmeldingReportRoutes = {
   [K in `reports/aanmeldingen/${AanmeldingReportType}`]: {
     entity: Report;
+    filter: AanmeldingReportFilter;
+    grouping: AanmeldingGroupField;
+  };
+};
+export type ActiviteitReportRoutes = {
+  [K in `reports/activiteiten/${ActiviteitReportType}`]: {
+    entity: Report;
+    filter: ActiviteitReportFilter;
+    grouping: ActiviteitGroupField;
   };
 };
 

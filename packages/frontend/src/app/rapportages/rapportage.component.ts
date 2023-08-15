@@ -18,9 +18,14 @@ import {
   Aanmeldingsstatus,
   aanmeldingLabels,
   aanmeldingsstatussen,
+  ActiviteitReportType,
+  isAanmeldingReportType,
+  activiteitGroupingFieldOptions,
+  isActiviteitGroupingField,
+  isActiviteitReportType,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
-import { html, PropertyValues } from 'lit';
+import { html, nothing, PropertyValues } from 'lit';
 import {
   CheckboxInputControl,
   InputType,
@@ -38,12 +43,12 @@ import {
 const GROUP1_TITLE = 'Totaal';
 const GROUP2_TITLE = 'Aantal';
 
-@customElement('rock-aanmelding-rapportage')
-export class AanmeldingRapportageComponent extends RockElement {
+@customElement('rock-rapportage')
+export class RapportageComponent extends RockElement {
   static override styles = [bootstrap];
 
   @property()
-  public reportType!: AanmeldingReportType;
+  public reportType!: AanmeldingReportType | ActiviteitReportType;
 
   @state()
   public report?: Report;
@@ -75,40 +80,68 @@ export class AanmeldingRapportageComponent extends RockElement {
   @state()
   public isLoading = false;
 
-  public override updated(
-    props: PropertyValues<AanmeldingRapportageComponent>,
-  ) {
+  public override updated(props: PropertyValues<RapportageComponent>) {
     if (
-      (props.has('reportType') ||
-        props.has('projectType') ||
-        props.has('group1') ||
-        props.has('group2') ||
-        props.has('enkelEersteAanmeldingen') ||
-        props.has('enkelJaar') ||
-        props.has('enkelOrganisatieonderdeel') ||
-        props.has('aanmeldingsstatus') ||
-        props.has('overnachting')) &&
-      this.group1
+      props.has('reportType') ||
+      props.has('projectType') ||
+      props.has('group1') ||
+      props.has('group2') ||
+      props.has('enkelEersteAanmeldingen') ||
+      props.has('enkelJaar') ||
+      props.has('enkelOrganisatieonderdeel') ||
+      props.has('aanmeldingsstatus') ||
+      props.has('overnachting')
     ) {
-      this.isLoading = true;
-      reportsClient
-        .get(
-          `reports/aanmeldingen/${this.reportType}`,
-          this.group1,
-          this.group2,
-          {
-            enkelEersteAanmeldingen: this.enkelEersteAanmeldingen,
-            organisatieonderdeel: this.enkelOrganisatieonderdeel,
-            type: this.projectType,
-            jaar: this.enkelJaar,
-            overnachting: this.overnachting,
-            aanmeldingsstatus: this.aanmeldingsstatus,
-          },
-        )
-        .then((report) => (this.report = report))
-        .finally(() => {
-          this.isLoading = false;
-        });
+      if (isActiviteitReportType(this.reportType)) {
+        if (this.group1 && !isActiviteitGroupingField(this.group1)) {
+          this.group1 = undefined;
+        }
+        if (this.group2 && !isActiviteitGroupingField(this.group2)) {
+          this.group2 = undefined;
+        }
+      }
+      if (this.group1) {
+        let reportRequest;
+        switch (this.reportType) {
+          case 'aanmeldingen':
+          case 'deelnames':
+          case 'deelnemersuren':
+            reportRequest = reportsClient.get(
+              `reports/aanmeldingen/${this.reportType}`,
+              this.group1,
+              this.group2,
+              {
+                enkelEersteAanmeldingen: this.enkelEersteAanmeldingen,
+                organisatieonderdeel: this.enkelOrganisatieonderdeel,
+                type: this.projectType,
+                jaar: this.enkelJaar,
+                overnachting: this.overnachting,
+                aanmeldingsstatus: this.aanmeldingsstatus,
+              },
+            );
+            break;
+          case 'begeleidingsuren':
+          case 'vormingsuren':
+            reportRequest = reportsClient.get(
+              `reports/activiteiten/${this.reportType}`,
+              this.group1,
+              this.group2,
+              {
+                organisatieonderdeel: this.enkelOrganisatieonderdeel,
+                type: this.projectType,
+                jaar: this.enkelJaar,
+                overnachting: this.overnachting,
+              },
+            );
+            break;
+        }
+        this.isLoading = true;
+        reportRequest
+          .then((report) => (this.report = report))
+          .finally(() => {
+            this.isLoading = false;
+          });
+      }
     }
   }
 
@@ -160,12 +193,12 @@ export class AanmeldingRapportageComponent extends RockElement {
 
         <rock-reactive-form-input-control
           class="col-12 col-md-3 col-sm-5 col-lg-3"
-          .control=${groupingControl('group1')}
+          .control=${groupingControl('group1', this.reportType)}
           .entity=${this}
         ></rock-reactive-form-input-control>
         <rock-reactive-form-input-control
           class="col-12 col-md-3 col-sm-5 col-lg-3"
-          .control=${groupingControl('group2')}
+          .control=${groupingControl('group2', this.reportType)}
           .entity=${this}
         ></rock-reactive-form-input-control>
       </fieldset>
@@ -188,19 +221,21 @@ export class AanmeldingRapportageComponent extends RockElement {
         ></rock-reactive-form-input-control>
         <rock-reactive-form-input-control
           class="col-12 col-md-4 col-sm-6"
-          .control=${enkelNieuwkomersControl}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
-        <rock-reactive-form-input-control
-          class="col-12 col-md-4 col-sm-6"
           .control=${overnachtingControl}
           .entity=${this}
         ></rock-reactive-form-input-control>
-        <rock-reactive-form-input-control
-          class="col-12 col-md-4 col-sm-6"
-          .control=${aanmeldingsstatusControl}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
+        ${reportRoot(this.reportType) === 'aanmeldingen'
+          ? html`<rock-reactive-form-input-control
+                class="col-12 col-md-4 col-sm-6"
+                .control=${aanmeldingsstatusControl}
+                .entity=${this}
+              ></rock-reactive-form-input-control>
+              <rock-reactive-form-input-control
+                class="col-12 col-md-4 col-sm-6"
+                .control=${enkelNieuwkomersControl}
+                .entity=${this}
+              ></rock-reactive-form-input-control>`
+          : nothing}
       </fieldset>
 
       <div class="row">
@@ -264,18 +299,26 @@ export class AanmeldingRapportageComponent extends RockElement {
   }
 }
 
-function groupingControl<TName extends 'group1' | 'group2'>(name: TName) {
-  return selectControl<AanmeldingRapportageComponent, TName>(
+function groupingControl<TName extends 'group1' | 'group2'>(
+  name: TName,
+  reportType: AanmeldingReportType | ActiviteitReportType,
+) {
+  return selectControl<RapportageComponent, TName>(
     name,
-    aanmeldingGroupingFieldOptions,
+    isAanmeldingReportType(reportType)
+      ? aanmeldingGroupingFieldOptions
+      : (activiteitGroupingFieldOptions as Readonly<
+          Record<RapportageComponent[TName] & string, string>
+        >),
     { placeholder: name === 'group1' ? 'Groepeer op...' : '...en daarna op' },
   );
 }
-const projectTypeControl = selectControl<
-  AanmeldingRapportageComponent,
-  'projectType'
->('projectType', projectTypes, { placeholder: 'Project type...' });
-const projectJaarControl: NumberInputControl<AanmeldingRapportageComponent> = {
+const projectTypeControl = selectControl<RapportageComponent, 'projectType'>(
+  'projectType',
+  projectTypes,
+  { placeholder: 'Project type...' },
+);
+const projectJaarControl: NumberInputControl<RapportageComponent> = {
   name: 'enkelJaar',
   type: InputType.number,
   label: 'Enkel in jaar...',
@@ -283,16 +326,17 @@ const projectJaarControl: NumberInputControl<AanmeldingRapportageComponent> = {
   step: 1,
 };
 
-const overnachtingControl = selectControl<
-  AanmeldingRapportageComponent,
-  'overnachting'
->('overnachting', overnachtingDescriptions, {
-  placeholder: 'Met en zonder overnachting',
-  label: 'Overnachting',
-});
+const overnachtingControl = selectControl<RapportageComponent, 'overnachting'>(
+  'overnachting',
+  overnachtingDescriptions,
+  {
+    placeholder: 'Met en zonder overnachting',
+    label: 'Overnachting',
+  },
+);
 
 const aanmeldingsstatusControl = selectControl<
-  AanmeldingRapportageComponent,
+  RapportageComponent,
   'aanmeldingsstatus'
 >('aanmeldingsstatus', aanmeldingsstatussen, {
   placeholder: 'Alle aanmeldingen',
@@ -300,18 +344,17 @@ const aanmeldingsstatusControl = selectControl<
 });
 
 const organisatieonderdeelFilterControl = selectControl<
-  AanmeldingRapportageComponent,
+  RapportageComponent,
   'enkelOrganisatieonderdeel'
 >('enkelOrganisatieonderdeel', organisatieonderdelen, {
   placeholder: 'Enkel organisatieonderdeel...',
 });
 
-const enkelNieuwkomersControl: CheckboxInputControl<AanmeldingRapportageComponent> =
-  {
-    name: 'enkelEersteAanmeldingen',
-    type: InputType.checkbox,
-    label: 'Enkel eerste aanmeldingen',
-  };
+const enkelNieuwkomersControl: CheckboxInputControl<RapportageComponent> = {
+  name: 'enkelEersteAanmeldingen',
+  type: InputType.checkbox,
+  label: 'Enkel eerste aanmeldingen',
+};
 
 function showGroupKey(
   group: AanmeldingGroupField,
@@ -331,5 +374,26 @@ function showGroupKey(
       return showOrganisatieonderdeel(key as Organisatieonderdeel | undefined);
     case 'werksituatie':
       return werksituaties[key as Werksituatie];
+  }
+}
+function reportRoot<
+  TReport extends AanmeldingReportType | ActiviteitReportType,
+>(
+  reportType: TReport,
+): TReport extends AanmeldingReportType ? 'aanmeldingen' : 'activiteiten' {
+  switch (reportType) {
+    case 'aanmeldingen':
+    case 'deelnames':
+    case 'deelnemersuren':
+      return 'aanmeldingen' as TReport extends AanmeldingReportType
+        ? 'aanmeldingen'
+        : 'activiteiten';
+    case 'begeleidingsuren':
+    case 'vormingsuren':
+      return 'activiteiten' as TReport extends AanmeldingReportType
+        ? 'aanmeldingen'
+        : 'activiteiten';
+    default:
+      throw new Error(`Unknown report type ${reportType satisfies never}`);
   }
 }

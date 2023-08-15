@@ -7,6 +7,8 @@ export type AanmeldingReportType =
   | 'deelnames'
   | 'deelnemersuren';
 
+export type ActiviteitReportType = 'vormingsuren' | 'begeleidingsuren';
+
 export const aanmeldingReportTypes: Options<AanmeldingReportType> =
   Object.freeze({
     aanmeldingen: 'Aanmeldingen',
@@ -14,10 +16,22 @@ export const aanmeldingReportTypes: Options<AanmeldingReportType> =
     deelnemersuren: 'Deelnemersuren',
   });
 
+export const activiteitReportTypes: Options<ActiviteitReportType> =
+  Object.freeze({
+    vormingsuren: 'Vormingsuren',
+    begeleidingsuren: 'Begeleidingsuren',
+  });
+
 export function isAanmeldingReportType(
   maybe: string,
 ): maybe is AanmeldingReportType {
   return maybe in aanmeldingReportTypes;
+}
+
+export function isActiviteitReportType(
+  maybe: string,
+): maybe is ActiviteitReportType {
+  return maybe in activiteitReportTypes;
 }
 
 export type Report = GroupedReport[];
@@ -34,30 +48,42 @@ export interface GroupedReport {
 }
 
 export type AanmeldingGroupField =
-  | 'jaar'
   | 'provincie'
   | 'woonsituatie'
   | 'geslacht'
   | 'werksituatie'
-  | 'organisatieonderdeel'
-  | 'project';
-export const aanmeldingGroupingFieldOptions: Options<AanmeldingGroupField> = {
+  | ActiviteitGroupField;
+
+export type ActiviteitGroupField = 'jaar' | 'organisatieonderdeel' | 'project';
+export const activiteitGroupingFieldOptions: Options<ActiviteitGroupField> = {
   project: 'Project',
   jaar: 'Jaar',
+  organisatieonderdeel: 'Organisatieonderdeel',
+};
+export const aanmeldingGroupingFieldOptions: Options<AanmeldingGroupField> = {
   provincie: 'Provincie',
   woonsituatie: 'Woonsituatie',
   werksituatie: 'Werksituatie',
   geslacht: 'Geslacht',
-  organisatieonderdeel: 'Organisatieonderdeel',
+  ...activiteitGroupingFieldOptions,
 };
 
-export interface AanmeldingReportFilter {
+export function isActiviteitGroupingField(
+  maybe: string,
+): maybe is ActiviteitGroupField {
+  return maybe in activiteitGroupingFieldOptions;
+}
+
+export interface AanmeldingReportFilter extends ActiviteitReportFilter {
   enkelEersteAanmeldingen?: boolean;
+  aanmeldingsstatus?: Aanmeldingsstatus;
+}
+
+export interface ActiviteitReportFilter {
   organisatieonderdeel?: Organisatieonderdeel;
   type?: ProjectType;
   jaar?: number;
   overnachting?: OvernachtingDescription;
-  aanmeldingsstatus?: Aanmeldingsstatus;
 }
 
 export type OvernachtingDescription = 'met' | 'zonder';

@@ -4,12 +4,18 @@ import type {
   Report,
   AanmeldingReportFilter,
   AanmeldingReportType,
-  ProjectType,
+  ActiviteitGroupField,
+  ActiviteitReportFilter,
+  ActiviteitReportType,
 } from '@rock-solid/shared';
-import { AanmeldingGroupingFieldPipe } from './pipes/aanmelding-grouping-field.pipe.js';
-import { AanmeldingReportFilterPipe } from './pipes/aanmelding-report-filter.pipe.js';
-import { AanmeldingReportTypePipe } from './pipes/aanmelding-report-type.pipe.js';
-import { ProjectTypePipe } from './pipes/project-type.pipe.js';
+import {
+  AanmeldingGroupingFieldPipe,
+  AanmeldingReportFilterPipe,
+  AanmeldingReportTypePipe,
+  ActiviteitGroupingFieldPipe,
+  ActiviteitReportFilterPipe,
+  ActiviteitReportTypePipe,
+} from './pipes/report-pipes.pipe.js';
 import { RequiredPipe } from './pipes/required.pipe.js';
 import { ReportMapper } from './services/report.mapper.js';
 
@@ -17,12 +23,10 @@ import { ReportMapper } from './services/report.mapper.js';
 export class ReportsController {
   constructor(private readonly reportMapper: ReportMapper) {}
 
-  @Get('aanmeldingen/:projectReport')
+  @Get('aanmeldingen/:aanmeldingReport')
   async aanmeldingen(
-    @Param('projectReport', AanmeldingReportTypePipe, RequiredPipe)
+    @Param('aanmeldingReport', AanmeldingReportTypePipe, RequiredPipe)
     report: AanmeldingReportType,
-    @Query('type', ProjectTypePipe)
-    type: ProjectType | undefined,
     @Query('by', AanmeldingGroupingFieldPipe, RequiredPipe)
     group1: AanmeldingGroupField,
     @Query('andBy', AanmeldingGroupingFieldPipe)
@@ -30,6 +34,20 @@ export class ReportsController {
     @Query(AanmeldingReportFilterPipe)
     filter: AanmeldingReportFilter,
   ): Promise<Report> {
-    return this.reportMapper.aanmeldingen(report, type, group1, group2, filter);
+    return this.reportMapper.aanmeldingen(report, group1, group2, filter);
+  }
+
+  @Get('activiteiten/:activiteitReport')
+  async activiteiten(
+    @Param('activiteitReport', ActiviteitReportTypePipe, RequiredPipe)
+    report: ActiviteitReportType,
+    @Query('by', ActiviteitGroupingFieldPipe, RequiredPipe)
+    group1: ActiviteitGroupField,
+    @Query('andBy', ActiviteitGroupingFieldPipe)
+    group2: ActiviteitGroupField | undefined,
+    @Query(ActiviteitReportFilterPipe)
+    filter: ActiviteitReportFilter,
+  ): Promise<Report> {
+    return this.reportMapper.activiteiten(report, group1, group2, filter);
   }
 }
