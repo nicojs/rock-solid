@@ -1,4 +1,5 @@
 import {
+  Activiteit,
   CursusActiviteit,
   Decimal,
   empty,
@@ -80,7 +81,7 @@ export class ProjectMapper {
     return count;
   }
 
-  private async enrichWithDeelnemersuren(activiteiten: CursusActiviteit[]) {
+  private async enrichWithDeelnemersuren(activiteiten: Activiteit[]) {
     if (activiteiten.length) {
       const deelnemersurenResult = await this.db.$queryRaw<
         { id: number; deelnemersuren: number }[]
@@ -91,9 +92,9 @@ export class ProjectMapper {
     WHERE activiteit.id IN (${Prisma.join(activiteiten.map(({ id }) => id))})
     GROUP BY activiteit.id`;
       for (const activiteit of activiteiten) {
-        activiteit.aantalDeelnemersuren = deelnemersurenResult.find(
-          ({ id }) => id === activiteit.id,
-        )?.deelnemersuren;
+        activiteit.aantalDeelnemersuren =
+          deelnemersurenResult.find(({ id }) => id === activiteit.id)
+            ?.deelnemersuren ?? 0;
       }
     }
   }
@@ -112,7 +113,7 @@ export class ProjectMapper {
   }
 
   async createProject(newProject: UpsertableProject): Promise<Project> {
-    const project = await handleKnownPrismaErrors(
+    const dbProject = await handleKnownPrismaErrors(
       this.db.project.create({
         data: {
           ...newProject,
@@ -127,14 +128,16 @@ export class ProjectMapper {
         include: includeAggregate,
       }),
     );
-    return toProject(project);
+    const project = toProject(dbProject);
+    await this.enrichWithDeelnemersuren(project.activiteiten);
+    return project;
   }
 
   async updateProject(
     id: number,
-    project: UpsertableProject,
+    projectUpdates: UpsertableProject,
   ): Promise<Project> {
-    const { aantalAanmeldingen, begeleiders, ...data } = project;
+    const { aantalAanmeldingen, begeleiders, ...data } = projectUpdates;
     const begeleiderIds = begeleiders?.map(({ id }) => ({ id })) ?? [];
     const result = await handleKnownPrismaErrors(
       this.db.project.update({
@@ -146,15 +149,15 @@ export class ProjectMapper {
             deleteMany: {
               projectId: id,
               id: {
-                notIn: project.activiteiten
+                notIn: projectUpdates.activiteiten
                   .map(({ id }) => id)
                   .filter(notEmpty),
               },
             },
-            create: project.activiteiten
+            create: projectUpdates.activiteiten
               .filter((act) => empty(act.id))
               .map(toDBActiviteit),
-            updateMany: project.activiteiten
+            updateMany: projectUpdates.activiteiten
               .filter((act) => notEmpty(act.id))
               .map((act) => ({
                 where: {
@@ -168,7 +171,9 @@ export class ProjectMapper {
         include: includeAggregate,
       }),
     );
-    return toProject(result);
+    const project = toProject(result);
+    await this.enrichWithDeelnemersuren(project.activiteiten);
+    return project;
   }
 
   async delete(id: number) {
@@ -201,9 +206,9 @@ function determineYear(activiteiten: UpsertableActiviteit[]) {
 }
 
 type DBActiviteitAggregate = db.Activiteit & {
-  _count?: {
-    deelnames?: number;
-  } | null;
+  _count: {
+    deelnames: number;
+  };
 };
 
 interface DBProjectAggregate extends db.Project {
@@ -211,7 +216,7 @@ interface DBProjectAggregate extends db.Project {
   begeleiders: DBPersonAggregate[];
   _count: {
     aanmeldingen: number;
-  } | null;
+  };
 }
 
 function toProject(val: DBProjectAggregate): Project {
@@ -220,7 +225,7 @@ function toProject(val: DBProjectAggregate): Project {
     type,
     begeleiders: begeleiders.map(toPersoon) as OverigPersoon[],
     ...projectProperties,
-    aantalAanmeldingen: _count?.aanmeldingen,
+    aantalAanmeldingen: _count.aanmeldingen,
   });
   switch (type) {
     case 'cursus':
@@ -245,18 +250,21 @@ function toProject(val: DBProjectAggregate): Project {
 }
 
 function toCursusActiviteit(val: DBActiviteitAggregate): CursusActiviteit {
-  const { projectId, verblijf, vervoer, _count, ...act } = purgeNulls(val);
+  const { projectId, verblijf, vervoer, _count, ...activiteitData } =
+    purgeNulls(val);
   return {
-    ...act,
-    aantalDeelnames: _count?.deelnames,
+    ...activiteitData,
+    aantalDeelnames: _count.deelnames,
+    aantalDeelnemersuren: -1,
   };
 }
 
 function toVakantieActiviteit(val: DBActiviteitAggregate): VakantieActiviteit {
-  const { projectId, vormingsuren, _count, ...act } = purgeNulls(val);
+  const { projectId, _count, ...activiteitData } = purgeNulls(val);
   return {
-    ...act,
-    aantalDeelnames: _count?.deelnames,
+    ...activiteitData,
+    aantalDeelnames: _count.deelnames,
+    aantalDeelnemersuren: -1,
   };
 }
 

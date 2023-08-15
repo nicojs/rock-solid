@@ -3,6 +3,8 @@ import {
   Project,
   UpsertableDeelname,
   Aanmelding,
+  Vakantie,
+  Activiteit,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory } from './test-utils.test.js';
@@ -174,6 +176,50 @@ describe(ProjectenController.name, () => {
         deelnemerId: deelnemer1.id,
       });
       expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
+    });
+  });
+
+  describe('POST /projecten', () => {
+    it('should create a project', async () => {
+      // Arrange
+      const activiteitData = {
+        van: new Date(2011, 2, 2, 20, 0, 0),
+        totEnMet: new Date(2011, 2, 4, 16, 0, 0),
+        vormingsuren: 20,
+        begeleidingsuren: 40,
+        metOvernachting: true,
+        verblijf: 'boot',
+        vervoer: 'autocarOverdag',
+      } as const satisfies Partial<Activiteit>;
+      const projectData = {
+        projectnummer: '123',
+        naam: 'Foo project',
+        type: 'vakantie',
+      } as const satisfies Partial<Project>;
+      const project = factory.project({
+        activiteiten: [factory.activiteit(activiteitData)],
+        ...projectData,
+      });
+
+      // Act
+      const createdProject = await harness.createProject(project);
+
+      // Assert
+      expect(createdProject).deep.eq({
+        id: createdProject.id,
+        ...projectData,
+        aantalAanmeldingen: 0,
+        begeleiders: [],
+        jaar: 2011,
+        activiteiten: [
+          {
+            ...activiteitData,
+            id: createdProject.activiteiten[0]!.id,
+            aantalDeelnames: 0,
+            aantalDeelnemersuren: 0,
+          },
+        ],
+      } satisfies Vakantie);
     });
   });
 

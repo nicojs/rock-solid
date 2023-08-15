@@ -16,6 +16,7 @@ import {
   OverigPersoonSelectie,
   cursusLabels,
   Privilege,
+  Decimal,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -107,22 +108,59 @@ const baseActiviteitenControls: FormControl<BaseActiviteit>[] = [
     type: InputType.dateTimeLocal,
     validators: { required: true },
   },
+  {
+    name: 'vormingsuren',
+    type: InputType.number,
+    validators: {
+      custom(value, entity) {
+        if (value instanceof Decimal) {
+          throw new Error(
+            'Value for "begeleidingsuren" should be a number, was a Decimal',
+          );
+        }
+        if (value === undefined && entity.begeleidingsuren !== undefined) {
+          return 'Vormingsuren zijn verplicht als er ook begeleidingsuren zijn.';
+        }
+        if (
+          value !== undefined &&
+          entity.begeleidingsuren !== undefined &&
+          value > entity.begeleidingsuren
+        ) {
+          return `Vul een waarde in die lager of gelijk zijn aan de begeleidingsuren (${entity.begeleidingsuren}).`;
+        }
+        return '';
+      },
+    },
+  },
+  {
+    name: 'begeleidingsuren',
+    type: InputType.number,
+    validators: {
+      custom(value, entity) {
+        if (value instanceof Decimal) {
+          throw new Error(
+            'Value for "begeleidingsuren" should be a number, was a Decimal',
+          );
+        }
+        if (value !== undefined) {
+          if (entity.vormingsuren === undefined) {
+            return 'Vormingsuren zijn verplicht als er ook begeleidingsuren zijn.';
+          }
+          if (value < entity.vormingsuren) {
+            return `Vul een waarde in die hoger of gelijk zijn aan de vormingsuren (${entity.vormingsuren}).`;
+          }
+        }
+        return '';
+      },
+    },
+  },
 ];
 
 const cursusActiviteitenControls: FormControl<CursusActiviteit>[] = [
   ...baseActiviteitenControls,
-  {
-    name: 'vormingsuren',
-    type: InputType.number,
-  },
 ];
 const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
   ...baseActiviteitenControls,
-
-  {
-    name: 'begeleidingsuren',
-    type: InputType.number,
-  },
   radioControl('verblijf', vakantieVerblijven, {
     validators: { required: true },
   }),

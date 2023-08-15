@@ -147,8 +147,11 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
               inputEl.value,
             );
           } else {
-            (this.entity[control.name] as unknown as number) =
-              inputEl.valueAsNumber;
+            let val: number | undefined = inputEl.valueAsNumber;
+            if (isNaN(val)) {
+              val = undefined;
+            }
+            (this.entity[control.name] as unknown as number | undefined) = val;
           }
           this.updateCustomValidity();
           this.updateValidationMessage();

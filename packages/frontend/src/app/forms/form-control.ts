@@ -37,7 +37,7 @@ interface Validators<TEntity, TValue> {
   min?: Date | number;
   max?: Date | number;
   pattern?: string;
-  custom?: (value: TValue, entity: TEntity) => string;
+  custom?: (value: TValue | undefined, entity: TEntity) => string;
 }
 
 export const patterns = Object.freeze({

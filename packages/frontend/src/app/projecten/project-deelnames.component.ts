@@ -39,7 +39,6 @@ export class ProjectDeelnamesComponent extends LitElement {
   override updated(props: PropertyValues<ProjectDeelnamesComponent>) {
     if (props.has('path') && this.path[0]) {
       const activiteitId = +this.path[0];
-      // @ts-expect-error "This expression is not callable"-nonsense
       this.activiteit = this.project.activiteiten.find(
         (act: Activiteit) => act.id === activiteitId,
       );
