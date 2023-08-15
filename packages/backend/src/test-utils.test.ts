@@ -32,6 +32,8 @@ import {
   Plaats,
   UpsertableDeelname,
   parse,
+  Vakantie,
+  UpsertableVakantie,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -337,6 +339,16 @@ export const factory = {
       projectnummer: `00${seed++}`,
       naam: `Test project ${seed}`,
       type: 'cursus',
+      activiteiten: [this.activiteit()],
+      ...overrides,
+    };
+  },
+
+  vakantie(overrides?: Partial<Vakantie>): UpsertableVakantie {
+    return {
+      projectnummer: `00${seed++}`,
+      naam: `Test vakantie ${seed}`,
+      type: 'vakantie',
       activiteiten: [this.activiteit()],
       ...overrides,
     };

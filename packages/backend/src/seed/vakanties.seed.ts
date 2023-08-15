@@ -76,7 +76,7 @@ export async function seedVakanties(
       jaar: parseInt(raw.jaar),
       seizoen: raw.seizoen === 'winter' ? 'winter' : 'zomer',
       organisatieonderdeel: 'deKei',
-      prijs: prijsFromRaw(raw.prijs),
+      saldo: prijsFromRaw(raw.saldo),
       voorschot: prijsFromRaw(raw.vosal),
       activiteiten: {
         createMany: {
