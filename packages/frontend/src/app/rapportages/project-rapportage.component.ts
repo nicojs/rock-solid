@@ -35,6 +35,9 @@ import {
   toCsv,
 } from '../shared';
 
+const GROUP1_TITLE = 'Totaal';
+const GROUP2_TITLE = 'Aantal';
+
 @customElement('rock-project-rapportage')
 export class ProjectRapportageComponent extends RockElement {
   static override styles = [bootstrap];
@@ -117,9 +120,9 @@ export class ProjectRapportageComponent extends RockElement {
           ['key', 'total', 'rowKey', 'rowCount'],
           {
             key: groupingFieldOptions[this.group1],
-            total: 'Totaal',
+            total: GROUP1_TITLE,
             rowKey: groupingFieldOptions[this.group2],
-            rowCount: 'Aantal',
+            rowCount: GROUP2_TITLE,
           },
           {},
         );
@@ -129,15 +132,15 @@ export class ProjectRapportageComponent extends RockElement {
           ['key', 'total'],
           {
             key: groupingFieldOptions[this.group1],
-            total: 'Totaal',
+            total: GROUP1_TITLE,
           },
           {},
         );
       }
       downloadCsv(
         csv,
-        `${this.reportType}-per-${groupingFieldOptions[this.group1]}${
-          this.group2 ? `-en-${groupingFieldOptions[this.group2]}` : ''
+        `${this.reportType}-per-${this.group1}${
+          this.group2 ? `-en-${this.group2}` : ''
         }`,
       );
     }
@@ -208,10 +211,10 @@ export class ProjectRapportageComponent extends RockElement {
                   <thead>
                     <tr>
                       <th>${groupingFieldOptions[this.group1]}</th>
-                      <th>Totaal</th>
+                      <th>${GROUP1_TITLE}</th>
                       ${this.group2
                         ? html`<th>${groupingFieldOptions[this.group2]}</th>
-                            <th>Aantal</th>`
+                            <th>${GROUP2_TITLE}</th>`
                         : ''}
                     </tr>
                   </thead>
@@ -280,7 +283,7 @@ const aanmeldingsstatusControl = selectControl<
   ProjectRapportageComponent,
   'aanmeldingsstatus'
 >('aanmeldingsstatus', aanmeldingsstatussen, {
-  placeholder: 'Alle aanmeldingsstatussen',
+  placeholder: 'Alle aanmeldingen',
   label: aanmeldingLabels.status,
 });
 
