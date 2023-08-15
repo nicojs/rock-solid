@@ -2,27 +2,39 @@ import { Aanmeldingsstatus } from './aanmelding.js';
 import { Options } from './options.js';
 import { Organisatieonderdeel, ProjectType } from './project.js';
 
-export type ProjectenReportType =
+export type AanmeldingReportType =
   | 'aanmeldingen'
   | 'deelnames'
   | 'deelnemersuren';
 
-export const projectenReportTypes: Options<ProjectenReportType> = Object.freeze(
-  {
+export type ActiviteitReportType = 'vormingsuren' | 'begeleidingsuren';
+
+export const aanmeldingReportTypes: Options<AanmeldingReportType> =
+  Object.freeze({
     aanmeldingen: 'Aanmeldingen',
     deelnames: 'Deelnames',
     deelnemersuren: 'Deelnemersuren',
-    vormingsuren: 'Vormingsuren',
-  },
-);
+  });
 
-export function isProjectReportType(
+export const activiteitReportTypes: Options<ActiviteitReportType> =
+  Object.freeze({
+    vormingsuren: 'Vormingsuren',
+    begeleidingsuren: 'Begeleidingsuren',
+  });
+
+export function isAanmeldingReportType(
   maybe: string,
-): maybe is ProjectenReportType {
-  return maybe in projectenReportTypes;
+): maybe is AanmeldingReportType {
+  return maybe in aanmeldingReportTypes;
 }
 
-export type ProjectReport = GroupedReport[];
+export function isActiviteitReportType(
+  maybe: string,
+): maybe is ActiviteitReportType {
+  return maybe in activiteitReportTypes;
+}
+
+export type Report = GroupedReport[];
 
 export interface ReportRow {
   key: string;
@@ -35,31 +47,43 @@ export interface GroupedReport {
   total: number;
 }
 
-export type GroupField =
-  | 'jaar'
+export type AanmeldingGroupField =
   | 'provincie'
   | 'woonsituatie'
   | 'geslacht'
   | 'werksituatie'
-  | 'organisatieonderdeel'
-  | 'project';
-export const groupingFieldOptions: Options<GroupField> = {
+  | ActiviteitGroupField;
+
+export type ActiviteitGroupField = 'jaar' | 'organisatieonderdeel' | 'project';
+export const activiteitGroupingFieldOptions: Options<ActiviteitGroupField> = {
   project: 'Project',
   jaar: 'Jaar',
+  organisatieonderdeel: 'Organisatieonderdeel',
+};
+export const aanmeldingGroupingFieldOptions: Options<AanmeldingGroupField> = {
   provincie: 'Provincie',
   woonsituatie: 'Woonsituatie',
   werksituatie: 'Werksituatie',
   geslacht: 'Geslacht',
-  organisatieonderdeel: 'Organisatieonderdeel',
+  ...activiteitGroupingFieldOptions,
 };
 
-export interface ProjectReportFilter {
+export function isActiviteitGroupingField(
+  maybe: string,
+): maybe is ActiviteitGroupField {
+  return maybe in activiteitGroupingFieldOptions;
+}
+
+export interface AanmeldingReportFilter extends ActiviteitReportFilter {
   enkelEersteAanmeldingen?: boolean;
+  aanmeldingsstatus?: Aanmeldingsstatus;
+}
+
+export interface ActiviteitReportFilter {
   organisatieonderdeel?: Organisatieonderdeel;
   type?: ProjectType;
   jaar?: number;
   overnachting?: OvernachtingDescription;
-  aanmeldingsstatus?: Aanmeldingsstatus;
 }
 
 export type OvernachtingDescription = 'met' | 'zonder';

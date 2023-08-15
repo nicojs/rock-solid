@@ -1,38 +1,62 @@
 import { Injectable } from '@nestjs/common';
 import {
   GroupedReport,
-  GroupField,
-  ProjectReport,
-  ProjectReportFilter,
-  ProjectenReportType,
-  ProjectType,
+  AanmeldingGroupField,
+  Report,
+  AanmeldingReportFilter,
+  AanmeldingReportType,
+  ActiviteitReportFilter,
+  ActiviteitReportType,
+  ActiviteitGroupField,
 } from '@rock-solid/shared';
 import { DBService } from './db.service.js';
 
 @Injectable()
 export class ReportMapper {
+  activiteiten(
+    reportType: ActiviteitReportType,
+    groupField: ActiviteitGroupField,
+    secondGroupField: ActiviteitGroupField | undefined,
+    filter: ActiviteitReportFilter,
+  ): Promise<Report> {
+    const query = `
+    SELECT 
+    ${select(groupField)}::text as key1, 
+    ${secondGroupField ? `${select(secondGroupField)}::text as key2,` : ''} 
+    ${activiteitReportAggregator(reportType)}::int as total
+    FROM activiteit
+    INNER JOIN project ON project.id = activiteit."projectId"
+    ${filterWhere(filter)}
+    GROUP BY ${fieldName(groupField)}${
+      secondGroupField ? `, ${fieldName(secondGroupField)}` : ''
+    }
+    ORDER BY ${fieldName(groupField)} DESC${
+      secondGroupField ? `, ${fieldName(secondGroupField)} DESC` : ''
+    }
+`;
+    return this.execReportQuery(query);
+  }
   constructor(private db: DBService) {}
 
-  async projecten(
-    reportType: ProjectenReportType,
-    projectType: ProjectType | undefined,
-    groupField: GroupField,
-    secondGroupField: GroupField | undefined,
-    filter: ProjectReportFilter,
-  ): Promise<ProjectReport> {
+  async aanmeldingen(
+    reportType: AanmeldingReportType,
+    groupField: AanmeldingGroupField,
+    secondGroupField: AanmeldingGroupField | undefined,
+    filter: AanmeldingReportFilter,
+  ): Promise<Report> {
     const query = `
     SELECT 
       ${select(groupField)}::text as key1, 
       ${secondGroupField ? `${select(secondGroupField)}::text as key2,` : ''} 
-      ${reportTypeAggregator(reportType)}::int as total
+      ${aanmeldingReportAggregator(reportType)}::int as total
     FROM aanmelding
     INNER JOIN project ON aanmelding."projectId" = project.id ${
-      projectType ? `AND project.type = '${projectType}'::project_type` : ''
+      filter.type ? `AND project.type = '${filter.type}'::project_type` : ''
     }
     ${reportTypeJoin(reportType)}
     INNER JOIN persoon ON persoon.id = aanmelding."deelnemerId"    
     INNER JOIN plaats ON aanmelding."woonplaatsDeelnemerId" = plaats.id
-    ${filterWhere(projectType, filter)}
+    ${filterWhere(filter)}
     GROUP BY ${fieldName(groupField)}${
       secondGroupField ? `, ${fieldName(secondGroupField)}` : ''
     }
@@ -40,11 +64,15 @@ export class ReportMapper {
       secondGroupField ? `, ${fieldName(secondGroupField)} DESC` : ''
     }
     `;
+    return this.execReportQuery(query);
+  }
+
+  private async execReportQuery(query: string): Promise<Report> {
     // console.log(query);
     const rawResults = await this.db.$queryRawUnsafe<
       { key1: string; key2?: string; total: number }[]
     >(query);
-    const aanmeldingen: ProjectReport = [];
+    const aanmeldingen: Report = [];
     function newReport(key: string) {
       const report: GroupedReport = {
         key,
@@ -65,12 +93,11 @@ export class ReportMapper {
       }
       reportItem.total += row.total;
     });
-
     return aanmeldingen;
   }
 }
 
-function reportTypeJoin(reportType: ProjectenReportType): string {
+function reportTypeJoin(reportType: AanmeldingReportType): string {
   switch (reportType) {
     case 'deelnames':
       return 'INNER JOIN deelname ON deelname."aanmeldingId" = aanmelding.id AND deelname."effectieveDeelnamePerunage" > 0';
@@ -84,13 +111,10 @@ function reportTypeJoin(reportType: ProjectenReportType): string {
   }
 }
 
-function filterWhere(
-  projectType: ProjectType | undefined,
-  filter: ProjectReportFilter,
-): string {
+function filterWhere(filter: AanmeldingReportFilter): string {
   const whereClauses: string[] = [];
   if (filter.enkelEersteAanmeldingen) {
-    switch (projectType) {
+    switch (filter.type) {
       case 'cursus':
         whereClauses.push('aanmelding.id = persoon."eersteCursusAanmeldingId"');
         break;
@@ -132,7 +156,7 @@ function filterWhere(
   }
   return '';
 }
-function reportTypeAggregator(reportType: ProjectenReportType): string {
+function aanmeldingReportAggregator(reportType: AanmeldingReportType): string {
   switch (reportType) {
     case 'deelnames':
     case 'aanmeldingen':
@@ -141,8 +165,16 @@ function reportTypeAggregator(reportType: ProjectenReportType): string {
       return 'SUM(deelname."effectieveDeelnamePerunage" * activiteit.vormingsuren)';
   }
 }
+function activiteitReportAggregator(reportType: ActiviteitReportType): string {
+  switch (reportType) {
+    case 'vormingsuren':
+      return 'SUM(activiteit.vormingsuren)';
+    case 'begeleidingsuren':
+      return 'SUM(activiteit.begeleidingsuren)';
+  }
+}
 
-function fieldName(field: GroupField): string {
+function fieldName(field: AanmeldingGroupField): string {
   switch (field) {
     case 'jaar':
       return 'project.jaar';
@@ -161,7 +193,7 @@ function fieldName(field: GroupField): string {
   }
 }
 
-function select(field: GroupField): string {
+function select(field: AanmeldingGroupField): string {
   switch (field) {
     case 'jaar':
       return 'jaar';
