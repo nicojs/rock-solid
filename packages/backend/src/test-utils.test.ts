@@ -32,7 +32,6 @@ import {
   Plaats,
   UpsertableDeelname,
   parse,
-  Upsertable,
   Vakantie,
   UpsertableVakantie,
 } from '@rock-solid/shared';
