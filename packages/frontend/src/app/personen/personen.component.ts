@@ -11,7 +11,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
 import { capitalize, pluralize } from '../shared';
-import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { fullName } from './full-name.pipe';
 import { RockElement } from '../rock-element';
 import { personenStore } from './personen.store';
@@ -73,13 +72,12 @@ export class PersonenComponent extends RockElement {
     );
   }
 
-  private searchFormSubmit(event: SubmitEvent) {
-    event.preventDefault();
-    if (this.searchRef.value?.value) {
+  private searchSubmit(event: CustomEvent<string>) {
+    if (event.detail) {
       personenStore.setCurrentPage(0, {
         searchType: 'text',
         type: this.type,
-        search: this.searchRef.value.value,
+        search: event.detail,
       });
     } else {
       personenStore.setCurrentPage(0, undefined);
@@ -108,28 +106,19 @@ export class PersonenComponent extends RockElement {
     personenStore.delete(ev.detail.id).subscribe();
   }
 
-  private searchRef: Ref<HTMLInputElement> = createRef();
   override render() {
     switch (this.path[0]) {
       case 'list':
-        return html` <div class="row">
+        return html`<div class="row">
             <h2 class="col-sm-6 col-md-8">
               ${capitalize(pluralize(this.type))}${this.personen
                 ? html` (${this.totalCount})`
                 : ''}
             </h2>
             <div class="col">
-              <form @submit="${this.searchFormSubmit}" class="input-group">
-                <input
-                  type="text"
-                  ${ref(this.searchRef)}
-                  class="form-control"
-                  placeholder="Zoek op naam"
-                />
-                <button type="submit" class="btn btn-outline-secondary">
-                  <rock-icon icon="search"></rock-icon>
-                </button>
-              </form>
+              <rock-text-search
+                @search-submitted=${this.searchSubmit}
+              ></rock-text-search>
             </div>
           </div>
           <div class="row">

@@ -78,6 +78,8 @@ export async function seedVakanties(
       organisatieonderdeel: 'deKei',
       saldo: prijsFromRaw(raw.saldo),
       voorschot: prijsFromRaw(raw.vosal),
+      bestemming: raw.bestemming,
+      land: raw.land,
       activiteiten: {
         createMany: {
           data: activiteitenFromRaw(raw),

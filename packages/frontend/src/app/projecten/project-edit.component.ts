@@ -83,14 +83,6 @@ const baseProjectControls: FormControl<BaseProject>[] = [
       pattern: '^((KJ)|(DK)|(DS))\\/\\d{2}\\/\\d+$',
     },
   },
-  {
-    name: 'naam',
-    type: InputType.text,
-    validators: {
-      minLength: 3,
-      required: true,
-    },
-  },
   { type: InputType.currency, name: 'saldo' },
 ];
 
@@ -171,6 +163,14 @@ const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
 ];
 
 const cursusProjectControls: FormControl<Cursus>[] = [
+  {
+    name: 'naam',
+    type: InputType.text,
+    validators: {
+      minLength: 3,
+      required: true,
+    },
+  },
   ...baseProjectControls,
   begeleidersTagsControl('personeel'),
   radioControl('organisatieonderdeel', organisatieonderdelen, {
@@ -181,9 +181,25 @@ const cursusProjectControls: FormControl<Cursus>[] = [
 ];
 
 const vakantieProjectControls: FormControl<Vakantie>[] = [
+  {
+    name: 'bestemming',
+    type: InputType.text,
+    validators: {
+      minLength: 3,
+      required: true,
+    },
+  },
+  {
+    name: 'land',
+    type: InputType.text,
+    validators: {
+      minLength: 3,
+      required: true,
+    },
+  },
   ...baseProjectControls,
-  begeleidersTagsControl('vakantieVrijwilliger', 2),
   { type: InputType.currency, name: 'voorschot' },
+  begeleidersTagsControl('vakantieVrijwilliger', 2),
   radioControl('seizoen', vakantieSeizoenen, {
     validators: { required: true },
   }),

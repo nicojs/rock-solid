@@ -107,29 +107,48 @@ export class OrganisatiesComponent extends RockElement {
     organisatieStore.delete(ev.detail.id).subscribe();
   }
 
+  private searchSubmit(event: CustomEvent<string>) {
+    if (event.detail) {
+      organisatieStore.setCurrentPage(0, {
+        naam: event.detail,
+      });
+    } else {
+      organisatieStore.setCurrentPage(0, undefined);
+    }
+  }
   override render() {
     switch (this.path[0]) {
       case 'list':
         return html`
           <div class="row">
-            <h2 class="col">Organisaties (${this.totalCount})</h2>
+            <h2 class="col-sm-6 col-md-8">Organisaties (${this.totalCount})</h2>
+            <div class="col">
+              <rock-text-search
+                @search-submitted=${this.searchSubmit}
+                placeholder="Zoek op organisatienaam"
+              ></rock-text-search>
+            </div>
           </div>
           ${this.organisaties
             ? html`
-                <rock-link href="/organisaties/new" btn btnSuccess
-                  ><rock-icon icon="journalPlus" size="md"></rock-icon>
-                  Organisatie</rock-link
-                >
-                <rock-link btn btnOutlineSecondary href="../zoeken"
-                  ><rock-icon icon="search"></rock-icon> Geavanceerd
-                  zoeken</rock-link
-                >
-                <rock-organisaties-list
-                  class="row"
-                  .organisaties=${this.organisaties}
-                  @delete=${this.deleteOrganisatie}
-                ></rock-organisaties-list>
-                <rock-paging .store=${organisatieStore}></rock-paging>
+                <div class="row">
+                  <div class="col">
+                    <rock-link href="/organisaties/new" btn btnSuccess
+                      ><rock-icon icon="journalPlus" size="md"></rock-icon>
+                      Organisatie</rock-link
+                    >
+                    <rock-link btn btnOutlineSecondary href="../zoeken"
+                      ><rock-icon icon="search"></rock-icon> Geavanceerd
+                      zoeken</rock-link
+                    >
+                    <rock-organisaties-list
+                      class="row"
+                      .organisaties=${this.organisaties}
+                      @delete=${this.deleteOrganisatie}
+                    ></rock-organisaties-list>
+                    <rock-paging .store=${organisatieStore}></rock-paging>
+                  </div>
+                </div>
               `
             : html`<rock-loading></rock-loading>`}
         `;

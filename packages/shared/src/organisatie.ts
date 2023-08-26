@@ -58,6 +58,7 @@ export const organisatieContactColumnNames: Record<
 });
 
 export type OrganisatieFilter = {
+  naam?: string;
   folders?: Foldersoort[];
 };
 

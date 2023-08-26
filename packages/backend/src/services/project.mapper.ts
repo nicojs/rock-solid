@@ -7,11 +7,8 @@ import {
   OverigPersoon,
   Project,
   ProjectFilter,
-  ProjectType,
   UpsertableActiviteit,
-  UpsertableCursus,
   UpsertableProject,
-  UpsertableVakantie,
   VakantieActiviteit,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
@@ -119,8 +116,7 @@ export class ProjectMapper {
     const dbProject = await handleKnownPrismaErrors(
       this.db.project.create({
         data: {
-          ...newProject,
-          jaar: determineYear(newProject.activiteiten),
+          ...toDBProject(newProject),
           activiteiten: {
             create: newProject.activiteiten.map(toDBActiviteit),
           },
@@ -140,20 +136,13 @@ export class ProjectMapper {
     id: number,
     projectUpdates: UpsertableProject,
   ): Promise<Project> {
-    const {
-      aantalAanmeldingen,
-      begeleiders,
-      id: unused,
-      prijs: unused2,
-      ...data
-    } = fillOutAllUpsertableProjectFields(projectUpdates);
-    const begeleiderIds = begeleiders?.map(({ id }) => ({ id })) ?? [];
+    const begeleiderIds =
+      projectUpdates.begeleiders?.map(({ id }) => ({ id })) ?? [];
     const result = await handleKnownPrismaErrors(
       this.db.project.update({
         where: { id },
         data: {
-          ...data,
-          jaar: determineYear(data.activiteiten),
+          ...toDBProject(projectUpdates),
           activiteiten: {
             deleteMany: {
               projectId: id,
@@ -190,6 +179,33 @@ export class ProjectMapper {
   }
 }
 
+function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
+  const jaar = determineYear(project.activiteiten);
+  const {
+    activiteiten,
+    begeleiders,
+    aantalAanmeldingen,
+    type,
+    prijs,
+    ...projectData
+  } = project;
+  if (project.type === 'vakantie') {
+    return {
+      ...projectData,
+      type: 'vakantie',
+      jaar,
+      naam: `${project.bestemming} - ${project.land}`,
+    };
+  } else {
+    return {
+      ...projectData,
+      type: 'cursus',
+      jaar,
+      naam: project.naam,
+    };
+  }
+}
+
 function toDBActiviteit(
   activiteit: UpsertableActiviteit,
 ): db.Prisma.ActiviteitCreateWithoutProjectInput {
@@ -207,22 +223,6 @@ function toDBActiviteit(
   return {
     ...data,
     metOvernachting,
-  };
-}
-
-type AllUpsertableProjectFields = Omit<UpsertableCursus, 'type'> &
-  Omit<UpsertableVakantie, 'type'> & {
-    type: ProjectType;
-  };
-
-/**
- * This is a hack to make it easier to work with the UpsertablePersoon type
- */
-function fillOutAllUpsertableProjectFields(
-  project: UpsertableProject,
-): AllUpsertableProjectFields {
-  return {
-    ...project,
   };
 }
 
@@ -249,6 +249,8 @@ function toProject(val: DBProjectAggregate): Project {
     type,
     _count,
     begeleiders,
+    bestemming,
+    land,
     saldo: dbSaldo,
     ...projectProperties
   } = val;
@@ -288,6 +290,8 @@ function toProject(val: DBProjectAggregate): Project {
         voorschot,
         prijs,
         type,
+        bestemming: bestemming!,
+        land: land!,
       };
     default:
       const none: never = type;
@@ -324,6 +328,12 @@ function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
   if (filter.begeleidDoorPersoonId) {
     whereClause.begeleiders = {
       some: { id: filter.begeleidDoorPersoonId },
+    };
+  }
+  if (filter.naam) {
+    whereClause.naam = {
+      contains: filter.naam,
+      mode: 'insensitive',
     };
   }
   return whereClause;

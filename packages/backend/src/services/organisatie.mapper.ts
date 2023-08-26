@@ -154,9 +154,11 @@ export class OrganisatieMapper {
 
 function toWhere({
   folders,
+  naam,
 }: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
-  return {
-    contacten: {
+  const where: db.Prisma.OrganisatieWhereInput = {};
+  if (folders) {
+    where.contacten = {
       some: {
         foldervoorkeuren: folders
           ? {
@@ -166,8 +168,15 @@ function toWhere({
             }
           : undefined,
       },
-    },
-  };
+    };
+  }
+  if (naam) {
+    where.naam = {
+      contains: naam,
+      mode: 'insensitive',
+    };
+  }
+  return where;
 }
 
 function toOrganisatie(org: DBOrganisatieAggregate): Organisatie {

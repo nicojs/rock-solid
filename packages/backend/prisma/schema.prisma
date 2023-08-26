@@ -102,8 +102,10 @@ model Project {
   organisatieonderdeel Organisatieonderdeel?
 
   // Vakantie. Total price is saldo + voorschot
-  seizoen   VakantieSeizoen?
-  voorschot Decimal?         @db.Money
+  bestemming String?
+  land       String?
+  seizoen    VakantieSeizoen?
+  voorschot  Decimal?         @db.Money
 
   @@map("project")
 }
