@@ -1,6 +1,6 @@
 import * as db from '@prisma/client';
 import { ImportErrors, notEmpty } from './import-errors.js';
-import { readImportJson, writeOutputJson } from './seed-utils.js';
+import { prijsFromRaw, readImportJson, writeOutputJson } from './seed-utils.js';
 
 interface RawCursus {
   titel: string;
@@ -84,6 +84,7 @@ export async function seedCursussen(
       type: 'cursus',
       jaar: parseInt(raw.jaar),
       organisatieonderdeel,
+      saldo: prijsFromRaw(raw.prijs),
       activiteiten: {
         createMany: {
           data: activiteitenFromRaw(raw),

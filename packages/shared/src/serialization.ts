@@ -11,7 +11,7 @@ const dateWhitelist = Object.freeze([
 ]);
 
 const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(:?\.\d+)?Z$/;
-const decimalWhitelist = Object.freeze(['prijs', 'voorschot']);
+const decimalWhitelist = Object.freeze(['prijs', 'voorschot', 'saldo']);
 
 export function rockReviver(key: string, value: unknown): unknown {
   if (

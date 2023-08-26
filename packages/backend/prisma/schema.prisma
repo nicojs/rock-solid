@@ -96,14 +96,14 @@ model Project {
   aanmeldingen  Aanmelding[]
   begeleiders   Persoon[]
   jaar          Int
+  saldo         Decimal?     @db.Money
 
   // Cursus
   organisatieonderdeel Organisatieonderdeel?
 
   // Vakantie. Total price is saldo + voorschot
-  saldo     Decimal?         @db.Money
-  voorschot Decimal?         @db.Money 
   seizoen   VakantieSeizoen?
+  voorschot Decimal?         @db.Money
 
   @@map("project")
 }

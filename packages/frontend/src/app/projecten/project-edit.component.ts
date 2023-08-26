@@ -91,6 +91,7 @@ const baseProjectControls: FormControl<BaseProject>[] = [
       required: true,
     },
   },
+  { type: InputType.currency, name: 'saldo' },
 ];
 
 const HALF_HOUR_SECONDS = 60 * 30;
@@ -183,7 +184,6 @@ const vakantieProjectControls: FormControl<Vakantie>[] = [
   ...baseProjectControls,
   begeleidersTagsControl('vakantieVrijwilliger', 2),
   { type: InputType.currency, name: 'voorschot' },
-  { type: InputType.currency, name: 'saldo' },
   radioControl('seizoen', vakantieSeizoenen, {
     validators: { required: true },
   }),

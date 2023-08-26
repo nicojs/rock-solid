@@ -11,6 +11,8 @@ export interface BaseProject {
   aantalAanmeldingen: number;
   begeleiders: OverigPersoon[];
   jaar: number;
+  saldo?: Decimal;
+  prijs?: Decimal;
 }
 
 export type ProjectType = 'cursus' | 'vakantie';
@@ -34,9 +36,7 @@ export interface Vakantie extends BaseProject {
   type: 'vakantie';
   activiteiten: VakantieActiviteit[];
   seizoen?: VakantieSeizoen;
-  saldo?: Decimal;
   voorschot?: Decimal;
-  prijs?: Decimal;
 }
 
 export const projectLabels: Record<keyof BaseProject, string> = {
@@ -47,6 +47,8 @@ export const projectLabels: Record<keyof BaseProject, string> = {
   projectnummer: 'Projectnummer',
   type: 'type',
   jaar: 'Jaar',
+  saldo: 'Saldo',
+  prijs: 'Prijs',
 };
 
 export const cursusLabels: Record<keyof Cursus, string> = {
@@ -59,9 +61,7 @@ export const vakantieLabels: Record<keyof Vakantie, string> = {
   ...projectLabels,
   activiteiten: 'Activiteiten',
   seizoen: 'Seizoen',
-  saldo: 'Saldo',
   voorschot: 'Voorschot',
-  prijs: 'Prijs',
 };
 
 export type Activiteit = CursusActiviteit | VakantieActiviteit;

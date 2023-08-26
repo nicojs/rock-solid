@@ -55,3 +55,10 @@ export function datumFromRaw(datum: string): Date | undefined {
   }
   return new Date(jaar ?? 0, (maand ?? 1) - 1, dag);
 }
+
+export function prijsFromRaw(prijs: string) {
+  if (prijs.startsWith('€')) {
+    return Number.parseFloat(prijs.substring(1));
+  }
+  return undefined;
+}

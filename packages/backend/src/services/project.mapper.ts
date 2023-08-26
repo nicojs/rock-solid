@@ -245,13 +245,21 @@ interface DBProjectAggregate extends db.Project {
 }
 
 function toProject(val: DBProjectAggregate): Project {
-  const { type, _count, begeleiders, ...projectProperties } = val;
+  const {
+    type,
+    _count,
+    begeleiders,
+    saldo: dbSaldo,
+    ...projectProperties
+  } = val;
   const project = purgeNulls({
     type,
     begeleiders: begeleiders.map(toPersoon) as OverigPersoon[],
     ...projectProperties,
     aantalAanmeldingen: _count.aanmeldingen,
   });
+  const saldo = dbSaldo ?? undefined;
+  let prijs = saldo;
   switch (type) {
     case 'cursus':
       return {
@@ -259,11 +267,11 @@ function toProject(val: DBProjectAggregate): Project {
         type,
         activiteiten: val.activiteiten?.map(toCursusActiviteit) ?? [],
         organisatieonderdeel: val.organisatieonderdeel!,
+        saldo,
+        prijs,
       };
     case 'vakantie':
-      const saldo = project.saldo as Decimal | undefined;
       const voorschot = project.voorschot as Decimal | undefined;
-      let prijs: Decimal | undefined;
       if (saldo !== undefined || voorschot !== undefined) {
         prijs = new Decimal(0);
         if (saldo !== undefined) {

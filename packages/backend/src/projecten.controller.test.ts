@@ -6,6 +6,8 @@ import {
   Vakantie,
   Activiteit,
   Decimal,
+  Cursus,
+  CursusActiviteit,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory } from './test-utils.test.js';
@@ -178,6 +180,60 @@ describe(ProjectenController.name, () => {
         deelnemerId: deelnemer1.id,
       });
       expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
+    });
+  });
+
+  describe('GET /projecten', () => {
+    it('should return the correct properties', async () => {
+      // Arrange
+      const activiteitData = {
+        van: new Date(2011, 2, 2, 20, 0, 0),
+        totEnMet: new Date(2011, 2, 4, 16, 0, 0),
+        vormingsuren: 20,
+        begeleidingsuren: 40,
+        metOvernachting: true,
+      } as const satisfies Partial<CursusActiviteit>;
+      const projectData = {
+        projectnummer: '123',
+        naam: 'Foo project',
+        saldo: new Decimal(2000),
+        organisatieonderdeel: 'deKei',
+      } as const satisfies Partial<Cursus>;
+      const project = factory.cursus({
+        activiteiten: [factory.activiteit(activiteitData)],
+        ...projectData,
+      });
+      const { id } = await harness.createProject(project);
+
+      // Act
+      const actual = await harness.getProject(id);
+
+      // Assert
+      const expectedCursus: Cursus = {
+        type: 'cursus',
+        begeleiders: [],
+        id: 1,
+        projectnummer: '123',
+        naam: 'Foo project',
+        jaar: 2011,
+        organisatieonderdeel: 'deKei',
+        activiteiten: [
+          {
+            id: 1,
+            van: new Date(2011, 2, 2, 20, 0, 0),
+            totEnMet: new Date(2011, 2, 4, 16, 0, 0),
+            vormingsuren: 20,
+            begeleidingsuren: 40,
+            metOvernachting: true,
+            aantalDeelnames: 0,
+            aantalDeelnemersuren: 0,
+          },
+        ],
+        aantalAanmeldingen: 0,
+        saldo: new Decimal(2000),
+        prijs: new Decimal(2000),
+      };
+      expect(actual).deep.eq(expectedCursus);
     });
   });
 

@@ -73,12 +73,16 @@ export class ProjectenListComponent extends LitElement {
         <tr>
           <th>Projectnummer</th>
           <th>Naam</th>
+          <th>Prijs</th>
           ${this.projecten[0]!.type === 'cursus'
-            ? html`<th>Organisatieonderdeel</th>
-                <th>Deelnemersuren</th>`
-            : html`<th>Seizoen</th>
-                <th>Prijs</th>
-                <th>Voorschot</th>`}
+            ? html`
+                <th>Organisatieonderdeel</th>
+                <th>Deelnemersuren</th>
+              `
+            : html`
+                <th>Voorschot</th>
+                <th>Seizoen</th>
+              `}
           <th>Activiteiten</th>
           <th style="width: 230px">Acties</th>
         </tr>
@@ -89,6 +93,7 @@ export class ProjectenListComponent extends LitElement {
             html`<tr>
               <td>${project.projectnummer}</td>
               <td>${project.naam}</td>
+              <td>${showMoney(project.prijs)}</td>
               ${project.type === 'cursus'
                 ? html`<td>
                       ${project.type === 'cursus'
@@ -102,13 +107,14 @@ export class ProjectenListComponent extends LitElement {
                             .reduce<number>((acc, cur) => acc + (cur ?? 0), 0)
                         : notAvailable}
                     </td>`
-                : html`<td>
+                : html`
+                    <td>${showMoney(project.voorschot)}</td>
+                    <td>
                       ${project.seizoen
                         ? vakantieSeizoenen[project.seizoen]
                         : notAvailable}
                     </td>
-                    <td>${showMoney(project.prijs)}</td>
-                    <td>${showMoney(project.voorschot)}</td>`}
+                  `}
 
               <td>
                 ${project.activiteiten.map((activiteit) => {
