@@ -11,7 +11,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
 import { capitalize, pluralize } from '../shared';
-import { createRef, ref, Ref } from 'lit/directives/ref.js';
 import { fullName } from './full-name.pipe';
 import { RockElement } from '../rock-element';
 import { personenStore } from './personen.store';

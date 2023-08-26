@@ -1,15 +1,13 @@
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, ref } from 'lit/directives/ref.js';
-import { html, LitElement, nothing } from 'lit';
+import { html, LitElement } from 'lit';
 import { bootstrap } from '../../styles';
-
-export type AlertEmphasis = 'danger' | 'warning' | 'primary';
 
 /**
  * @see https://loading.io/css/
  */
 @customElement('rock-text-search')
-export class AlertComponent extends LitElement {
+export class TextSearchComponent extends LitElement {
   static override styles = [bootstrap];
 
   private searchRef = createRef<HTMLInputElement>();

@@ -7,11 +7,8 @@ import {
   OverigPersoon,
   Project,
   ProjectFilter,
-  ProjectType,
   UpsertableActiviteit,
-  UpsertableCursus,
   UpsertableProject,
-  UpsertableVakantie,
   VakantieActiviteit,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
@@ -139,13 +136,6 @@ export class ProjectMapper {
     id: number,
     projectUpdates: UpsertableProject,
   ): Promise<Project> {
-    // const {
-    //   aantalAanmeldingen,
-    //   begeleiders,
-    //   id: unused,
-    //   prijs: unused2,
-    //   ...data
-    // } = fillOutAllUpsertableProjectFields(projectUpdates);
     const begeleiderIds =
       projectUpdates.begeleiders?.map(({ id }) => ({ id })) ?? [];
     const result = await handleKnownPrismaErrors(
@@ -233,26 +223,6 @@ function toDBActiviteit(
   return {
     ...data,
     metOvernachting,
-  };
-}
-
-type AllUpsertableProjectFields = Omit<UpsertableCursus, 'type' | 'naam'> &
-  Omit<UpsertableVakantie, 'type' | 'bestemming' | 'land'> &
-  Partial<Pick<UpsertableVakantie, 'bestemming' | 'land'>> &
-  Partial<Pick<UpsertableCursus, 'naam'>> & {
-    type: ProjectType;
-  };
-
-/**
- * This is a hack to make it easier to work with the UpsertablePersoon type
- */
-function fillOutAllUpsertableProjectFields(
-  project: UpsertableProject,
-): AllUpsertableProjectFields {
-  return {
-    bestemming: undefined,
-    land: undefined,
-    ...project,
   };
 }
 
