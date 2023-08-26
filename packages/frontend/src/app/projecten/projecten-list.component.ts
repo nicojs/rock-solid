@@ -68,13 +68,17 @@ export class ProjectenListComponent extends LitElement {
   }
 
   private renderTable() {
+    const isCursus = this.projecten[0]!.type === 'cursus';
     return html`<table class="table table-hover table-sm">
       <thead>
         <tr>
           <th>Projectnummer</th>
-          <th>Naam</th>
+          ${isCursus
+            ? html`<th>Naam</th>`
+            : html`<th>Bestemming</th>
+                <th>Land</th>`}
           <th>Prijs</th>
-          ${this.projecten[0]!.type === 'cursus'
+          ${isCursus
             ? html`
                 <th>Organisatieonderdeel</th>
                 <th>Deelnemersuren</th>
@@ -92,7 +96,12 @@ export class ProjectenListComponent extends LitElement {
           (project) =>
             html`<tr>
               <td>${project.projectnummer}</td>
-              <td>${project.naam}</td>
+              ${project.type === 'cursus'
+                ? html`<td>${project.naam}</td>`
+                : html`
+                    <td>${project.bestemming}</td>
+                    <td>${project.land}</td>
+                  `}
               <td>${showMoney(project.prijs)}</td>
               ${project.type === 'cursus'
                 ? html`<td>

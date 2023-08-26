@@ -71,7 +71,7 @@ export class ProjectenComponent extends RockElement {
         const project: DeepPartial<Project> = {
           naam: '',
           projectnummer: '',
-          type: 'cursus',
+          type: this.type,
           activiteiten: [newActiviteit()],
           begeleiders: [],
         };
@@ -119,11 +119,33 @@ export class ProjectenComponent extends RockElement {
     });
   }
 
+  private searchSubmit(event: CustomEvent<string>) {
+    if (event.detail) {
+      projectenStore.setCurrentPage(0, {
+        type: this.type,
+        naam: event.detail,
+      });
+    } else {
+      projectenStore.setCurrentPage(0, undefined);
+    }
+  }
+
   override render() {
     switch (this.path[0]) {
       case 'list':
         return html`<div class="row">
-            <h2>${capitalize(pluralize(this.type))} (${this.totalCount})</h2>
+            <h2 class="col-sm-6 col-md-8">
+              ${capitalize(pluralize(this.type))} (${this.totalCount})
+            </h2>
+            <div class="col">
+              <rock-text-search
+                @search-submitted=${this.searchSubmit}
+                .placeholder=${this.type === 'cursus'
+                  ? 'Zoek op cursusnaam'
+                  : 'Zoek op bestemming - land'}
+              ></rock-text-search>
+            </div>
+            <h2></h2>
           </div>
           ${this.projecten
             ? html`<rock-link href="/${pluralize(this.type)}/new" btn btnSuccess

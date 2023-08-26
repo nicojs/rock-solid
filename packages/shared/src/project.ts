@@ -34,6 +34,8 @@ export interface Cursus extends BaseProject {
 
 export interface Vakantie extends BaseProject {
   type: 'vakantie';
+  bestemming: string;
+  land: string;
   activiteiten: VakantieActiviteit[];
   seizoen?: VakantieSeizoen;
   voorschot?: Decimal;
@@ -59,6 +61,8 @@ export const cursusLabels: Record<keyof Cursus, string> = {
 
 export const vakantieLabels: Record<keyof Vakantie, string> = {
   ...projectLabels,
+  bestemming: 'Bestemming',
+  land: 'Land',
   activiteiten: 'Activiteiten',
   seizoen: 'Seizoen',
   voorschot: 'Voorschot',
@@ -146,13 +150,14 @@ export type UpsertableCursus = Upsertable<
 };
 export type UpsertableVakantie = Upsertable<
   Omit<Vakantie, 'activiteiten'>,
-  'projectnummer' | 'naam'
+  'projectnummer' | 'bestemming' | 'land'
 > & {
   type: 'vakantie';
   activiteiten: UpsertableActiviteit[];
 };
 
 export type ProjectFilter = Pick<Project, 'type'> & {
+  naam?: string;
   aanmeldingPersoonId?: number;
   begeleidDoorPersoonId?: number;
 };

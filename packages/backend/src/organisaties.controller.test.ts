@@ -89,6 +89,89 @@ describe(OrganisatiesController.name, () => {
       expect(actualOrganisatie).deep.equal(expectedOrganisatie);
     });
   });
+
+  describe('GET /organisaties', () => {
+    let acme: Organisatie;
+    let disney: Organisatie;
+    beforeEach(async () => {
+      [acme, disney] = await Promise.all([
+        harness.createOrganisatie({
+          naam: 'Acme',
+          contacten: [
+            factory.organisatieContact({
+              terAttentieVan: 'Hans',
+              foldervoorkeuren: [
+                { folder: 'deKeiCursussen', communicatie: 'post' },
+              ],
+            }),
+            factory.organisatieContact({
+              terAttentieVan: 'Piet',
+              foldervoorkeuren: [
+                { folder: 'keiJongBuso', communicatie: 'email' },
+              ],
+            }),
+          ],
+        }),
+        harness.createOrganisatie({
+          naam: 'Disney',
+          contacten: [
+            factory.organisatieContact({
+              terAttentieVan: 'Mickey',
+              foldervoorkeuren: [
+                {
+                  folder: 'deKeiWintervakanties',
+                  communicatie: 'postEnEmail',
+                },
+                {
+                  folder: 'keiJongBuso',
+                  communicatie: 'postEnEmail',
+                },
+              ],
+            }),
+          ],
+        }),
+      ]);
+    });
+
+    describe('filters', () => {
+      it('should be able to filter naam', async () => {
+        // Act
+        const [acmeOrgs, disneyOrgs] = await Promise.all([
+          harness.getAllOrganisaties({ naam: 'acme' }),
+          harness.getAllOrganisaties({ naam: 'disney' }),
+        ]);
+
+        // Assert
+        expect(acmeOrgs.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(disneyOrgs.map(({ id }) => id)).deep.eq([disney.id]);
+      });
+
+      it('should be able to filter on foldervoorkeur', async () => {
+        // Act
+        const [deKeiCursussenOrgs, keiJongBusoOrgs] = await Promise.all([
+          harness.getAllOrganisaties({ folders: ['deKeiCursussen'] }),
+          harness.getAllOrganisaties({ folders: ['keiJongBuso'] }),
+        ]);
+
+        // Assert
+        expect(deKeiCursussenOrgs.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(deKeiCursussenOrgs[0]?.contacten).lengthOf(1);
+        expect(deKeiCursussenOrgs[0]?.contacten[0]?.terAttentieVan).eq('Hans');
+        expect(keiJongBusoOrgs.map(({ id }) => id).sort()).deep.eq(
+          [disney.id, acme.id].sort(),
+        );
+        const acmeOrg = keiJongBusoOrgs.find((org) => org.id === acme.id)!;
+        const disneyOrg = keiJongBusoOrgs.find((org) => org.id === disney.id)!;
+        expect(
+          acmeOrg.contacten.map(({ terAttentieVan }) => terAttentieVan),
+        ).deep.eq(['Piet']);
+        expect(
+          disneyOrg.contacten.map(({ terAttentieVan }) => terAttentieVan),
+        ).deep.eq(['Mickey']);
+      });
+    });
+  });
+
   describe('DELETE /organisaties/:id', () => {
     it('should delete the organisatie and organisatie contacten', async () => {
       const org = await harness.createOrganisatie({

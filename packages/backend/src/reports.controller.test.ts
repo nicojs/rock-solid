@@ -206,7 +206,7 @@ describe(ReportsController.name, () => {
     ]);
     const [projectA, projectB] = await Promise.all([
       harness.createProject(
-        factory.project({
+        factory.cursus({
           naam: 'A',
           projectnummer: '001',
           activiteiten: [
@@ -215,7 +215,7 @@ describe(ReportsController.name, () => {
         }),
       ),
       harness.createProject(
-        factory.project({
+        factory.cursus({
           projectnummer: '002',
           naam: 'B',
           activiteiten: [
@@ -250,20 +250,18 @@ describe(ReportsController.name, () => {
     ]);
     const [projectC, projectD] = await Promise.all([
       harness.createProject(
-        factory.project({
+        factory.vakantie({
           naam: 'C',
           projectnummer: '003',
-          type: 'vakantie',
           activiteiten: [
             factory.activiteit({ van: new Date(2021, 1, 1), vormingsuren: 60 }),
           ],
         }),
       ),
       harness.createProject(
-        factory.project({
+        factory.vakantie({
           projectnummer: '004',
           naam: 'D',
-          type: 'vakantie',
           activiteiten: [
             factory.activiteit({ van: new Date(2019, 1, 1), vormingsuren: 90 }),
           ],

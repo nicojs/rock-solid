@@ -59,7 +59,7 @@ describe(ProjectenController.name, () => {
 
     it('PUT /projecten/:id/deelnames should be allowed for projectverantwoordelijke', async () => {
       // Arrange
-      const project = await harness.createProject(factory.project());
+      const project = await harness.createProject(factory.cursus());
       const deelnemer = await harness.createDeelnemer(factory.deelnemer());
       const aanmelding = await harness.createAanmelding({
         projectId: project.id,
@@ -98,8 +98,7 @@ describe(ProjectenController.name, () => {
     let deelnemer2: Deelnemer;
     beforeEach(async () => {
       vakantie = await harness.createProject(
-        factory.project({
-          type: 'vakantie',
+        factory.vakantie({
           activiteiten: [
             factory.activiteit({
               // earliest
@@ -110,7 +109,7 @@ describe(ProjectenController.name, () => {
         }),
       );
       cursus1 = await harness.createProject(
-        factory.project({
+        factory.cursus({
           type: 'cursus',
           activiteiten: [
             factory.activiteit({
@@ -121,7 +120,7 @@ describe(ProjectenController.name, () => {
         }),
       );
       cursus2 = await harness.createProject(
-        factory.project({
+        factory.cursus({
           type: 'cursus',
           activiteiten: [
             factory.activiteit({
@@ -235,6 +234,69 @@ describe(ProjectenController.name, () => {
       };
       expect(actual).deep.eq(expectedCursus);
     });
+
+    describe('filter', () => {
+      let athensVakantie: Project;
+      let creteVakantie: Project;
+      let cookCursus: Project;
+      let cleanCursus: Project;
+      beforeEach(async () => {
+        [athensVakantie, creteVakantie, cookCursus, cleanCursus] =
+          await Promise.all([
+            harness.createProject(
+              factory.vakantie({ bestemming: 'Athens', land: 'Greece' }),
+            ),
+            harness.createProject(
+              factory.vakantie({ bestemming: 'Crete', land: 'Greece' }),
+            ),
+            harness.createProject(factory.cursus({ naam: 'Learning to cook' })),
+            harness.createProject(
+              factory.cursus({ naam: 'Learning to clean' }),
+            ),
+            harness.createProject(factory.cursus({ naam: 'Other cursus' })),
+            harness.createProject(factory.vakantie({ naam: 'Other vakantie' })),
+          ]);
+      });
+
+      it('should allow filter on "naam"', async () => {
+        // Act
+        const [
+          learningCursussen,
+          cookCursussen,
+          greeceVakanties,
+          athensVakanties,
+        ] = await Promise.all([
+          harness.getAllProjecten({
+            type: 'cursus',
+            naam: 'Learning',
+          }),
+          harness.getAllProjecten({
+            type: 'cursus',
+            naam: 'cook',
+          }),
+          harness.getAllProjecten({
+            type: 'vakantie',
+            naam: 'Greece',
+          }),
+          harness.getAllProjecten({
+            type: 'vakantie',
+            naam: 'Athens',
+          }),
+        ]);
+
+        // Assert
+        expect(learningCursussen.map(({ id }) => id).sort()).deep.eq(
+          [cookCursus.id, cleanCursus.id].sort(),
+        );
+        expect(cookCursussen.map(({ id }) => id)).deep.eq([cookCursus.id]);
+        expect(greeceVakanties.map(({ id }) => id).sort()).deep.eq(
+          [athensVakantie.id, creteVakantie.id].sort(),
+        );
+        expect(athensVakanties.map(({ id }) => id)).deep.eq([
+          athensVakantie.id,
+        ]);
+      });
+    });
   });
 
   describe('POST /projecten', () => {
@@ -251,10 +313,12 @@ describe(ProjectenController.name, () => {
       } as const satisfies Partial<Activiteit>;
       const projectData = {
         projectnummer: '123',
-        naam: 'Foo project',
+        naam: 'Hanover - Germany',
         type: 'vakantie',
+        bestemming: 'Hanover',
+        land: 'Germany',
       } as const satisfies Partial<Project>;
-      const project = factory.project({
+      const project = factory.vakantie({
         activiteiten: [factory.activiteit(activiteitData)],
         ...projectData,
       });
@@ -282,13 +346,28 @@ describe(ProjectenController.name, () => {
 
     it('should add voorschot and saldo to be the total price', async () => {
       const vakantie = factory.vakantie({
-        type: 'vakantie',
         voorschot: new Decimal('41.9'),
         saldo: new Decimal('0.1'),
       });
       const project = await harness.createProject(vakantie);
       assert.equal(project.type, 'vakantie');
       expect(project.prijs).deep.eq(new Decimal('42'));
+    });
+
+    it('should base naam on `bestemming - land` for vakanties', async () => {
+      const vakantie = factory.vakantie({
+        bestemming: 'Beach',
+        land: 'Spain',
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.naam, 'Beach - Spain');
+    });
+    it('should not base the naam on `bestemming - land` for cursus', async () => {
+      const vakantie = factory.cursus({
+        naam: 'Mijn cursus',
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.naam, 'Mijn cursus');
     });
   });
 
@@ -301,7 +380,7 @@ describe(ProjectenController.name, () => {
     beforeEach(async () => {
       // Arrange
       [project, deelnemer1, deelnemer2] = await Promise.all([
-        harness.createProject(factory.project()),
+        harness.createProject(factory.cursus()),
         harness.createDeelnemer(factory.deelnemer()),
         harness.createDeelnemer(factory.deelnemer()),
       ]);
@@ -360,7 +439,7 @@ describe(ProjectenController.name, () => {
       // Arrange
       const [project, deelnemer1, deelnemer2] = await Promise.all([
         harness.createProject(
-          factory.project({
+          factory.cursus({
             activiteiten: [factory.activiteit(), factory.activiteit()],
           }),
         ),
@@ -408,7 +487,7 @@ describe(ProjectenController.name, () => {
       // Arrange
       const [project, deelnemer] = await Promise.all([
         harness.createProject(
-          factory.project({
+          factory.cursus({
             activiteiten: [factory.activiteit(), factory.activiteit()],
           }),
         ),

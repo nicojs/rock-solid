@@ -33,9 +33,10 @@ import {
   Plaats,
   UpsertableDeelname,
   parse,
-  Vakantie,
   UpsertableVakantie,
   UpsertableCursus,
+  ProjectFilter,
+  OrganisatieFilter,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -240,6 +241,13 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
+  public async getAllProjecten(filter: ProjectFilter): Promise<Project[]> {
+    const response = await this.get(
+      `/projecten${toQueryString(filter)}`,
+    ).expect(200);
+    return response.body;
+  }
+
   async createAanmelding(
     aanmelding: InsertableAanmelding,
   ): Promise<Aanmelding> {
@@ -288,6 +296,13 @@ class IntegrationTestingHarness {
 
   private async createPersoon(persoon: UpsertablePersoon) {
     const response = await this.post(`/personen`, persoon).expect(201);
+    return response.body;
+  }
+
+  async getAllOrganisaties(filter: OrganisatieFilter): Promise<Organisatie[]> {
+    const response = await this.get(
+      `/organisaties${toQueryString(filter)}`,
+    ).expect(200);
     return response.body;
   }
 
@@ -340,31 +355,23 @@ export const factory = {
     };
   },
 
-  project(overrides?: Partial<UpsertableProject>): UpsertableProject {
+  cursus(overrides?: Partial<UpsertableCursus>): UpsertableCursus {
     return {
+      type: 'cursus',
       projectnummer: `00${seed++}`,
       naam: `Test project ${seed}`,
-      type: 'cursus',
       activiteiten: [this.activiteit()],
       ...overrides,
     };
   },
 
-  vakantie(overrides?: Partial<Vakantie>): UpsertableVakantie {
+  vakantie(overrides?: Partial<UpsertableVakantie>): UpsertableVakantie {
     return {
       projectnummer: `00${seed++}`,
       naam: `Test vakantie ${seed}`,
       type: 'vakantie',
-      activiteiten: [this.activiteit()],
-      ...overrides,
-    };
-  },
-
-  cursus(overrides?: Partial<UpsertableCursus>): UpsertableCursus {
-    return {
-      projectnummer: `00${seed++}`,
-      naam: `Test vakantie ${seed}`,
-      type: 'cursus',
+      bestemming: 'Beach',
+      land: 'Spain',
       activiteiten: [this.activiteit()],
       ...overrides,
     };
