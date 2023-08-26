@@ -2,6 +2,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import request from 'supertest';
 import * as db from '@prisma/client';
+import chai from 'chai';
 
 import {
   PostgreSqlContainer,
@@ -34,10 +35,17 @@ import {
   parse,
   Vakantie,
   UpsertableVakantie,
+  UpsertableCursus,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
 import { PrismaClient } from '@prisma/client';
+
+/**
+ * @see https://stackoverflow.com/questions/45881829/how-to-have-mocha-show-entire-object-in-diff-on-assertion-error
+ */
+chai.config.truncateThreshold = 0;
+
 const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
 
@@ -169,13 +177,11 @@ class IntegrationTestingHarness {
   }
 
   get(url: string): request.Test {
-    return this.authenticateRequest(request(this.app.getHttpServer()).get(url));
+    return this.wrapBodyRequest(request(this.app.getHttpServer()).get(url));
   }
 
   delete(url: string): request.Test {
-    return this.authenticateRequest(
-      request(this.app.getHttpServer()).delete(url),
-    );
+    return this.wrapBodyRequest(request(this.app.getHttpServer()).delete(url));
   }
 
   post(url: string, body?: string | object): request.Test {
@@ -349,6 +355,16 @@ export const factory = {
       projectnummer: `00${seed++}`,
       naam: `Test vakantie ${seed}`,
       type: 'vakantie',
+      activiteiten: [this.activiteit()],
+      ...overrides,
+    };
+  },
+
+  cursus(overrides?: Partial<UpsertableCursus>): UpsertableCursus {
+    return {
+      projectnummer: `00${seed++}`,
+      naam: `Test vakantie ${seed}`,
+      type: 'cursus',
       activiteiten: [this.activiteit()],
       ...overrides,
     };

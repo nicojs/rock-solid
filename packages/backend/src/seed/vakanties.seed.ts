@@ -1,6 +1,6 @@
 import * as db from '@prisma/client';
 import { ImportErrors, notEmpty } from './import-errors.js';
-import { readImportJson, writeOutputJson } from './seed-utils.js';
+import { prijsFromRaw, readImportJson, writeOutputJson } from './seed-utils.js';
 
 type RawVerblijf = 'hotel of pension' | 'vakantiehuis' | 'boot' | '';
 type RawVervoer =
@@ -138,11 +138,4 @@ function vervoerFromRaw(vervoer: RawVervoer): db.VakantieVervoer | undefined {
     case '':
       return;
   }
-}
-
-function prijsFromRaw(prijs: string) {
-  if (prijs.startsWith('€')) {
-    return Number.parseFloat(prijs.substring(1));
-  }
-  return undefined;
 }
