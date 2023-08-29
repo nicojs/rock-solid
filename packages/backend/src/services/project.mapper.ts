@@ -1,4 +1,5 @@
 import {
+  AanmeldingOf,
   Activiteit,
   CursusActiviteit,
   Decimal,
@@ -72,6 +73,31 @@ export class ProjectMapper {
       projecten.flatMap((project) => project.activiteiten),
     );
     return projecten;
+  }
+
+  public async getAllProjectAanmeldingen(
+    deelnemerId: number,
+    filter: ProjectFilter,
+  ) {
+    filter.aanmeldingPersoonId = deelnemerId;
+    const dbProjectenWithAanmelding = await this.db.project.findMany({
+      include: {
+        ...includeAggregate,
+        aanmeldingen: {
+          where: {
+            deelnemerId,
+          },
+        },
+      },
+      where: where(filter),
+      orderBy: [{ jaar: 'desc' }, { projectnummer: 'desc' }],
+    });
+    const projectAanmeldingen =
+      dbProjectenWithAanmelding.map(toProjectAanmelding);
+    await this.enrichWithDeelnemersuren(
+      projectAanmeldingen.flatMap((project) => project.activiteiten),
+    );
+    return projectAanmeldingen;
   }
 
   async count(filter: ProjectFilter): Promise<number> {
@@ -244,21 +270,33 @@ interface DBProjectAggregate extends db.Project {
   };
 }
 
-function toProject(val: DBProjectAggregate): Project {
-  const {
-    type,
-    _count,
-    begeleiders,
-    bestemming,
-    land,
-    saldo: dbSaldo,
-    ...projectProperties
-  } = val;
+function toProjectAanmelding(
+  projectWithAanmelding: DBProjectAggregate & { aanmeldingen: db.Aanmelding[] },
+): AanmeldingOf<Project> {
+  return {
+    ...toProject(projectWithAanmelding),
+    status: projectWithAanmelding.aanmeldingen[0]!.status,
+  };
+}
+
+function toProject({
+  type,
+  begeleiders,
+  _count,
+  saldo: dbSaldo,
+  bestemming,
+  land,
+  ...projectProperties
+}: DBProjectAggregate): Project {
   const project = purgeNulls({
     type,
     begeleiders: begeleiders.map(toPersoon) as OverigPersoon[],
-    ...projectProperties,
     aantalAanmeldingen: _count.aanmeldingen,
+    id: projectProperties.id,
+    projectnummer: projectProperties.projectnummer,
+    jaar: projectProperties.jaar,
+    naam: projectProperties.naam,
+    voorschot: projectProperties.voorschot,
   });
   const saldo = dbSaldo ?? undefined;
   let prijs = saldo;
@@ -267,8 +305,9 @@ function toProject(val: DBProjectAggregate): Project {
       return {
         ...project,
         type,
-        activiteiten: val.activiteiten?.map(toCursusActiviteit) ?? [],
-        organisatieonderdeel: val.organisatieonderdeel!,
+        activiteiten:
+          projectProperties.activiteiten?.map(toCursusActiviteit) ?? [],
+        organisatieonderdeel: projectProperties.organisatieonderdeel!,
         saldo,
         prijs,
       };
@@ -285,7 +324,8 @@ function toProject(val: DBProjectAggregate): Project {
       }
       return {
         ...project,
-        activiteiten: val.activiteiten?.map(toVakantieActiviteit) ?? [],
+        activiteiten:
+          projectProperties.activiteiten?.map(toVakantieActiviteit) ?? [],
         saldo,
         voorschot,
         prijs,

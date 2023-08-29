@@ -2,6 +2,7 @@ import { Decimal } from 'decimal.js';
 import { Options } from './options.js';
 import { OverigPersoon } from './persoon.js';
 import { Upsertable } from './upsertable.js';
+import { Aanmeldingsstatus } from './aanmelding.js';
 
 export interface BaseProject {
   id: number;
@@ -40,6 +41,10 @@ export interface Vakantie extends BaseProject {
   seizoen?: VakantieSeizoen;
   voorschot?: Decimal;
 }
+
+export type AanmeldingOf<T extends Project> = {
+  status: Aanmeldingsstatus;
+} & T;
 
 export const projectLabels: Record<keyof BaseProject, string> = {
   aantalAanmeldingen: 'Aantal aanmeldingen',

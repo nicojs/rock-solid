@@ -37,6 +37,9 @@ import {
   UpsertableCursus,
   ProjectFilter,
   OrganisatieFilter,
+  Cursus,
+  Vakantie,
+  AanmeldingOf,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -177,8 +180,10 @@ class IntegrationTestingHarness {
     await rockSolidDBContainer.clear();
   }
 
-  get(url: string): request.Test {
-    return this.wrapBodyRequest(request(this.app.getHttpServer()).get(url));
+  get(url: string, query?: Record<string, unknown>): request.Test {
+    return this.wrapBodyRequest(
+      request(this.app.getHttpServer()).get(url + toQueryString(query)),
+    );
   }
 
   delete(url: string): request.Test {
@@ -269,7 +274,9 @@ class IntegrationTestingHarness {
     ).expect(204);
   }
 
-  async createProject(project: UpsertableProject): Promise<Project> {
+  async createProject<TProject extends UpsertableProject>(
+    project: TProject,
+  ): Promise<TProject extends { type: 'cursus' } ? Cursus : Vakantie> {
     const response = await this.post(`/projecten`, project).expect(201);
     return response.body;
   }
@@ -296,6 +303,19 @@ class IntegrationTestingHarness {
 
   private async createPersoon(persoon: UpsertablePersoon) {
     const response = await this.post(`/personen`, persoon).expect(201);
+    return response.body;
+  }
+
+  async getDeelnemerProjectAanmeldingen<TFilter extends ProjectFilter>(
+    deelnemerId: number,
+    filter: TFilter,
+  ): Promise<
+    AanmeldingOf<TFilter extends { type: 'cursus' } ? Cursus : Vakantie>[]
+  > {
+    const response = await this.get(
+      `/personen/${deelnemerId}/aanmeldingen`,
+      filter,
+    ).expect(200);
     return response.body;
   }
 

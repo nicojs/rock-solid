@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'url';
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
@@ -17,7 +18,6 @@ import { AuthController } from './auth.controller.js';
 import { AuthModule, JwtAuthGuard } from './auth/index.js';
 import { ReportsController } from './reports.controller.js';
 import { ReportMapper } from './services/report.mapper.js';
-import { APP_GUARD } from '@nestjs/core';
 import { PrivilegesGuard } from './auth/privileges.guard.js';
 
 const rootPath = fileURLToPath(

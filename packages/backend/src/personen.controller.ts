@@ -66,9 +66,9 @@ export class PersonenController {
     @Param('id', NumberPipe) id: number,
     @Query(MetaFilterPipe) filter: ProjectFilter,
   ): Promise<Project[]> {
-    const projecten = await this.projectMapper.getAll(
-      { ...filter, aanmeldingPersoonId: id },
-      undefined,
+    const projecten = await this.projectMapper.getAllProjectAanmeldingen(
+      id,
+      filter,
     );
     return projecten;
   }

@@ -1,6 +1,7 @@
 import {
   Aanmelding,
   Aanmeldingsstatus,
+  Deelnemer,
   Project,
   split,
 } from '@rock-solid/shared';
@@ -235,7 +236,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
               (aanmelding) =>
                 html` <li class="list-group-item">
                   ${aanmelding.deelnemer
-                    ? fullNameWithAge(
+                    ? deelnemerLink(
                         aanmelding.deelnemer,
                         this.project.activiteiten[0]?.van,
                       )
@@ -324,7 +325,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                             icon="cameraVideoOff"
                           ></rock-icon>`}
                       ${aanmelding.deelnemer
-                        ? html`${fullNameWithAge(
+                        ? html`${deelnemerLink(
                               aanmelding.deelnemer,
                               this.project.activiteiten[0]?.van,
                             )}
@@ -479,4 +480,12 @@ export class ProjectAanmeldingenComponent extends LitElement {
       ></rock-autocomplete>
     </div>`;
   }
+}
+
+function deelnemerLink(deelnemer: Deelnemer, van: Date | undefined) {
+  return html`<a
+    class="link-body-emphasis"
+    href="/deelnemers/display/${deelnemer.id}"
+    >${fullNameWithAge(deelnemer, van)}</a
+  >`;
 }
