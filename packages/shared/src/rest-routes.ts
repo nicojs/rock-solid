@@ -16,7 +16,12 @@ import { Aanmelding } from './aanmelding.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
 import { Persoon, UpsertablePersoon } from './persoon.js';
 import { Plaats, PlaatsFilter } from './adres.js';
-import { AanmeldingOf, Project, ProjectFilter, UpsertableProject } from './project.js';
+import {
+  AanmeldingOf,
+  Project,
+  ProjectFilter,
+  UpsertableProject,
+} from './project.js';
 
 export type EntityFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['entity'];
