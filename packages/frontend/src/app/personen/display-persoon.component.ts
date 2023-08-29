@@ -1,4 +1,5 @@
 import {
+  AanmeldingOf,
   Cursus,
   Deelnemer,
   OverigPersoon,
@@ -28,9 +29,9 @@ export class DisplayPersoonComponent extends RockElement {
   private persoon!: Persoon;
 
   @state()
-  private cursussen?: Project[];
+  private cursussen?: AanmeldingOf<Cursus>[];
   @state()
-  private vakanties?: Vakantie[];
+  private vakanties?: AanmeldingOf<Vakantie>[];
 
   static override styles = [bootstrap];
 
@@ -40,23 +41,33 @@ export class DisplayPersoonComponent extends RockElement {
         .getAll(`personen/${this.persoon.id}/aanmeldingen`, {
           type: 'cursus',
         })
-        .then((cursussen) => (this.cursussen = cursussen as Cursus[]));
+        .then(
+          (cursussen) => (this.cursussen = cursussen as AanmeldingOf<Cursus>[]),
+        );
       restClient
         .getAll(`personen/${this.persoon.id}/aanmeldingen`, {
           type: 'vakantie',
         })
-        .then((vakanties) => (this.vakanties = vakanties as Vakantie[]));
+        .then(
+          (vakanties) =>
+            (this.vakanties = vakanties as AanmeldingOf<Vakantie>[]),
+        );
     } else {
       restClient
         .getAll(`personen/${this.persoon.id}/begeleid`, {
           type: 'cursus',
         })
-        .then((cursussen) => (this.cursussen = cursussen as Cursus[]));
+        .then(
+          (cursussen) => (this.cursussen = cursussen as AanmeldingOf<Cursus>[]),
+        );
       restClient
         .getAll(`personen/${this.persoon.id}/begeleid`, {
           type: 'vakantie',
         })
-        .then((vakanties) => (this.vakanties = vakanties as Vakantie[]));
+        .then(
+          (vakanties) =>
+            (this.vakanties = vakanties as AanmeldingOf<Vakantie>[]),
+        );
     }
   }
 
@@ -104,7 +115,7 @@ export class DisplayPersoonComponent extends RockElement {
   }
 
   private renderAanmeldingen() {
-    return html`<h3>Ingeschreven in cursussen</h3>
+    return html`<h3>Aangemeld voor cursussen</h3>
       ${this.renderProjectListRow(this.cursussen)}
       <h3>Ingeschreven in vakanties</h3>
       ${this.renderProjectListRow(this.vakanties)}`;

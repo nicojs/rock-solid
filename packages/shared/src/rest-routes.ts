@@ -16,7 +16,12 @@ import { Aanmelding } from './aanmelding.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
 import { Persoon, UpsertablePersoon } from './persoon.js';
 import { Plaats, PlaatsFilter } from './adres.js';
-import { Project, ProjectFilter, UpsertableProject } from './project.js';
+import {
+  AanmeldingOf,
+  Project,
+  ProjectFilter,
+  UpsertableProject,
+} from './project.js';
 
 export type EntityFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['entity'];
@@ -64,7 +69,7 @@ type ProjectenAanmeldingRoute = {
 
 type PersoonAanmeldingenRoute = {
   [K in `personen/${string}/aanmeldingen`]: {
-    entity: Project;
+    entity: AanmeldingOf<Project>;
     filter: ProjectFilter;
     upsertableEntity: never;
   };

@@ -1,4 +1,6 @@
 import {
+  AanmeldingOf,
+  aanmeldingsstatussen,
   notEmpty,
   organisatieonderdelen,
   Project,
@@ -27,7 +29,7 @@ export class ProjectenListComponent extends LitElement {
   static override styles = [bootstrap, unsafeCSS(style)];
 
   @property()
-  public projecten!: Project[];
+  public projecten!: Project[] | AanmeldingOf<Project>[];
 
   override render() {
     return html`<div class="row">
@@ -62,16 +64,17 @@ export class ProjectenListComponent extends LitElement {
         composed: true,
         detail: project,
       });
-
       this.dispatchEvent(deleteEvent);
     }
   }
 
   private renderTable() {
     const isCursus = this.projecten[0]!.type === 'cursus';
+    const hasStatus = 'status' in (this.projecten[0] ?? {});
     return html`<table class="table table-hover table-sm">
       <thead>
         <tr>
+          ${hasStatus ? html`<th>Status</th>` : ''}
           <th>Projectnummer</th>
           ${isCursus
             ? html`<th>Naam</th>`
@@ -95,6 +98,13 @@ export class ProjectenListComponent extends LitElement {
         ${this.projecten.map(
           (project) =>
             html`<tr>
+              ${hasStatus
+                ? html`<td>
+                    ${'status' in project
+                      ? aanmeldingsstatussen[project.status]
+                      : notAvailable}
+                  </td>`
+                : ''}
               <td>${project.projectnummer}</td>
               ${project.type === 'cursus'
                 ? html`<td>${project.naam}</td>`
