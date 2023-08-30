@@ -284,6 +284,18 @@ class IntegrationTestingHarness {
   async createDeelnemer(deelnemer: UpsertableDeelnemer): Promise<Deelnemer> {
     return await this.createPersoon(deelnemer);
   }
+  async updateDeelnemer(deelnemer: Deelnemer): Promise<Deelnemer> {
+    const response = await this.put(
+      `/personen/${deelnemer.id}`,
+      deelnemer,
+    ).expect(200);
+    return response.body;
+  }
+  async getDeelnemer(deelnemerId: number): Promise<Deelnemer> {
+    const response = await this.get(`/personen/${deelnemerId}`).expect(200);
+    return response.body;
+  }
+
   async createOverigPersoon(
     overigPersoon: UpsertableOverigPersoon,
   ): Promise<OverigPersoon> {
@@ -333,6 +345,15 @@ class IntegrationTestingHarness {
       '/organisaties',
       factory.organisatie(org),
     ).expect(201);
+    return response.body;
+  }
+
+  async updateOrganisatie(org: Organisatie): Promise<Organisatie> {
+    const response = await this.put(`/organisaties/${org.id}`, org).expect(200);
+    return response.body;
+  }
+  async getOrganisatie(orgId: number): Promise<Organisatie> {
+    const response = await this.get(`/organisaties/${orgId}`).expect(200);
     return response.body;
   }
 }

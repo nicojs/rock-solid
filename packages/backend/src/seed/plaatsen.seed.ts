@@ -22,7 +22,7 @@ export async function seedPlaatsen(client: db.PrismaClient) {
     deelgemeente: 'Onbekend',
     gemeente: 'Onbekend',
     postcode: '0',
-    provincieId: 1,
+    provincieId: 0,
     volledigeNaam: 'Onbekend',
   });
   await client.plaats.createMany({ data: plaatsen });

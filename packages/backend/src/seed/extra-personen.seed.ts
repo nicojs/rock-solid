@@ -63,8 +63,7 @@ export async function seedExtraPersonen(
     const volledigeNaam = raw.titel;
     const [voornaam, ...achternaamParts] = volledigeNaam.split(' ');
     const achternaam = achternaamParts.join(' ');
-    const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput =
-      adresSeeder.fromRawOrOnbekend(raw, raw.adres, raw.postcode);
+    const verblijfadres = adresSeeder.fromRaw(raw, raw.adres, raw.postcode);
     return {
       achternaam,
       voornaam,

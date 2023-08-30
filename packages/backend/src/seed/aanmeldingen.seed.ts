@@ -2,6 +2,7 @@ import * as db from '@prisma/client';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { deduplicate } from '../services/mapper-utils.js';
+const ONBEKENDE_PLAATS_ID = 1; // 1 = "onbekend"
 
 export interface RawInschrijving {
   deelgenomen: 'Ja' | 'Nee';
@@ -31,10 +32,10 @@ export async function seedAanmeldingen<T extends RawInschrijving>(
     })
   ).reduce((map, { id, verblijfadres, domicilieadres }) => {
     map.set(id, {
-      woonplaatsId: domicilieadres?.plaatsId ?? verblijfadres.plaatsId,
+      woonplaatsId: domicilieadres?.plaatsId ?? verblijfadres?.plaatsId,
     });
     return map;
-  }, new Map<number, { woonplaatsId: number }>());
+  }, new Map<number, { woonplaatsId: number | undefined }>());
 
   const projectenByCode = (
     await client.project.findMany({
@@ -160,7 +161,9 @@ export async function seedAanmeldingen<T extends RawInschrijving>(
             })),
           },
         },
-        woonplaatsDeelnemer: { connect: { id: deelnemer.woonplaatsId } },
+        woonplaatsDeelnemer: {
+          connect: { id: deelnemer.woonplaatsId ?? ONBEKENDE_PLAATS_ID },
+        },
         status: raw.deelgenomen === 'Ja' ? 'Bevestigd' : 'Geannuleerd',
       },
       projectnummer,

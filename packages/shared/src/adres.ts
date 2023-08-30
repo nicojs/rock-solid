@@ -1,6 +1,7 @@
 import { Upsertable } from './upsertable.js';
 
 export enum Provincie {
+  'Onbekend' = 0,
   'Brussels Hoofdstedelijk Gewest' = 1,
   'Waals-Brabant' = 2,
   'Vlaams-Brabant' = 3,

@@ -69,8 +69,7 @@ export async function seedVrijwilligers(
     raw: RawVrijwilliger,
   ): [title: string, createInput: db.Prisma.PersoonCreateInput] {
     const volledigeNaam = `${raw.naam} ${raw.achternaam}`;
-    const verblijfadres: db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput =
-      adresSeeder.fromRawOrOnbekend(raw, raw.adres, raw.postcode);
+    const verblijfadres = adresSeeder.fromRaw(raw, raw.adres, raw.postcode);
     return [
       raw.titel,
       {

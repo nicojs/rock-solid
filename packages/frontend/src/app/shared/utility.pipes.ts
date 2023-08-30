@@ -128,8 +128,8 @@ export function showPlaats(plaats?: Plaats): string {
   }
 }
 
-export function showProvincie(provincie?: Provincie) {
-  return (provincie && Provincie[provincie]) ?? unknown;
+export function showProvincie(provincie?: Provincie): string {
+  return (typeof provincie === 'number' && Provincie[provincie]) || unknown;
 }
 
 export function showAdres(adres?: Adres) {
@@ -144,7 +144,7 @@ export function showAdres(adres?: Adres) {
       .filter(Boolean)
       .join(', ');
   }
-  return ' ';
+  return notAvailable;
 }
 
 export function showMoney(decimal?: Decimal) {

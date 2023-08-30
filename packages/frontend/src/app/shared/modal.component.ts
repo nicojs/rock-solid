@@ -4,8 +4,9 @@ import { RockElement } from '../rock-element';
 import { bootstrap } from '../../styles';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { router } from '../router';
 
-type ModalKind = 'confirm';
+type ModalKind = 'confirm' | 'alert';
 
 @customElement('rock-modal')
 export class ModalComponent extends RockElement {
@@ -23,7 +24,7 @@ export class ModalComponent extends RockElement {
   private confirmed = (event: MouseEvent) => {
     event.stopPropagation();
     this.shown = false;
-    this.currentResolveFn!(true);
+    this.currentResolveFn!(this.kind === 'confirm' ? true : undefined);
   };
   private cancelled = (event: MouseEvent) => {
     event.stopPropagation();
@@ -41,6 +42,22 @@ export class ModalComponent extends RockElement {
       this.modalTitle = title;
       this.shown = true;
       this.currentResolveFn = res as (value: unknown) => void;
+    });
+  }
+  public alert(body: TemplateResult, title = 'Oops!'): Promise<void> {
+    return new Promise((res) => {
+      this.kind = 'alert';
+      this.modalBody = body;
+      this.modalTitle = title;
+      this.shown = true;
+      this.currentResolveFn = res as (value: unknown) => void;
+    });
+  }
+
+  public override connectedCallback() {
+    super.connectedCallback();
+    router.routeChange$.subscribe(() => {
+      this.shown = false;
     });
   }
 
@@ -113,6 +130,14 @@ export class ModalComponent extends RockElement {
           >
             Annuleren
           </button>`;
+      case 'alert':
+        return html`<button
+          @click=${this.confirmed}
+          type="button"
+          class="btn btn-primary"
+        >
+          Ok
+        </button>`;
     }
   }
 }
