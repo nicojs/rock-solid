@@ -251,11 +251,12 @@ enum Communicatievoorkeur {
 }
 
 enum Foldersoort {
-  deKeiCursussen
-  deKeiZomervakanties
-  deKeiWintervakanties
+  deKeiCursus
+  deKeiZomervakantie
+  deKeiWintervakantie
   keiJongNietBuso
   keiJongBuso
+  infoboekje
 
   @@map("foldersoort")
 }

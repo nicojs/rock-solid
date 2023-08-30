@@ -98,8 +98,8 @@ const foldervoorkeuren: db.Prisma.FoldervoorkeurCreateNestedManyWithoutPersoonIn
   {
     createMany: {
       data: [
-        { communicatie: 'email', folder: 'deKeiWintervakanties' },
-        { communicatie: 'email', folder: 'deKeiZomervakanties' },
+        { communicatie: 'email', folder: 'deKeiWintervakantie' },
+        { communicatie: 'email', folder: 'deKeiZomervakantie' },
       ],
     },
   };
