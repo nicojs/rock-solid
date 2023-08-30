@@ -14,6 +14,7 @@ import {
   includePersoonAggregate,
   toPersoon,
 } from './persoon.mapper.js';
+import { ONBEKENDE_PLAATS_ID } from './plaats.mapper.js';
 
 type DBAanmeldingAggregate = db.Aanmelding & {
   deelnemer: DBPersonAggregate | null;
@@ -59,9 +60,10 @@ export class AanmeldingMapper {
       this.db.aanmelding.create({
         data: {
           ...aanmeldingData,
-          woonplaatsDeelnemerId: domicilieadres
-            ? domicilieadres.plaatsId
-            : verblijfadres.plaatsId,
+          woonplaatsDeelnemerId:
+            domicilieadres?.plaatsId ??
+            verblijfadres?.plaatsId ??
+            ONBEKENDE_PLAATS_ID,
         },
       }),
     );

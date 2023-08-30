@@ -86,11 +86,7 @@ export async function seedDeelnemers(
     raw: RawDeelnemer,
   ): [title: string, createInput: db.Prisma.PersoonCreateInput] {
     const volledigeNaam = `${raw.naam} ${raw.achternaam}`;
-    const verblijfadres = adresSeeder.fromRawOrOnbekend(
-      raw,
-      raw.adres,
-      raw.postcode,
-    );
+    const verblijfadres = adresSeeder.fromRaw(raw, raw.adres, raw.postcode);
     const domicilieadres = adresSeeder.fromRaw(
       raw,
       raw['adres domicilie'],

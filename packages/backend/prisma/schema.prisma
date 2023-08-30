@@ -17,8 +17,8 @@ model Persoon {
   achternaam          String      @db.VarChar(128)
   volledigeNaam       String      @db.VarChar(256)
   emailadres          String?     @db.VarChar(256)
-  verblijfadresId     Int
-  verblijfadres       Adres       @relation(name: "verblijfadres", fields: [verblijfadresId], references: [id])
+  verblijfadresId     Int?
+  verblijfadres       Adres?      @relation(name: "verblijfadres", fields: [verblijfadresId], references: [id])
   domicilieadresId    Int?
   domicilieadres      Adres?      @relation(name: "domicilieadres", fields: [domicilieadresId], references: [id])
   geboortedatum       DateTime?   @db.Date
@@ -178,7 +178,7 @@ model OrganisatieContact {
   afdeling         String?          @db.VarChar(256)
   emailadres       String?          @db.VarChar(256)
   telefoonnummer   String?          @db.VarChar(256)
-  adres            Adres?           @relation(fields: [adresId], references: [id], onDelete: Cascade)
+  adres            Adres?           @relation(fields: [adresId], references: [id])
   adresId          Int?
   opmerking        String?          @db.VarChar(1024)
   foldervoorkeuren Foldervoorkeur[]

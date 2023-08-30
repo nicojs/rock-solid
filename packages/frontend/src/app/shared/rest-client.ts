@@ -75,7 +75,7 @@ export class RestClient {
   async update<TRoute extends keyof RestRoutes>(
     route: TRoute,
     id: string | number,
-    entity: RestRoutes[TRoute]['upsertableEntity'],
+    entity: RestRoutes[TRoute]['entity'],
   ): Promise<RestRoutes[TRoute]['entity']> {
     const response = await this.http.fetch(`/api/${route}/${id}`, {
       method: 'PUT',

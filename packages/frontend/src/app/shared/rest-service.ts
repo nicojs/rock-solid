@@ -32,7 +32,7 @@ export class RestService<TRoute extends keyof RestRoutes> {
 
   update(
     id: string | number,
-    data: UpsertableFrom<TRoute>,
+    data: EntityFrom<TRoute>,
   ): Promise<EntityFrom<TRoute>> {
     return this.restClient.update(this.route, id, data);
   }

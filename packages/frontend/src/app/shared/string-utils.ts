@@ -85,26 +85,10 @@ const aanmeldingCsvColumns = Object.freeze([
 
 export function toOverigePersonenCsv(personen: OverigPersoon[]) {
   return toCsv(
-    personen.map(
-      ({
-        verblijfadres: {
-          plaats: { postcode, gemeente, deelgemeente },
-          straatnaam,
-          huisnummer,
-          busnummer,
-        },
-        domicilieadres,
-        ...deelnemer
-      }) => ({
-        ...deelnemer,
-        postcode,
-        adres: `${straatnaam} ${huisnummer}${
-          busnummer ? ` bus ${busnummer}` : ''
-        }`,
-        gemeente,
-        deelgemeente,
-      }),
-    ),
+    personen.map(({ verblijfadres, domicilieadres, ...deelnemer }) => ({
+      ...deelnemer,
+      ...adresCsvFields(verblijfadres),
+    })),
     [...basePersoonColumns, ...adresCsvColumns, 'selectie', 'foldervoorkeuren'],
     overigPersoonLabels,
     {
@@ -114,17 +98,6 @@ export function toOverigePersonenCsv(personen: OverigPersoon[]) {
   );
 }
 
-function adresCsvFieldsOrDefault(adres?: Adres): AdresCsvFields {
-  return adres
-    ? adresCsvFields(adres)
-    : {
-        adres: '',
-        deelgemeente: '',
-        gemeente: '',
-        postcode: '',
-      };
-}
-
 interface AdresCsvFields {
   postcode: string;
   adres: string;
@@ -132,17 +105,26 @@ interface AdresCsvFields {
   deelgemeente: string;
 }
 
-function adresCsvFields({
-  plaats: { postcode, gemeente, deelgemeente },
-  straatnaam,
-  huisnummer,
-  busnummer,
-}: Adres): AdresCsvFields {
+function adresCsvFields(adres: Adres | undefined): AdresCsvFields {
+  if (adres) {
+    const {
+      plaats: { postcode, gemeente, deelgemeente },
+      straatnaam,
+      huisnummer,
+      busnummer,
+    } = adres;
+    return {
+      postcode,
+      adres: toStraatEnHuisnummer({ straatnaam, huisnummer, busnummer }),
+      gemeente,
+      deelgemeente,
+    };
+  }
   return {
-    postcode,
-    adres: toStraatEnHuisnummer({ straatnaam, huisnummer, busnummer }),
-    gemeente,
-    deelgemeente,
+    adres: '',
+    deelgemeente: '',
+    gemeente: '',
+    postcode: '',
   };
 }
 
@@ -166,7 +148,7 @@ export function toAanmeldingenCsv(aanmeldingen: Aanmelding[]): string {
     aanmeldingen.map(({ deelnemer, ...aanmelding }) => ({
       ...aanmelding,
       ...deelnemer,
-      ...adresCsvFieldsOrDefault(deelnemer?.verblijfadres),
+      ...adresCsvFields(deelnemer?.verblijfadres),
     })),
     [
       ...basePersoonColumns,

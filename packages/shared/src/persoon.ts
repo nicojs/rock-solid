@@ -6,7 +6,7 @@ import { Upsertable } from './upsertable.js';
 export interface BasePersoon {
   id: number;
   type: PersoonType;
-  verblijfadres: Adres;
+  verblijfadres?: Adres;
   domicilieadres?: Adres;
   voornaam?: string;
   achternaam: string;
@@ -24,17 +24,19 @@ export interface BasePersoon {
 }
 
 export type UpsertablePersoon = UpsertableDeelnemer | UpsertableOverigPersoon;
-export type UpsertableDeelnemer = Omit<
-  Upsertable<Deelnemer, 'achternaam' | 'type'>,
-  'verblijfadres'
+export type UpsertableDeelnemer = Upsertable<
+  Omit<Deelnemer, 'domicilieadres' | 'verblijfadres'>,
+  'achternaam' | 'type'
 > & {
-  verblijfadres: UpsertableAdres;
+  domicilieadres?: UpsertableAdres;
+  verblijfadres?: UpsertableAdres;
 };
-export type UpsertableOverigPersoon = Omit<
-  Upsertable<OverigPersoon, 'achternaam' | 'type'>,
-  'verblijfadres'
+export type UpsertableOverigPersoon = Upsertable<
+  Omit<OverigPersoon, 'domicilieadres' | 'verblijfadres'>,
+  'achternaam' | 'type'
 > & {
-  verblijfadres: UpsertableAdres;
+  domicilieadres?: UpsertableAdres;
+  verblijfadres?: UpsertableAdres;
 };
 export type Persoon = Deelnemer | OverigPersoon;
 

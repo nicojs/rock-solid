@@ -18,16 +18,17 @@ import {
   toAdres,
   toCreateAdresInput,
   toUpdateAdresInput,
-  toNullableUpdateAdresInput,
 } from './adres.mapper.js';
 
 export type DBPersonAggregate = db.Persoon & {
-  verblijfadres: db.Adres & { plaats: db.Plaats };
-  domicilieadres: (db.Adres & { plaats: db.Plaats }) | null;
+  verblijfadres: DBAdresAggregate | null;
+  domicilieadres: DBAdresAggregate | null;
   foldervoorkeuren: db.Foldervoorkeur[];
   eersteCursusAanmelding: (db.Aanmelding & { project: db.Project }) | null;
   eersteVakantieAanmelding: (db.Aanmelding & { project: db.Project }) | null;
 };
+
+export type DBAdresAggregate = db.Adres & { plaats: db.Plaats };
 
 /**
  * A data mapper for persoon
@@ -122,13 +123,24 @@ export class PersoonMapper {
       eersteVakantie,
       ...props
     } = fillOutAllPersoonFields(persoon);
+    const { verblijfadresId, domicilieadresId } =
+      await this.db.persoon.findUniqueOrThrow({
+        where: { id: personId },
+        select: { verblijfadresId: true, domicilieadresId: true },
+      });
     const result = await this.db.persoon.update({
       where,
       data: {
         ...props,
         volledigeNaam: computeVolledigeNaam(props),
-        verblijfadres: toUpdateAdresInput(verblijfadres),
-        domicilieadres: toNullableUpdateAdresInput(domicilieadres),
+        verblijfadres: toUpdateAdresInput(
+          verblijfadres,
+          typeof verblijfadresId === 'number',
+        ),
+        domicilieadres: toUpdateAdresInput(
+          domicilieadres,
+          typeof domicilieadresId === 'number',
+        ),
         foldervoorkeuren: toFoldervoorkeurInput(persoon),
       },
       include: includePersoonAggregate,
@@ -185,7 +197,7 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
   } = p;
   return {
     ...purgeNulls(person),
-    domicilieadres: domicilieadres ? toAdres(domicilieadres) : undefined,
+    domicilieadres: toAdres(domicilieadres),
     verblijfadres: toAdres(verblijfadres),
     foldervoorkeuren: foldervoorkeuren.map(toFoldervoorkeur),
     eersteCursus: eersteCursusAanmelding?.project.projectnummer,

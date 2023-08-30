@@ -80,29 +80,10 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
     },
   },
   radioControl('voedingswens', voedingswensen),
-  formGroup(
-    'verblijfadres',
-    [
-      {
-        name: 'straatnaam',
-        type: InputType.text,
-        validators: { required: true },
-      },
-      {
-        name: 'huisnummer',
-        type: InputType.text,
-        validators: { required: true },
-      },
-      {
-        name: 'plaats',
-        type: InputType.plaats,
-        label: 'Woonplaats',
-        validators: { required: true },
-      },
-      { name: 'busnummer', type: InputType.text },
-    ],
-    { required: true },
-  ),
+  formGroup('verblijfadres', adresControls, {
+    required: false,
+    requiredLabel: 'Verblijfadres invullen',
+  }),
   {
     name: 'gsmNummer',
     label: 'GSM',

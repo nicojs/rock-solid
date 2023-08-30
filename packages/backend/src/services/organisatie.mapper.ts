@@ -16,8 +16,8 @@ import { toPage } from './paging.js';
 import {
   DBAdresWithPlaats,
   toNullableAdres,
-  toNullableCreateAdresInput,
-  toNullableUpdateAdresInput,
+  toCreateAdresInput,
+  toUpdateAdresInput,
 } from './adres.mapper.js';
 import { handleKnownPrismaErrors } from '../errors/prisma.js';
 
@@ -95,7 +95,6 @@ export class OrganisatieMapper {
     data: Organisatie;
   }): Promise<Organisatie> {
     const { contacten, id, ...props } = data;
-
     const result = await handleKnownPrismaErrors(
       this.db.organisatie.update({
         where,
@@ -114,21 +113,20 @@ export class OrganisatieMapper {
               .map(toCreateContactInput),
             update: data.contacten
               .filter((contact) => notEmpty(contact.id))
-              .map(toUpdateContactInput),
+              .map((contact) => toUpdateContactInput(contact)),
           },
         },
         include: includeContacten(),
       }),
     );
 
-    // Delete addresses that needs to be deleted
-    for (const contact of contacten) {
-      const updatedContactIndex = result.contacten.findIndex(
-        ({ id }) => contact.id === id,
-      );
-      const updatedContact = result.contacten[updatedContactIndex];
-      if (!contact.adres && updatedContact?.adres) {
-        result.contacten[updatedContactIndex] =
+    // Delete addresses that needs to be deleted, cannot be done in one sweep, because of https://github.com/prisma/prisma/issues/20448
+    await Promise.all(
+      contacten.map(async (contact) => {
+        const updatedContact = result.contacten.find(
+          ({ id }) => contact.id === id,
+        );
+        if (!contact.adres && updatedContact?.adres) {
           await this.db.organisatieContact.update({
             where: { id: updatedContact.id },
             data: { adres: { delete: true } },
@@ -137,8 +135,10 @@ export class OrganisatieMapper {
               ...includeFoldervoorkeuren,
             },
           });
-      }
-    }
+          updatedContact.adres = null;
+        }
+      }),
+    );
 
     return toOrganisatie(result);
   }
@@ -240,7 +240,7 @@ function toCreateContactInput(
   const { adres, id, foldervoorkeuren, ...props } = contact;
   return {
     ...props,
-    adres: toNullableCreateAdresInput(adres),
+    adres: toCreateAdresInput(adres),
     terAttentieVan: props.terAttentieVan ?? '', // Empty string so we can use the unique key constraint
     foldervoorkeuren: {
       create: foldervoorkeuren?.map(({ communicatie, folder }) => ({
@@ -258,7 +258,8 @@ function toUpdateContactInput(
     where: { id: contact.id },
     data: {
       ...toCreateContactInput(contact),
-      adres: toNullableUpdateAdresInput(contact.adres),
+      // we provide false here and delete it afterwards, because of issue https://github.com/prisma/prisma/issues/20448
+      adres: toUpdateAdresInput(contact.adres, false),
       foldervoorkeuren: {
         deleteMany: {
           organisatieContactId: contact.id,
@@ -266,16 +267,21 @@ function toUpdateContactInput(
             notIn: contact.foldervoorkeuren.map(({ folder }) => folder),
           },
         },
-        upsert: contact.foldervoorkeuren.map(({ communicatie, folder }) => ({
-          where: {
-            folder_organisatieContactId: {
-              folder,
-              organisatieContactId: contact.id,
+        upsert: contact.foldervoorkeuren.map(
+          ({
+            communicatie,
+            folder,
+          }): db.Prisma.FoldervoorkeurUpsertWithWhereUniqueWithoutOrganisatieContactInput => ({
+            where: {
+              folder_organisatieContactId: {
+                folder,
+                organisatieContactId: contact.id,
+              },
             },
-          },
-          create: { folder, communicatie },
-          update: { folder, communicatie },
-        })),
+            create: { folder, communicatie },
+            update: { folder, communicatie },
+          }),
+        ),
       },
     },
   };

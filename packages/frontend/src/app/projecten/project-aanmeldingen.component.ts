@@ -2,6 +2,7 @@ import {
   Aanmelding,
   Aanmeldingsstatus,
   Deelnemer,
+  Persoon,
   Project,
   split,
 } from '@rock-solid/shared';
@@ -442,7 +443,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
       </div>
 
       <rock-autocomplete
-        .searchAction="${(val: string): Promise<TypeAheadHint[]> =>
+        .searchAction="${(val: string): Promise<TypeAheadHint<Persoon>[]> =>
           persoonService
             .getAll({
               type: 'deelnemer',
@@ -455,15 +456,29 @@ export class ProjectAanmeldingenComponent extends LitElement {
                   persoon,
                   this.project.activiteiten[0]?.van,
                 ),
-                value: persoon.id,
+                value: persoon,
               })),
             )}"
-        @selected="${async (event: CustomEvent<TypeAheadHint>) => {
+        @selected="${async (event: CustomEvent<TypeAheadHint<Persoon>>) => {
           try {
+            const deelnemer = event.detail.value;
+            if (!deelnemer.domicilieadres && !deelnemer.verblijfadres) {
+              await ModalComponent.instance.alert(
+                html`<p>
+                  ${fullName(deelnemer)} heeft nog
+                  <strong>geen domicilieadres of verblijfadres</strong>.
+                  <rock-link href="/deelnemers/edit/${deelnemer.id}"
+                    >Vul hier eerst het adres in</rock-link
+                  >
+                </p>`,
+                `Kan ${fullName(deelnemer)} niet aanmelden`,
+              );
+              return;
+            }
             const aanmelding = await projectService.createAanmelding(
               this.project.id,
               {
-                deelnemerId: +event.detail.value,
+                deelnemerId: deelnemer.id,
                 projectId: this.project.id,
               },
             );

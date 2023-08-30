@@ -172,6 +172,52 @@ describe(OrganisatiesController.name, () => {
     });
   });
 
+  describe('PUT /organisaties/:id', () => {
+    let disney: Organisatie;
+    beforeEach(async () => {
+      disney = await harness.createOrganisatie({
+        naam: 'Disney',
+        contacten: [
+          factory.organisatieContact({
+            terAttentieVan: 'Mickey',
+            adres: {
+              straatnaam: 'Mousestreet',
+              huisnummer: '1',
+              plaats: onbekendePlaats,
+            },
+            foldervoorkeuren: [
+              {
+                folder: 'deKeiWintervakantie',
+                communicatie: 'postEnEmail',
+              },
+              {
+                folder: 'keiJongBuso',
+                communicatie: 'postEnEmail',
+              },
+            ],
+          }),
+          factory.organisatieContact({ terAttentieVan: 'Minie' }),
+        ],
+      });
+    });
+
+    it('should delete the adres of a contact', async () => {
+      // Act
+      await harness.updateOrganisatie({
+        ...disney,
+        contacten: disney.contacten.map((contact) => ({
+          ...contact,
+          adres: undefined,
+        })),
+      });
+
+      // Assert
+      const updatedDisney = await harness.getOrganisatie(disney.id);
+      expect(updatedDisney.contacten[0]!.adres).undefined;
+      expect(updatedDisney.contacten[1]!.adres).undefined;
+    });
+  });
+
   describe('DELETE /organisaties/:id', () => {
     it('should delete the organisatie and organisatie contacten', async () => {
       const org = await harness.createOrganisatie({

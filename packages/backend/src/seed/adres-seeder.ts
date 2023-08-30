@@ -22,22 +22,6 @@ export class AdresSeeder<TRaw> {
     );
   }
 
-  fromRawOrOnbekend(
-    raw: TRaw,
-    adres: string,
-    postcode: string,
-  ): db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput {
-    return (
-      this.fromRaw(raw, adres, postcode) ?? {
-        create: {
-          huisnummer: '',
-          plaatsId: ONBEKENDE_PLAATS_ID,
-          straatnaam: '',
-        },
-      }
-    );
-  }
-
   fromRaw(
     raw: TRaw,
     adres: string,
