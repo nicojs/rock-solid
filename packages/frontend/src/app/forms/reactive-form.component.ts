@@ -1,7 +1,7 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { BaseInputControl, FormControl } from './form-control';
+import { FormControl } from './form-control';
 import { Privilege } from '@rock-solid/shared';
 import { privilege } from '../auth/privilege.directive';
 import { createRef, ref } from 'lit/directives/ref.js';

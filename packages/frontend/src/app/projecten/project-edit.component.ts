@@ -17,7 +17,6 @@ import {
   cursusLabels,
   Privilege,
   Decimal,
-  vakantieLabels,
   activiteitLabels,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
