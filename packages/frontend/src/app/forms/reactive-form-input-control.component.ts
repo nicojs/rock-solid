@@ -16,13 +16,15 @@ import {
 } from './form-control';
 import { capitalize, toDateString, toDateTimeString } from '../shared';
 import { Decimal } from '@rock-solid/shared';
-import { FormElement } from './form-element';
+import { FormControlElement } from './form-element';
 import { ref, createRef } from 'lit/directives/ref.js';
 
 @customElement('rock-reactive-form-input-control')
-export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
+export class ReactiveFormInputControl<
+  TEntity,
+> extends FormControlElement<TEntity> {
   @property({ attribute: false })
-  public override control!: InputControl<TEntity>;
+  public control!: InputControl<TEntity>;
 
   @property({ attribute: false })
   private validationMessage = '';
@@ -40,15 +42,16 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
 
   private inputRef = createRef<HTMLInputElement>();
   override updated() {
-    this.updateCustomValidity();
+    this.validate();
   }
 
-  private updateCustomValidity() {
+  override validate() {
     const errorMessage = this.control.validators?.custom?.(
       (this.entity as any)[this.control.name] as unknown as never,
       this.entity,
     );
-    this.inputRef.value?.setCustomValidity(errorMessage ?? '');
+    this.inputRef.value!.setCustomValidity(errorMessage ?? '');
+    this.updateValidationMessage();
   }
 
   private updateValidationMessage() {
@@ -89,7 +92,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
         ?checked="${this.entity[control.name]}"
         @change="${(e: Event) => {
           const inputEl = e.target as HTMLInputElement;
-          (this.entity[control.name] as unknown as boolean) = inputEl.checked;
+          this.updateValue(inputEl.checked);
         }}"
       />
       <label for="${this.name}" class="form-check-label"
@@ -115,10 +118,7 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
         const inputEl = e.target as HTMLInputElement;
-        (this.entity[control.name] as unknown as string | undefined) =
-          inputEl.value || undefined;
-        this.updateCustomValidity();
-        this.updateValidationMessage();
+        this.updateValue(inputEl.value || undefined);
       }}"
     /> `;
   }
@@ -143,18 +143,14 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
         @change="${(e: Event) => {
           const inputEl = e.target as HTMLInputElement;
           if (control.type === InputType.currency) {
-            (this.entity[control.name] as unknown as Decimal) = new Decimal(
-              inputEl.value,
-            );
+            this.updateValue(new Decimal(inputEl.value));
           } else {
             let val: number | undefined = inputEl.valueAsNumber;
             if (isNaN(val)) {
               val = undefined;
             }
-            (this.entity[control.name] as unknown as number | undefined) = val;
+            this.updateValue(val);
           }
-          this.updateCustomValidity();
-          this.updateValidationMessage();
         }}"
       />`;
   }
@@ -185,10 +181,9 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       @invalid="${this.updateValidationMessage}"
       @change="${(e: Event) => {
         const inputEl = e.target as HTMLInputElement;
-        (this.entity[control.name] as unknown as Date | undefined) =
-          inputEl.valueAsDate ?? new Date(inputEl.value) ?? undefined;
-        this.updateCustomValidity();
-        this.updateValidationMessage();
+        this.updateValue(
+          inputEl.valueAsDate ?? new Date(inputEl.value) ?? undefined,
+        );
       }}"
     /> `;
   }
@@ -219,12 +214,10 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       if (control.grouped) {
         const firstGroup = Object.values(control.items)[0];
         if (firstGroup) {
-          (this.entity[control.name] as unknown as string | undefined) =
-            Object.keys(firstGroup)[0];
+          this.updateValue(Object.keys(firstGroup)[0]);
         }
       } else {
-        (this.entity[control.name] as unknown as string | undefined) =
-          Object.keys(control.items)[0];
+        this.updateValue(Object.keys(control.items)[0]);
       }
     }
 
@@ -238,11 +231,11 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
       @change="${(e: Event) => {
         const selectEl = e.target as HTMLSelectElement;
         if (control.multiple) {
-          (this.entity[control.name] as unknown as string[]) = [
-            ...selectEl.selectedOptions,
-          ].map((option) => option.value);
+          this.updateValue(
+            [...selectEl.selectedOptions].map((option) => option.value),
+          );
         } else {
-          (this.entity[control.name] as unknown as string) = selectEl.value;
+          this.updateValue(selectEl.value);
         }
       }}"
     >
@@ -291,15 +284,27 @@ export class ReactiveFormInputControl<TEntity> extends FormElement<TEntity> {
           class="form-check-input"
           type="radio"
           name=${this.name}
+          ${ref(this.inputRef)}
           id=${id}
           ?required=${control.validators?.required}
           ?checked=${isChecked(key)}
           @change="${() => {
-            (this.entity[control.name] as unknown as string) = key;
+            this.updateValue(key);
           }}"
         />
         <label class="form-check-label" for=${id}> ${value} </label>
       </div>`;
     })}`;
+  }
+
+  private updateValue(value: unknown) {
+    (this.entity as any)[this.control.name] = value;
+    this.validate();
+    const updatedEvent = new CustomEvent<string>('input-updated', {
+      bubbles: true,
+      composed: true,
+      detail: this.control.name,
+    });
+    this.dispatchEvent(updatedEvent);
   }
 }

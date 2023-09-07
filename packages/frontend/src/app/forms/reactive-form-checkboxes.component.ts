@@ -3,15 +3,15 @@ import { customElement, property } from 'lit/decorators.js';
 import { createRef, ref } from 'lit/directives/ref.js';
 import { capitalize } from '../shared';
 import { CheckboxesControl, KeysOfType } from './form-control';
-import { FormElement } from './form-element';
+import { FormControlElement } from './form-element';
 
 @customElement('rock-reactive-checkboxes')
 export class ReactiveFormTags<
   TEntity,
   TKey extends KeysOfType<TEntity, string[]>,
-> extends FormElement<TEntity> {
+> extends FormControlElement<TEntity> {
   @property({ attribute: false })
-  public override control!: CheckboxesControl<TEntity, TKey>;
+  public control!: CheckboxesControl<TEntity, TKey>;
 
   override render() {
     return html`

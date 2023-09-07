@@ -9,15 +9,15 @@ import {
   TypeAheadHint,
 } from '../shared';
 import { ArrayItem, KeysOfType, TagsControl } from './form-control';
-import { FormElement } from './form-element';
+import { FormControlElement } from './form-element';
 
 @customElement('rock-reactive-form-tags')
 export class ReactiveFormTags<
   TEntity,
   TKey extends KeysOfType<TEntity, any[]>,
-> extends FormElement<TEntity> {
+> extends FormControlElement<TEntity> {
   @property({ attribute: false })
-  public override control!: TagsControl<TEntity, TKey>;
+  public control!: TagsControl<TEntity, TKey>;
   private inputRef = createRef<HTMLInputElement>();
   private get input() {
     return this.inputRef.value!;

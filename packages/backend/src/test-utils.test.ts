@@ -100,13 +100,6 @@ export class RockSolidDBContainer {
   }
 
   private async init() {
-    await execAsync('npm run prisma:push:force', {
-      env: {
-        ...process.env,
-        DATABASE_URL: this.db.getConnectionUri(),
-      },
-      cwd,
-    });
     await this.client.$connect();
     await this.seed();
   }

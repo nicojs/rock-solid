@@ -17,6 +17,7 @@ import {
   cursusLabels,
   Privilege,
   Decimal,
+  activiteitLabels,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -99,7 +100,16 @@ const baseActiviteitenControls: FormControl<BaseActiviteit>[] = [
     label: 'Tot en met',
     step: HALF_HOUR_SECONDS,
     type: InputType.dateTimeLocal,
-    validators: { required: true },
+    validators: {
+      required: true,
+      custom(value, entity) {
+        if (value && value.getTime() < entity.van.getTime()) {
+          return `De "${activiteitLabels.totEnMet}" moet na de "${activiteitLabels.van}"-datum liggen.`;
+        }
+        return '';
+      },
+    },
+    dependsOn: ['van'],
   },
   {
     name: 'vormingsuren',
@@ -124,28 +134,11 @@ const baseActiviteitenControls: FormControl<BaseActiviteit>[] = [
         return '';
       },
     },
+    dependsOn: ['begeleidingsuren'],
   },
   {
     name: 'begeleidingsuren',
     type: InputType.number,
-    validators: {
-      custom(value, entity) {
-        if (value instanceof Decimal) {
-          throw new Error(
-            'Value for "begeleidingsuren" should be a number, was a Decimal',
-          );
-        }
-        if (value !== undefined) {
-          if (entity.vormingsuren === undefined) {
-            return 'Vormingsuren zijn verplicht als er ook begeleidingsuren zijn.';
-          }
-          if (value < entity.vormingsuren) {
-            return `Vul een waarde in die hoger of gelijk zijn aan de vormingsuren (${entity.vormingsuren}).`;
-          }
-        }
-        return '';
-      },
-    },
   },
 ];
 

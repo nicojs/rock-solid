@@ -2,14 +2,14 @@ import { html, nothing, PropertyValues } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { FormGroup } from './form-control';
 import { capitalize } from '../shared';
-import { FormElement } from './form-element';
+import { FormControlElement } from './form-element';
 
 @customElement('rock-reactive-form-group')
 export class ReactiveFormGroupComponent<
   TEntity,
   TKey extends keyof TEntity & string,
-> extends FormElement<TEntity> {
-  public override control!: FormGroup<TEntity, TKey>;
+> extends FormControlElement<TEntity> {
+  public control!: FormGroup<TEntity, TKey>;
 
   @state()
   private showControls = false;
@@ -33,7 +33,6 @@ export class ReactiveFormGroupComponent<
     }
     super.update(changedProperties);
   }
-
   public override render() {
     return html` <fieldset class="row mb-3 border">
       <legend class="form-text">${capitalize(this.control.name)}</legend>
@@ -43,14 +42,11 @@ export class ReactiveFormGroupComponent<
   }
 
   private renderControls() {
-    return this.control.controls.map(
-      (control) =>
-        html`<rock-reactive-form-control
-          .control="${control}"
-          .entity="${this.value}"
-          .path="${this.name}"
-        ></rock-reactive-form-control>`,
-    );
+    return html`<rock-reactive-form-control-list
+      .entity=${this.value}
+      .path=${this.name}
+      .controls=${this.control.controls}
+    ></rock-reactive-form-control-list>`;
   }
 
   private renderCheckbox() {

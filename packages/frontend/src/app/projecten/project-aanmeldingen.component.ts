@@ -327,29 +327,13 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           ></rock-icon>`}
                       ${aanmelding.deelnemer
                         ? html`${deelnemerLink(
-                              aanmelding.deelnemer,
-                              this.project.activiteiten[0]?.van,
-                            )}
-                            <rock-icon
-                              title="Geslacht: ${aanmelding.deelnemer
-                                .geslacht}${aanmelding.deelnemer
-                                .geslachtOpmerking
-                                ? ` (${aanmelding.deelnemer.geslachtOpmerking})`
-                                : nothing}"
-                              icon="${geslachtIcons[
-                                aanmelding.deelnemer.geslacht
-                              ]}"
-                            ></rock-icon>`
-                        : deelnemerVerwijderd}${[
-                        aanmelding.deelnemer?.eersteCursus,
-                        aanmelding.deelnemer?.eersteVakantie,
-                      ].includes(this.project.projectnummer)
-                        ? html`
-                            <span class="badge rounded-pill text-bg-primary"
-                              >Eerste ${this.project.type}</span
-                            >
-                          `
-                        : nothing}
+                            aanmelding.deelnemer,
+                            this.project.activiteiten[0]?.van,
+                          )} `
+                        : deelnemerVerwijderd}
+                      ${renderGeslacht(aanmelding.deelnemer)}
+                      ${renderVoedingswens(aanmelding.deelnemer)}
+                      ${this.renderEersteAanmelding(aanmelding)}
                     </td>
                     <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
                     <td>${showDatum(aanmelding.deelnemer?.geboortedatum)}</td>
@@ -411,6 +395,19 @@ export class ProjectAanmeldingenComponent extends LitElement {
             </tbody>
           </table>`
       : nothing}`;
+  }
+
+  private renderEersteAanmelding(aanmelding: Aanmelding): unknown {
+    return [
+      aanmelding.deelnemer?.eersteCursus,
+      aanmelding.deelnemer?.eersteVakantie,
+    ].includes(this.project.projectnummer)
+      ? html`
+          <span class="badge rounded-pill text-bg-primary"
+            >Eerste ${this.project.type}</span
+          >
+        `
+      : nothing;
   }
 
   private renderDeleteButton(aanmelding: Aanmelding, floatEnd = false) {
@@ -503,4 +500,48 @@ function deelnemerLink(deelnemer: Deelnemer, van: Date | undefined) {
     href="/deelnemers/display/${deelnemer.id}"
     >${fullNameWithAge(deelnemer, van)}</a
   >`;
+}
+
+function renderGeslacht(
+  deelnemer?: Pick<Deelnemer, 'geslacht' | 'geslachtOpmerking'>,
+) {
+  if (!deelnemer) {
+    return nothing;
+  }
+  const title = `Geslacht: ${deelnemer.geslacht}${
+    deelnemer.geslachtOpmerking ? ` (${deelnemer.geslachtOpmerking})` : ''
+  }`;
+  return html`<rock-icon
+    title="${title}"
+    icon="${geslachtIcons[deelnemer.geslacht]}"
+  ></rock-icon>`;
+}
+
+function renderVoedingswens({
+  voedingswens,
+  voedingswensOpmerking,
+}: Partial<Pick<Persoon, 'voedingswens' | 'voedingswensOpmerking'>> = {}) {
+  const voedingswensTitlePostfix = voedingswensOpmerking
+    ? `: ${voedingswensOpmerking}`
+    : '';
+  if (voedingswens) {
+    switch (voedingswens) {
+      case 'vegetarisch':
+        return html`<rock-icon
+          title="Voedingswens Vegetarisch${voedingswensTitlePostfix}"
+          icon="customVegetarian"
+        ></rock-icon>`;
+      case 'halal':
+        return html`<rock-icon
+          title="Voedingswens Halal${voedingswensTitlePostfix}"
+          icon="customHalal"
+        ></rock-icon>`;
+      case 'andere':
+        return html`<rock-icon
+          title="Andere voedingswens${voedingswensTitlePostfix}"
+          icon="customFood"
+        ></rock-icon>`;
+    }
+  }
+  return nothing;
 }

@@ -4,6 +4,7 @@ import { bootstrap } from '../../styles';
 import { FormControl } from './form-control';
 import { Privilege } from '@rock-solid/shared';
 import { privilege } from '../auth/privilege.directive';
+import { createRef, ref } from 'lit/directives/ref.js';
 
 @customElement('rock-reactive-form')
 export class ReactiveFormComponent<TEntity> extends LitElement {
@@ -42,18 +43,16 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
   @property()
   public privilege?: Privilege;
 
+  private formRef = createRef<HTMLFormElement>();
+
   override render() {
     return html`<form
       novalidate
+      ${ref(this.formRef)}
       class="${this.wasValidated ? 'was-validated' : ''}"
       @submit="${this.submit}"
     >
-      ${this.controls?.map((control) => {
-        return html`<rock-reactive-form-control
-          .control=${control}
-          .entity=${this.entity}
-        ></rock-reactive-form-control>`;
-      })}
+      ${this.renderControls()}
       <div class="row">
         <div class="col offset-lg-2 offset-md-4">
           <button
@@ -80,5 +79,11 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
     } else {
       this.wasValidated = true;
     }
+  }
+  private renderControls() {
+    return html`<rock-reactive-form-control-list
+      .entity=${this.entity}
+      .controls=${this.controls}
+    ></rock-reactive-form-control-list>`;
   }
 }

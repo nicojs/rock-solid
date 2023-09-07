@@ -12,12 +12,12 @@ import {
   TypeAheadHint,
 } from '../shared';
 import { PlaatsControl } from './form-control';
-import { FormElement } from './form-element';
+import { FormControlElement } from './form-element';
 
 @customElement('rock-reactive-form-plaats')
-export class ReactiveFormPlaats<TEntity> extends FormElement<TEntity> {
+export class ReactiveFormPlaats<TEntity> extends FormControlElement<TEntity> {
   @property({ attribute: false })
-  public override control!: PlaatsControl<TEntity>;
+  public control!: PlaatsControl<TEntity>;
 
   @property({ attribute: false })
   private validationMessage = '';
