@@ -7,7 +7,6 @@ export abstract class FormElement<TEntity> extends LitElement {
     // Use light dom, so input elements participate in form validation 🤷‍♂️
     return this;
   }
-  public abstract control: FormControl<TEntity>;
 
   @property({ attribute: false })
   public entity!: TEntity;
@@ -17,6 +16,12 @@ export abstract class FormElement<TEntity> extends LitElement {
    */
   @property()
   public path = '';
+}
+
+export abstract class FormControlElement<TEntity> extends FormElement<TEntity> {
+  public abstract control: FormControl<TEntity>;
+
+  validate() {}
 
   get name() {
     return [this.path, this.control.name].join('_');

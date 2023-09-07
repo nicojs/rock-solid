@@ -2,12 +2,19 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { capitalize } from '../shared';
 import { FormControl, InputControl, InputType } from './form-control';
-import { FormElement } from './form-element';
+import { FormControlElement } from './form-element';
+import { createRef, ref } from 'lit/directives/ref.js';
 
 @customElement('rock-reactive-form-control')
-export class ReactiveFormControl<TEntity> extends FormElement<TEntity> {
+export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
   @property({ attribute: false })
-  public override control!: FormControl<TEntity>;
+  public control!: FormControl<TEntity>;
+
+  public override validate() {
+    this.inputRef.value?.validate();
+  }
+
+  inputRef = createRef<FormControlElement<unknown>>();
 
   override render() {
     switch (this.control.type) {
@@ -16,30 +23,35 @@ export class ReactiveFormControl<TEntity> extends FormElement<TEntity> {
           .control=${this.control}
           .entity=${this.entity}
           .path=${this.path}
+          ${ref(this.inputRef)}
         ></rock-reactive-form-array>`;
       case InputType.group:
         return html`<rock-reactive-form-group
           .control=${this.control}
           .entity=${this.entity}
           .path=${this.path}
+          ${ref(this.inputRef)}
         ></rock-reactive-form-group>`;
       case InputType.plaats:
         return html`<rock-reactive-form-plaats
           .control=${this.control}
           .entity=${this.entity}
           .path=${this.path}
+          ${ref(this.inputRef)}
         ></rock-reactive-form-plaats>`;
       case InputType.tags:
         return html`<rock-reactive-form-tags
           .control=${this.control}
           .entity=${this.entity}
           .path=${this.path}
+          ${ref(this.inputRef)}
         ></rock-reactive-form-tags>`;
       case InputType.checkboxes:
         return html`<rock-reactive-checkboxes
           .control=${this.control}
           .entity=${this.entity}
           .path=${this.path}
+          ${ref(this.inputRef)}
         ></rock-reactive-checkboxes>`;
       default:
         return this.renderInputControl(this.control);
@@ -60,7 +72,14 @@ export class ReactiveFormControl<TEntity> extends FormElement<TEntity> {
         .control="${control}"
         .entity="${this.entity}"
         .path="${this.path}"
+        ${ref(this.inputRef)}
       ></rock-reactive-form-input-control>
     </div>`;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'rock-reactive-form-control': ReactiveFormControl<unknown>;
   }
 }

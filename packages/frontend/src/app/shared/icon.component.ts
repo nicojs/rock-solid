@@ -15,15 +15,18 @@ export class IconComponent extends LitElement {
   static override styles = [
     bootstrap,
     css`
-      .icon-sm svg {
+      .icon-sm svg,
+      .icon-sm img {
         width: 8px;
         height: 8px;
       }
-      .icon-md svg {
+      .icon-md svg,
+      .icon-md img {
         width: 16px;
         height: 16px;
       }
-      .icon-lg svg {
+      .icon-lg svg,
+      .icon-lg img {
         width: 32px;
         height: 32px;
       }

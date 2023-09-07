@@ -80,6 +80,20 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
     },
   },
   radioControl('voedingswens', voedingswensen),
+  {
+    name: 'voedingswensOpmerking',
+    type: InputType.text,
+    label: persoonLabels.voedingswensOpmerking,
+    validators: {
+      custom(value, entity) {
+        if (value || entity.voedingswens !== 'andere') {
+          return '';
+        }
+        return `Voedingswens opmerking is verplicht bij voedingswens "${voedingswensen.andere}" is`;
+      },
+    },
+    dependsOn: ['voedingswens'],
+  },
   formGroup('verblijfadres', adresControls, {
     required: false,
     requiredLabel: 'Verblijfadres invullen',

@@ -2,15 +2,15 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { FormArray, KeysOfType } from './form-control';
 import { capitalize, singularize } from '../shared';
-import { FormElement } from './form-element';
+import { FormControlElement } from './form-element';
 
 @customElement('rock-reactive-form-array')
 export class ReactiveFormArrayComponent<
   TEntity,
   TKey extends KeysOfType<TEntity, any[]>,
-> extends FormElement<TEntity> {
+> extends FormControlElement<TEntity> {
   @property({ attribute: false })
-  public override control!: FormArray<TEntity, TKey>;
+  public control!: FormArray<TEntity, TKey>;
 
   public get items(): any[] {
     return this.entity[this.control.name] as unknown as unknown[];
@@ -52,14 +52,11 @@ export class ReactiveFormArrayComponent<
                 @click=${() => this.removeItem(item)}
               ></button>
             </div>
-            ${this.control.controls.map(
-              (control) =>
-                html`<rock-reactive-form-control
-                  .control="${control}"
-                  .entity="${item}"
-                  .path="${this.name}_${index}"
-                ></rock-reactive-form-control>`,
-            )}
+            <rock-reactive-form-control-list
+              .entity=${item}
+              .path=${`${this.name}_${index}`}
+              .controls=${this.control.controls}
+            ></rock-reactive-form-control-list>
           </div>`,
       )}
       <div class="d-flex justify-content-start mb-3">

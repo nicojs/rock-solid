@@ -66,6 +66,8 @@ const basePersoonColumns = Object.freeze([
   'telefoonnummer',
   'rekeningnummer',
   'rijksregisternummer',
+  'voedingswens',
+  'voedingswensOpmerking',
   'opmerking',
 ] as const) satisfies readonly (keyof BasePersoon)[];
 

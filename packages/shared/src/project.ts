@@ -73,6 +73,22 @@ export const vakantieLabels: Record<keyof Vakantie, string> = {
   voorschot: 'Voorschot',
 };
 
+export const activiteitLabels: Record<
+  keyof (VakantieActiviteit & CursusActiviteit),
+  string
+> = {
+  aantalDeelnames: 'Aantal deelnames',
+  aantalDeelnemersuren: 'Aantal deelnemersuren',
+  begeleidingsuren: 'Begeleidingsuren',
+  id: 'id',
+  metOvernachting: 'Met overnachting',
+  totEnMet: 'Tot en met',
+  van: 'Van',
+  vormingsuren: 'Vormingsuren',
+  verblijf: 'Verblijf',
+  vervoer: 'Vervoer',
+};
+
 export type Activiteit = CursusActiviteit | VakantieActiviteit;
 
 export interface BaseActiviteit {
