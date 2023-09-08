@@ -2,12 +2,23 @@ import { NestFactory } from '@nestjs/core';
 import { rockReviver } from '@rock-solid/shared';
 import { AppModule } from './app.module.js';
 import bodyParser from 'body-parser';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
     bodyParser: false,
   });
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          scriptSrc: ["'self'", 'http://localhost:35729'],
+          connectSrc: ["'self'", 'ws://localhost:35729'],
+        },
+      },
+    }),
+  );
   app.use(
     bodyParser.json({
       reviver: rockReviver,
