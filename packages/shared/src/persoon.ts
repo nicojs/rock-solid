@@ -137,12 +137,12 @@ export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
   selectie: 'Selectie',
 };
 
-export type Voedingswens = 'geen' | 'vegetarisch' | 'halal' | 'andere';
+export type Voedingswens = 'geen' | 'vegetarisch' | 'halal' | 'anders';
 export const voedingswensen: Options<Voedingswens> = Object.freeze({
   geen: 'Geen speciale voedingswensen',
   vegetarisch: 'Vegetarisch',
   halal: 'Halal',
-  andere: 'Andere voedingswensen',
+  anders: 'Andere voedingswensen',
 });
 
 export type Werksituatie =
@@ -172,20 +172,24 @@ export const werksituaties: Options<Werksituatie> = Object.freeze({
 
 export type Woonsituatie =
   | 'onbekend'
-  | 'thuisZonderProfessioneleBegeleiding'
-  | 'thuisMetProfessioneleBegeleiding'
+  | 'oudersMetProfessioneleBegeleiding'
+  | 'oudersZonderProfessioneleBegeleiding'
   | 'residentieleWoonondersteuning'
+  | 'zelfstandigMetProfessioneleBegeleiding'
   | 'zelfstandigZonderProfessioneleBegeleiding'
-  | 'zelfstandigMetProfessioneleBegeleiding';
+  | 'anders';
 export const woonsituaties: Options<Woonsituatie> = Object.freeze({
-  onbekend: 'onbekend',
-  thuisZonderProfessioneleBegeleiding: 'thuis zonder professionele begeleiding',
-  thuisMetProfessioneleBegeleiding: 'thuis met professionele begeleiding',
-  residentieleWoonondersteuning: 'residentiele woonondersteuning',
-  zelfstandigZonderProfessioneleBegeleiding:
-    'zelfstandig zonder professionele begeleiding',
+  onbekend: 'Onbekend',
+  oudersMetProfessioneleBegeleiding:
+    '(Pleeg)ouders met professionele begeleiding',
+  oudersZonderProfessioneleBegeleiding:
+    '(Pleeg)ouders zonder professionele begeleiding',
+  residentieleWoonondersteuning: 'Residentiële woonondersteuning',
   zelfstandigMetProfessioneleBegeleiding:
-    'zelfstandig met professionele begeleiding',
+    'Zelfstandig met professionele begeleiding',
+  zelfstandigZonderProfessioneleBegeleiding:
+    'Zelfstandig zonder professionele begeleiding',
+  anders: 'Anders, namelijk',
 });
 
 export type Geslacht = 'onbekend' | 'man' | 'vrouw' | 'x';

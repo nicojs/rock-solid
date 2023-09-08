@@ -306,11 +306,12 @@ enum Geslacht {
 
 enum Woonsituatie {
   onbekend
-  thuisZonderProfessioneleBegeleiding
-  thuisMetProfessioneleBegeleiding
+  oudersMetProfessioneleBegeleiding
+  oudersZonderProfessioneleBegeleiding
   residentieleWoonondersteuning
-  zelfstandigZonderProfessioneleBegeleiding
   zelfstandigMetProfessioneleBegeleiding
+  zelfstandigZonderProfessioneleBegeleiding
+  anders
 
   @@map("woonsituatie")
 }
@@ -345,7 +346,7 @@ enum Voedingswens {
   geen
   vegetarisch
   halal
-  andere
+  anders
 
   @@map("voedingswens")
 }
