@@ -86,10 +86,10 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
     label: persoonLabels.voedingswensOpmerking,
     validators: {
       custom(value, entity) {
-        if (value || entity.voedingswens !== 'andere') {
+        if (value || entity.voedingswens !== 'anders') {
           return '';
         }
-        return `Voedingswens opmerking is verplicht bij voedingswens "${voedingswensen.andere}" is`;
+        return `Voedingswens opmerking is verplicht bij voedingswens "${voedingswensen.anders}" is`;
       },
     },
     dependsOn: ['voedingswens'],
@@ -159,6 +159,15 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
     name: 'woonsituatieOpmerking',
     label: 'Opmerking',
     type: InputType.text,
+    validators: {
+      custom(value, entity) {
+        if (value || entity.woonsituatie !== 'anders') {
+          return '';
+        }
+        return `Woonsituatie opmerking is verplicht bij woonsituatie "${woonsituaties.anders}" is`;
+      },
+    },
+    dependsOn: ['woonsituatie'],
   },
   radioControl('werksituatie', werksituaties),
   {
