@@ -10,7 +10,7 @@ import {
 type JaNee = 'ja' | 'nee';
 
 interface RawExtraPersoon {
-  titel: string;
+  '': string;
   adres: string;
   'algemene vergadering De Bedding': JaNee;
   'algemene vergadering De Kei': JaNee;
@@ -60,7 +60,7 @@ export async function seedExtraPersonen(
   );
 
   function fromRaw(raw: RawExtraPersoon): db.Prisma.PersoonCreateInput {
-    const volledigeNaam = raw.titel;
+    const volledigeNaam = raw[''];
     const [voornaam, ...achternaamParts] = volledigeNaam.split(' ');
     const achternaam = achternaamParts.join(' ');
     const verblijfadres = adresSeeder.fromRaw(raw, raw.adres, raw.postcode);

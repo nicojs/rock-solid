@@ -15,7 +15,7 @@ function parseCsvFile(fileName) {
   return new Promise((res, rej) => {
     fs.createReadStream(fileName)
       .pipe(stripBom())
-      .pipe(csv({ separator: ';' }))
+      .pipe(csv({ separator: ',' }))
       .on('data', (data) => results.push(data))
       .on('error', (err) => rej(err))
       .on('end', () => {
