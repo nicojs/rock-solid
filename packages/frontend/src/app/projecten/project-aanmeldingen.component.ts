@@ -536,7 +536,7 @@ function renderVoedingswens({
           title="Voedingswens Halal${voedingswensTitlePostfix}"
           icon="customHalal"
         ></rock-icon>`;
-      case 'andere':
+      case 'anders':
         return html`<rock-icon
           title="Andere voedingswens${voedingswensTitlePostfix}"
           icon="customFood"
