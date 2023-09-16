@@ -1,7 +1,6 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import request from 'supertest';
-import * as db from '@prisma/client';
 import chai from 'chai';
 
 import {
@@ -40,10 +39,12 @@ import {
   Cursus,
   Vakantie,
   AanmeldingOf,
+  UpsertableAdres,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
 import { PrismaClient } from '@prisma/client';
+import { toPlaats } from './services/plaats.mapper.js';
 
 /**
  * @see https://stackoverflow.com/questions/45881829/how-to-have-mocha-show-entire-object-in-diff-on-assertion-error
@@ -53,16 +54,17 @@ chai.config.truncateThreshold = 0;
 const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
 
-export const onbekendePlaats: Readonly<Plaats> = Object.freeze({
-  deelgemeente: 'Onbekend',
-  gemeente: 'Onbekend',
-  postcode: '0',
-  provincie: 1,
-  id: 1,
-});
 export class RockSolidDBContainer {
   private readonly db;
   private client;
+  #seedPlaats?: Plaats;
+
+  get seedPlaats() {
+    if (!this.#seedPlaats) {
+      throw new Error('Seed plaats not set');
+    }
+    return this.#seedPlaats;
+  }
 
   private constructor(db: StartedPostgreSqlContainer) {
     this.db = db;
@@ -105,15 +107,19 @@ export class RockSolidDBContainer {
   }
 
   private async seed() {
-    const { provincie, ...plaatsData } = onbekendePlaats;
-    const plaatsen: db.Prisma.PlaatsCreateManyInput[] = [
-      {
+    this.#seedPlaats = await this.insertPlaats(factory.plaats());
+  }
+
+  public async insertPlaats(plaats: Omit<Plaats, 'id'>): Promise<Plaats> {
+    const { provincie, ...plaatsData } = plaats;
+    const dbPlaats = await this.client.plaats.create({
+      data: {
         ...plaatsData,
         provincieId: provincie,
-        volledigeNaam: 'Onbekend',
+        volledigeNaam: `${plaats.gemeente} (${plaats.postcode})`,
       },
-    ];
-    await this.client.plaats.createMany({ data: plaatsen });
+    });
+    return toPlaats(dbPlaats);
   }
 
   /**
@@ -121,8 +127,8 @@ export class RockSolidDBContainer {
    */
   async clear(): Promise<void> {
     await this.client.$queryRaw`
-      TRUNCATE TABLE foldervoorkeur, aanmelding, deelname, activiteit, organisatie_contact, organisatie, "_PersoonToProject", persoon, project RESTART IDENTITY;`;
-    await this.client.$queryRaw`DELETE FROM plaats WHERE id > 1;`;
+      TRUNCATE TABLE foldervoorkeur, aanmelding, deelname, activiteit, organisatie_contact, organisatie, "_PersoonToProject", persoon, project, adres, plaats RESTART IDENTITY;`;
+    await this.seed();
   }
 
   async stop() {
@@ -138,6 +144,7 @@ export class RockSolidDBContainer {
 class IntegrationTestingHarness {
   private readonly app;
   private authToken?: string;
+  public db = rockSolidDBContainer;
   constructor(app: INestApplication) {
     this.app = app;
   }
@@ -256,6 +263,14 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
+  async updateAanmelding(aanmelding: Aanmelding): Promise<Aanmelding> {
+    const response = await this.put(
+      `/projecten/${aanmelding.projectId}/aanmeldingen/${aanmelding.id}`,
+      aanmelding,
+    ).expect(200);
+    return response.body;
+  }
+
   async updateDeelnames(
     projectId: number,
     activiteitId: number,
@@ -286,6 +301,15 @@ class IntegrationTestingHarness {
   }
   async getDeelnemer(deelnemerId: number): Promise<Deelnemer> {
     const response = await this.get(`/personen/${deelnemerId}`).expect(200);
+    return response.body;
+  }
+
+  async deleteDeelnemer(id: number): Promise<void> {
+    await this.delete(`/personen/${id}`).expect(204);
+  }
+
+  async getAanmeldingen(projectId: number): Promise<Aanmelding[]> {
+    const response = await this.get(`/projecten/${projectId}/aanmeldingen`);
     return response.body;
   }
 
@@ -376,15 +400,30 @@ export const factory = {
     };
   },
 
+  plaats(overrides?: Partial<Omit<Plaats, 'id'>>): Omit<Plaats, 'id'> {
+    return {
+      deelgemeente: 'Onbekend',
+      gemeente: 'Onbekend',
+      postcode: '0',
+      provincie: 1,
+      ...overrides,
+    };
+  },
+
+  adres(overrides?: Partial<UpsertableAdres>): UpsertableAdres {
+    return {
+      straatnaam: 'Onbekend',
+      huisnummer: '1',
+      plaats: rockSolidDBContainer.seedPlaats,
+      ...overrides,
+    };
+  },
+
   deelnemer(overrides?: Partial<UpsertableDeelnemer>): UpsertableDeelnemer {
     return {
       achternaam: 'Deelnemer2',
       type: 'deelnemer',
-      verblijfadres: {
-        straatnaam: 'Onbekend',
-        huisnummer: '1',
-        plaats: onbekendePlaats,
-      },
+      verblijfadres: this.adres(),
       ...overrides,
     };
   },

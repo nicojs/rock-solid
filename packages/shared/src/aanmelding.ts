@@ -1,5 +1,6 @@
+import { Plaats } from './adres.js';
 import { Options } from './options.js';
-import { Deelnemer } from './persoon.js';
+import { Deelnemer, Geslacht, Werksituatie, Woonsituatie } from './persoon.js';
 import { Upsertable } from './upsertable.js';
 
 export interface Aanmelding {
@@ -10,6 +11,11 @@ export interface Aanmelding {
   rekeninguittrekselNummer?: string;
   opmerking?: string;
   deelnemer?: Deelnemer;
+  werksituatie: Werksituatie;
+  woonsituatie: Woonsituatie;
+  geslacht: Geslacht;
+  plaats?: Plaats;
+
   status: Aanmeldingsstatus;
 }
 
@@ -45,5 +51,9 @@ export const aanmeldingLabels: Record<keyof Aanmelding, string> = {
   rekeninguittrekselNummer: 'Rekeninguittreksel nummer',
   opmerking: 'Opmerking',
   deelnemer: 'Deelnemer',
+  plaats: 'Plaats',
+  werksituatie: 'Werksituatie',
+  woonsituatie: 'Woonsituatie',
+  geslacht: 'Geslacht',
   status: 'Status',
 };

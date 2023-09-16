@@ -10,7 +10,7 @@ export class IconComponent extends LitElement {
   public icon!: keyof typeof icons;
 
   @property()
-  public size: 'sm' | 'md' | 'lg' = 'md';
+  public size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
 
   static override styles = [
     bootstrap,
@@ -27,6 +27,11 @@ export class IconComponent extends LitElement {
       }
       .icon-lg svg,
       .icon-lg img {
+        width: 24px;
+        height: 24px;
+      }
+      .icon-xl svg,
+      .icon-xl img {
         width: 32px;
         height: 32px;
       }

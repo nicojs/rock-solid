@@ -17,14 +17,6 @@ export async function seedPlaatsen(client: db.PrismaClient) {
     ),
   ) as RawPlaats[];
 
-  // Plaats 1 is onbekend
-  plaatsen.unshift({
-    deelgemeente: 'Onbekend',
-    gemeente: 'Onbekend',
-    postcode: '0',
-    provincieId: 0,
-    volledigeNaam: 'Onbekend',
-  });
   await client.plaats.createMany({ data: plaatsen });
   console.log(`Seeded ${plaatsen.length} plaatsen`);
 }

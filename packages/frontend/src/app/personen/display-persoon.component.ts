@@ -20,6 +20,7 @@ import {
   showAdres,
   showDatum,
   showOverigPersoonSelectie,
+  pluralize,
 } from '../shared';
 import { age, fullName } from './full-name.pipe';
 
@@ -72,7 +73,15 @@ export class DisplayPersoonComponent extends RockElement {
   }
 
   override render() {
-    return html` <h3>Persoonsgegevens</h3>
+    return html` <h3>
+        Persoonsgegevens
+        <rock-link
+          btn
+          btnSecondary
+          href="/${pluralize(this.persoon.type)}/edit/${this.persoon.id}"
+          ><rock-icon icon="pencil"></rock-icon
+        ></rock-link>
+      </h3>
       <div class="row">
         <dl class="col-sm-6">
           <dt>Naam</dt>

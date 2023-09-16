@@ -27,5 +27,3 @@ export function toPlaats(p: db.Plaats): Plaats {
   const { provincieId, volledigeNaam, ...props } = p;
   return { ...props, provincie: provincieId };
 }
-
-export const ONBEKENDE_PLAATS_ID = 1;

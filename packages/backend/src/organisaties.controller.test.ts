@@ -1,6 +1,6 @@
 import { Organisatie } from '@rock-solid/shared';
 import { OrganisatiesController } from './organisaties.controller.js';
-import { factory, harness, onbekendePlaats } from './test-utils.test.js';
+import { factory, harness } from './test-utils.test.js';
 import { expect } from 'chai';
 
 describe(OrganisatiesController.name, () => {
@@ -35,7 +35,7 @@ describe(OrganisatiesController.name, () => {
       const adres = {
         straatnaam: 'Foostraat',
         huisnummer: '1',
-        plaats: onbekendePlaats,
+        plaats: harness.db.seedPlaats,
       };
       const response = await harness
         .post(
@@ -183,7 +183,7 @@ describe(OrganisatiesController.name, () => {
             adres: {
               straatnaam: 'Mousestreet',
               huisnummer: '1',
-              plaats: onbekendePlaats,
+              plaats: harness.db.seedPlaats,
             },
             foldervoorkeuren: [
               {
