@@ -85,6 +85,11 @@ export class ReactiveFormPlaats<TEntity> extends FormControlElement<TEntity> {
           id="${this.name}"
           name="${this.control.name}"
           .value="${showPlaats(this.plaatsValue)}"
+          @change=${() => {
+            if (this.inputRef.value!.value === '') {
+              this.plaatsValue = undefined;
+            }
+          }}
           ?required=${this.control.validators?.required}
           placeholder=${ifDefined(this.control.placeholder)}
           @invalid="${this.updateValidationMessage}"

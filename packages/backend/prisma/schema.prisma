@@ -111,20 +111,24 @@ model Project {
 }
 
 model Aanmelding {
-  id                         Int               @id @default(autoincrement())
-  projectId                  Int
-  project                    Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  deelnemerId                Int?
-  deelnemer                  Persoon?          @relation(fields: [deelnemerId], references: [id])
-  deelnames                  Deelname[]
-  woonplaatsDeelnemerId      Int
-  woonplaatsDeelnemer        Plaats            @relation(fields: [woonplaatsDeelnemerId], references: [id])
-  rekeninguittrekselNummer   String?           @db.VarChar(32)
-  opmerking                  String?           @db.VarChar(1024)
-  tijdstipVanAanmelden       DateTime          @default(now())
-  status                     Aanmeldingsstatus @default(Aangemeld)
-  eersteCursusAanmeldingen   Persoon[]         @relation("eersteCursusAanmelding")
-  eersteVakantieAanmeldingen Persoon[]         @relation("eersteVakantieAanmelding")
+  id                       Int               @id @default(autoincrement())
+  projectId                Int
+  project                  Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deelnemerId              Int?
+  deelnemer                Persoon?          @relation(fields: [deelnemerId], references: [id])
+  deelnames                Deelname[]
+  rekeninguittrekselNummer String?           @db.VarChar(32)
+  tijdstipVanAanmelden     DateTime          @default(now())
+  status                   Aanmeldingsstatus @default(Aangemeld)
+
+  // Fields copied from deelnemer when created
+  plaats                     Plaats?      @relation(fields: [plaatsId], references: [id])
+  plaatsId                   Int?
+  werksituatie               Werksituatie @default(onbekend)
+  woonsituatie               Woonsituatie @default(onbekend)
+  geslacht                   Geslacht     @default(onbekend)
+  eersteCursusAanmeldingen   Persoon[]    @relation("eersteCursusAanmelding")
+  eersteVakantieAanmeldingen Persoon[]    @relation("eersteVakantieAanmelding")
 
   @@unique([projectId, deelnemerId])
   @@map("aanmelding")

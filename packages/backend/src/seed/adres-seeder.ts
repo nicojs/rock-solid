@@ -2,7 +2,6 @@ import db from '@prisma/client';
 import { ImportErrors } from './import-errors.js';
 
 const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
-const ONBEKENDE_PLAATS_ID = 1; // 1 = "onbekend"
 
 export class AdresSeeder<TRaw> {
   private plaatsIdByPostcode!: Map<string, number>;
@@ -47,13 +46,13 @@ export class AdresSeeder<TRaw> {
     ];
 
     const postCode = postcodeFromRaw(rawPostcode);
-    let plaatsId = this.plaatsIdByPostcode.get(postCode);
+    const plaatsId = this.plaatsIdByPostcode.get(postCode);
     if (plaatsId === undefined) {
       this.importErrors.addWarning('postcode_doesnt_exist', {
         detail: `Cannot find postcode "${postCode}", using onbekend`,
         item: raw,
       });
-      plaatsId = ONBEKENDE_PLAATS_ID;
+      return;
     }
     return {
       create: {

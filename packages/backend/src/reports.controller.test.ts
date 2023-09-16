@@ -61,6 +61,34 @@ describe(ReportsController.name, () => {
         ];
         expect(report).deep.eq(expectedReport);
       });
+
+      it('should support grouping on "werksituatie" when the deelnemer is deleted', async () => {
+        const { deelnemerA } = await arrangeCursussenTestSet();
+        await harness.deleteDeelnemer(deelnemerA.id);
+        const report = await harness.getReport(
+          'reports/aanmeldingen/aanmeldingen',
+          'werksituatie',
+        );
+        const expectedReport: Report = [
+          { key: 'arbeidszorg', total: 2 },
+          { key: 'onbekend', total: 1 },
+        ];
+        expect(report).deep.eq(expectedReport);
+      });
+
+      it('should support grouping on "woonsituatie" when the deelnemer is deleted', async () => {
+        const { deelnemerA } = await arrangeCursussenTestSet();
+        await harness.deleteDeelnemer(deelnemerA.id);
+        const report = await harness.getReport(
+          'reports/aanmeldingen/aanmeldingen',
+          'woonsituatie',
+        );
+        const expectedReport: Report = [
+          { key: 'residentieleWoonondersteuning', total: 2 },
+          { key: 'onbekend', total: 1 },
+        ];
+        expect(report).deep.eq(expectedReport);
+      });
     });
 
     describe('filter', () => {
@@ -201,7 +229,14 @@ describe(ReportsController.name, () => {
 
   async function arrangeCursussenTestSet() {
     const [deelnemerA, deelnemerB] = await Promise.all([
-      harness.createDeelnemer(factory.deelnemer({ achternaam: 'A' })),
+      harness.createDeelnemer(
+        factory.deelnemer({
+          woonsituatie: 'residentieleWoonondersteuning',
+          werksituatie: 'arbeidszorg',
+          geslacht: 'x',
+          achternaam: 'A',
+        }),
+      ),
       harness.createDeelnemer(factory.deelnemer({ achternaam: 'B' })),
     ]);
     const [projectA, projectB] = await Promise.all([
@@ -242,6 +277,7 @@ describe(ReportsController.name, () => {
       { id: aanmelding2.id, status: 'Aangemeld' },
       { id: aanmelding3.id, status: 'Bevestigd' },
     ]);
+    return { deelnemerA };
   }
   async function arrangeVakantiesTestSet() {
     const [deelnemerC, deelnemerD] = await Promise.all([

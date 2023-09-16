@@ -1,5 +1,11 @@
 import { Geslacht, UpsertablePersoon } from '@rock-solid/shared';
 
+export function fullNameOrOnbekend(
+  persoon?: Pick<UpsertablePersoon, 'achternaam' | 'voornaam'>,
+) {
+  return persoon ? fullName(persoon) : 'Onbekend';
+}
+
 export function fullName(
   persoon: Pick<UpsertablePersoon, 'achternaam' | 'voornaam'>,
 ) {

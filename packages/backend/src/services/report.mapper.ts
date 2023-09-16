@@ -54,8 +54,8 @@ export class ReportMapper {
       filter.type ? `AND project.type = '${filter.type}'::project_type` : ''
     }
     ${reportTypeJoin(reportType)}
-    INNER JOIN persoon ON persoon.id = aanmelding."deelnemerId"    
-    INNER JOIN plaats ON aanmelding."woonplaatsDeelnemerId" = plaats.id
+    LEFT JOIN persoon ON persoon.id = aanmelding."deelnemerId"    
+    LEFT JOIN plaats ON aanmelding."plaatsId" = plaats.id
     ${filterWhere(filter)}
     GROUP BY ${fieldName(groupField)}${
       secondGroupField ? `, ${fieldName(secondGroupField)}` : ''
@@ -181,11 +181,11 @@ function fieldName(field: AanmeldingGroupField): string {
     case 'provincie':
       return 'plaats."provincieId"';
     case 'woonsituatie':
-      return 'persoon.woonsituatie';
+      return 'aanmelding.woonsituatie';
     case 'werksituatie':
-      return 'persoon.werksituatie';
+      return 'aanmelding.werksituatie';
     case 'geslacht':
-      return 'persoon.geslacht';
+      return 'aanmelding.geslacht';
     case 'organisatieonderdeel':
       return 'project.organisatieonderdeel';
     case 'project':
@@ -200,11 +200,11 @@ function select(field: AanmeldingGroupField): string {
     case 'provincie':
       return '"provincieId"';
     case 'woonsituatie':
-      return 'woonsituatie';
+      return 'aanmelding.woonsituatie';
     case 'werksituatie':
-      return 'werksituatie';
+      return 'aanmelding.werksituatie';
     case 'geslacht':
-      return 'geslacht';
+      return 'aanmelding.geslacht';
     case 'organisatieonderdeel':
       return 'organisatieonderdeel';
     case 'project':

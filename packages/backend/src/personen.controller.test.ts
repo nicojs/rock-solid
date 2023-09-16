@@ -1,6 +1,6 @@
 import { AanmeldingOf, Cursus, Deelnemer, Vakantie } from '@rock-solid/shared';
 import { PersonenController } from './personen.controller.js';
-import { factory, harness, onbekendePlaats } from './test-utils.test.js';
+import { factory, harness } from './test-utils.test.js';
 import { expect } from 'chai';
 
 describe(PersonenController.name, () => {
@@ -112,7 +112,7 @@ describe(PersonenController.name, () => {
           verblijfadres: {
             straatnaam: 'Kerkstraat',
             huisnummer: '123',
-            plaats: onbekendePlaats,
+            plaats: harness.db.seedPlaats,
           },
         }),
       );

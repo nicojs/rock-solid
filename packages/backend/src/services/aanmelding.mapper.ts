@@ -14,16 +14,18 @@ import {
   includePersoonAggregate,
   toPersoon,
 } from './persoon.mapper.js';
-import { ONBEKENDE_PLAATS_ID } from './plaats.mapper.js';
+import { toPlaats } from './plaats.mapper.js';
 
 type DBAanmeldingAggregate = db.Aanmelding & {
   deelnemer: DBPersonAggregate | null;
+  plaats: db.Plaats | null;
 };
 
 const includeDeelnemer = Object.freeze({
   deelnemer: Object.freeze({
     include: includePersoonAggregate,
   }),
+  plaats: true,
 });
 
 @Injectable()
@@ -40,12 +42,15 @@ export class AanmeldingMapper {
   }
 
   public async create(aanmelding: InsertableAanmelding): Promise<Aanmelding> {
-    const { deelnemer, ...aanmeldingData } = aanmelding;
+    const { deelnemer, plaats, ...aanmeldingData } = aanmelding;
     const {
       verblijfadres,
       domicilieadres,
       eersteCursusAanmeldingId,
       eersteVakantieAanmeldingId,
+      woonsituatie,
+      werksituatie,
+      geslacht,
     } = await this.db.persoon.findUniqueOrThrow({
       where: { id: aanmeldingData.deelnemerId },
       include: {
@@ -60,10 +65,11 @@ export class AanmeldingMapper {
       this.db.aanmelding.create({
         data: {
           ...aanmeldingData,
-          woonplaatsDeelnemerId:
-            domicilieadres?.plaatsId ??
-            verblijfadres?.plaatsId ??
-            ONBEKENDE_PLAATS_ID,
+          woonsituatie,
+          werksituatie,
+          geslacht,
+          plaatsId:
+            domicilieadres?.plaatsId ?? verblijfadres?.plaatsId ?? undefined,
         },
       }),
     );
@@ -131,11 +137,14 @@ export class AanmeldingMapper {
       deelnemer: persoon,
       deelnemerId,
       projectId,
+      plaats,
+      id: unused,
       ...aanmeldingData
     } = aanmelding;
     const dbAanmelding = await this.db.aanmelding.update({
       data: {
         ...aanmeldingData,
+        plaatsId: plaats?.id,
         rekeninguittrekselNummer:
           aanmeldingData.rekeninguittrekselNummer ?? null,
       },
@@ -161,9 +170,10 @@ export class AanmeldingMapper {
 }
 
 function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
-  const { woonplaatsDeelnemerId, deelnemer, ...aanmelding } = raw;
+  const { plaatsId, plaats, deelnemer, ...aanmelding } = raw;
   return {
     ...purgeNulls(aanmelding),
+    plaats: plaats ? toPlaats(plaats) : undefined,
     deelnemer: deelnemer ? (toPersoon(deelnemer) as Deelnemer) : undefined,
   };
 }

@@ -8,6 +8,8 @@ import {
   Decimal,
   Cursus,
   CursusActiviteit,
+  Plaats,
+  Provincie,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory } from './test-utils.test.js';
@@ -431,6 +433,101 @@ describe(ProjectenController.name, () => {
         aanmelding2Data,
       ];
       expect(aanmeldingen).deep.eq(expectedAanmeldingen);
+    });
+
+    it('should store "woonsituatie", "werksituatie", "geslacht" en "woonplaats" in the aanmelding', async () => {
+      // Arrange
+      const luik = await harness.db.insertPlaats(
+        factory.plaats({
+          gemeente: 'Luik',
+          postcode: '4000',
+          provincie: Provincie.Luik,
+        }),
+      );
+      const deelnemer = await harness.createDeelnemer(
+        factory.deelnemer({
+          woonsituatie: 'residentieleWoonondersteuning',
+          werksituatie: 'werkzoekend',
+          verblijfadres: factory.adres({ plaats: luik }),
+          geslacht: 'x',
+        }),
+      );
+      await harness.createDeelnemer(deelnemer);
+
+      // Act
+      const { id: actualAanmeldingId } = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+
+      // Assert
+      deelnemer.woonsituatie = 'onbekend';
+      deelnemer.werksituatie = 'onbekend';
+      deelnemer.verblijfadres = undefined;
+      deelnemer.geslacht = 'onbekend';
+      await harness.updateDeelnemer(deelnemer);
+      const actualAanmelding = (await harness.getAanmeldingen(project.id)).find(
+        ({ id }) => id === actualAanmeldingId,
+      );
+      const expectedAanmelding: Partial<Aanmelding> = {
+        woonsituatie: 'residentieleWoonondersteuning',
+        werksituatie: 'werkzoekend',
+        geslacht: 'x',
+        plaats: luik,
+      };
+      expect(actualAanmelding).deep.include(expectedAanmelding);
+    });
+  });
+
+  describe('PUT /projecten/:id/aanmeldingen/:id', () => {
+    let plaats: Plaats;
+    let project: Project;
+    let deelnemer: Deelnemer;
+
+    beforeEach(async () => {
+      [project, deelnemer, plaats] = await Promise.all([
+        harness.createProject(factory.cursus()),
+        harness.createDeelnemer(
+          factory.deelnemer({
+            werksituatie: 'onbekend',
+            woonsituatie: 'onbekend',
+            geslacht: 'onbekend',
+            domicilieadres: undefined,
+            verblijfadres: undefined,
+          }),
+        ),
+        harness.db.insertPlaats(
+          factory.plaats({
+            gemeente: 'Luik',
+            postcode: '4000',
+            provincie: Provincie.Luik,
+          }),
+        ),
+      ]);
+    });
+
+    it('should be able to update "werksituatie", "woonsituatie", "geslacht" and "plaats"', async () => {
+      // Arrange
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+
+      // Act
+      aanmelding.werksituatie = 'arbeidstrajectbegeleiding';
+      aanmelding.woonsituatie = 'residentieleWoonondersteuning';
+      aanmelding.geslacht = 'x';
+      aanmelding.plaats = plaats;
+      const actualAanmelding = await harness.updateAanmelding(aanmelding);
+
+      // Assert
+      const expectedAanmelding: Partial<Aanmelding> = {
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+        plaats,
+      };
+      expect(actualAanmelding).deep.include(expectedAanmelding);
     });
   });
 

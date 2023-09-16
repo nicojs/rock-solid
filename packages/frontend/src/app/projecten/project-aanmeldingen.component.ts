@@ -4,6 +4,7 @@ import {
   Deelnemer,
   Persoon,
   Project,
+  aanmeldingLabels,
   split,
 } from '@rock-solid/shared';
 import { html, LitElement, nothing, PropertyValues } from 'lit';
@@ -15,6 +16,7 @@ import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
 import {
+  age,
   fullName,
   fullNameWithAge,
   geslachtIcons,
@@ -123,6 +125,57 @@ export class ProjectAanmeldingenComponent extends LitElement {
         this.navigateToAanmeldingenList();
       });
   };
+
+  private async createAanmelding(deelnemer: Deelnemer) {
+    try {
+      let confirmed = true;
+      const missingFields: string[] = [];
+      if (!deelnemer.domicilieadres && !deelnemer.verblijfadres) {
+        missingFields.push(aanmeldingLabels.plaats);
+      }
+      if (deelnemer.geslacht === 'onbekend') {
+        missingFields.push(aanmeldingLabels.geslacht);
+      }
+      if (deelnemer.werksituatie === 'onbekend') {
+        missingFields.push(aanmeldingLabels.werksituatie);
+      }
+      if (deelnemer.woonsituatie === 'onbekend') {
+        missingFields.push(aanmeldingLabels.woonsituatie);
+      }
+      if (missingFields.length) {
+        confirmed = await ModalComponent.instance.confirm(
+          html`<p>We missen nog wat informatie van ${fullName(deelnemer)}</p>
+            <ul>
+              ${missingFields.map(
+                (field) =>
+                  html`<li>Geen <strong>${field}</strong> bekend.</li>`,
+              )}
+            </ul>
+            <p>
+              <rock-link href="/deelnemers/edit/${deelnemer.id}"
+                >Deelnemer wijzigen</rock-link
+              >
+            </p>`,
+          `${fullName(deelnemer)} aanmelden?`,
+        );
+      }
+      if (confirmed) {
+        const aanmelding = await projectService.createAanmelding(
+          this.project.id,
+          {
+            deelnemerId: deelnemer.id,
+            projectId: this.project.id,
+          },
+        );
+        this.aanmeldingen = [...(this.aanmeldingen ?? []), aanmelding];
+      }
+    } catch (err) {
+      if (!(err instanceof UniquenessFailedError)) {
+        throw err; // oops 🤷‍♀️
+      }
+      // Ignore, deelnemer al aangemeld
+    }
+  }
 
   private deleteAanmelding = async (aanmelding: Aanmelding) => {
     const confirm = await ModalComponent.instance.confirm(
@@ -237,10 +290,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
               (aanmelding) =>
                 html` <li class="list-group-item">
                   ${aanmelding.deelnemer
-                    ? deelnemerLink(
-                        aanmelding.deelnemer,
-                        this.project.activiteiten[0]?.van,
-                      )
+                    ? deelnemerLink(aanmelding.deelnemer)
                     : deelnemerVerwijderd}
                   ${this.renderDeleteButton(aanmelding, /* floatEnd */ true)}
 
@@ -282,11 +332,32 @@ export class ProjectAanmeldingenComponent extends LitElement {
           <table class="table table-hover">
             <thead>
               <tr>
-                <th>
-                  Naam (leeftijd op de startdatum van de ${this.project.type})
+                <th title="Bevestigd of aangemeld" width="10px">
+                  <rock-icon icon="personLock"></rock-icon>
+                </th>
+                <th>Naam</th>
+                <th
+                  class="text-center align-middle"
+                  title="Toestemming foto's"
+                  width="10px"
+                >
+                  📷
+                </th>
+                <th class="text-center" title="Geslacht" width="10px">
+                  <rock-icon icon="genderNeuter"></rock-icon>
+                </th>
+                <th
+                  class="text-center align-middle"
+                  title="Voedingswens"
+                  width="10px"
+                >
+                  🥪
                 </th>
                 <th>Ingeschreven op</th>
-                <th>Geboortedatum</th>
+                <th>
+                  Geboortedatum
+                  <small>(leeftijd startdatum)</small>
+                </th>
                 <th>Rekeninguittreksel</th>
                 <th>Acties</th>
               </tr>
@@ -295,48 +366,31 @@ export class ProjectAanmeldingenComponent extends LitElement {
               ${aanmeldingen.map(
                 (aanmelding) =>
                   html`<tr>
+                    <td>${renderStatusIcon(aanmelding)}</td>
                     <td>
-                      ${aanmelding.status === 'Bevestigd'
-                        ? html`<rock-icon
-                            title="${aanmelding.deelnemer
-                              ? fullName(aanmelding.deelnemer)
-                              : 'Deelnemer'} is bevestigd"
-                            icon="personLock"
-                          ></rock-icon>`
-                        : nothing}
-                      ${aanmelding.status === 'Aangemeld'
-                        ? html`<rock-icon
-                            title="${aanmelding.deelnemer
-                              ? fullName(aanmelding.deelnemer)
-                              : 'Deelnemer'} is aangemeld, maar nog niet bevestigd"
-                            icon="unlock"
-                          ></rock-icon>`
-                        : nothing}
-                      ${aanmelding.deelnemer?.toestemmingFotos
-                        ? html` <rock-icon
-                            title="${fullName(
-                              aanmelding.deelnemer!,
-                            )} geeft toestemming voor foto's"
-                            icon="camera"
-                          ></rock-icon>`
-                        : html` <rock-icon
-                            title="${fullName(
-                              aanmelding.deelnemer!,
-                            )} geeft geen toestemming voor foto's"
-                            icon="cameraVideoOff"
-                          ></rock-icon>`}
+                      ${renderWarning(aanmelding)}
                       ${aanmelding.deelnemer
-                        ? html`${deelnemerLink(
-                            aanmelding.deelnemer,
-                            this.project.activiteiten[0]?.van,
-                          )} `
+                        ? html`${deelnemerLink(aanmelding.deelnemer)} `
                         : deelnemerVerwijderd}
-                      ${renderGeslacht(aanmelding.deelnemer)}
-                      ${renderVoedingswens(aanmelding.deelnemer)}
                       ${this.renderEersteAanmelding(aanmelding)}
                     </td>
+                    <td class="text-center">
+                      ${renderToestemmingFotos(aanmelding)}
+                    </td>
+                    <td class="text-center">${renderGeslacht(aanmelding)}</td>
+                    <td class=" text-center">
+                      ${renderVoedingswens(aanmelding.deelnemer)}
+                    </td>
                     <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
-                    <td>${showDatum(aanmelding.deelnemer?.geboortedatum)}</td>
+                    <td>
+                      ${showDatum(aanmelding.deelnemer?.geboortedatum)}
+                      ${aanmelding.deelnemer?.geboortedatum
+                        ? html`(${age(
+                            aanmelding.deelnemer.geboortedatum,
+                            this.project.activiteiten[0]?.van,
+                          )})`
+                        : nothing}
+                    </td>
                     <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
                     <td>
                       <rock-link
@@ -347,16 +401,6 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           .id}/aanmeldingen/edit/${aanmelding.id}"
                         ><rock-icon icon="pencil"></rock-icon
                       ></rock-link>
-                      <button
-                        title="Naar wachtlijst"
-                        ${privilege('write:aanmeldingen')}
-                        class="btn btn-outline-warning"
-                        type="button"
-                        @click=${() =>
-                          this.patchStatus(aanmelding, 'OpWachtlijst')}
-                      >
-                        <rock-icon icon="hourglass"></rock-icon>
-                      </button>
                       ${aanmelding.status === 'Aangemeld'
                         ? html`<button
                             title="Bevestigen"
@@ -366,7 +410,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                             @click=${() =>
                               this.patchStatus(aanmelding, 'Bevestigd')}
                           >
-                            <rock-icon icon="personLock"></rock-icon>
+                            <rock-icon icon="lock"></rock-icon>
                           </button>`
                         : html`<button
                             title="Aanmelden"
@@ -378,6 +422,16 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           >
                             <rock-icon icon="unlock"></rock-icon>
                           </button>`}
+                      <button
+                        title="Naar wachtlijst"
+                        ${privilege('write:aanmeldingen')}
+                        class="btn btn-outline-warning"
+                        type="button"
+                        @click=${() =>
+                          this.patchStatus(aanmelding, 'OpWachtlijst')}
+                      >
+                        <rock-icon icon="hourglass"></rock-icon>
+                      </button>
                       <button
                         title="Annuleren"
                         ${privilege('write:aanmeldingen')}
@@ -440,7 +494,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
       </div>
 
       <rock-autocomplete
-        .searchAction="${(val: string): Promise<TypeAheadHint<Persoon>[]> =>
+        .searchAction="${(val: string): Promise<TypeAheadHint<Deelnemer>[]> =>
           persoonService
             .getAll({
               type: 'deelnemer',
@@ -448,7 +502,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
               search: val,
             })
             .then((personen) =>
-              personen.map((persoon) => ({
+              (personen as Deelnemer[]).map((persoon) => ({
                 text: fullNameWithAge(
                   persoon,
                   this.project.activiteiten[0]?.van,
@@ -456,36 +510,9 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 value: persoon,
               })),
             )}"
-        @selected="${async (event: CustomEvent<TypeAheadHint<Persoon>>) => {
-          try {
-            const deelnemer = event.detail.value;
-            if (!deelnemer.domicilieadres && !deelnemer.verblijfadres) {
-              await ModalComponent.instance.alert(
-                html`<p>
-                  ${fullName(deelnemer)} heeft nog
-                  <strong>geen domicilieadres of verblijfadres</strong>.
-                  <rock-link href="/deelnemers/edit/${deelnemer.id}"
-                    >Vul hier eerst het adres in</rock-link
-                  >
-                </p>`,
-                `Kan ${fullName(deelnemer)} niet aanmelden`,
-              );
-              return;
-            }
-            const aanmelding = await projectService.createAanmelding(
-              this.project.id,
-              {
-                deelnemerId: deelnemer.id,
-                projectId: this.project.id,
-              },
-            );
-            this.aanmeldingen = [...(this.aanmeldingen ?? []), aanmelding];
-          } catch (err) {
-            if (!(err instanceof UniquenessFailedError)) {
-              throw err; // oops 🤷‍♀️
-            }
-            // Ignore, deelnemer al aangemeld
-          }
+        @selected="${async (event: CustomEvent<TypeAheadHint<Deelnemer>>) => {
+          const deelnemer = event.detail.value;
+          await this.createAanmelding(deelnemer);
           this.searchInput.value!.value = '';
           this.searchInput.value!.dispatchEvent(new InputEvent('input'));
         }}"
@@ -494,26 +521,63 @@ export class ProjectAanmeldingenComponent extends LitElement {
   }
 }
 
-function deelnemerLink(deelnemer: Deelnemer, van: Date | undefined) {
+function renderStatusIcon(aanmelding: Aanmelding): unknown {
+  return aanmelding.status === 'Bevestigd'
+    ? html`<rock-icon
+        title="${aanmelding.deelnemer
+          ? fullName(aanmelding.deelnemer)
+          : 'Deelnemer'} is bevestigd"
+        icon="lock"
+      ></rock-icon>`
+    : aanmelding.status === 'Aangemeld'
+    ? html`<rock-icon
+        title="${aanmelding.deelnemer
+          ? fullName(aanmelding.deelnemer)
+          : 'Deelnemer'} is aangemeld, maar nog niet bevestigd"
+        icon="unlock"
+      ></rock-icon>`
+    : nothing;
+}
+
+function renderToestemmingFotos(aanmelding: Aanmelding): unknown {
+  if (aanmelding.deelnemer) {
+    return aanmelding.deelnemer?.toestemmingFotos
+      ? html` <rock-icon
+          title="${fullName(
+            aanmelding.deelnemer,
+          )} geeft toestemming voor foto's"
+          icon="camera"
+        ></rock-icon>`
+      : html` <rock-icon
+          title="${fullName(
+            aanmelding.deelnemer,
+          )} geeft geen toestemming voor foto's"
+          icon="cameraVideoOff"
+        ></rock-icon>`;
+  }
+  return deelnemerVerwijderd;
+}
+
+function deelnemerLink(deelnemer: Deelnemer) {
   return html`<a
     class="link-body-emphasis"
     href="/deelnemers/display/${deelnemer.id}"
-    >${fullNameWithAge(deelnemer, van)}</a
+    >${fullName(deelnemer)}</a
   >`;
 }
 
-function renderGeslacht(
-  deelnemer?: Pick<Deelnemer, 'geslacht' | 'geslachtOpmerking'>,
-) {
-  if (!deelnemer) {
+function renderGeslacht(aanmelding: Aanmelding) {
+  if (!aanmelding.geslacht) {
     return nothing;
   }
-  const title = `Geslacht: ${deelnemer.geslacht}${
-    deelnemer.geslachtOpmerking ? ` (${deelnemer.geslachtOpmerking})` : ''
+  const title = `Geslacht: ${aanmelding.geslacht}${
+    aanmelding.deelnemer?.geslachtOpmerking
+      ? ` (${aanmelding.deelnemer.geslachtOpmerking})`
+      : ''
   }`;
   return html`<rock-icon
     title="${title}"
-    icon="${geslachtIcons[deelnemer.geslacht]}"
+    icon="${geslachtIcons[aanmelding.geslacht]}"
   ></rock-icon>`;
 }
 
@@ -541,7 +605,34 @@ function renderVoedingswens({
           title="Andere voedingswens${voedingswensTitlePostfix}"
           icon="customFood"
         ></rock-icon>`;
+      default:
+        return html`<rock-icon
+          icon="checkCircle"
+          title="Geen speciale voedingswens"
+        ></rock-icon>`;
     }
   }
-  return nothing;
+}
+function renderWarning(aanmelding: Aanmelding) {
+  const missingFields: string[] = [];
+  if (!aanmelding.plaats) {
+    missingFields.push(aanmeldingLabels.plaats);
+  }
+  if (aanmelding.woonsituatie === 'onbekend') {
+    missingFields.push(aanmeldingLabels.woonsituatie);
+  }
+  if (aanmelding.werksituatie === 'onbekend') {
+    missingFields.push(aanmeldingLabels.werksituatie);
+  }
+  if (aanmelding.geslacht === 'onbekend') {
+    missingFields.push(aanmeldingLabels.geslacht);
+  }
+  if (missingFields.length) {
+    return html`<rock-icon
+      title="Deze aanmelding mist de volgende velden: ${missingFields.join(
+        ', ',
+      )}"
+      icon="exclamationTriangleFill"
+    ></rock-icon>`;
+  }
 }
