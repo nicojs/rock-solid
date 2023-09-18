@@ -34,13 +34,19 @@ export class RockSolidApp extends LitElement {
   public override render() {
     return html`<div class="container-fluid">
         <nav class="navbar navbar-light bg-light justify-content-between">
-          <span class="navbar-brand mb-0 h1"
-            >RockSolid.
+          <span class="navbar-brand mb-0 h1">
+            <img
+              src="/rock-solid.png"
+              alt="Rock Solid"
+              width="30"
+              height="24"
+            />
+            Rock Solid.
             <span class="text-muted fs-6"
               >Steenvast en solide management systeem voor De Kei en
               Kei-Jong</span
-            ></span
-          >
+            >
+          </span>
           <rock-user></rock-user>
         </nav>
         <div class="row">
@@ -87,8 +93,8 @@ export class RockSolidApp extends LitElement {
         return html`<rock-rapportages
           .path=${this.route.path.slice(1)}
         ></rock-rapportages>`;
-      case '':
-        return html`<h2>Home</h2>`;
+      case undefined:
+        return html`<rock-home></rock-home>`;
       default:
         router.navigate('/');
         return undefined;

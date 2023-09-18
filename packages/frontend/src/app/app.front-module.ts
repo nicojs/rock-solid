@@ -1,5 +1,6 @@
 import './app.component';
 import './nav.component';
+import './home/home.front-module';
 import './forms/forms.front-module';
 import './shared/shared.front-module';
 import './personen/personen.front-module';

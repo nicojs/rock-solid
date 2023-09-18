@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { rockReviver } from '@rock-solid/shared';
+import { loginUrl, logoutUrl, rockReviver } from '@rock-solid/shared';
 import { AppModule } from './app.module.js';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
@@ -24,7 +24,9 @@ async function bootstrap() {
       reviver: rockReviver,
     }),
   );
-  app.setGlobalPrefix('api', { exclude: ['/auth/login', '/auth/callback'] });
+  app.setGlobalPrefix('api', {
+    exclude: [loginUrl, '/auth/callback', logoutUrl],
+  });
   await app.listen(process.env['PORT'] ?? 3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

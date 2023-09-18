@@ -11,7 +11,7 @@ export class NavComponent extends LitElement {
   @property({ attribute: true })
   public active?: string;
 
-  private activeClass(url: string) {
+  private activeClass(url: string | undefined) {
     return url === this.active ? 'active' : '';
   }
 
@@ -19,7 +19,7 @@ export class NavComponent extends LitElement {
     return html`<ul class="nav flex-column nav-pills">
       <li class="nav-item">
         <a
-          class="nav-link ${this.activeClass('')}"
+          class="nav-link ${this.activeClass(undefined)}"
           @click="${router.linkClick}"
           aria-current="page"
           href="/"

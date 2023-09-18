@@ -1,4 +1,4 @@
-import { User } from '@rock-solid/shared';
+import { logoutUrl, User } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ export class UserComponent extends LitElement {
   public logoff(event: MouseEvent) {
     event.preventDefault();
     authStore.logoff();
+    window.location.href = logoutUrl;
   }
 
   override connectedCallback(): void {
