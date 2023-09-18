@@ -1,6 +1,7 @@
-import { LoginResponse, loginUrl, User } from '@rock-solid/shared';
-import { Controller, Request, UseGuards, Get } from '@nestjs/common';
+import { LoginResponse, loginUrl, logoutUrl, User } from '@rock-solid/shared';
+import { Controller, Request, UseGuards, Get, Redirect } from '@nestjs/common';
 import { Office365AuthGuard, AuthService, Public } from './auth/index.js';
+import { authConstants } from './auth/constants.js';
 
 @Controller()
 export class AuthController {
@@ -15,4 +16,11 @@ export class AuthController {
       user: req.user,
     };
   }
+
+  @Public()
+  @Get(logoutUrl)
+  @Redirect(
+    `https://login.microsoftonline.com/${authConstants.tenantId}/oauth2/v2.0/logout`,
+  )
+  logout(): void {}
 }

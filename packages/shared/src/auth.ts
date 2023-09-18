@@ -18,6 +18,7 @@ export interface LoginResponse {
   jwt: string;
 }
 export const loginUrl = '/auth/login';
+export const logoutUrl = '/auth/logout';
 
 export const privileges: Record<UserRole, Privilege[]> = {
   admin: [
