@@ -1,7 +1,6 @@
-import { LitElement, PropertyValueMap, html } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { restClient } from '../shared';
 import { reportsClient } from '../rapportages/reports-client';
 import { Organisatieonderdeel } from '@rock-solid/shared';
 
