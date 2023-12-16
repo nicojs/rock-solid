@@ -90,18 +90,18 @@ export class AdvancedSearchPersonenComponent extends LitElement {
       ${this.isLoading
         ? html`<rock-loading></rock-loading>`
         : this.personen
-        ? html` <button
-              type="button"
-              class="btn btn-outline-secondary"
-              @click=${() => this.downloadCsv()}
-            >
-              <rock-icon icon="download"></rock-icon> Export
-            </button>
-            <rock-personen-list
-              .type=${this.type}
-              .personen=${this.personen}
-            ></rock-personen-list>`
-        : ''}`;
+          ? html` <button
+                type="button"
+                class="btn btn-outline-secondary"
+                @click=${() => this.downloadCsv()}
+              >
+                <rock-icon icon="download"></rock-icon> Export
+              </button>
+              <rock-personen-list
+                .type=${this.type}
+                .personen=${this.personen}
+              ></rock-personen-list>`
+          : ''}`;
   }
 }
 

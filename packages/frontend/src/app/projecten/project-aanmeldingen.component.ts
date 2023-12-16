@@ -530,13 +530,13 @@ function renderStatusIcon(aanmelding: Aanmelding): unknown {
         icon="lock"
       ></rock-icon>`
     : aanmelding.status === 'Aangemeld'
-    ? html`<rock-icon
-        title="${aanmelding.deelnemer
-          ? fullName(aanmelding.deelnemer)
-          : 'Deelnemer'} is aangemeld, maar nog niet bevestigd"
-        icon="unlock"
-      ></rock-icon>`
-    : nothing;
+      ? html`<rock-icon
+          title="${aanmelding.deelnemer
+            ? fullName(aanmelding.deelnemer)
+            : 'Deelnemer'} is aangemeld, maar nog niet bevestigd"
+          icon="unlock"
+        ></rock-icon>`
+      : nothing;
 }
 
 function renderToestemmingFotos(aanmelding: Aanmelding): unknown {

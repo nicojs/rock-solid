@@ -1,7 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Strategy } from 'passport-oauth2';
-import fetch from 'node-fetch';
 import { authConstants } from './constants.js';
 import { User, UserRole } from '@rock-solid/shared';
 
@@ -67,8 +66,8 @@ export class Office365Strategy extends PassportStrategy(
       (groupIds.includes(authConstants.adminGroupObjectId)
         ? 'admin'
         : groupIds.includes(authConstants.adminGroupObjectId)
-        ? 'projectverantwoordelijke'
-        : undefined);
+          ? 'projectverantwoordelijke'
+          : undefined);
     if (!role) {
       throw new UnauthorizedException(
         `Not authorized, as the user does not belong to a RockSolid group.`,

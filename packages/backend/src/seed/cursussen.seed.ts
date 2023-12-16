@@ -115,10 +115,10 @@ export async function seedCursussen(
     return deKei
       ? 'deKei'
       : keiJongNietBuso
-      ? 'keiJongNietBuSO'
-      : keiJongBuso
-      ? 'keiJongBuSO'
-      : undefined;
+        ? 'keiJongNietBuSO'
+        : keiJongBuso
+          ? 'keiJongBuSO'
+          : undefined;
   }
 
   function activiteitenFromRaw(

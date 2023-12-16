@@ -4,10 +4,10 @@ export type Queryfied<T> = {
   [K in keyof T]: T[K] extends string
     ? T[K]
     : T[K] extends string | undefined
-    ? T[K]
-    : undefined extends T[K]
-    ? string | undefined
-    : string;
+      ? T[K]
+      : undefined extends T[K]
+        ? string | undefined
+        : string;
 };
 
 export function filterMetaQuery<T extends Record<string, unknown>>(query: T) {

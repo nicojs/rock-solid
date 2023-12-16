@@ -106,8 +106,8 @@ export async function seedDeelnemers(
           raw.geslacht === 'man'
             ? db.Geslacht.man
             : raw.geslacht === 'vrouw'
-            ? db.Geslacht.vrouw
-            : db.Geslacht.onbekend,
+              ? db.Geslacht.vrouw
+              : db.Geslacht.onbekend,
         geboorteplaats: stringFromRaw(raw.geboorteplaats),
         gsmNummer: stringFromRaw(raw.GSM),
         rijksregisternummer: stringFromRaw(raw.rijksregisternummer),

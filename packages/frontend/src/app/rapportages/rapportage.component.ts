@@ -243,45 +243,45 @@ export class RapportageComponent extends RockElement {
           ${this.isLoading
             ? html`<rock-loading></rock-loading>`
             : this.report && this.group1
-            ? html` <button
-                  @click=${this.downloadReport}
-                  class="btn btn-outline-secondary"
-                >
-                  <rock-icon icon="download"></rock-icon> Export
-                </button>
-                <table class="table table-hover table-sm">
-                  <thead>
-                    <tr>
-                      <th>${aanmeldingGroupingFieldOptions[this.group1]}</th>
-                      <th>${GROUP1_TITLE}</th>
-                      ${this.group2
-                        ? html`<th>
-                              ${aanmeldingGroupingFieldOptions[this.group2]}
-                            </th>
-                            <th>${GROUP2_TITLE}</th>`
-                        : ''}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${this.report.map(
-                      ({ key, rows, total }) =>
-                        html`<tr>
-                            <th rowspan="${rows?.length}">
-                              ${showGroupKey(this.group1!, key)}
-                            </th>
-                            <td rowspan="${rows?.length}">${total}</td>
-                            ${renderRowData(this.group2!, rows?.[0])}
-                          </tr>
-                          ${rows?.slice(1).map(
-                            (row) =>
-                              html`<tr>
-                                ${renderRowData(this.group2!, row)}
-                              </tr>`,
-                          )}`,
-                    )}
-                  </tbody>
-                </table>`
-            : html`Kies een groep`}
+              ? html` <button
+                    @click=${this.downloadReport}
+                    class="btn btn-outline-secondary"
+                  >
+                    <rock-icon icon="download"></rock-icon> Export
+                  </button>
+                  <table class="table table-hover table-sm">
+                    <thead>
+                      <tr>
+                        <th>${aanmeldingGroupingFieldOptions[this.group1]}</th>
+                        <th>${GROUP1_TITLE}</th>
+                        ${this.group2
+                          ? html`<th>
+                                ${aanmeldingGroupingFieldOptions[this.group2]}
+                              </th>
+                              <th>${GROUP2_TITLE}</th>`
+                          : ''}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${this.report.map(
+                        ({ key, rows, total }) =>
+                          html`<tr>
+                              <th rowspan="${rows?.length}">
+                                ${showGroupKey(this.group1!, key)}
+                              </th>
+                              <td rowspan="${rows?.length}">${total}</td>
+                              ${renderRowData(this.group2!, rows?.[0])}
+                            </tr>
+                            ${rows?.slice(1).map(
+                              (row) =>
+                                html`<tr>
+                                  ${renderRowData(this.group2!, row)}
+                                </tr>`,
+                            )}`,
+                      )}
+                    </tbody>
+                  </table>`
+              : html`Kies een groep`}
         </div>
       </div>
     </div>`;

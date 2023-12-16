@@ -47,16 +47,16 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
       ${this.isLoading
         ? html`<rock-loading></rock-loading>`
         : this.organisaties
-        ? html`<button
-              @click=${() => this.download()}
-              class="btn btn-outline-secondary"
-            >
-              <rock-icon icon="download"></rock-icon> Export
-            </button>
-            <rock-organisaties-list
-              .organisaties=${this.organisaties}
-            ></rock-organisaties-list>`
-        : ''}`;
+          ? html`<button
+                @click=${() => this.download()}
+                class="btn btn-outline-secondary"
+              >
+                <rock-icon icon="download"></rock-icon> Export
+              </button>
+              <rock-organisaties-list
+                .organisaties=${this.organisaties}
+              ></rock-organisaties-list>`
+          : ''}`;
   }
 }
 const searchControls: FormControl<OrganisatieFilter>[] = [

@@ -33,9 +33,8 @@ export async function seedVrijwilligers(
   readonly: boolean,
 ) {
   const importErrors = new ImportErrors<RawVrijwilliger>();
-  const vrijwilligersRaw = await readImportJson<RawVrijwilliger[]>(
-    'vrijwilligers.json',
-  );
+  const vrijwilligersRaw =
+    await readImportJson<RawVrijwilliger[]>('vrijwilligers.json');
 
   const adresSeeder = new AdresSeeder(client, importErrors);
   await adresSeeder.init();

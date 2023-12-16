@@ -39,9 +39,8 @@ export async function seedOrganisaties(
   client: db.PrismaClient,
   readonly: boolean,
 ) {
-  const organisatiesRaw = await readImportJson<RawOrganisatie[]>(
-    'organisaties.json',
-  );
+  const organisatiesRaw =
+    await readImportJson<RawOrganisatie[]>('organisaties.json');
 
   const importErrors = new ImportErrors<RawOrganisatie>();
 
