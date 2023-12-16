@@ -69,9 +69,10 @@ export class ReportMapper {
 
   private async execReportQuery(query: string): Promise<Report> {
     // console.log(query);
-    const rawResults = await this.db.$queryRawUnsafe<
-      { key1: string; key2?: string; total: number }[]
-    >(query);
+    const rawResults =
+      await this.db.$queryRawUnsafe<
+        { key1: string; key2?: string; total: number }[]
+      >(query);
     const aanmeldingen: Report = [];
     function newReport(key: string) {
       const report: GroupedReport = {

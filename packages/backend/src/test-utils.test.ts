@@ -2,11 +2,10 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import request from 'supertest';
 import chai from 'chai';
-
 import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
-} from 'testcontainers';
+} from '@testcontainers/postgresql';
 import { Test } from '@nestjs/testing';
 import { AppModule } from './app.module.js';
 import { JwtService } from '@nestjs/jwt';
