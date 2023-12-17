@@ -130,6 +130,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
     name: 'opmerking',
     type: InputType.text,
   },
+  formArray('foldervoorkeuren', foldervoorkeurControls),
 ];
 
 const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
@@ -140,7 +141,6 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
     type: InputType.text,
   },
   checkboxesControl('selectie', false, overigPersoonSelecties),
-  formArray('foldervoorkeuren', foldervoorkeurControls),
 ];
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [

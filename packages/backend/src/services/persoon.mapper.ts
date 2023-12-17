@@ -340,7 +340,6 @@ function fillOutAllUpsertablePersoonFields(
  */
 function fillOutAllPersoonFields(persoon: Persoon): AllPersoonFields {
   return {
-    foldervoorkeuren: [],
     selectie: [],
     woonsituatie: 'onbekend',
     werksituatie: 'onbekend',

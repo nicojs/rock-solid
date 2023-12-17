@@ -52,7 +52,7 @@ describe(OrganisatiesController.name, () => {
                 adres,
                 foldervoorkeuren: [
                   {
-                    folder: 'deKeiCursus',
+                    folder: 'deKeiCursussen',
                     communicatie: 'email',
                   },
                 ],
@@ -69,7 +69,7 @@ describe(OrganisatiesController.name, () => {
             id: actualOrganisatie.contacten[0]!.id,
             foldervoorkeuren: [
               {
-                folder: 'deKeiCursus',
+                folder: 'deKeiCursussen',
                 communicatie: 'email',
               },
             ],
@@ -101,7 +101,7 @@ describe(OrganisatiesController.name, () => {
             factory.organisatieContact({
               terAttentieVan: 'Hans',
               foldervoorkeuren: [
-                { folder: 'deKeiCursus', communicatie: 'post' },
+                { folder: 'deKeiCursussen', communicatie: 'post' },
               ],
             }),
             factory.organisatieContact({
@@ -149,7 +149,7 @@ describe(OrganisatiesController.name, () => {
       it('should be able to filter on foldervoorkeur', async () => {
         // Act
         const [deKeiCursussenOrgs, keiJongBusoOrgs] = await Promise.all([
-          harness.getAllOrganisaties({ folders: ['deKeiCursus'] }),
+          harness.getAllOrganisaties({ folders: ['deKeiCursussen'] }),
           harness.getAllOrganisaties({ folders: ['keiJongBuso'] }),
         ]);
 

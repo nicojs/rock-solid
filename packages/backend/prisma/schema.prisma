@@ -31,6 +31,7 @@ model Persoon {
   gsmNummer           String?     @db.VarChar(256)
   opmerking           String?     @db.VarChar(1024)
   type                PersoonType @default(deelnemer)
+  foldervoorkeuren    Foldervoorkeur[]
 
   // Deelnemer
   woonsituatie               Woonsituatie    @default(onbekend)
@@ -48,7 +49,6 @@ model Persoon {
   toestemmingFotos           Boolean         @default(false)
 
   // OverigePersonen
-  foldervoorkeuren   Foldervoorkeur[]
   selectie           OverigPersoonSelectie[]
   begeleidtProjecten Project[]
 
@@ -255,7 +255,7 @@ enum Communicatievoorkeur {
 }
 
 enum Foldersoort {
-  deKeiCursus
+  deKeiCursussen
   deKeiZomervakantie
   deKeiWintervakantie
   keiJongNietBuso

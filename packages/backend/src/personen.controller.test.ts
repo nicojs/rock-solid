@@ -1,6 +1,6 @@
 import { AanmeldingOf, Cursus, Deelnemer, Vakantie } from '@rock-solid/shared';
 import { PersonenController } from './personen.controller.js';
-import { factory, harness } from './test-utils.test.js';
+import { byId, factory, harness } from './test-utils.test.js';
 import { expect } from 'chai';
 
 describe(PersonenController.name, () => {
@@ -104,6 +104,88 @@ describe(PersonenController.name, () => {
     });
   });
 
+  describe('GET /personen?searchType=persoon', () => {
+    it('by foldersoort', async () => {
+      // Arrange
+      const [
+        deelnemerNoFolder,
+        deelnemerDeKei,
+        deelnemerBuso,
+        deelnemerNietBuso,
+        deelnemerKeiJong,
+      ] = await Promise.all([
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(
+          factory.deelnemer({
+            achternaam: 'deKeiCursussen',
+            foldervoorkeuren: [
+              { folder: 'deKeiCursussen', communicatie: 'post' },
+            ],
+          }),
+        ),
+        harness.createDeelnemer(
+          factory.deelnemer({
+            achternaam: 'keiJongBuso',
+            foldervoorkeuren: [{ folder: 'keiJongBuso', communicatie: 'post' }],
+          }),
+        ),
+        harness.createDeelnemer(
+          factory.deelnemer({
+            achternaam: 'keiJongNietBuso',
+            foldervoorkeuren: [
+              { folder: 'keiJongNietBuso', communicatie: 'post' },
+            ],
+          }),
+        ),
+        harness.createDeelnemer(
+          factory.deelnemer({
+            achternaam: 'keiJong',
+            foldervoorkeuren: [
+              { folder: 'keiJongBuso', communicatie: 'post' },
+              { folder: 'keiJongNietBuso', communicatie: 'post' },
+            ],
+          }),
+        ),
+      ]);
+
+      // Act
+      const [actualDeKei, actualKeiJongBuso, actualKeiJong, actualNoFilter] =
+        await Promise.all([
+          harness.getAllPersonen({
+            searchType: 'persoon',
+            foldersoorten: ['deKeiCursussen'],
+          }),
+          harness.getAllPersonen({
+            searchType: 'persoon',
+            foldersoorten: ['keiJongBuso'],
+          }),
+          harness.getAllPersonen({
+            searchType: 'persoon',
+            foldersoorten: ['keiJongBuso', 'keiJongNietBuso'],
+          }),
+          harness.getAllPersonen({ searchType: 'persoon', foldersoorten: [] }),
+        ]);
+
+      // Assert
+      expect(actualDeKei).deep.eq([deelnemerDeKei]);
+      expect(actualKeiJongBuso.sort(byId)).deep.eq(
+        [deelnemerBuso, deelnemerKeiJong].sort(byId),
+      );
+      expect(actualKeiJong.sort(byId)).deep.eq(
+        [deelnemerBuso, deelnemerKeiJong, deelnemerNietBuso].sort(byId),
+      );
+      expect(actualNoFilter.sort(byId)).deep.eq(
+        [
+          deelnemerNoFolder,
+          deelnemerDeKei,
+          deelnemerBuso,
+          deelnemerNietBuso,
+          deelnemerKeiJong,
+        ].sort(byId),
+      );
+    });
+  });
+
   describe('PUT /personen/:id', () => {
     let deelnemer: Deelnemer;
     beforeEach(async () => {
@@ -133,7 +215,3 @@ describe(PersonenController.name, () => {
     });
   });
 });
-
-function byId(a: { id: number }, b: { id: number }) {
-  return a.id - b.id;
-}

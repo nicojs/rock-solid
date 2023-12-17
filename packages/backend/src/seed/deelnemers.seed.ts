@@ -7,6 +7,7 @@ import {
   stringFromRaw,
   writeOutputJson,
 } from './seed-utils.js';
+import { calculateAge } from '@rock-solid/shared';
 
 interface RawDeelnemer {
   '': string;
@@ -92,6 +93,7 @@ export async function seedDeelnemers(
       raw['adres domicilie'],
       raw['postnummer domicilie'],
     );
+    const geboortedatum = datumFromRaw(raw.geboortedatum);
     return [
       raw[''],
       {
@@ -99,7 +101,7 @@ export async function seedDeelnemers(
         voornaam: raw.naam || undefined,
         volledigeNaam,
         emailadres: stringFromRaw(raw['e-mail']),
-        geboortedatum: datumFromRaw(raw.geboortedatum),
+        geboortedatum,
         verblijfadres,
         domicilieadres,
         geslacht:
@@ -116,8 +118,26 @@ export async function seedDeelnemers(
         telefoonnummer: stringFromRaw(raw.telefoon),
         opmerking: stringFromRaw(raw.opmerkingen),
         type: 'deelnemer',
+        foldervoorkeuren: {
+          create: foldervoorkeurFromRaw(raw, geboortedatum),
+        },
       },
     ];
+  }
+}
+
+function foldervoorkeurFromRaw(
+  raw: RawDeelnemer,
+  geboortedatum: Date | undefined,
+): db.Prisma.FoldervoorkeurCreateWithoutPersoonInput | undefined {
+  if (raw.cursussen === 'Ja') {
+    if (!geboortedatum || calculateAge(geboortedatum) >= 31) {
+      return { communicatie: 'post', folder: 'deKeiCursussen' };
+    } else if (raw['Kei-Jong BUSO'] === 'Ja') {
+      return { communicatie: 'post', folder: 'keiJongBuso' };
+    } else {
+      return { communicatie: 'post', folder: 'keiJongNietBuso' };
+    }
   }
 }
 

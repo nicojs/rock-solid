@@ -17,7 +17,6 @@ import { bootstrap } from '../../styles';
 import {
   checkboxesControl,
   FormControl,
-  InputControl,
   InputType,
   selectControl,
 } from '../forms';
@@ -96,6 +95,7 @@ export class AdvancedSearchPersonenComponent extends LitElement {
                 @click=${() => this.downloadCsv()}
               >
                 <rock-icon icon="download"></rock-icon> Export
+                (${this.personen.length})
               </button>
               <rock-personen-list
                 .type=${this.type}
@@ -114,7 +114,7 @@ const overigPersoonSearchControls: FormControl<PersoonDetailsFilter>[] = [
   }),
 ];
 
-const deelnemerSearchControls: InputControl<PersoonDetailsFilter>[] = [
+const deelnemerSearchControls: FormControl<PersoonDetailsFilter>[] = [
   selectControl('geslacht', geslachten, {
     label: deelnemerLabels.geslacht,
     placeholder: 'Geen filter',
@@ -129,4 +129,7 @@ const deelnemerSearchControls: InputControl<PersoonDetailsFilter>[] = [
     name: 'laatsteAanmeldingJaarGeleden',
     postfix: 'jaar geleden',
   },
+  checkboxesControl('foldersoorten', false, foldersoorten, {
+    label: 'Folders',
+  }),
 ];

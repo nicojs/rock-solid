@@ -76,7 +76,7 @@ export type UpsertableOrganisatieContact = Upsertable<
 export type Communicatievoorkeur = 'post' | 'email' | 'postEnEmail';
 
 export type Foldersoort =
-  | 'deKeiCursus'
+  | 'deKeiCursussen'
   | 'deKeiZomervakantie'
   | 'deKeiWintervakantie'
   | 'keiJongNietBuso'
@@ -89,11 +89,11 @@ export interface Foldervoorkeur {
 }
 
 export const foldersoorten: Options<Foldersoort> = Object.freeze({
-  deKeiCursus: 'De Kei',
-  deKeiZomervakantie: 'Zomervakanties',
-  deKeiWintervakantie: 'Wintervakanties',
-  keiJongBuso: 'Buso',
-  keiJongNietBuso: 'niet Buso',
+  deKeiCursussen: 'De Kei cursussen',
+  deKeiZomervakantie: 'De Kei Zomervakanties',
+  deKeiWintervakantie: 'De Kei Wintervakanties',
+  keiJongBuso: 'Kei-Jong Buso',
+  keiJongNietBuso: 'Kei-Jong niet Buso',
   infoboekje: 'Infoboekjes',
 });
 
