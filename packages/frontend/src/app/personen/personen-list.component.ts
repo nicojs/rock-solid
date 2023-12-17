@@ -6,7 +6,6 @@ import {
   showFoldervoorkeurBadges,
   pluralize,
   show,
-  showAdres,
   showOverigPersoonSelectie,
   showPlaats,
 } from '../shared';
