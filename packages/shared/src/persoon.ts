@@ -22,6 +22,7 @@ export interface BasePersoon {
   telefoonnummer?: string;
   gsmNummer?: string;
   opmerking?: string;
+  foldervoorkeuren: Foldervoorkeur[];
 }
 
 export type UpsertablePersoon = UpsertableDeelnemer | UpsertableOverigPersoon;
@@ -59,7 +60,10 @@ export interface OverigPersoonTextFilter extends BasePersoonTextFilter {
 
 export type PersoonDetailsFilter = Partial<
   Omit<OverigPersoon, 'type' | 'foldervoorkeuren'> &
-    Omit<Deelnemer, 'type' | 'eersteCursus' | 'eersteVakantie'> & {
+    Omit<
+      Deelnemer,
+      'type' | 'eersteCursus' | 'eersteVakantie' | 'foldervoorkeuren'
+    > & {
       type: PersoonType;
     }
 > & {
@@ -84,7 +88,6 @@ export interface Deelnemer extends BasePersoon {
 export interface OverigPersoon extends BasePersoon {
   type: 'overigPersoon';
   vrijwilligerOpmerking?: string;
-  foldervoorkeuren: Foldervoorkeur[];
   selectie: OverigPersoonSelectie[];
 }
 
@@ -117,6 +120,7 @@ export const persoonLabels: Record<keyof Persoon, string> = {
   type: 'type',
   opmerking: 'Opmerking',
   voornaam: 'Voornaam',
+  foldervoorkeuren: 'Foldervoorkeuren',
 };
 
 export const deelnemerLabels: Record<keyof Deelnemer, string> = {
@@ -133,7 +137,6 @@ export const deelnemerLabels: Record<keyof Deelnemer, string> = {
 export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
   ...persoonLabels,
   vrijwilligerOpmerking: 'Vrijwilliger opmerking',
-  foldervoorkeuren: 'Foldervoorkeuren',
   selectie: 'Selectie',
 };
 

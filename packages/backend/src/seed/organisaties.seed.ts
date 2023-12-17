@@ -121,7 +121,7 @@ export async function seedOrganisaties(
       [];
     addIfJa('folders Kei-Jong (niet Buso)', 'keiJongNietBuso');
     addIfJa('folders Kei-Jong Buso', 'keiJongBuso');
-    addIfJa('folders cursussen De Kei', 'deKeiCursus');
+    addIfJa('folders cursussen De Kei', 'deKeiCursussen');
     addIfJa('folders wintervakanties De Kei', 'deKeiWintervakantie');
     addIfJa('folders zomervakanties De Kei', 'deKeiZomervakantie');
     return { createMany: { data: voorkeuren } };

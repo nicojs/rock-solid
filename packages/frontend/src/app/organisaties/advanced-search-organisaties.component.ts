@@ -52,6 +52,7 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
                 class="btn btn-outline-secondary"
               >
                 <rock-icon icon="download"></rock-icon> Export
+                (${this.organisaties.length})
               </button>
               <rock-organisaties-list
                 .organisaties=${this.organisaties}

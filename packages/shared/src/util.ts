@@ -29,3 +29,16 @@ export function split<T>(
   }
   return [left, right];
 }
+
+export function calculateAge(geboortedatum: Date, now = new Date()): number {
+  const then = geboortedatum;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return (
+    today.getFullYear() -
+    then.getFullYear() -
+    (today.valueOf() >=
+    new Date(today.getFullYear(), then.getMonth(), then.getDate()).valueOf()
+      ? 0
+      : 1)
+  );
+}

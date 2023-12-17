@@ -1,4 +1,4 @@
-import { Geslacht, UpsertablePersoon } from '@rock-solid/shared';
+import { Geslacht, UpsertablePersoon, calculateAge } from '@rock-solid/shared';
 
 export function fullNameOrOnbekend(
   persoon?: Pick<UpsertablePersoon, 'achternaam' | 'voornaam'>,
@@ -19,7 +19,9 @@ export function fullNameWithAge(
   now = new Date(),
 ) {
   return `${fullName(persoon)}${
-    persoon.geboortedatum ? ` (${age(persoon.geboortedatum, now)})` : ''
+    persoon.geboortedatum
+      ? ` (${calculateAge(persoon.geboortedatum, now)})`
+      : ''
   }`;
 }
 
@@ -29,16 +31,3 @@ export const geslachtIcons: Record<Geslacht, string> = {
   x: 'genderTrans',
   onbekend: 'genderAmbiguous',
 };
-
-export function age(geboortedatum: Date, now = new Date()) {
-  const then = geboortedatum;
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return (
-    today.getFullYear() -
-    then.getFullYear() -
-    (today.valueOf() >=
-    new Date(today.getFullYear(), then.getMonth(), then.getDate()).valueOf()
-      ? 0
-      : 1)
-  );
-}

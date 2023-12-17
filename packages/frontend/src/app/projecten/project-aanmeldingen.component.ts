@@ -5,6 +5,7 @@ import {
   Persoon,
   Project,
   aanmeldingLabels,
+  calculateAge,
   split,
 } from '@rock-solid/shared';
 import { html, LitElement, nothing, PropertyValues } from 'lit';
@@ -16,7 +17,6 @@ import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
 import {
-  age,
   fullName,
   fullNameWithAge,
   geslachtIcons,
@@ -385,7 +385,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     <td>
                       ${showDatum(aanmelding.deelnemer?.geboortedatum)}
                       ${aanmelding.deelnemer?.geboortedatum
-                        ? html`(${age(
+                        ? html`(${calculateAge(
                             aanmelding.deelnemer.geboortedatum,
                             this.project.activiteiten[0]?.van,
                           )})`

@@ -39,6 +39,8 @@ import {
   Vakantie,
   AanmeldingOf,
   UpsertableAdres,
+  PersoonFilter,
+  Persoon,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -303,6 +305,13 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
+  async getAllPersonen(filter: PersoonFilter): Promise<Persoon[]> {
+    const response = await this.get(`/personen${toQueryString(filter)}`).expect(
+      200,
+    );
+    return response.body;
+  }
+
   async deleteDeelnemer(id: number): Promise<void> {
     await this.delete(`/personen/${id}`).expect(204);
   }
@@ -505,4 +514,8 @@ function parseJson(
       cb(error, body);
     }
   });
+}
+
+export function byId(a: { id: number }, b: { id: number }) {
+  return a.id - b.id;
 }

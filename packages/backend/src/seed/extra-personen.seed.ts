@@ -108,7 +108,7 @@ function foldervoorkeurenFromRaw(
   }
   addIfJa(raw['folders Kei-Jong (niet Buso)'], 'keiJongNietBuso');
   addIfJa(raw['folders Kei-Jong Buso'], 'keiJongBuso');
-  addIfJa(raw['folders cursussen De Kei'], 'deKeiCursus');
+  addIfJa(raw['folders cursussen De Kei'], 'deKeiCursussen');
   addIfJa(raw['folders zomervakanties De Kei'], 'deKeiZomervakantie');
   return { createMany: { data: voorkeuren } };
 }

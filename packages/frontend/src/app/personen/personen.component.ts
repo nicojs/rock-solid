@@ -152,10 +152,8 @@ export class PersonenComponent extends RockElement {
           voedingswens: 'geen',
           verblijfadres: {},
           geslacht: 'onbekend',
+          foldervoorkeuren: [],
         };
-        if (persoon.type === 'overigPersoon') {
-          persoon.foldervoorkeuren = [];
-        }
         if (persoon.type === 'deelnemer') {
           persoon.werksituatie = 'onbekend';
           persoon.woonsituatie = 'onbekend';

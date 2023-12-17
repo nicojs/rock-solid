@@ -1,5 +1,6 @@
 import {
   AanmeldingOf,
+  calculateAge,
   Cursus,
   Deelnemer,
   OverigPersoon,
@@ -22,7 +23,7 @@ import {
   showOverigPersoonSelectie,
   pluralize,
 } from '../shared';
-import { age, fullName } from './full-name.pipe';
+import { fullName } from './full-name.pipe';
 
 @customElement('rock-display-persoon')
 export class DisplayPersoonComponent extends RockElement {
@@ -90,7 +91,7 @@ export class DisplayPersoonComponent extends RockElement {
           <dt>Geboortedatum</dt>
           <dd>
             ${showDatum(this.persoon.geboortedatum)}${this.persoon.geboortedatum
-              ? ` (${age(this.persoon.geboortedatum)} jaar)`
+              ? ` (${calculateAge(this.persoon.geboortedatum)} jaar)`
               : nothing}
           </dd>
           <dt>${persoonLabels.geslacht}</dt>

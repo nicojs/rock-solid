@@ -8,6 +8,7 @@ import {
   show,
   showAdres,
   showOverigPersoonSelectie,
+  showPlaats,
 } from '../shared';
 import { fullName, fullNameWithAge } from './full-name.pipe';
 import { ModalComponent } from '../shared/modal.component';
@@ -59,9 +60,8 @@ export class PersonenComponent extends LitElement {
           ${this.type === 'overigPersoon' ? html`<th>Selectie</th>` : nothing}
           <th>Emailadres</th>
           <th>Telefoonnummer</th>
-          ${this.type === 'deelnemer'
-            ? html`<th>Verblijfadres</th>`
-            : html`<th>Folders</th>`}
+          ${this.type === 'deelnemer' ? html`<th>Woonplaats</th>` : nothing}
+          <th>Folders</th>
           <th style="width: 190px">Acties</th>
         </tr>
       </thead>
@@ -75,11 +75,10 @@ export class PersonenComponent extends LitElement {
                 : nothing}
               <td>${show(persoon.emailadres)}</td>
               <td>${show(persoon.gsmNummer ?? persoon.telefoonnummer)}</td>
-              <td>
-                ${persoon.type === 'deelnemer'
-                  ? showAdres(persoon.verblijfadres)
-                  : showFoldervoorkeurBadges(persoon.foldervoorkeuren)}
-              </td>
+              ${persoon.type === 'deelnemer'
+                ? html`<td>${showPlaats(persoon.verblijfadres?.plaats)}</td>`
+                : nothing}
+              <td>${showFoldervoorkeurBadges(persoon.foldervoorkeuren)}</td>
               <td>
                 <rock-link btn btnSecondary href="../display/${persoon.id}"
                   ><rock-icon icon="eye"></rock-icon
