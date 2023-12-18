@@ -94,6 +94,6 @@ const organisatieControls: FormControl<Organisatie>[] = [
         requiredLabel: 'Met adres',
       }),
     ],
-    () => ({ terAttentieVan: '' }),
+    () => ({ terAttentieVan: '', foldervoorkeuren: [{}] }),
   ),
 ];
