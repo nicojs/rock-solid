@@ -178,5 +178,5 @@ export class OrganisatiesComponent extends RockElement {
 }
 
 function newOrganisatie(): DeepPartial<Organisatie> {
-  return { contacten: [] };
+  return { contacten: [{ foldervoorkeuren: [{}] }] };
 }
