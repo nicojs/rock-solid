@@ -13,6 +13,7 @@ import {
   persoonLabels,
   Contactpersoon,
   deelnemerLabels,
+  fotoToestemmingLabels,
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -23,8 +24,9 @@ import {
   adresControls,
   formArray,
   foldervoorkeurControls,
-  checkboxesControl,
+  checkboxesItemsControl,
   radioControl,
+  checkboxesPropsControl,
 } from '../forms';
 
 @customElement('rock-edit-persoon')
@@ -142,7 +144,7 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
     label: 'Vrijwilliger opmerking',
     type: InputType.text,
   },
-  checkboxesControl('selectie', false, overigPersoonSelecties),
+  checkboxesItemsControl('selectie', overigPersoonSelecties),
 ];
 const contactPersoonControls: readonly FormControl<Contactpersoon>[] =
   Object.freeze([
@@ -166,11 +168,6 @@ const contactPersoonControls: readonly FormControl<Contactpersoon>[] =
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [
   ...basePersoonFormControls,
-  {
-    name: 'toestemmingFotos',
-    label: "Toestemming voor gebruik van foto's",
-    type: InputType.checkbox,
-  },
   formGroup('domicilieadres', adresControls, {
     required: false,
     requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
@@ -201,5 +198,8 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
     label: deelnemerLabels['begeleidendeDienst'],
     type: InputType.text,
   },
+  checkboxesPropsControl('fotoToestemming', fotoToestemmingLabels, {
+    label: deelnemerLabels['fotoToestemming'],
+  }),
   formGroup('contactpersoon', contactPersoonControls),
 ];

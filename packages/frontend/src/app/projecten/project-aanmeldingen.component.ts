@@ -2,10 +2,12 @@ import {
   Aanmelding,
   Aanmeldingsstatus,
   Deelnemer,
+  FotoToestemming,
   Persoon,
   Project,
   aanmeldingLabels,
   calculateAge,
+  fotoToestemmingLabels,
   split,
 } from '@rock-solid/shared';
 import { html, LitElement, nothing, PropertyValues } from 'lit';
@@ -541,22 +543,69 @@ function renderStatusIcon(aanmelding: Aanmelding): unknown {
 
 function renderToestemmingFotos(aanmelding: Aanmelding): unknown {
   if (aanmelding.deelnemer) {
-    return aanmelding.deelnemer?.toestemmingFotos
-      ? html` <rock-icon
-          title="${fullName(
-            aanmelding.deelnemer,
-          )} geeft toestemming voor foto's"
+    const name = fullName(aanmelding.deelnemer);
+    const { fotoToestemming } = aanmelding.deelnemer;
+
+    switch (determineFotoToestemmingKind(fotoToestemming)) {
+      case 'all':
+        return html` <rock-icon
+          title="${name} geeft toestemming voor gebruik van foto's voor alle doeleinden"
           icon="camera"
-        ></rock-icon>`
-      : html` <rock-icon
-          title="${fullName(
-            aanmelding.deelnemer,
-          )} geeft geen toestemming voor foto's"
+        ></rock-icon>`;
+      case 'none':
+        return html`<rock-icon
+          title="${name} geeft geen toestemming gebruik van foto's"
           icon="cameraVideoOff"
         ></rock-icon>`;
+      case 'some':
+        return html`${Object.keys(fotoToestemmingLabels).map((key) =>
+          renderFotoToestemmingIcon(
+            name,
+            fotoToestemming,
+            key as keyof FotoToestemming,
+          ),
+        )}`;
+    }
   }
   return deelnemerVerwijderd;
 }
+
+function determineFotoToestemmingKind(
+  toestemming: FotoToestemming,
+): 'all' | 'none' | 'some' {
+  const toestemmingValues = Object.keys(fotoToestemmingLabels).map(
+    (key) => toestemming[key as keyof FotoToestemming],
+  );
+  if (toestemmingValues.every((value) => value === true)) {
+    return 'all';
+  }
+  if (toestemmingValues.every((value) => value === false)) {
+    return 'none';
+  }
+  return 'some';
+}
+
+function renderFotoToestemmingIcon(
+  name: string,
+  toestemming: FotoToestemming,
+  current: keyof FotoToestemming,
+) {
+  if (!toestemming[current]) {
+    return nothing;
+  }
+  return html`<rock-icon
+    title="${name} geeft toestemming voor ${fotoToestemmingLabels[current]}"
+    icon="${fotoToestemmingIcons[current]}"
+  ></rock-icon>`;
+}
+
+const fotoToestemmingIcons: Record<keyof FotoToestemming, string> = {
+  socialeMedia: 'facebook',
+  folder: 'cardChecklist',
+  infoboekje: 'journal',
+  nieuwsbrief: 'newspaper',
+  website: 'globe',
+};
 
 function deelnemerLink(deelnemer: Deelnemer) {
   return html`<a

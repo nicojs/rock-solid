@@ -2,7 +2,7 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, ref } from 'lit/directives/ref.js';
 import { capitalize } from '../shared';
-import { CheckboxesControl, KeysOfType } from './form-control';
+import { CheckboxesControl, CheckboxesKind, KeysOfType } from './form-control';
 import { FormControlElement } from './form-element';
 
 @customElement('rock-reactive-checkboxes')
@@ -11,7 +11,15 @@ export class ReactiveFormTags<
   TKey extends KeysOfType<TEntity, string[]>,
 > extends FormControlElement<TEntity> {
   @property({ attribute: false })
-  public control!: CheckboxesControl<TEntity, TKey>;
+  public control!: CheckboxesControl<TEntity>;
+
+  get value(): any {
+    return (this.entity as any)[this.control.name];
+  }
+
+  set value(value: string[] | Record<string, boolean>) {
+    (this.entity as any)[this.control.name] = value;
+  }
 
   override render() {
     return html`
@@ -21,52 +29,67 @@ export class ReactiveFormTags<
             ${this.control.label ?? capitalize(this.control.name)}
           </div>
         </div>
-        <div class="col">
-          ${this.control.grouped
-            ? html`<div class="row">
-                ${Object.entries(this.control.items).map(
-                  ([key, value]) =>
-                    html`<div class="mb-3 col-md-6 col-xl-4 col-xxl-3 col-12">
-                      <h6>${key}</h6>
-                      ${this.renderCheckboxes(value)}
-                    </div>`,
-                )}
-              </div>`
-            : this.renderCheckboxes(this.control.items)}
-        </div>
+        <div class="col">${this.renderCheckboxesKind()}</div>
       </div>
     `;
   }
 
+  private renderCheckboxesKind() {
+    switch (this.control.kind) {
+      case CheckboxesKind.groupedItems:
+        return html`<div class="row">
+          ${Object.entries(this.control.items).map(
+            ([key, value]) =>
+              html`<div class="mb-3 col-md-6 col-xl-4 col-xxl-3 col-12">
+                <h6>${key}</h6>
+                ${this.renderCheckboxes(
+                  value as Readonly<Record<TEntity[TKey] & string, string>>,
+                  (this.value ??= []),
+                )}
+              </div>`,
+          )}
+        </div>`;
+      case CheckboxesKind.items:
+        return this.renderCheckboxes(this.control.items, (this.value ??= []));
+      case CheckboxesKind.props:
+        const currentSelected = Object.entries(
+          ((this.value as Record<string, boolean>) ??= {}),
+        )
+          .filter(([, flag]) => flag)
+          .map(([prop]) => prop);
+        return this.renderCheckboxes(
+          this.control.items,
+          currentSelected,
+          (item) => (this.value[item] = true),
+          (item) => (this.value[item] = false),
+        );
+    }
+  }
+
   private renderCheckboxes(
     items: Readonly<Record<TEntity[TKey] & string, string>>,
+    initialValues: string[],
+    checkAction: (option: string) => void = (item) => initialValues.push(item),
+    uncheckAction: (option: string) => void = (item) =>
+      initialValues.splice(initialValues.indexOf(item), 1),
   ) {
     return Object.entries(items).map(([key, value]) => {
       const checkboxRef = createRef<HTMLInputElement>();
-      const checkedValues =
-        (this.entity[this.control.name] as string[] | undefined) ?? [];
-      return html`<div class="form-check">
+      return html`<div class="form-check form-check-inline">
         <input
           id="${this.name}-${key}"
           ${ref(checkboxRef)}
           name="${this.control.name}"
           type="checkbox"
           class="form-check-input"
-          ?checked=${checkedValues.includes(key)}
+          ?checked=${initialValues.includes(key)}
           @change="${(e: Event) => {
             const inputEl = e.target as HTMLInputElement;
             if (inputEl.checked) {
-              (this.entity[this.control.name] as string[]) = [
-                ...((this.entity[this.control.name] as string[] | undefined) ??
-                  []),
-                key,
-              ];
+              checkAction(key);
             } else {
-              (this.entity[this.control.name] as string[]) = (
-                this.entity[this.control.name] as string[]
-              ).filter((entry) => entry !== key);
+              uncheckAction(key);
             }
-            console.log(this.entity[this.control.name]);
           }}"
         />
         <label for="${this.name}-${key}" class="form-check-label"

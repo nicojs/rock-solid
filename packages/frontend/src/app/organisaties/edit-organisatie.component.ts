@@ -15,7 +15,7 @@ import {
   patterns,
   formArray,
   foldervoorkeurControls,
-  checkboxesControl,
+  checkboxesGroupedItemsControl,
 } from '../forms';
 import { printOrganisatie } from './organisatie.pipes';
 @customElement('rock-edit-organisatie')
@@ -65,7 +65,7 @@ const organisatieControls: FormControl<Organisatie>[] = [
     type: InputType.url,
     placeholder: 'https://dekei.be',
   },
-  checkboxesControl('soorten', true, groupedOrganisatieSoorten),
+  checkboxesGroupedItemsControl('soorten', groupedOrganisatieSoorten),
   formArray(
     'contacten',
     [

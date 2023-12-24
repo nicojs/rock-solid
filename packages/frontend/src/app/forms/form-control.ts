@@ -54,7 +54,7 @@ export type FormControl<TEntity> =
 export type CustomControl<TEntity> =
   | PlaatsControl<TEntity>
   | TagsControl<TEntity, any>
-  | CheckboxesControl<TEntity, any>;
+  | CheckboxesControl<TEntity>;
 
 export function formGroup<TEntity, TKey extends keyof TEntity & string>(
   name: TKey,
@@ -123,58 +123,104 @@ export function tagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   };
 }
 
-export type CheckboxesControl<
-  TEntity,
-  TKey extends KeysOfType<TEntity, string[]>,
-> =
-  | GroupedCheckboxesControl<TEntity, TKey>
-  | SingleGroupCheckboxesControl<TEntity, TKey>;
+export enum CheckboxesKind {
+  groupedItems = 'groupedItems',
+  items = 'items',
+  props = 'props',
+}
 
-interface BaseCheckboxesControl<
+export type CheckboxesControl<TEntity> =
+  | GroupedItemsCheckboxesControl<TEntity, any>
+  | ItemsCheckboxesControl<TEntity, any>
+  | PropsCheckboxesControl<TEntity, any>;
+
+export interface GroupedItemsCheckboxesControl<
   TEntity,
   TKey extends KeysOfType<TEntity, string[]>,
-> extends BaseInputControl<TEntity, ArrayItem<TEntity[TKey]>[]> {
+> extends BaseInputControl<TEntity, TKey> {
   name: TKey;
   type: InputType.checkboxes;
-}
-export interface GroupedCheckboxesControl<
-  TEntity,
-  TKey extends KeysOfType<TEntity, string[]>,
-> extends BaseCheckboxesControl<TEntity, TKey> {
-  grouped: true;
+  kind: CheckboxesKind.groupedItems;
   items: GroupedOptions<TEntity[TKey] & string>;
 }
 
-export interface SingleGroupCheckboxesControl<
+export interface ItemsCheckboxesControl<
   TEntity,
   TKey extends KeysOfType<TEntity, string[]>,
-> extends BaseCheckboxesControl<TEntity, TKey> {
-  grouped: false;
+> extends BaseInputControl<TEntity, TKey> {
+  name: TKey;
+  type: InputType.checkboxes;
+  kind: CheckboxesKind.items;
   items: Options<TEntity[TKey] & string>;
 }
 
-export function checkboxesControl<
+export interface PropsCheckboxesControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, Record<keyof TEntity[TKey], boolean>>,
+> extends BaseInputControl<TEntity, TKey> {
+  name: TKey;
+  type: InputType.checkboxes;
+  kind: CheckboxesKind.props;
+  items: Options<TEntity[TKey] & string>;
+}
+
+export function checkboxesItemsControl<
   TEntity,
   TKey extends KeysOfType<TEntity, string[]>,
-  TGrouped extends boolean,
 >(
   name: TKey,
-  grouped: TGrouped,
-  items: TGrouped extends true
-    ? GroupedOptions<TEntity[TKey] & string>
-    : Options<TEntity[TKey] & string>,
+  items: Options<TEntity[TKey] & string>,
   additionalOptions?: Omit<
-    CheckboxesControl<TEntity, TKey>,
-    'name' | 'items' | 'type' | 'grouped'
+    CheckboxesControl<TEntity>,
+    'name' | 'items' | 'type' | 'kind'
   >,
-): CheckboxesControl<TEntity, TKey> {
+): CheckboxesControl<TEntity> {
   return {
     type: InputType.checkboxes,
-    grouped,
+    kind: CheckboxesKind.items,
     name,
     items,
     ...additionalOptions,
-  } as CheckboxesControl<TEntity, TKey>;
+  };
+}
+
+export function checkboxesPropsControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, Record<keyof TEntity[TKey], boolean>>,
+>(
+  name: TKey,
+  items: Options<TEntity[TKey] & string>,
+  additionalOptions?: Omit<
+    CheckboxesControl<TEntity>,
+    'name' | 'items' | 'type' | 'kind'
+  >,
+): PropsCheckboxesControl<TEntity, TKey> {
+  return {
+    type: InputType.checkboxes,
+    kind: CheckboxesKind.props,
+    name,
+    items,
+    ...additionalOptions,
+  };
+}
+export function checkboxesGroupedItemsControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, string[]>,
+>(
+  name: TKey,
+  items: GroupedOptions<TEntity[TKey] & string>,
+  additionalOptions?: Omit<
+    CheckboxesControl<TEntity>,
+    'name' | 'items' | 'type' | 'kind'
+  >,
+): GroupedItemsCheckboxesControl<TEntity, TKey> {
+  return {
+    type: InputType.checkboxes,
+    kind: CheckboxesKind.groupedItems,
+    name,
+    items,
+    ...additionalOptions,
+  };
 }
 
 export interface FormGroup<TEntity, TKey extends keyof TEntity> {
