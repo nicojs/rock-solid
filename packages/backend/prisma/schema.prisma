@@ -12,35 +12,40 @@ generator client {
 }
 
 model Persoon {
-  id                  Int         @id @default(autoincrement())
-  voornaam            String?     @db.VarChar(128)
-  achternaam          String      @db.VarChar(128)
-  volledigeNaam       String      @db.VarChar(256)
-  emailadres          String?     @db.VarChar(256)
+  id                  Int              @id @default(autoincrement())
+  voornaam            String?          @db.VarChar(128)
+  achternaam          String           @db.VarChar(128)
+  volledigeNaam       String           @db.VarChar(256)
+  emailadres          String?          @db.VarChar(256)
   verblijfadresId     Int?
-  verblijfadres       Adres?      @relation(name: "verblijfadres", fields: [verblijfadresId], references: [id])
+  verblijfadres       Adres?           @relation(name: "verblijfadres", fields: [verblijfadresId], references: [id])
   domicilieadresId    Int?
-  domicilieadres      Adres?      @relation(name: "domicilieadres", fields: [domicilieadresId], references: [id])
-  geboortedatum       DateTime?   @db.Date
-  geboorteplaats      String?     @db.VarChar(256)
-  geslacht            Geslacht    @default(onbekend)
-  geslachtOpmerking   String?     @db.VarChar(256)
-  rekeningnummer      String?     @db.VarChar(256)
-  rijksregisternummer String?     @db.VarChar(256)
-  telefoonnummer      String?     @db.VarChar(256)
-  gsmNummer           String?     @db.VarChar(256)
-  opmerking           String?     @db.VarChar(1024)
-  type                PersoonType @default(deelnemer)
+  domicilieadres      Adres?           @relation(name: "domicilieadres", fields: [domicilieadresId], references: [id])
+  geboortedatum       DateTime?        @db.Date
+  geboorteplaats      String?          @db.VarChar(256)
+  geslacht            Geslacht         @default(onbekend)
+  geslachtOpmerking   String?          @db.VarChar(256)
+  rekeningnummer      String?          @db.VarChar(256)
+  rijksregisternummer String?          @db.VarChar(256)
+  telefoonnummer      String?          @db.VarChar(256)
+  gsmNummer           String?          @db.VarChar(256)
+  opmerking           String?          @db.VarChar(1024)
+  type                PersoonType      @default(deelnemer)
   foldervoorkeuren    Foldervoorkeur[]
 
   // Deelnemer
   woonsituatie               Woonsituatie    @default(onbekend)
-  woonsituatieOpmerking      String?
+  woonsituatieOpmerking      String?         @db.VarChar(256)
   werksituatie               Werksituatie    @default(onbekend)
   opleidingsvorm             Opleidingsvorm?
-  werksituatieOpmerking      String?
+  werksituatieOpmerking      String?         @db.VarChar(256)
   voedingswens               Voedingswens    @default(geen)
-  voedingswensOpmerking      String?
+  voedingswensOpmerking      String?         @db.VarChar(256)
+  begeleidendeDienst         String?         @db.VarChar(256)
+  contactpersoon             String?         @db.VarChar(256)
+  contactpersoonTelefoon     String?         @db.VarChar(256)
+  contactpersoonGsm          String?         @db.VarChar(256)
+  contactpersoonEmail        String?         @db.VarChar(256)
   aanmeldingen               Aanmelding[]
   eersteCursusAanmelding     Aanmelding?     @relation("eersteCursusAanmelding", fields: [eersteCursusAanmeldingId], references: [id])
   eersteCursusAanmeldingId   Int?

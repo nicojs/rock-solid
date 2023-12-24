@@ -112,6 +112,10 @@ export async function seedDeelnemers(
               : db.Geslacht.onbekend,
         geboorteplaats: stringFromRaw(raw.geboorteplaats),
         gsmNummer: stringFromRaw(raw.GSM),
+        begeleidendeDienst: stringFromRaw(raw['Begeleidende dienst']),
+        contactpersoon: stringFromRaw(
+          raw['contactpersonen cursussen'] || raw['contactpersonen vakanties'],
+        ),
         rijksregisternummer: stringFromRaw(raw.rijksregisternummer),
         woonsituatieOpmerking: stringFromRaw(raw.woonsituatie),
         werksituatieOpmerking: stringFromRaw(raw.werksituatie),

@@ -10,7 +10,7 @@ import {
   Vakantie,
   voedingswensen,
 } from '@rock-solid/shared';
-import { html, nothing } from 'lit';
+import { html, nothing, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
@@ -22,8 +22,14 @@ import {
   showDatum,
   showOverigPersoonSelectie,
   pluralize,
+  showDatumWithAge,
 } from '../shared';
-import { fullName } from './full-name.pipe';
+import {
+  fullName,
+  showContactpersoon,
+  showEmail,
+  showPhoneNumber,
+} from './persoon.pipe';
 
 @customElement('rock-display-persoon')
 export class DisplayPersoonComponent extends RockElement {
@@ -87,13 +93,8 @@ export class DisplayPersoonComponent extends RockElement {
         <dl class="col-sm-6">
           <dt>Naam</dt>
           <dd>${fullName(this.persoon)}</dd>
-          ${this.renderDefinition('emailadres')}
-          <dt>Geboortedatum</dt>
-          <dd>
-            ${showDatum(this.persoon.geboortedatum)}${this.persoon.geboortedatum
-              ? ` (${calculateAge(this.persoon.geboortedatum)} jaar)`
-              : nothing}
-          </dd>
+          ${this.renderDefinition('emailadres', showEmail)}
+          ${this.renderDefinition('geboortedatum', showDatumWithAge)}
           <dt>${persoonLabels.geslacht}</dt>
           <dd>
             ${show(this.persoon.geslacht)}${this.persoon.geslachtOpmerking
@@ -106,17 +107,18 @@ export class DisplayPersoonComponent extends RockElement {
         </dl>
         <dl class="col-sm-6">
           ${this.renderDefinition('rijksregisternummer')}
-          ${this.renderDefinition('telefoonnummer')}
-          <dt>Voedingswens</dt>
-          <dd>${voedingswensen[this.persoon.voedingswens]}</dd>
-          <dt>Verblijfadres</dt>
-          <dl>${showAdres(this.persoon.verblijfadres)}</dl>
-          <dt>Domicilieadres</dt>
-          <dl>
-            ${this.persoon.domicilieadres
+          ${this.renderDefinition('telefoonnummer', showPhoneNumber)}
+          ${this.renderDefinition(
+            'voedingswens',
+            voedingswensen[this.persoon.voedingswens],
+          )}
+          ${this.renderDefinition('verblijfadres', showAdres)}
+          ${this.renderDefinition(
+            'domicilieadres',
+            this.persoon.domicilieadres
               ? showAdres(this.persoon.domicilieadres)
-              : 'Zelfde als verblijfadres'}
-          </dl>
+              : 'Zelfde als verblijfadres',
+          )}
         </dl>
       </div>
       ${this.persoon.type === 'deelnemer'
@@ -150,10 +152,15 @@ export class DisplayPersoonComponent extends RockElement {
     </div>`;
   }
 
-  private renderDefinition<T extends keyof Persoon>(key: T) {
+  private renderDefinition<T extends keyof Persoon>(
+    key: T,
+    renderFn: string | ((val: Persoon[T]) => string | TemplateResult) = show,
+  ) {
     return html`
       <dt>${persoonLabels[key]}</dt>
-      <dd>${show(this.persoon[key])}</dd>
+      <dd>
+        ${typeof renderFn === 'string' ? renderFn : renderFn(this.persoon[key])}
+      </dd>
     `;
   }
 
@@ -165,6 +172,8 @@ export class DisplayPersoonComponent extends RockElement {
         ? html`<dt>Opmerking</dt>
             <dd>${show(deelnemer.woonsituatieOpmerking)}</dd>`
         : nothing}
+      <dt>Contactpersoon</dt>
+      <dd>${showContactpersoon(deelnemer.contactpersoon)}</dd>
     `;
   }
   private renderOverigPersoonProperties(persoon: OverigPersoon) {

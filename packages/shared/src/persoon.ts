@@ -74,8 +74,17 @@ export type PersoonDetailsFilter = Partial<
 
 export type PersoonFilter = PersoonDetailsFilter | PersoonTextFilter;
 
+export interface Contactpersoon {
+  naam?: string;
+  telefoon?: string;
+  gsm?: string;
+  email?: string;
+}
+
 export interface Deelnemer extends BasePersoon {
   type: 'deelnemer';
+  begeleidendeDienst?: string;
+  contactpersoon?: Contactpersoon;
   woonsituatie: Woonsituatie;
   woonsituatieOpmerking?: string;
   werksituatie: Werksituatie;
@@ -125,6 +134,8 @@ export const persoonLabels: Record<keyof Persoon, string> = {
 
 export const deelnemerLabels: Record<keyof Deelnemer, string> = {
   ...persoonLabels,
+  contactpersoon: 'Contactpersoon',
+  begeleidendeDienst: 'Begeleidende dienst',
   eersteCursus: 'Eerste cursus',
   eersteVakantie: 'Eerste vakantie',
   toestemmingFotos: "Toestemming voor foto's",

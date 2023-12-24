@@ -1,0 +1,73 @@
+import {
+  Contactpersoon,
+  Geslacht,
+  UpsertablePersoon,
+  calculateAge,
+} from '@rock-solid/shared';
+import { notAvailable, show } from '../shared';
+import { html } from 'lit';
+
+export function fullNameOrOnbekend(
+  persoon?: Pick<UpsertablePersoon, 'achternaam' | 'voornaam'>,
+) {
+  return persoon ? fullName(persoon) : 'Onbekend';
+}
+
+export function fullName(
+  persoon: Pick<UpsertablePersoon, 'achternaam' | 'voornaam'>,
+) {
+  return persoon.voornaam
+    ? `${persoon.voornaam} ${persoon.achternaam}`
+    : persoon.achternaam;
+}
+
+export function fullNameWithAge(
+  persoon: Pick<UpsertablePersoon, 'achternaam' | 'voornaam' | 'geboortedatum'>,
+  now = new Date(),
+) {
+  return `${fullName(persoon)}${
+    persoon.geboortedatum
+      ? ` (${calculateAge(persoon.geboortedatum, now)})`
+      : ''
+  }`;
+}
+
+export function showPhoneNumber(
+  phoneNumber?: string,
+  additionalCssClass?: string,
+) {
+  if (!phoneNumber) {
+    return html`<span class=${additionalCssClass}>${notAvailable}</span>`;
+  }
+  return html`<a class=${additionalCssClass} href="tel:${phoneNumber}"
+    >${phoneNumber}</a
+  >`;
+}
+
+export function showEmail(email?: string, additionalCssClass?: string) {
+  if (!email) {
+    return html`<span class=${additionalCssClass}>${notAvailable}</span>`;
+  }
+  return html`<a class=${additionalCssClass} href="mailto:${email}"
+    >${email}</a
+  >`;
+}
+export function showContactpersoon(contactpersoon?: Contactpersoon) {
+  if (!contactpersoon) {
+    return notAvailable;
+  }
+  return html`<rock-icon icon="person"></rock-icon
+    ><span class="me-2">${show(contactpersoon.naam)}</span> 📧
+    ${showEmail(contactpersoon.email, 'me-2')}
+    <rock-icon icon="telephone"></rock-icon>
+    ${showPhoneNumber(contactpersoon.telefoon, 'me-2')}</span>
+    <rock-icon icon="phone"></rock-icon>
+    ${showPhoneNumber(contactpersoon.gsm)}`;
+}
+
+export const geslachtIcons: Record<Geslacht, string> = {
+  man: 'genderMale',
+  vrouw: 'genderFemale',
+  x: 'genderTrans',
+  onbekend: 'genderAmbiguous',
+};

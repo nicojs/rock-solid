@@ -1,4 +1,10 @@
-import { AanmeldingOf, Cursus, Deelnemer, Vakantie } from '@rock-solid/shared';
+import {
+  AanmeldingOf,
+  Contactpersoon,
+  Cursus,
+  Deelnemer,
+  Vakantie,
+} from '@rock-solid/shared';
 import { PersonenController } from './personen.controller.js';
 import { byId, factory, harness } from './test-utils.test.js';
 import { expect } from 'chai';
@@ -212,6 +218,52 @@ describe(PersonenController.name, () => {
       const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
       expect(actualDeelnemer.verblijfadres).undefined;
       expect(actualDeelnemer.domicilieadres).undefined;
+    });
+
+    it('should be able to update contactpersoon fields', async () => {
+      // Arrange
+      const contactpersoon: Contactpersoon = {
+        naam: 'Jan',
+        telefoon: '012345678',
+        gsm: '987654321',
+        email: 'jan@example.org',
+      };
+
+      // Act
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        contactpersoon,
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.contactpersoon).deep.eq(contactpersoon);
+    });
+
+    it('should be able to delete contactpersoon fields', async () => {
+      // Arrange
+      const contactpersoon: Contactpersoon = {
+        naam: 'Jan',
+        telefoon: '012345678',
+        gsm: '987654321',
+        email: 'jan@example.org',
+      };
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        contactpersoon,
+      });
+      delete contactpersoon.naam;
+      delete contactpersoon.telefoon;
+
+      // Act
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        contactpersoon,
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.contactpersoon).deep.eq(contactpersoon);
     });
   });
 });

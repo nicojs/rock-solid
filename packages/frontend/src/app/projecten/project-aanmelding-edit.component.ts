@@ -12,7 +12,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl, InputType } from '../forms';
-import { fullNameOrOnbekend } from '../personen/full-name.pipe';
+import { fullNameOrOnbekend } from '../personen/persoon.pipe';
 import { printProject } from './project.pipes';
 
 @customElement('rock-project-aanmelding-edit')

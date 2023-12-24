@@ -29,7 +29,7 @@ import {
   radioControl,
   tagsControl,
 } from '../forms';
-import { fullName } from '../personen/full-name.pipe';
+import { fullName } from '../personen/persoon.pipe';
 import { persoonService } from '../personen/persoon.service';
 import { capitalize } from '../shared';
 import { printProject } from './project.pipes';
