@@ -8,10 +8,9 @@
       "name": "🌱 Seed database",
       "program": "${workspaceFolder}/packages/backend/dist/seed/all.seed.js",
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "type": "node"
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "runtimeArgs": ["--enable-source-maps"]
     },
     {
       "name": "🧪 Run Backend Tests",
@@ -25,29 +24,27 @@
         "${workspaceFolder}/packages/backend/dist/**/*.test.js"
       ],
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "type": "node",
       "outputCapture": "std",
-      "outFiles": [
-        "${workspaceFolder}/**/*.js",
-        "!**/node_modules/**"
-      ]
+      "outFiles": ["${workspaceFolder}/**/*.js", "!**/node_modules/**"]
     },
     {
       "name": "🧲 Attach to backend",
       "port": 9229,
       "request": "attach",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "restart": true,
       "type": "node",
-      "outFiles": [
-        "${workspaceFolder}/**/*.js",
-        "!**/node_modules/**"
-      ]
+      "outFiles": ["${workspaceFolder}/**/*.js", "!**/node_modules/**"]
+    },
+    {
+      "name": "🚀 Launch current file",
+      "program": "${file}",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "cwd": "${fileDirname}"
     }
   ]
 }
