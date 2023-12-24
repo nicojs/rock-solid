@@ -1,6 +1,5 @@
 import {
   AanmeldingOf,
-  calculateAge,
   Cursus,
   Deelnemer,
   OverigPersoon,
@@ -19,7 +18,6 @@ import {
   restClient,
   show,
   showAdres,
-  showDatum,
   showOverigPersoonSelectie,
   pluralize,
   showDatumWithAge,

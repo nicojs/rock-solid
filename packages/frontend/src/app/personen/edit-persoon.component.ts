@@ -25,7 +25,6 @@ import {
   foldervoorkeurControls,
   checkboxesControl,
   radioControl,
-  FormGroup,
 } from '../forms';
 
 @customElement('rock-edit-persoon')
