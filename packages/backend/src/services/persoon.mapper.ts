@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import * as db from '@prisma/client';
 import {
+  Contactpersoon,
   Deelnemer,
   Foldervoorkeur,
   OverigPersoon,
@@ -85,11 +86,13 @@ export class PersoonMapper {
       foldervoorkeuren,
       eersteCursus,
       eersteVakantie,
+      contactpersoon,
       ...props
     } = fillOutAllUpsertablePersoonFields(persoon);
     const dbPersoon = await this.db.persoon.create({
       data: {
         ...props,
+        ...toContactPersoonFields(contactpersoon),
         volledigeNaam: computeVolledigeNaam(props),
         verblijfadres: toCreateAdresInput(verblijfadres),
         domicilieadres: domicilieadres
@@ -121,6 +124,7 @@ export class PersoonMapper {
       domicilieadres,
       eersteCursus,
       eersteVakantie,
+      contactpersoon,
       ...props
     } = fillOutAllPersoonFields(persoon);
     const { verblijfadresId, domicilieadresId } =
@@ -132,6 +136,7 @@ export class PersoonMapper {
       where,
       data: {
         ...props,
+        ...toContactPersoonFields(contactpersoon),
         volledigeNaam: computeVolledigeNaam(props),
         verblijfadres: toUpdateAdresInput(
           verblijfadres,
@@ -193,10 +198,20 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     eersteVakantieAanmelding,
     eersteCursusAanmeldingId,
     eersteVakantieAanmeldingId,
+    contactpersoon,
+    contactpersoonEmail,
+    contactpersoonGsm,
+    contactpersoonTelefoon,
     ...person
   } = p;
   return {
     ...purgeNulls(person),
+    contactpersoon: toContactPersoon({
+      contactpersoonEmail,
+      contactpersoonGsm,
+      contactpersoonTelefoon,
+      contactpersoon,
+    }),
     domicilieadres: toAdres(domicilieadres),
     verblijfadres: toAdres(verblijfadres),
     foldervoorkeuren: foldervoorkeuren.map(toFoldervoorkeur),
@@ -220,10 +235,12 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
         foldersoorten,
         selectie,
         laatsteAanmeldingJaarGeleden,
+        contactpersoon,
         ...where
       } = filter;
       return {
         ...where,
+        ...toContactPersoonFields(contactpersoon),
         ...(foldersoorten?.length
           ? { foldervoorkeuren: { some: { folder: { in: foldersoorten } } } }
           : {}),
@@ -346,4 +363,32 @@ function fillOutAllPersoonFields(persoon: Persoon): AllPersoonFields {
     toestemmingFotos: true,
     ...persoon,
   };
+}
+
+type ContactPersoonFields = Pick<
+  db.Prisma.PersoonCreateInput,
+  | 'contactpersoon'
+  | 'contactpersoonEmail'
+  | 'contactpersoonGsm'
+  | 'contactpersoonTelefoon'
+>;
+
+function toContactPersoonFields(
+  contactpersoon?: Contactpersoon,
+): ContactPersoonFields {
+  return {
+    contactpersoon: contactpersoon?.naam ?? null,
+    contactpersoonEmail: contactpersoon?.email ?? null,
+    contactpersoonGsm: contactpersoon?.gsm ?? null,
+    contactpersoonTelefoon: contactpersoon?.telefoon ?? null,
+  };
+}
+
+function toContactPersoon(contact: ContactPersoonFields): Contactpersoon {
+  return purgeNulls({
+    naam: contact.contactpersoon,
+    email: contact.contactpersoonEmail,
+    gsm: contact.contactpersoonGsm,
+    telefoon: contact.contactpersoonTelefoon,
+  });
 }

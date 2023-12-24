@@ -8,7 +8,7 @@ import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
-import { fullName } from '../personen/full-name.pipe';
+import { fullName } from '../personen/persoon.pipe';
 import { router } from '../router';
 import { pluralize, showDatum } from '../shared';
 import { printProject } from './project.pipes';

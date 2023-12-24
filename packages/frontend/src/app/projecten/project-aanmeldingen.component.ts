@@ -20,7 +20,7 @@ import {
   fullName,
   fullNameWithAge,
   geslachtIcons,
-} from '../personen/full-name.pipe';
+} from '../personen/persoon.pipe';
 import {
   TypeAheadHint,
   pluralize,

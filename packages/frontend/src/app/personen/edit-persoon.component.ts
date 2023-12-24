@@ -11,6 +11,8 @@ import {
   voedingswensen,
   Privilege,
   persoonLabels,
+  Contactpersoon,
+  deelnemerLabels,
 } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -142,6 +144,25 @@ const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
   },
   checkboxesControl('selectie', false, overigPersoonSelecties),
 ];
+const contactPersoonControls: readonly FormControl<Contactpersoon>[] =
+  Object.freeze([
+    Object.freeze({
+      name: 'naam',
+      type: InputType.text,
+    }),
+    Object.freeze({
+      name: 'email',
+      type: InputType.email,
+    }),
+    Object.freeze({
+      name: 'telefoon',
+      type: InputType.tel,
+    }),
+    Object.freeze({
+      name: 'gsm',
+      type: InputType.tel,
+    }),
+  ]);
 
 const deelnemerFormControls: FormControl<Deelnemer>[] = [
   ...basePersoonFormControls,
@@ -175,4 +196,10 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
     label: 'Opmerking',
     type: InputType.text,
   },
+  {
+    name: 'begeleidendeDienst',
+    label: deelnemerLabels['begeleidendeDienst'],
+    type: InputType.text,
+  },
+  formGroup('contactpersoon', contactPersoonControls),
 ];

@@ -2,7 +2,7 @@ import { Aanmelding, Project } from '@rock-solid/shared';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { FormControl, InputType } from '../forms';
-import { fullNameWithAge } from '../personen/full-name.pipe';
+import { fullNameWithAge } from '../personen/persoon.pipe';
 import { printProject } from './project.pipes';
 import { bootstrap } from '../../styles';
 import { privilege } from '../auth/privilege.directive';

@@ -12,6 +12,7 @@ import {
   organisatieonderdelen,
   OverigPersoonSelectie,
   overigPersoonSelecties,
+  calculateAge,
 } from '@rock-solid/shared';
 import { html } from 'lit';
 import { decimalSeparator } from './string-utils';
@@ -115,6 +116,10 @@ export function showDatum(val: Date | undefined): string {
     return val.toLocaleDateString();
   }
   return notAvailable;
+}
+
+export function showDatumWithAge(val?: Date): string {
+  return `${showDatum(val)}${val ? ` (${calculateAge(val)} jaar)` : ''}`;
 }
 
 export function showPlaats(plaats?: Plaats): string {

@@ -9,7 +9,7 @@ import {
   showOverigPersoonSelectie,
   showPlaats,
 } from '../shared';
-import { fullName, fullNameWithAge } from './full-name.pipe';
+import { fullName, fullNameWithAge } from './persoon.pipe';
 import { ModalComponent } from '../shared/modal.component';
 import { privilege } from '../auth/privilege.directive';
 
