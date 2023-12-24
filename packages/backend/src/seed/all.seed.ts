@@ -13,6 +13,7 @@ import { seedVakantieVrijwilligers } from './vakantie-vrijwilligers.seed.js';
 async function main() {
   const readonly = process.argv.includes('--readonly');
   const client = new db.PrismaClient();
+  console.log(`Seeding database using timezone ${process.env.TZ}...`);
   try {
     await client.$connect();
     await seedPlaatsen(client);

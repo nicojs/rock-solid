@@ -28,6 +28,10 @@ async function bootstrap() {
     exclude: [loginUrl, '/auth/callback', logoutUrl],
   });
   await app.listen(process.env['PORT'] ?? 3000);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  console.log(
+    `Application is running on: ${await app.getUrl()}, using timezone ${
+      process.env.TZ
+    }`,
+  );
 }
 bootstrap();

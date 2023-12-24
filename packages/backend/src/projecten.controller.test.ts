@@ -237,6 +237,30 @@ describe(ProjectenController.name, () => {
       expect(actual).deep.eq(expectedCursus);
     });
 
+    it('should correctly handle timezones', async () => {
+      const project = await harness.createProject(
+        factory.cursus({
+          activiteiten: [
+            factory.activiteit({
+              van: new Date('2011-10-05T20:00:00.000+02:00'), // different timezones
+              totEnMet: new Date('2011-10-07T16:00:00.000+01:00'), // different timezones
+            }),
+          ],
+        }),
+      );
+
+      // Act
+      const actual = await harness.getProject(project.id);
+
+      // Assert
+      expect(actual.activiteiten[0]!.van).deep.eq(
+        new Date(Date.UTC(2011, 9, 5, 18, 0, 0)),
+      );
+      expect(actual.activiteiten[0]!.totEnMet).deep.eq(
+        new Date(Date.UTC(2011, 9, 7, 15, 0, 0)),
+      );
+    });
+
     describe('filter', () => {
       let athensVakantie: Project;
       let creteVakantie: Project;

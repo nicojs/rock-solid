@@ -51,6 +51,7 @@ import { toPlaats } from './services/plaats.mapper.js';
  * @see https://stackoverflow.com/questions/45881829/how-to-have-mocha-show-entire-object-in-diff-on-assertion-error
  */
 chai.config.truncateThreshold = 0;
+process.env.TZ = 'Etc/UTC';
 
 const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
