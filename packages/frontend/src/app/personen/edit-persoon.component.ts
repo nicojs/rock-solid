@@ -201,5 +201,5 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
   checkboxesPropsControl('fotoToestemming', fotoToestemmingLabels, {
     label: deelnemerLabels['fotoToestemming'],
   }),
-  formGroup('contactpersoon', contactPersoonControls),
+  formGroup('contactpersoon', contactPersoonControls, { required: true }),
 ];

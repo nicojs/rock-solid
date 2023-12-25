@@ -381,6 +381,7 @@ function fillOutAllPersoonFields(persoon: Persoon): AllPersoonFields {
       socialeMedia: false,
       website: false,
     },
+    contactpersoon: {},
     ...persoon,
   };
 }

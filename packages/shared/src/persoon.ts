@@ -92,7 +92,7 @@ export interface FotoToestemming {
 export interface Deelnemer extends BasePersoon {
   type: 'deelnemer';
   begeleidendeDienst?: string;
-  contactpersoon?: Contactpersoon;
+  contactpersoon: Contactpersoon;
   woonsituatie: Woonsituatie;
   woonsituatieOpmerking?: string;
   werksituatie: Werksituatie;

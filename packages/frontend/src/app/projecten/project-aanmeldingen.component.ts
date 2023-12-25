@@ -341,7 +341,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 <th
                   class="text-center align-middle"
                   title="Toestemming foto's"
-                  width="10px"
+                  width="100px"
                 >
                   📷
                 </th>
@@ -594,6 +594,7 @@ function renderFotoToestemmingIcon(
     return nothing;
   }
   return html`<rock-icon
+    class="me-1"
     title="${name} geeft toestemming voor ${fotoToestemmingLabels[current]}"
     icon="${fotoToestemmingIcons[current]}"
   ></rock-icon>`;
