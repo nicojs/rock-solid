@@ -3,6 +3,8 @@ import {
   Contactpersoon,
   Cursus,
   Deelnemer,
+  Foldervoorkeur,
+  FotoToestemming,
   Vakantie,
 } from '@rock-solid/shared';
 import { PersonenController } from './personen.controller.js';
@@ -240,6 +242,24 @@ describe(PersonenController.name, () => {
       expect(actualDeelnemer.contactpersoon).deep.eq(contactpersoon);
     });
 
+    it('should be able to update folder voorkeur', async () => {
+      // Arrange
+      const foldervoorkeur: Foldervoorkeur = {
+        folder: 'deKeiCursussen',
+        communicatie: 'post',
+      };
+
+      // Act
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        foldervoorkeuren: [foldervoorkeur],
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.foldervoorkeuren).deep.eq([foldervoorkeur]);
+    });
+
     it('should be able to delete contactpersoon fields', async () => {
       // Arrange
       const contactpersoon: Contactpersoon = {
@@ -264,6 +284,27 @@ describe(PersonenController.name, () => {
       // Assert
       const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
       expect(actualDeelnemer.contactpersoon).deep.eq(contactpersoon);
+    });
+
+    it('should be able to update fototoestemming fields', async () => {
+      // Arrange
+      const fotoToestemming: FotoToestemming = {
+        folder: true,
+        website: true,
+        socialeMedia: true,
+        nieuwsbrief: true,
+        infoboekje: true,
+      };
+
+      // Act
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        fotoToestemming,
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.fotoToestemming).deep.eq(fotoToestemming);
     });
   });
 });

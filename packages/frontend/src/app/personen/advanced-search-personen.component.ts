@@ -15,7 +15,7 @@ import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import {
-  checkboxesControl,
+  checkboxesItemsControl,
   FormControl,
   InputType,
   selectControl,
@@ -106,10 +106,10 @@ export class AdvancedSearchPersonenComponent extends LitElement {
 }
 
 const overigPersoonSearchControls: FormControl<PersoonDetailsFilter>[] = [
-  checkboxesControl('selectie', false, overigPersoonSelecties, {
+  checkboxesItemsControl('selectie', overigPersoonSelecties, {
     label: overigPersoonLabels.selectie,
   }),
-  checkboxesControl('foldersoorten', false, foldersoorten, {
+  checkboxesItemsControl('foldersoorten', foldersoorten, {
     label: 'Folders',
   }),
 ];
@@ -129,7 +129,7 @@ const deelnemerSearchControls: FormControl<PersoonDetailsFilter>[] = [
     name: 'laatsteAanmeldingJaarGeleden',
     postfix: 'jaar geleden',
   },
-  checkboxesControl('foldersoorten', false, foldersoorten, {
+  checkboxesItemsControl('foldersoorten', foldersoorten, {
     label: 'Folders',
   }),
 ];

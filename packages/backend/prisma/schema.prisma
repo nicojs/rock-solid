@@ -34,24 +34,28 @@ model Persoon {
   foldervoorkeuren    Foldervoorkeur[]
 
   // Deelnemer
-  woonsituatie               Woonsituatie    @default(onbekend)
-  woonsituatieOpmerking      String?         @db.VarChar(256)
-  werksituatie               Werksituatie    @default(onbekend)
-  opleidingsvorm             Opleidingsvorm?
-  werksituatieOpmerking      String?         @db.VarChar(256)
-  voedingswens               Voedingswens    @default(geen)
-  voedingswensOpmerking      String?         @db.VarChar(256)
-  begeleidendeDienst         String?         @db.VarChar(256)
-  contactpersoon             String?         @db.VarChar(256)
-  contactpersoonTelefoon     String?         @db.VarChar(256)
-  contactpersoonGsm          String?         @db.VarChar(256)
-  contactpersoonEmail        String?         @db.VarChar(256)
-  aanmeldingen               Aanmelding[]
-  eersteCursusAanmelding     Aanmelding?     @relation("eersteCursusAanmelding", fields: [eersteCursusAanmeldingId], references: [id])
-  eersteCursusAanmeldingId   Int?
-  eersteVakantieAanmelding   Aanmelding?     @relation("eersteVakantieAanmelding", fields: [eersteVakantieAanmeldingId], references: [id])
-  eersteVakantieAanmeldingId Int?
-  toestemmingFotos           Boolean         @default(false)
+  woonsituatie                 Woonsituatie    @default(onbekend)
+  woonsituatieOpmerking        String?         @db.VarChar(256)
+  werksituatie                 Werksituatie    @default(onbekend)
+  opleidingsvorm               Opleidingsvorm?
+  werksituatieOpmerking        String?         @db.VarChar(256)
+  voedingswens                 Voedingswens    @default(geen)
+  voedingswensOpmerking        String?         @db.VarChar(256)
+  begeleidendeDienst           String?         @db.VarChar(256)
+  contactpersoon               String?         @db.VarChar(256)
+  contactpersoonTelefoon       String?         @db.VarChar(256)
+  contactpersoonGsm            String?         @db.VarChar(256)
+  contactpersoonEmail          String?         @db.VarChar(256)
+  aanmeldingen                 Aanmelding[]
+  eersteCursusAanmelding       Aanmelding?     @relation("eersteCursusAanmelding", fields: [eersteCursusAanmeldingId], references: [id])
+  eersteCursusAanmeldingId     Int?
+  eersteVakantieAanmelding     Aanmelding?     @relation("eersteVakantieAanmelding", fields: [eersteVakantieAanmeldingId], references: [id])
+  eersteVakantieAanmeldingId   Int?
+  toestemmingFotosFolder       Boolean         @default(false)
+  toestemmingFotosWebsite      Boolean         @default(false)
+  toestemmingFotosSocialeMedia Boolean         @default(false)
+  toestemmingFotosNieuwsbrief  Boolean         @default(false)
+  toestemmingFotosInfoboekje   Boolean         @default(false)
 
   // OverigePersonen
   selectie           OverigPersoonSelectie[]

@@ -152,12 +152,7 @@ export function toAanmeldingenCsv(aanmeldingen: Aanmelding[]): string {
       ...deelnemer,
       ...adresCsvFields(deelnemer?.verblijfadres),
     })),
-    [
-      ...basePersoonColumns,
-      'toestemmingFotos',
-      ...adresCsvColumns,
-      ...aanmeldingCsvColumns,
-    ],
+    [...basePersoonColumns, ...adresCsvColumns, ...aanmeldingCsvColumns],
     { ...deelnemerLabels, ...aanmeldingLabels },
     {},
   );

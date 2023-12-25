@@ -5,6 +5,7 @@ import {
   Contactpersoon,
   Deelnemer,
   Foldervoorkeur,
+  FotoToestemming,
   OverigPersoon,
   Persoon,
   PersoonFilter,
@@ -87,12 +88,14 @@ export class PersoonMapper {
       eersteCursus,
       eersteVakantie,
       contactpersoon,
+      fotoToestemming,
       ...props
     } = fillOutAllUpsertablePersoonFields(persoon);
     const dbPersoon = await this.db.persoon.create({
       data: {
         ...props,
         ...toContactPersoonFields(contactpersoon),
+        ...toFotoToestemmingFields(fotoToestemming),
         volledigeNaam: computeVolledigeNaam(props),
         verblijfadres: toCreateAdresInput(verblijfadres),
         domicilieadres: domicilieadres
@@ -125,6 +128,7 @@ export class PersoonMapper {
       eersteCursus,
       eersteVakantie,
       contactpersoon,
+      fotoToestemming,
       ...props
     } = fillOutAllPersoonFields(persoon);
     const { verblijfadresId, domicilieadresId } =
@@ -137,6 +141,7 @@ export class PersoonMapper {
       data: {
         ...props,
         ...toContactPersoonFields(contactpersoon),
+        ...toFotoToestemmingFields(fotoToestemming),
         volledigeNaam: computeVolledigeNaam(props),
         verblijfadres: toUpdateAdresInput(
           verblijfadres,
@@ -202,6 +207,11 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     contactpersoonEmail,
     contactpersoonGsm,
     contactpersoonTelefoon,
+    toestemmingFotosFolder,
+    toestemmingFotosInfoboekje,
+    toestemmingFotosNieuwsbrief,
+    toestemmingFotosSocialeMedia,
+    toestemmingFotosWebsite,
     ...person
   } = p;
   return {
@@ -211,6 +221,13 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
       contactpersoonGsm,
       contactpersoonTelefoon,
       contactpersoon,
+    }),
+    fotoToestemming: toFotoToestemming({
+      toestemmingFotosFolder,
+      toestemmingFotosInfoboekje,
+      toestemmingFotosNieuwsbrief,
+      toestemmingFotosSocialeMedia,
+      toestemmingFotosWebsite,
     }),
     domicilieadres: toAdres(domicilieadres),
     verblijfadres: toAdres(verblijfadres),
@@ -307,27 +324,24 @@ export const includePersoonAggregate = Object.freeze({
 function toFoldervoorkeurInput(
   persoon: Persoon,
 ): db.Prisma.FoldervoorkeurUpdateManyWithoutPersoonNestedInput | undefined {
-  if (persoon.type === 'overigPersoon') {
-    return {
-      deleteMany: {
-        persoonId: persoon.id,
-        folder: {
-          notIn: persoon.foldervoorkeuren.map(({ folder }) => folder),
+  return {
+    deleteMany: {
+      persoonId: persoon.id,
+      folder: {
+        notIn: persoon.foldervoorkeuren.map(({ folder }) => folder),
+      },
+    },
+    upsert: persoon.foldervoorkeuren.map(({ communicatie, folder }) => ({
+      where: {
+        folder_persoonId: {
+          folder,
+          persoonId: persoon.id,
         },
       },
-      upsert: persoon.foldervoorkeuren.map(({ communicatie, folder }) => ({
-        where: {
-          folder_persoonId: {
-            folder,
-            persoonId: persoon.id,
-          },
-        },
-        create: { folder, communicatie },
-        update: { folder, communicatie },
-      })),
-    };
-  }
-  return;
+      create: { folder, communicatie },
+      update: { folder, communicatie },
+    })),
+  };
 }
 
 type AllUpsertablePersoonFields = Omit<UpsertableDeelnemer, 'type'> &
@@ -360,7 +374,14 @@ function fillOutAllPersoonFields(persoon: Persoon): AllPersoonFields {
     selectie: [],
     woonsituatie: 'onbekend',
     werksituatie: 'onbekend',
-    toestemmingFotos: true,
+    fotoToestemming: {
+      folder: false,
+      infoboekje: false,
+      nieuwsbrief: false,
+      socialeMedia: false,
+      website: false,
+    },
+    contactpersoon: {},
     ...persoon,
   };
 }
@@ -391,4 +412,35 @@ function toContactPersoon(contact: ContactPersoonFields): Contactpersoon {
     gsm: contact.contactpersoonGsm,
     telefoon: contact.contactpersoonTelefoon,
   });
+}
+
+type FotoToestemmingFields = Pick<
+  db.Persoon,
+  | 'toestemmingFotosFolder'
+  | 'toestemmingFotosInfoboekje'
+  | 'toestemmingFotosNieuwsbrief'
+  | 'toestemmingFotosSocialeMedia'
+  | 'toestemmingFotosWebsite'
+>;
+
+function toFotoToestemmingFields(
+  toestemming?: FotoToestemming,
+): FotoToestemmingFields {
+  return {
+    toestemmingFotosFolder: toestemming?.folder ?? false,
+    toestemmingFotosInfoboekje: toestemming?.infoboekje ?? false,
+    toestemmingFotosNieuwsbrief: toestemming?.nieuwsbrief ?? false,
+    toestemmingFotosSocialeMedia: toestemming?.socialeMedia ?? false,
+    toestemmingFotosWebsite: toestemming?.website ?? false,
+  };
+}
+
+function toFotoToestemming(contact: FotoToestemmingFields): FotoToestemming {
+  return {
+    folder: contact.toestemmingFotosFolder,
+    infoboekje: contact.toestemmingFotosInfoboekje,
+    nieuwsbrief: contact.toestemmingFotosNieuwsbrief,
+    socialeMedia: contact.toestemmingFotosSocialeMedia,
+    website: contact.toestemmingFotosWebsite,
+  };
 }

@@ -52,8 +52,8 @@ export function showEmail(email?: string, additionalCssClass?: string) {
     >${email}</a
   >`;
 }
-export function showContactpersoon(contactpersoon?: Contactpersoon) {
-  if (!contactpersoon) {
+export function showContactpersoon(contactpersoon: Contactpersoon) {
+  if (Object.values(contactpersoon).every((v) => !v)) {
     return notAvailable;
   }
   return html`<rock-icon icon="person"></rock-icon

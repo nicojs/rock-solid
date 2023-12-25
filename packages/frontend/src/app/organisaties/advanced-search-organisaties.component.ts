@@ -6,7 +6,7 @@ import {
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { checkboxesControl, FormControl } from '../forms';
+import { checkboxesItemsControl, FormControl } from '../forms';
 import { downloadCsv, toOrganisatiesCsv } from '../shared';
 import { organisatieService } from './organisatie.service';
 
@@ -61,5 +61,5 @@ export class AdvancedSearchOrganisatiesComponent extends LitElement {
   }
 }
 const searchControls: FormControl<OrganisatieFilter>[] = [
-  checkboxesControl('folders', false, foldersoorten, { label: 'Folders' }),
+  checkboxesItemsControl('folders', foldersoorten, { label: 'Folders' }),
 ];

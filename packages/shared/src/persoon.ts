@@ -81,17 +81,25 @@ export interface Contactpersoon {
   email?: string;
 }
 
+export interface FotoToestemming {
+  folder: boolean;
+  website: boolean;
+  socialeMedia: boolean;
+  nieuwsbrief: boolean;
+  infoboekje: boolean;
+}
+
 export interface Deelnemer extends BasePersoon {
   type: 'deelnemer';
   begeleidendeDienst?: string;
-  contactpersoon?: Contactpersoon;
+  contactpersoon: Contactpersoon;
   woonsituatie: Woonsituatie;
   woonsituatieOpmerking?: string;
   werksituatie: Werksituatie;
   werksituatieOpmerking?: string;
   eersteCursus?: string;
   eersteVakantie?: string;
-  toestemmingFotos: boolean;
+  fotoToestemming: FotoToestemming;
 }
 
 export interface OverigPersoon extends BasePersoon {
@@ -138,11 +146,19 @@ export const deelnemerLabels: Record<keyof Deelnemer, string> = {
   begeleidendeDienst: 'Begeleidende dienst',
   eersteCursus: 'Eerste cursus',
   eersteVakantie: 'Eerste vakantie',
-  toestemmingFotos: "Toestemming voor foto's",
+  fotoToestemming: 'Foto toestemming',
   woonsituatie: 'Woonsituatie',
   woonsituatieOpmerking: 'Woonsituatie opmerking',
   werksituatie: 'Werksituatie',
   werksituatieOpmerking: 'Werksituatie opmerking',
+};
+
+export const fotoToestemmingLabels: Record<keyof FotoToestemming, string> = {
+  folder: 'Folder',
+  website: 'Website',
+  socialeMedia: 'Sociale media',
+  nieuwsbrief: 'Nieuwsbrief',
+  infoboekje: 'Infoboekje',
 };
 
 export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
