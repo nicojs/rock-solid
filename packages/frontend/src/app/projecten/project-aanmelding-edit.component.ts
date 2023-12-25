@@ -109,6 +109,21 @@ const aanmeldingControls: FormControl<Aanmelding>[] = [
     items: geslachten,
   },
   {
+    name: 'tijdstipVanAanmelden',
+    label: aanmeldingLabels.tijdstipVanAanmelden,
+    type: InputType.date,
+  },
+  {
+    name: 'bevestigingsbriefVerzondenOp',
+    label: aanmeldingLabels.bevestigingsbriefVerzondenOp,
+    type: InputType.date,
+  },
+  {
+    name: 'vervoersbriefVerzondenOp',
+    label: aanmeldingLabels.vervoersbriefVerzondenOp,
+    type: InputType.date,
+  },
+  {
     name: 'rekeninguittrekselNummer',
     label: 'Rekeninguittreksel nummer',
     type: InputType.text,

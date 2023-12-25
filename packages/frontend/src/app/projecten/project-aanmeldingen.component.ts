@@ -89,6 +89,28 @@ export class ProjectAanmeldingenComponent extends LitElement {
     }
   }
 
+  private async pathBrievenVerzonden(aanmeldingen: Aanmelding[]) {
+    projectService
+      .patchAanmeldingen(
+        this.project.id,
+        aanmeldingen.map(
+          ({ id, bevestigingsbriefVerzondenOp, vervoersbriefVerzondenOp }) => ({
+            id,
+            bevestigingsbriefVerzondenOp,
+            vervoersbriefVerzondenOp,
+          }),
+        ),
+      )
+      .then((aanmeldingen) => {
+        this.aanmeldingen$.next(
+          this.aanmeldingen!.map(
+            (a) => aanmeldingen.find((b) => a.id === b.id) ?? a,
+          ),
+        );
+        this.navigateToAanmeldingenList();
+      });
+  }
+
   private async pathRekeninguittreksels(aanmeldingen: Aanmelding[]) {
     projectService
       .patchAanmeldingen(
@@ -229,6 +251,17 @@ export class ProjectAanmeldingenComponent extends LitElement {
               )}
             ></rock-project-rekeninguittreksels>`
           : html`<rock-loading></rock-loading>`;
+      case 'brieven-verzenden':
+        return this.aanmeldingen
+          ? html`<rock-project-brieven-verzenden
+              .project=${this.project}
+              @brieven-verzonden=${(event: CustomEvent<Aanmelding[]>) =>
+                this.pathBrievenVerzonden(event.detail)}
+              .aanmeldingen=${this.aanmeldingen?.filter(
+                ({ status }) => status === 'Bevestigd',
+              )}
+            ></rock-project-brieven-verzenden>`
+          : html`<rock-loading></rock-loading>`;
       case undefined:
         return this.renderProjectAanmeldingen();
       default:
@@ -331,13 +364,24 @@ export class ProjectAanmeldingenComponent extends LitElement {
             ><rock-icon icon="cashCoin"></rock-icon> Rekeninguittreksels
             invullen</rock-link
           >
+          <rock-link
+            btn
+            btnOutlineSecondary
+            href="/${pluralize(this.project.type)}/${this.project
+              .id}/aanmeldingen/brieven-verzenden"
+            ><rock-icon icon="mailbox"></rock-icon> Brieven verzenden</rock-link
+          >
           <table class="table table-hover">
             <thead>
               <tr>
-                <th title="Bevestigd of aangemeld" width="10px">
+                <th
+                  class="align-middle"
+                  title="Bevestigd of aangemeld"
+                  width="10px"
+                >
                   <rock-icon icon="personLock"></rock-icon>
                 </th>
-                <th>Naam</th>
+                <th class="align-middle">Naam</th>
                 <th
                   class="text-center align-middle"
                   title="Toestemming foto's"
@@ -345,7 +389,11 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 >
                   📷
                 </th>
-                <th class="text-center" title="Geslacht" width="10px">
+                <th
+                  class="text-center align-middle"
+                  title="Geslacht"
+                  width="10px"
+                >
                   <rock-icon icon="genderNeuter"></rock-icon>
                 </th>
                 <th
@@ -355,13 +403,17 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 >
                   🥪
                 </th>
-                <th>Ingeschreven op</th>
-                <th>
-                  Geboortedatum
-                  <small>(leeftijd startdatum)</small>
+                <th class="align-middle">
+                  ${aanmeldingLabels.tijdstipVanAanmelden}
                 </th>
-                <th>Rekeninguittreksel</th>
-                <th>Acties</th>
+                <th class="align-middle">Bevestigingsbrief</th>
+                <th class="align-middle">Vervoersbrief</th>
+                <th class="align-middle">
+                  Geboortedatum<br />
+                  <small>(leeftijd op startdatum)</small>
+                </th>
+                <th class="align-middle">Rekeninguittreksel</th>
+                <th class="align-middle">Acties</th>
               </tr>
             </thead>
             <tbody>
@@ -384,6 +436,10 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       ${renderVoedingswens(aanmelding.deelnemer)}
                     </td>
                     <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
+                    <td>
+                      ${showDatum(aanmelding.bevestigingsbriefVerzondenOp)}
+                    </td>
+                    <td>${showDatum(aanmelding.vervoersbriefVerzondenOp)}</td>
                     <td>
                       ${showDatum(aanmelding.deelnemer?.geboortedatum)}
                       ${aanmelding.deelnemer?.geboortedatum

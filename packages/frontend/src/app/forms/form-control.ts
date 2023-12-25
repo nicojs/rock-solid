@@ -249,6 +249,7 @@ export type InputControl<TEntity> =
   | TemporalInput<TEntity>;
 
 export interface BaseInputControl<TEntity, TValue> {
+  id?: string;
   label?: string | false;
   validators?: Validators<TEntity, TValue>;
   placeholder?: string;

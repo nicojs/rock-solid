@@ -1,6 +1,7 @@
 import { LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { FormControl } from './form-control';
+import { generateInputName } from './common';
 
 export abstract class FormElement<TEntity> extends LitElement {
   override createRenderRoot() {
@@ -24,6 +25,6 @@ export abstract class FormControlElement<TEntity> extends FormElement<TEntity> {
   validate() {}
 
   get name() {
-    return [this.path, this.control.name].join('_');
+    return generateInputName(this.path, this.control.name);
   }
 }

@@ -120,15 +120,17 @@ model Project {
 }
 
 model Aanmelding {
-  id                       Int               @id @default(autoincrement())
-  projectId                Int
-  project                  Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  deelnemerId              Int?
-  deelnemer                Persoon?          @relation(fields: [deelnemerId], references: [id])
-  deelnames                Deelname[]
-  rekeninguittrekselNummer String?           @db.VarChar(32)
-  tijdstipVanAanmelden     DateTime          @default(now())
-  status                   Aanmeldingsstatus @default(Aangemeld)
+  id                           Int               @id @default(autoincrement())
+  projectId                    Int
+  project                      Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deelnemerId                  Int?
+  deelnemer                    Persoon?          @relation(fields: [deelnemerId], references: [id])
+  deelnames                    Deelname[]
+  rekeninguittrekselNummer     String?           @db.VarChar(32)
+  tijdstipVanAanmelden         DateTime          @default(now())
+  status                       Aanmeldingsstatus @default(Aangemeld)
+  bevestigingsbriefVerzondenOp DateTime?
+  vervoersbriefVerzondenOp     DateTime?
 
   // Fields copied from deelnemer when created
   plaats                     Plaats?      @relation(fields: [plaatsId], references: [id])

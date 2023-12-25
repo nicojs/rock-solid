@@ -28,16 +28,16 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
   }
 
   override render() {
-    return html` <h2>
+    return html`<h2>
         Rekeninguittreksels voor bevestigde inschrijvingen van
         ${printProject(this.project)}
       </h2>
       <form @submit=${this.submit}>
         ${this.aanmeldingen.map(
-          (aanmelding) =>
+          (aanmelding, index) =>
             html` <rock-reactive-form-control
               .entity=${aanmelding}
-              .control=${rekeninguittrekselNummerControlFor(aanmelding)}
+              .control=${rekeninguittrekselNummerControlFor(aanmelding, index)}
             ></rock-reactive-form-control>`,
         )}
         <button
@@ -51,10 +51,12 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
   }
 }
 
-function rekeninguittrekselNummerControlFor({
-  deelnemer,
-}: Aanmelding): FormControl<Aanmelding> {
+function rekeninguittrekselNummerControlFor(
+  { deelnemer }: Aanmelding,
+  index: number,
+): FormControl<Aanmelding> {
   return {
+    id: `reknr_${index}`,
     name: 'rekeninguittrekselNummer',
     label: fullNameWithAge(deelnemer!),
     type: InputType.text,
