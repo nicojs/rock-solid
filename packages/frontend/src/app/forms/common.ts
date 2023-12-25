@@ -4,7 +4,12 @@ import {
   foldersoorten,
   Foldervoorkeur,
 } from '@rock-solid/shared';
-import { FormControl, InputType, radioControl } from './form-control';
+import {
+  FormControl,
+  InputControl,
+  InputType,
+  radioControl,
+} from './form-control';
 
 export const adresControls: readonly FormControl<Adres>[] = Object.freeze([
   Object.freeze({
@@ -34,3 +39,11 @@ export const foldervoorkeurControls: readonly FormControl<Foldervoorkeur>[] = [
     validators: { required: true },
   }),
 ];
+
+export function generateInputName(path: string, name: string) {
+  return [path, name].join('_');
+}
+
+export function generateInputId(control: InputControl<any>, path: string) {
+  return control.id ?? generateInputName(path, control.name);
+}

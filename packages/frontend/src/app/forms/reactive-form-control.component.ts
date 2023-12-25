@@ -4,6 +4,7 @@ import { capitalize } from '../shared';
 import { FormControl, InputControl, InputType } from './form-control';
 import { FormControlElement } from './form-element';
 import { createRef, ref } from 'lit/directives/ref.js';
+import { generateInputId } from './common';
 
 @customElement('rock-reactive-form-control')
 export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
@@ -62,7 +63,9 @@ export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
     return html` <div class="mb-3 row">
       <div class="col-lg-2 col-md-4">
         ${control.type !== InputType.checkbox
-          ? html`<label for="${this.name}" class="col-form-label"
+          ? html`<label
+              for=${generateInputId(control, this.path)}
+              class="col-form-label"
               >${control.label ?? capitalize(this.control.name)}</label
             >`
           : ''}

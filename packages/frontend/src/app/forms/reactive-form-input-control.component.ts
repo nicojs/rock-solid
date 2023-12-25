@@ -18,6 +18,7 @@ import { capitalize, toDateString, toDateTimeString } from '../shared';
 import { Decimal } from '@rock-solid/shared';
 import { FormControlElement } from './form-element';
 import { ref, createRef } from 'lit/directives/ref.js';
+import { generateInputId } from './common';
 
 @customElement('rock-reactive-form-input-control')
 export class ReactiveFormInputControl<
@@ -28,6 +29,10 @@ export class ReactiveFormInputControl<
 
   @property({ attribute: false })
   private validationMessage = '';
+
+  private get inputId() {
+    return generateInputId(this.control, this.path);
+  }
 
   override render() {
     return html`
@@ -83,7 +88,7 @@ export class ReactiveFormInputControl<
   private renderCheckbox(control: CheckboxInputControl<TEntity>) {
     return html`<div class="form-check">
       <input
-        id="${this.name}"
+        id=${this.inputId}
         ${ref(this.inputRef)}
         name="${control.name}"
         type="checkbox"
@@ -95,7 +100,7 @@ export class ReactiveFormInputControl<
           this.updateValue(inputEl.checked);
         }}"
       />
-      <label for="${this.name}" class="form-check-label"
+      <label for=${this.inputId} class="form-check-label"
         >${this.control.label ?? capitalize(this.control.name)}</label
       >
     </div> `;
@@ -106,7 +111,7 @@ export class ReactiveFormInputControl<
       type="${control.type}"
       class="form-control"
       ${ref(this.inputRef)}
-      id="${this.name}"
+      id=${this.inputId}
       name="${control.name}"
       value="${ifDefined(this.entity[control.name])}"
       ?required=${control.validators?.required}
@@ -131,7 +136,7 @@ export class ReactiveFormInputControl<
         type="number"
         class="form-control"
         ${ref(this.inputRef)}
-        id="${this.name}"
+        id=${this.inputId}
         name="${control.name}"
         value="${this.entity[control.name]}"
         ?required=${control.validators?.required}
@@ -164,7 +169,7 @@ export class ReactiveFormInputControl<
     return html`<input
       type="${control.type}"
       class="form-control"
-      id="${this.name}"
+      id=${this.inputId}
       ${ref(this.inputRef)}
       name="${control.name}"
       value="${dateToString(this.entity[control.name] as unknown as Date)}"
@@ -278,7 +283,7 @@ export class ReactiveFormInputControl<
     };
 
     return html` ${Object.entries(control.items).map(([key, value]) => {
-      const id = `${this.path}-${key}`;
+      const id = `${this.inputId}-${key}`;
       return html`<div class="form-check me-2">
         <input
           class="form-check-input"

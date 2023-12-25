@@ -69,5 +69,5 @@ export const geslachtIcons: Record<Geslacht, string> = {
   man: 'genderMale',
   vrouw: 'genderFemale',
   x: 'genderTrans',
-  onbekend: 'genderAmbiguous',
+  onbekend: 'questionCircle',
 };

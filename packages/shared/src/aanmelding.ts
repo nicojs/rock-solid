@@ -15,6 +15,8 @@ export interface Aanmelding {
   woonsituatie: Woonsituatie;
   geslacht: Geslacht;
   plaats?: Plaats;
+  bevestigingsbriefVerzondenOp?: Date;
+  vervoersbriefVerzondenOp?: Date;
 
   status: Aanmeldingsstatus;
 }
@@ -56,4 +58,6 @@ export const aanmeldingLabels: Record<keyof Aanmelding, string> = {
   woonsituatie: 'Woonsituatie',
   geslacht: 'Geslacht',
   status: 'Status',
+  bevestigingsbriefVerzondenOp: 'Bevestigingsbrief verzonden op',
+  vervoersbriefVerzondenOp: 'Vervoersbrief verzonden op',
 };

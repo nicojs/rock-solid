@@ -113,7 +113,7 @@ export function toDateTimeString(
 
 export function showDatum(val: Date | undefined): string {
   if (val) {
-    return val.toLocaleDateString();
+    return val.toLocaleDateString('nl-NL');
   }
   return notAvailable;
 }
