@@ -58,7 +58,7 @@ export interface OverigPersoonTextFilter extends BasePersoonTextFilter {
   overigePersoonSelectie?: OverigPersoonSelectie;
 }
 
-export type PersoonDetailsFilter = Partial<
+export type PersoonFilter = Partial<
   Omit<OverigPersoon, 'type' | 'foldervoorkeuren'> &
     Omit<
       Deelnemer,
@@ -68,11 +68,11 @@ export type PersoonDetailsFilter = Partial<
     }
 > & {
   foldersoorten?: Foldersoort[];
-  searchType: 'persoon';
   laatsteAanmeldingJaarGeleden?: number;
+  minLeeftijd?: number;
+  maxLeeftijd?: number;
+  volledigeNaamLike?: string;
 };
-
-export type PersoonFilter = PersoonDetailsFilter | PersoonTextFilter;
 
 export interface Contactpersoon {
   naam?: string;

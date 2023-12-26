@@ -436,6 +436,15 @@ export const factory = {
       ...overrides,
     };
   },
+  overigPersoon(
+    overrides?: Partial<UpsertableOverigPersoon>,
+  ): UpsertableOverigPersoon {
+    return {
+      achternaam: 'OverigPersoon',
+      type: 'overigPersoon',
+      ...overrides,
+    };
+  },
 
   cursus(overrides?: Partial<UpsertableCursus>): UpsertableCursus {
     return {

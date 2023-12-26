@@ -37,10 +37,7 @@ export class PersonenComponent extends RockElement {
 
   override update(changedProperties: PropertyValues<PersonenComponent>) {
     if (changedProperties.has('type')) {
-      personenStore.setFilter({
-        type: this.type,
-        searchType: 'persoon',
-      });
+      personenStore.setFilter({ type: this.type });
     }
     if (
       changedProperties.has('path') &&
@@ -75,9 +72,8 @@ export class PersonenComponent extends RockElement {
   private searchSubmit(event: CustomEvent<string>) {
     if (event.detail) {
       personenStore.setCurrentPage(0, {
-        searchType: 'text',
         type: this.type,
-        search: event.detail,
+        volledigeNaamLike: event.detail,
       });
     } else {
       personenStore.setCurrentPage(0, undefined);

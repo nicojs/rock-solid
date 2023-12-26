@@ -113,6 +113,93 @@ describe(PersonenController.name, () => {
   });
 
   describe('GET /personen?searchType=persoon', () => {
+    it('by volledigeNaamLike', async () => {
+      // Arrange
+      const [fooBar, bazQux, bond] = await Promise.all([
+        harness.createDeelnemer(
+          factory.deelnemer({ voornaam: 'Foo', achternaam: 'Bar' }),
+        ),
+        harness.createDeelnemer(
+          factory.deelnemer({ voornaam: 'Baz', achternaam: 'Qux' }),
+        ),
+        harness.createOverigPersoon(
+          factory.overigPersoon({ voornaam: undefined, achternaam: 'Bond' }),
+        ),
+      ]);
+
+      // Act
+      const [oo, ba, bazQu, ond, fooBaz, noFilter] = await Promise.all([
+        harness.getAllPersonen({ volledigeNaamLike: 'oo' }),
+        harness.getAllPersonen({ volledigeNaamLike: 'ba' }),
+        harness.getAllPersonen({ volledigeNaamLike: 'Baz qu' }),
+        harness.getAllPersonen({ volledigeNaamLike: 'ond' }),
+        harness.getAllPersonen({ volledigeNaamLike: 'foo Baz' }),
+        harness.getAllPersonen({ volledigeNaamLike: undefined }),
+      ]);
+
+      // Assert
+      expect(oo).deep.eq([fooBar]);
+      expect(ba.sort(byId)).deep.eq([fooBar, bazQux].sort(byId));
+      expect(bazQu).deep.eq([bazQux]);
+      expect(ond).deep.eq([bond]);
+      expect(fooBaz).deep.eq([]);
+      expect(noFilter.sort(byId)).deep.eq([fooBar, bazQux, bond].sort(byId));
+    });
+
+    it('by selectie', async () => {
+      // Arrange
+      const [deelnemer, overigPersoon, bestuurslid, vrijwilliger, werknemer] =
+        await Promise.all([
+          harness.createDeelnemer(factory.deelnemer()),
+          harness.createOverigPersoon(factory.overigPersoon({ selectie: [] })),
+          harness.createOverigPersoon(
+            factory.overigPersoon({
+              selectie: ['algemeneVergaderingDeBedding'],
+            }),
+          ),
+          harness.createOverigPersoon(
+            factory.overigPersoon({ selectie: ['vakantieVrijwilliger'] }),
+          ),
+          harness.createOverigPersoon(
+            factory.overigPersoon({
+              selectie: ['vakantieVrijwilliger', 'personeel'],
+            }),
+          ),
+        ]);
+
+      // Act
+      const [
+        personeelResult,
+        algemeneVergaderingResult,
+        noSelectieResult,
+        noFilterResult,
+      ] = await Promise.all([
+        harness.getAllPersonen({ selectie: ['personeel'] }),
+        harness.getAllPersonen({
+          selectie: [
+            'algemeneVergaderingDeBedding',
+            'algemeneVergaderingDeKei',
+          ],
+        }),
+        harness.getAllPersonen({ selectie: [] }),
+        harness.getAllPersonen({ selectie: undefined }),
+      ]);
+
+      // Assert
+      expect(personeelResult).deep.eq([werknemer]);
+      expect(algemeneVergaderingResult).deep.eq([bestuurslid]);
+      expect(noSelectieResult.sort(byId)).deep.eq(
+        [deelnemer, overigPersoon, bestuurslid, vrijwilliger, werknemer].sort(
+          byId,
+        ),
+      );
+      expect(noFilterResult.sort(byId)).deep.eq(
+        [deelnemer, overigPersoon, bestuurslid, vrijwilliger, werknemer].sort(
+          byId,
+        ),
+      );
+    });
+
     it('by foldersoort', async () => {
       // Arrange
       const [
@@ -159,19 +246,12 @@ describe(PersonenController.name, () => {
       // Act
       const [actualDeKei, actualKeiJongBuso, actualKeiJong, actualNoFilter] =
         await Promise.all([
+          harness.getAllPersonen({ foldersoorten: ['deKeiCursussen'] }),
+          harness.getAllPersonen({ foldersoorten: ['keiJongBuso'] }),
           harness.getAllPersonen({
-            searchType: 'persoon',
-            foldersoorten: ['deKeiCursussen'],
-          }),
-          harness.getAllPersonen({
-            searchType: 'persoon',
-            foldersoorten: ['keiJongBuso'],
-          }),
-          harness.getAllPersonen({
-            searchType: 'persoon',
             foldersoorten: ['keiJongBuso', 'keiJongNietBuso'],
           }),
-          harness.getAllPersonen({ searchType: 'persoon', foldersoorten: [] }),
+          harness.getAllPersonen({ foldersoorten: [] }),
         ]);
 
       // Assert
@@ -192,6 +272,87 @@ describe(PersonenController.name, () => {
         ].sort(byId),
       );
     });
+
+    it('by minLeeftijd', async () => {
+      // Arrange
+      const { deelnemer17Y, deelnemer18Y, deelnemerNoGeboortedatum } =
+        await arrangeLeeftijdDeelnemers();
+
+      // Act
+      const [deelnemers18Years, deelnemers17Years, noFilter] =
+        await Promise.all([
+          harness.getAllPersonen({ minLeeftijd: 18 }),
+          harness.getAllPersonen({ minLeeftijd: 17 }),
+          harness.getAllPersonen({ minLeeftijd: undefined }),
+        ]);
+
+      // Assert
+      expect(deelnemers18Years).deep.eq([deelnemer18Y]);
+      expect(deelnemers17Years.sort(byId)).deep.eq(
+        [deelnemer18Y, deelnemer17Y].sort(byId),
+      );
+      expect(noFilter.sort(byId)).deep.eq(
+        [deelnemer18Y, deelnemer17Y, deelnemerNoGeboortedatum].sort(byId),
+      );
+    });
+
+    it('by maxLeeftijd', async () => {
+      // Arrange
+      const { deelnemer17Y, deelnemer18Y, deelnemerNoGeboortedatum } =
+        await arrangeLeeftijdDeelnemers();
+
+      // Act
+      const [deelnemers18Years, deelnemers17Years, noFilter] =
+        await Promise.all([
+          harness.getAllPersonen({ maxLeeftijd: 18 }),
+          harness.getAllPersonen({ maxLeeftijd: 17 }),
+          harness.getAllPersonen({ maxLeeftijd: undefined }),
+        ]);
+
+      // Assert
+      expect(deelnemers18Years.sort(byId)).deep.eq(
+        [deelnemer17Y, deelnemer18Y].sort(byId),
+      );
+      expect(deelnemers17Years).deep.eq([deelnemer17Y]);
+      expect(noFilter.sort(byId)).deep.eq(
+        [deelnemer18Y, deelnemer17Y, deelnemerNoGeboortedatum].sort(byId),
+      );
+    });
+
+    async function arrangeLeeftijdDeelnemers() {
+      const now = new Date();
+
+      const [deelnemer18Y, deelnemer17Y, deelnemerNoGeboortedatum] =
+        await Promise.all([
+          harness.createDeelnemer(
+            factory.deelnemer({
+              achternaam: '18Years',
+              geboortedatum: new Date(
+                now.getFullYear() - 18,
+                now.getMonth(),
+                now.getDate(),
+              ),
+            }),
+          ),
+          harness.createDeelnemer(
+            factory.deelnemer({
+              achternaam: '17Years',
+              geboortedatum: new Date(
+                now.getFullYear() - 18,
+                now.getMonth(),
+                now.getDate() + 1,
+              ),
+            }),
+          ),
+          harness.createDeelnemer(
+            factory.deelnemer({
+              achternaam: 'noGeboortedatum',
+              geboortedatum: undefined,
+            }),
+          ),
+        ]);
+      return { deelnemer18Y, deelnemer17Y, deelnemerNoGeboortedatum };
+    }
   });
 
   describe('PUT /personen/:id', () => {

@@ -49,25 +49,15 @@ export function pickNotEmpty<T, TProp extends keyof T>(
 }
 
 export function datumFromRaw(datum: string): Date | undefined {
-  function tryParse(split: '/' | '-') {
-    // example: 21-04-77
-
-    // eslint-disable-next-line prefer-const
-    let [dag, maand, jaar] = datum.split(split).map((i) => parseInt(i));
-    if (isNaN(dag!) || maand === undefined || jaar === undefined) {
-      return undefined;
+  // 1971-11-13
+  if (datum) {
+    const d = new Date(datum);
+    if (isNaN(d.getTime())) {
+      throw new Error(`Invalid date: ${datum}`);
     }
-    if (jaar < 100) {
-      // 🤷‍♀️
-      if (jaar > 26) {
-        jaar += 1900;
-      } else {
-        jaar += 2000;
-      }
-    }
-    return new Date(jaar ?? 0, (maand ?? 1) - 1, dag);
+    return d;
   }
-  return tryParse('/') ?? tryParse('-');
+  return undefined;
 }
 
 export function prijsFromRaw(prijs: string) {

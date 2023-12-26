@@ -1,7 +1,6 @@
 import {
   Persoon,
   PersoonType,
-  PersoonDetailsFilter,
   Deelnemer,
   deelnemerLabels,
   OverigPersoon,
@@ -10,6 +9,7 @@ import {
   werksituaties,
   overigPersoonLabels,
   foldersoorten,
+  PersoonFilter,
 } from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -32,8 +32,7 @@ import { persoonService } from './persoon.service';
 export class AdvancedSearchPersonenComponent extends LitElement {
   public static override styles = [bootstrap];
 
-  private filter: PersoonDetailsFilter = {
-    searchType: 'persoon',
+  private filter: PersoonFilter = {
     type: 'deelnemer',
   };
 
@@ -105,7 +104,7 @@ export class AdvancedSearchPersonenComponent extends LitElement {
   }
 }
 
-const overigPersoonSearchControls: FormControl<PersoonDetailsFilter>[] = [
+const overigPersoonSearchControls: FormControl<PersoonFilter>[] = [
   checkboxesItemsControl('selectie', overigPersoonSelecties, {
     label: overigPersoonLabels.selectie,
   }),
@@ -114,7 +113,7 @@ const overigPersoonSearchControls: FormControl<PersoonDetailsFilter>[] = [
   }),
 ];
 
-const deelnemerSearchControls: FormControl<PersoonDetailsFilter>[] = [
+const deelnemerSearchControls: FormControl<PersoonFilter>[] = [
   selectControl('geslacht', geslachten, {
     label: deelnemerLabels.geslacht,
     placeholder: 'Geen filter',
@@ -128,6 +127,18 @@ const deelnemerSearchControls: FormControl<PersoonDetailsFilter>[] = [
     label: 'Laatste aanmelding',
     name: 'laatsteAanmeldingJaarGeleden',
     postfix: 'jaar geleden',
+  },
+  {
+    type: InputType.number,
+    label: 'Min leeftijd',
+    name: 'minLeeftijd',
+    postfix: 'jaar oud',
+  },
+  {
+    type: InputType.number,
+    label: 'Max leeftijd',
+    name: 'maxLeeftijd',
+    postfix: 'jaar oud',
   },
   checkboxesItemsControl('foldersoorten', foldersoorten, {
     label: 'Folders',

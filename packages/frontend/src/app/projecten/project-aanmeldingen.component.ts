@@ -552,12 +552,13 @@ export class ProjectAanmeldingenComponent extends LitElement {
       </div>
 
       <rock-autocomplete
-        .searchAction="${(val: string): Promise<TypeAheadHint<Deelnemer>[]> =>
+        .searchAction="${(
+          volledigeNaamLike: string,
+        ): Promise<TypeAheadHint<Deelnemer>[]> =>
           persoonService
             .getAll({
               type: 'deelnemer',
-              searchType: 'text',
-              search: val,
+              volledigeNaamLike,
             })
             .then((personen) =>
               (personen as Deelnemer[]).map((persoon) => ({
