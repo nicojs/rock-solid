@@ -112,7 +112,7 @@ describe(PersonenController.name, () => {
     });
   });
 
-  describe('GET /personen?searchType=persoon', () => {
+  describe('GET /personen', () => {
     it('by volledigeNaamLike', async () => {
       // Arrange
       const [fooBar, bazQux, bond] = await Promise.all([
