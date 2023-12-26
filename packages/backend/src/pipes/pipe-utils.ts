@@ -22,6 +22,17 @@ export function filterMetaQuery<T extends Record<string, unknown>>(query: T) {
     ) as T;
 }
 
+export function tryParseInt(val: string | undefined): number | undefined {
+  if (val === undefined) {
+    return undefined;
+  }
+  const parsed = parseInt(val);
+  if (isNaN(parsed)) {
+    return undefined;
+  }
+  return parsed;
+}
+
 @Injectable()
 export class MetaFilterPipe implements PipeTransform {
   transform(value: Record<string, unknown>): unknown {

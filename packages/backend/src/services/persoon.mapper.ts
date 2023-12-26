@@ -245,56 +245,72 @@ function toFoldervoorkeur(foldervoorkeur: db.Foldervoorkeur): Foldervoorkeur {
 }
 
 function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
-  switch (filter.searchType) {
-    case 'persoon':
-      const {
-        searchType,
-        foldersoorten,
-        selectie,
-        laatsteAanmeldingJaarGeleden,
-        contactpersoon,
-        ...where
-      } = filter;
-      return {
-        ...where,
-        ...toContactPersoonFields(contactpersoon),
-        ...(foldersoorten?.length
-          ? { foldervoorkeuren: { some: { folder: { in: foldersoorten } } } }
-          : {}),
-        ...(selectie?.length ? { selectie: { hasSome: selectie } } : {}),
-        ...(laatsteAanmeldingJaarGeleden !== undefined
-          ? {
-              aanmeldingen: {
-                some: {
-                  project: {
-                    jaar: {
-                      gte:
-                        new Date().getFullYear() - laatsteAanmeldingJaarGeleden,
-                    },
-                  },
+  const {
+    foldersoorten,
+    selectie,
+    laatsteAanmeldingJaarGeleden,
+    minLeeftijd,
+    maxLeeftijd,
+    contactpersoon,
+    volledigeNaamLike,
+    ...where
+  } = filter;
+  return {
+    ...where,
+    ...toContactPersoonFields(contactpersoon),
+    ...(foldersoorten?.length
+      ? { foldervoorkeuren: { some: { folder: { in: foldersoorten } } } }
+      : {}),
+    ...(selectie?.length ? { selectie: { hasSome: selectie } } : {}),
+    ...(laatsteAanmeldingJaarGeleden !== undefined
+      ? {
+          aanmeldingen: {
+            some: {
+              project: {
+                jaar: {
+                  gte: new Date().getFullYear() - laatsteAanmeldingJaarGeleden,
                 },
               },
-            }
-          : {}),
-      };
-    case 'text':
-      const whereStatement = {
-        volledigeNaam: { contains: filter.search, mode: 'insensitive' },
-        type: filter.type,
-      } as const;
-      if (filter.type === 'overigPersoon' && filter.overigePersoonSelectie) {
-        return {
-          ...whereStatement,
-          selectie: {
-            hasSome: filter.overigePersoonSelectie
-              ? [filter.overigePersoonSelectie]
-              : undefined,
+            },
           },
-        };
-      } else {
-        return whereStatement;
-      }
-  }
+        }
+      : {}),
+    geboortedatum: dateRangeFilter({ minLeeftijd, maxLeeftijd }),
+    ...(volledigeNaamLike
+      ? {
+          volledigeNaam: { contains: volledigeNaamLike, mode: 'insensitive' },
+        }
+      : {}),
+  };
+}
+
+type LeeftijdRangeFilter = Pick<PersoonFilter, 'minLeeftijd' | 'maxLeeftijd'>;
+
+function dateRangeFilter({
+  minLeeftijd,
+  maxLeeftijd,
+}: LeeftijdRangeFilter): db.Prisma.DateTimeNullableFilter<'Persoon'> {
+  const now = new Date();
+  return {
+    ...(minLeeftijd === undefined
+      ? {}
+      : {
+          lte: new Date(
+            now.getFullYear() - minLeeftijd,
+            now.getMonth(),
+            now.getDate(),
+          ),
+        }),
+    ...(maxLeeftijd === undefined
+      ? {}
+      : {
+          gte: new Date(
+            now.getFullYear() - (maxLeeftijd + 1),
+            now.getMonth(),
+            now.getDate() + 1,
+          ),
+        }),
+  };
 }
 
 export const includePersoonAggregate = Object.freeze({

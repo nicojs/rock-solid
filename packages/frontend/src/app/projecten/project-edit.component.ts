@@ -219,12 +219,11 @@ function begeleidersTagsControl(
   return tagsControl<BaseProject, 'begeleiders'>(
     'begeleiders',
     (tag) => fullName(tag),
-    async (search) => {
+    async (volledigeNaamLike) => {
       const personen = await persoonService.getAll({
         type: 'overigPersoon',
-        searchType: 'text',
-        search,
-        overigePersoonSelectie,
+        selectie: [overigePersoonSelectie],
+        volledigeNaamLike,
       });
       return personen.map((persoon) => ({
         text: fullName(persoon),
