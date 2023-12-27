@@ -178,17 +178,23 @@ export type UpsertableVakantie = Upsertable<
   activiteiten: UpsertableActiviteit[];
 };
 
-export type ProjectFilter = Pick<Project, 'type'> & {
-  naam?: string;
-  aanmeldingPersoonId?: number;
-  begeleidDoorPersoonId?: number;
-};
+export type ProjectFilter = Pick<Project, 'type'> &
+  Partial<Pick<Project, 'jaar'>> & {
+    titelLike?: string;
+    aanmeldingPersoonId?: number;
+    begeleidDoorPersoonId?: number;
+    organisatieonderdelen?: Organisatieonderdeel[];
+  };
 
 export function toProjectFilter(
   query: Queryfied<ProjectFilter>,
 ): ProjectFilter {
   return {
     ...filterMetaQuery(query),
+    jaar: tryParseInt(query.jaar),
+    organisatieonderdelen: query.organisatieonderdelen?.split(
+      ',',
+    ) as Organisatieonderdeel[],
     begeleidDoorPersoonId: tryParseInt(query.begeleidDoorPersoonId),
     aanmeldingPersoonId: tryParseInt(query.aanmeldingPersoonId),
   };

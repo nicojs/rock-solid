@@ -1,6 +1,7 @@
 import * as db from '@prisma/client';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { prijsFromRaw, readImportJson, writeOutputJson } from './seed-utils.js';
+import { toTitel } from '../services/project.mapper.js';
 
 type RawVerblijf = 'hotel of pension' | 'vakantiehuis' | 'boot' | '';
 type RawVervoer =
@@ -69,9 +70,11 @@ export async function seedVakanties(
     if (iteration) {
       throw new Error(`Unexpected project code ${projectNummerMatch[0]}`);
     }
+    const naam = [raw.bestemming, raw.land].filter(Boolean).join(' - ');
     const project: db.Prisma.ProjectCreateInput = {
-      naam: [raw.bestemming, raw.land].filter(Boolean).join(' - '),
+      naam,
       projectnummer,
+      titel: toTitel(projectnummer, naam),
       type: 'vakantie',
       jaar: parseInt(raw.jaar),
       seizoen: raw.seizoen === 'winter' ? 'winter' : 'zomer',

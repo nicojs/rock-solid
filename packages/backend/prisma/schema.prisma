@@ -98,9 +98,10 @@ model Plaats {
 
 model Project {
   id            Int          @id @default(autoincrement())
-  projectnummer String       @unique @db.VarChar(256)
+  projectnummer String       @unique @db.VarChar(40)
+  naam          String       @db.VarChar(216)
+  titel         String       @db.VarChar(256)
   type          ProjectType
-  naam          String       @db.VarChar(256)
   activiteiten  Activiteit[]
   aanmeldingen  Aanmelding[]
   begeleiders   Persoon[]

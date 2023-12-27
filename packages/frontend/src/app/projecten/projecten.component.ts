@@ -6,6 +6,8 @@ import {
   Queryfied,
   toProjectFilter,
   tryParseInt,
+  organisatieonderdelen,
+  cursusLabels,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -20,7 +22,12 @@ import {
 } from '../shared';
 import { newActiviteit } from './project-edit.component';
 import { projectenStore } from './projecten.store';
-import { InputControl, InputType } from '../forms';
+import {
+  FormControl,
+  InputControl,
+  InputType,
+  checkboxesItemsControl,
+} from '../forms';
 import { distinctUntilChanged, map } from 'rxjs';
 
 @customElement('rock-projecten')
@@ -164,11 +171,13 @@ export class ProjectenComponent extends RockElement {
               >
             </div>
           </div>
-
           <rock-search
             .mainControl=${this.type === 'cursus'
               ? mainCursusSearchControl
               : mainVakantieSearchControl}
+            .advancedControls=${this.type === 'cursus'
+              ? advancedCursusSearchControls
+              : advancedVakantieSearchControls}
             .filter=${this.filter}
             @search-submitted=${() => this.doSearch()}
           ></rock-search>
@@ -225,13 +234,34 @@ export class ProjectenComponent extends RockElement {
 
 const mainCursusSearchControl: InputControl<ProjectFilter> = {
   type: InputType.text,
-  name: 'naam',
-  label: 'Naam',
-  placeholder: 'Zoek op cursusnaam',
+  name: 'titelLike',
+  label: 'Titel',
+  placeholder: 'Zoek op projectnummer of cursusnaam',
 };
 const mainVakantieSearchControl: InputControl<ProjectFilter> = {
   type: InputType.text,
-  name: 'naam',
-  label: 'Bestemming - land',
-  placeholder: 'Zoek op bestemming - land',
+  name: 'titelLike',
+  label: 'Titel',
+  placeholder: 'Zoek op projectnummer of bestemming - land',
 };
+
+const advancedVakantieSearchControls: FormControl<ProjectFilter>[] = [
+  {
+    type: InputType.number,
+    name: 'jaar',
+    label: 'Jaar',
+    placeholder: 'Zoek op jaar',
+  },
+];
+
+const advancedCursusSearchControls: FormControl<ProjectFilter>[] = [
+  {
+    type: InputType.number,
+    name: 'jaar',
+    label: 'Jaar',
+    placeholder: 'Zoek op jaar',
+  },
+  checkboxesItemsControl('organisatieonderdelen', organisatieonderdelen, {
+    label: 'Organisatieonderdelen',
+  }),
+];
