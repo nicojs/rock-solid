@@ -3,6 +3,7 @@ import { Options } from './options.js';
 import { OverigPersoon } from './persoon.js';
 import { Upsertable } from './upsertable.js';
 import { Aanmeldingsstatus } from './aanmelding.js';
+import { Queryfied, filterMetaQuery, tryParseInt } from './util.js';
 
 export interface BaseProject {
   id: number;
@@ -182,3 +183,13 @@ export type ProjectFilter = Pick<Project, 'type'> & {
   aanmeldingPersoonId?: number;
   begeleidDoorPersoonId?: number;
 };
+
+export function toProjectFilter(
+  query: Queryfied<ProjectFilter>,
+): ProjectFilter {
+  return {
+    ...filterMetaQuery(query),
+    begeleidDoorPersoonId: tryParseInt(query.begeleidDoorPersoonId),
+    aanmeldingPersoonId: tryParseInt(query.aanmeldingPersoonId),
+  };
+}

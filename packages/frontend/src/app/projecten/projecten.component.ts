@@ -1,12 +1,27 @@
-import { Project, ProjectType, DeepPartial } from '@rock-solid/shared';
+import {
+  Project,
+  ProjectType,
+  DeepPartial,
+  ProjectFilter,
+  Queryfied,
+  toProjectFilter,
+  tryParseInt,
+} from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
-import { Query, router } from '../router';
-import { capitalize, handleUniquenessError, pluralize } from '../shared';
+import { router } from '../router';
+import {
+  capitalize,
+  handleUniquenessError,
+  pluralize,
+  toQuery,
+} from '../shared';
 import { newActiviteit } from './project-edit.component';
 import { projectenStore } from './projecten.store';
+import { InputControl, InputType } from '../forms';
+import { distinctUntilChanged, map } from 'rxjs';
 
 @customElement('rock-projecten')
 export class ProjectenComponent extends RockElement {
@@ -16,16 +31,10 @@ export class ProjectenComponent extends RockElement {
   public path!: string[];
 
   @property()
-  public query!: Query;
-
-  @property()
   public type: ProjectType = 'cursus';
 
   @state()
   private projecten: Project[] | undefined;
-
-  @state()
-  private totalCount = 0;
 
   @state()
   private loading = false;
@@ -38,6 +47,11 @@ export class ProjectenComponent extends RockElement {
 
   @state()
   private errorMessage: string | undefined;
+
+  @state()
+  private filter: ProjectFilter = {
+    type: 'cursus',
+  };
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -52,9 +66,20 @@ export class ProjectenComponent extends RockElement {
       ),
     );
     this.subscription.add(
-      projectenStore.totalCount$.subscribe(
-        (count) => (this.totalCount = count),
-      ),
+      router.routeChange$
+        .pipe(
+          map(
+            ({ query }) => query as Queryfied<ProjectFilter> & { page: string },
+          ),
+        )
+        .pipe(distinctUntilChanged())
+        .subscribe((query) => {
+          const { page, ...filterParams } = query;
+          this.filter = toProjectFilter(filterParams);
+          this.filter.type = this.type;
+          const currentPage = (tryParseInt(page) ?? 1) - 1;
+          projectenStore.setCurrentPage(currentPage, { ...this.filter });
+        }),
     );
   }
 
@@ -119,40 +144,36 @@ export class ProjectenComponent extends RockElement {
     });
   }
 
-  private searchSubmit(event: CustomEvent<string>) {
-    if (event.detail) {
-      projectenStore.setCurrentPage(0, {
-        type: this.type,
-        naam: event.detail,
-      });
-    } else {
-      projectenStore.setCurrentPage(0, undefined);
-    }
+  private doSearch() {
+    const query = toQuery(this.filter);
+    delete query['type']; // not needed, already in the path
+    router.setQuery(query);
   }
 
   override render() {
     switch (this.path[0]) {
       case 'list':
         return html`<div class="row">
-            <h2 class="col-sm-6 col-md-8">
-              ${capitalize(pluralize(this.type))} (${this.totalCount})
-            </h2>
-            <div class="col">
-              <rock-text-search
-                @search-submitted=${this.searchSubmit}
-                .placeholder=${this.type === 'cursus'
-                  ? 'Zoek op cursusnaam'
-                  : 'Zoek op bestemming - land'}
-              ></rock-text-search>
-            </div>
-            <h2></h2>
+            <h2 class="col">${capitalize(pluralize(this.type))}</h2>
           </div>
+          <div class="row">
+            <div class="col">
+              <rock-link href="/${pluralize(this.type)}/new" btn btnSuccess
+                ><rock-icon icon="journalPlus" size="md"></rock-icon>
+                ${capitalize(this.type)}</rock-link
+              >
+            </div>
+          </div>
+
+          <rock-search
+            .mainControl=${this.type === 'cursus'
+              ? mainCursusSearchControl
+              : mainVakantieSearchControl}
+            .filter=${this.filter}
+            @search-submitted=${() => this.doSearch()}
+          ></rock-search>
           ${this.projecten
-            ? html`<rock-link href="/${pluralize(this.type)}/new" btn btnSuccess
-                  ><rock-icon icon="journalPlus" size="md"></rock-icon>
-                  ${capitalize(this.type)}</rock-link
-                >
-                <rock-projecten-list
+            ? html`<rock-projecten-list
                   .projecten=${this.projecten}
                   @delete=${this.deleteProject}
                 ></rock-projecten-list>
@@ -201,3 +222,16 @@ export class ProjectenComponent extends RockElement {
     }
   }
 }
+
+const mainCursusSearchControl: InputControl<ProjectFilter> = {
+  type: InputType.text,
+  name: 'naam',
+  label: 'Naam',
+  placeholder: 'Zoek op cursusnaam',
+};
+const mainVakantieSearchControl: InputControl<ProjectFilter> = {
+  type: InputType.text,
+  name: 'naam',
+  label: 'Bestemming - land',
+  placeholder: 'Zoek op bestemming - land',
+};

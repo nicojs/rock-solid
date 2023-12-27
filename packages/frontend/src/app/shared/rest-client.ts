@@ -2,6 +2,7 @@ import {
   EntityFrom,
   FilterFrom,
   parse,
+  Query,
   RestRoutes,
   TOTAL_COUNT_HEADER,
 } from '@rock-solid/shared';
@@ -31,10 +32,12 @@ export class RestClient {
     route: TRoute,
     page = 0,
     filter?: FilterFrom<TRoute>,
+    signal?: AbortSignal,
   ): Promise<Page<TRoute>> {
     const query = { ...filter, _page: page };
     const response = await this.http.fetch(
       `/api/${route}${toQueryString(query)}`,
+      { signal },
     );
     const bodyText = await response.text();
     const totalCount = response.headers.get(TOTAL_COUNT_HEADER);
@@ -166,18 +169,29 @@ export class RestClient {
 
 export const restClient = new RestClient();
 
+function toQueryEntries(filter: object | undefined): [string, string][] {
+  if (!filter) {
+    return [];
+  }
+  return Object.entries(filter)
+    .filter(
+      ([, val]) =>
+        val !== undefined &&
+        val !== '' &&
+        (!Array.isArray(val) || val.length > 0),
+    )
+    .map(([key, val]) => [key, String(val)]);
+}
+
+export function toQuery(filter: object | undefined): Query {
+  return Object.fromEntries(toQueryEntries(filter));
+}
+
 function toQueryString(query: object | undefined) {
   if (query) {
-    return `?${Object.entries(query)
-      .filter(
-        ([, val]) =>
-          val !== undefined &&
-          val !== '' &&
-          (!Array.isArray(val) || val.length > 0),
-      )
+    return `?${toQueryEntries(query)
       .map(
-        ([key, val]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(String(val))}`,
+        ([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`,
       )
       .join('&')}`;
   }

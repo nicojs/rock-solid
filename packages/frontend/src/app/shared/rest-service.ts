@@ -19,11 +19,16 @@ export class RestService<TRoute extends keyof RestRoutes> {
     );
   }
 
-  getPage(page = 0, query?: FilterFrom<TRoute>): Promise<Page<TRoute>> {
+  getPage(
+    page = 0,
+    query?: FilterFrom<TRoute>,
+    signal?: AbortSignal,
+  ): Promise<Page<TRoute>> {
     return this.restClient.getPage(
       this.route,
       page,
       query as Record<string, unknown> | undefined,
+      signal,
     );
   }
   get(id: string | number): Promise<EntityFrom<TRoute>> {

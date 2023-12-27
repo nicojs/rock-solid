@@ -1,7 +1,6 @@
+import { Query, toQueryString } from '@rock-solid/shared';
 import { fromEvent, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-export type Query = Record<string, string | undefined>;
 
 export class RouteParams {
   constructor(
@@ -33,13 +32,7 @@ export class RouteParams {
   }
 
   get queryString() {
-    const entries = Object.entries(this.query);
-    if (entries.length) {
-      return `?${entries
-        .map(([k, v]) => `${k}=${encodeURIComponent(v ?? '')}`)
-        .join('&')}`;
-    }
-    return '';
+    return toQueryString(this.query);
   }
 }
 
@@ -66,6 +59,21 @@ export class Router {
   navigate(path: string) {
     const route = this.resolve(path);
     window.history.pushState({}, '', route.pathname);
+    this.navigatorSubject.next(route);
+  }
+
+  setQuery(query: Query) {
+    const route = new RouteParams(this.navigatorSubject.value.path, query);
+    window.history.pushState({}, '', `${route.pathname}${route.queryString}`);
+    this.navigatorSubject.next(route);
+  }
+
+  patchQuery(patchQueryValues: Query) {
+    const route = new RouteParams(this.navigatorSubject.value.path, {
+      ...this.navigatorSubject.value.query,
+      ...patchQueryValues,
+    });
+    window.history.pushState({}, '', `${route.pathname}${route.queryString}`);
     this.navigatorSubject.next(route);
   }
 

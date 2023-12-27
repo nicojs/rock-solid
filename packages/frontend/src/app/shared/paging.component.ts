@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
 import { PagedStore } from './paged-store.store';
+import { router } from '../router';
 
 const MAX_PAGE_BUTTON_COUNT = 10;
 
@@ -18,6 +19,7 @@ export class PagingComponent<
 
   @state()
   private currentPage = 0;
+
   @state()
   private totalCount = 0;
 
@@ -34,7 +36,7 @@ export class PagingComponent<
   }
 
   private clickPage(page: number) {
-    this.store.setCurrentPage(page);
+    router.patchQuery({ page: (page + 1).toString() });
   }
 
   override render() {

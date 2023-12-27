@@ -1,15 +1,27 @@
 import {
   DeepPartial,
   Organisatie,
+  OrganisatieFilter,
+  Queryfied,
   UpsertableOrganisatie,
+  foldersoorten,
+  toOrganisatieFilter,
+  tryParseInt,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
 import { router } from '../router';
-import { handleUniquenessError } from '../shared';
+import { handleUniquenessError, toOrganisatiesCsv, toQuery } from '../shared';
 import { organisatieStore } from './organisatie.store';
+import {
+  FormControl,
+  InputControl,
+  InputType,
+  checkboxesItemsControl,
+} from '../forms';
+import { distinctUntilChanged, map } from 'rxjs';
 
 @customElement('rock-organisaties')
 export class OrganisatiesComponent extends RockElement {
@@ -28,13 +40,13 @@ export class OrganisatiesComponent extends RockElement {
   private newOrganisatie = newOrganisatie();
 
   @state()
-  private totalCount = 0;
-
-  @state()
   private loading = false;
 
   @state()
   private errorMessage: string | undefined;
+
+  @state()
+  private filter: OrganisatieFilter = {};
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -44,14 +56,25 @@ export class OrganisatiesComponent extends RockElement {
       }),
     );
     this.subscription.add(
-      organisatieStore.totalCount$.subscribe(
-        (total) => (this.totalCount = total),
-      ),
-    );
-    this.subscription.add(
       organisatieStore.focussedItem$.subscribe(
         (org) => (this.organisatieToEdit = org),
       ),
+    );
+    this.subscription.add(
+      router.routeChange$
+        .pipe(
+          map(
+            ({ query }) =>
+              query as Queryfied<OrganisatieFilter> & { page: string },
+          ),
+        )
+        .pipe(distinctUntilChanged())
+        .subscribe((query) => {
+          const { page, ...filterParams } = query;
+          this.filter = toOrganisatieFilter(filterParams);
+          const currentPage = (tryParseInt(page) ?? 1) - 1;
+          organisatieStore.setCurrentPage(currentPage, { ...this.filter });
+        }),
     );
   }
 
@@ -107,48 +130,45 @@ export class OrganisatiesComponent extends RockElement {
     organisatieStore.delete(ev.detail.id).subscribe();
   }
 
-  private searchSubmit(event: CustomEvent<string>) {
-    if (event.detail) {
-      organisatieStore.setCurrentPage(0, {
-        naam: event.detail,
-      });
-    } else {
-      organisatieStore.setCurrentPage(0, undefined);
-    }
+  private doSearch() {
+    router.setQuery(toQuery(this.filter));
   }
+
   override render() {
     switch (this.path[0]) {
       case 'list':
         return html`
           <div class="row">
-            <h2 class="col-sm-6 col-md-8">Organisaties (${this.totalCount})</h2>
+            <h2 class="col">Organisaties</h2>
+          </div>
+          <div class="row">
             <div class="col">
-              <rock-text-search
-                @search-submitted=${this.searchSubmit}
-                placeholder="Zoek op organisatienaam"
-              ></rock-text-search>
+              <rock-link href="/organisaties/new" btn btnSuccess
+                ><rock-icon icon="journalPlus" size="md"></rock-icon>
+                Organisatie</rock-link
+              >
+              <rock-export
+                .store=${organisatieStore}
+                .filter=${this.filter}
+                .toCsv=${toOrganisatiesCsv}
+                exportTitle="organisaties"
+              ></rock-export>
             </div>
           </div>
+          <rock-search
+            .mainControl=${mainSearchControl}
+            .advancedControls=${advancedSearchControls}
+            .filter=${this.filter}
+            @search-submitted=${() => this.doSearch()}
+          ></rock-search>
           ${this.organisaties
             ? html`
-                <div class="row">
-                  <div class="col">
-                    <rock-link href="/organisaties/new" btn btnSuccess
-                      ><rock-icon icon="journalPlus" size="md"></rock-icon>
-                      Organisatie</rock-link
-                    >
-                    <rock-link btn btnOutlineSecondary href="../zoeken"
-                      ><rock-icon icon="search"></rock-icon> Geavanceerd
-                      zoeken</rock-link
-                    >
-                    <rock-organisaties-list
-                      class="row"
-                      .organisaties=${this.organisaties}
-                      @delete=${this.deleteOrganisatie}
-                    ></rock-organisaties-list>
-                    <rock-paging .store=${organisatieStore}></rock-paging>
-                  </div>
-                </div>
+                <rock-organisaties-list
+                  class="row"
+                  .organisaties=${this.organisaties}
+                  @delete=${this.deleteOrganisatie}
+                ></rock-organisaties-list>
+                <rock-paging .store=${organisatieStore}></rock-paging>
               `
             : html`<rock-loading></rock-loading>`}
         `;
@@ -169,8 +189,6 @@ export class OrganisatiesComponent extends RockElement {
               @organisatie-submitted=${this.updateOrganisatie}
             ></rock-edit-organisatie>`
           : html`<rock-loading></rock-loading>`}`;
-      case 'zoeken':
-        return html`<rock-advanced-search-organisaties></rock-advanced-search-organisaties>`;
       default:
         router.navigate(`/organisaties/list`);
     }
@@ -180,3 +198,14 @@ export class OrganisatiesComponent extends RockElement {
 function newOrganisatie(): DeepPartial<Organisatie> {
   return { contacten: [{ foldervoorkeuren: [{}] }] };
 }
+
+const mainSearchControl: InputControl<OrganisatieFilter> = {
+  type: InputType.text,
+  name: 'naam',
+  label: 'Naam',
+  placeholder: 'Zoek op organisatienaam',
+};
+
+const advancedSearchControls: FormControl<OrganisatieFilter>[] = [
+  checkboxesItemsControl('folders', foldersoorten, { label: 'Folders' }),
+];
