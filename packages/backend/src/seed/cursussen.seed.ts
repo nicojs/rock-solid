@@ -1,6 +1,7 @@
 import * as db from '@prisma/client';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { prijsFromRaw, readImportJson, writeOutputJson } from './seed-utils.js';
+import { toTitel } from '../services/project.mapper.js';
 
 interface RawCursus {
   titel: string;
@@ -81,6 +82,7 @@ export async function seedCursussen(
     const project: db.Prisma.ProjectCreateInput = {
       naam: raw.cursusnaam,
       projectnummer,
+      titel: toTitel(projectnummer, raw.cursusnaam),
       type: 'cursus',
       jaar: parseInt(raw.jaar),
       organisatieonderdeel,
@@ -118,7 +120,11 @@ export async function seedCursussen(
         ? 'keiJongNietBuSO'
         : keiJongBuso
           ? 'keiJongBuSO'
-          : undefined;
+          : raw.titel.includes('DK/')
+            ? 'deKei'
+            : raw.titel.includes('KJ/')
+              ? 'keiJongNietBuSO'
+              : undefined;
   }
 
   function activiteitenFromRaw(

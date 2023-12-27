@@ -12,7 +12,7 @@ import {
   Provincie,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
-import { harness, factory } from './test-utils.test.js';
+import { harness, factory, byId } from './test-utils.test.js';
 import { expect } from 'chai';
 import assert from 'assert/strict';
 
@@ -267,6 +267,10 @@ describe(ProjectenController.name, () => {
       let cookCursus: Project;
       let cleanCursus: Project;
       beforeEach(async () => {
+        const jan2022 = new Date(2022, 0, 2);
+        const jan2022Plus2 = new Date(2022, 0, 4);
+        const jan2021 = new Date(2021, 0, 2);
+        const jan2021Plus2 = new Date(2021, 0, 4);
         [athensVakantie, creteVakantie, cookCursus, cleanCursus] =
           await Promise.all([
             harness.createProject(
@@ -275,39 +279,63 @@ describe(ProjectenController.name, () => {
             harness.createProject(
               factory.vakantie({ bestemming: 'Crete', land: 'Greece' }),
             ),
-            harness.createProject(factory.cursus({ naam: 'Learning to cook' })),
             harness.createProject(
-              factory.cursus({ naam: 'Learning to clean' }),
+              factory.cursus({
+                projectnummer: 'KJ/23/048',
+                naam: 'Learning to cook',
+                organisatieonderdeel: 'keiJongBuSO',
+                activiteiten: [
+                  factory.activiteit({ van: jan2022, totEnMet: jan2022Plus2 }),
+                ],
+              }),
             ),
-            harness.createProject(factory.cursus({ naam: 'Other cursus' })),
+            harness.createProject(
+              factory.cursus({
+                projectnummer: 'KJ/23/050',
+                naam: 'Learning to clean',
+                organisatieonderdeel: 'keiJongNietBuSO',
+                activiteiten: [
+                  factory.activiteit({ van: jan2021, totEnMet: jan2021Plus2 }),
+                ],
+              }),
+            ),
+            harness.createProject(
+              factory.cursus({
+                projectnummer: 'DK/23/189',
+                naam: 'Other cursus',
+                organisatieonderdeel: 'deKei',
+              }),
+            ),
             harness.createProject(factory.vakantie({ naam: 'Other vakantie' })),
           ]);
       });
 
-      it('should allow filter on "naam"', async () => {
+      it('by titelLike', async () => {
         // Act
         const [
           learningCursussen,
           cookCursussen,
           greeceVakanties,
           athensVakanties,
+          kj23Cursussen,
         ] = await Promise.all([
           harness.getAllProjecten({
             type: 'cursus',
-            naam: 'Learning',
+            titelLike: 'Learning',
           }),
           harness.getAllProjecten({
             type: 'cursus',
-            naam: 'cook',
+            titelLike: 'cook',
           }),
           harness.getAllProjecten({
             type: 'vakantie',
-            naam: 'Greece',
+            titelLike: 'Greece',
           }),
           harness.getAllProjecten({
             type: 'vakantie',
-            naam: 'Athens',
+            titelLike: 'Athens',
           }),
+          harness.getAllProjecten({ type: 'cursus', titelLike: 'KJ/23' }),
         ]);
 
         // Assert
@@ -321,6 +349,52 @@ describe(ProjectenController.name, () => {
         expect(athensVakanties.map(({ id }) => id)).deep.eq([
           athensVakantie.id,
         ]);
+        expect(kj23Cursussen.sort(byId)).deep.eq(
+          [cleanCursus, cookCursus].sort(byId),
+        );
+      });
+
+      it('by jaar', async () => {
+        // Act
+        const [cursus2022, cursus2021] = await Promise.all([
+          harness.getAllProjecten({
+            type: 'cursus',
+            jaar: 2022,
+          }),
+          harness.getAllProjecten({
+            type: 'cursus',
+            jaar: 2021,
+          }),
+        ]);
+
+        // Assert
+        expect(cursus2022.map(({ id }) => id)).deep.eq([cookCursus.id]);
+        expect(cursus2021.map(({ id }) => id)).deep.eq([cleanCursus.id]);
+      });
+
+      it('by organisatieonderdelen', async () => {
+        // Act
+        const [keiJongBuSO, keiJongNietBuSO, keiJong] = await Promise.all([
+          harness.getAllProjecten({
+            type: 'cursus',
+            organisatieonderdelen: ['keiJongBuSO'],
+          }),
+          harness.getAllProjecten({
+            type: 'cursus',
+            organisatieonderdelen: ['keiJongNietBuSO'],
+          }),
+          harness.getAllProjecten({
+            type: 'cursus',
+            organisatieonderdelen: ['keiJongBuSO', 'keiJongNietBuSO'],
+          }),
+        ]);
+
+        // Assert
+        expect(keiJongBuSO).deep.eq([cookCursus]);
+        expect(keiJongNietBuSO).deep.eq([cleanCursus]);
+        expect(keiJong.sort(byId)).deep.eq(
+          [cookCursus, cleanCursus].sort(byId),
+        );
       });
     });
   });

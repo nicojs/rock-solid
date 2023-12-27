@@ -216,15 +216,18 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
     ...projectData
   } = project;
   if (project.type === 'vakantie') {
+    const naam = `${project.bestemming} - ${project.land}`;
     return {
       ...projectData,
+      titel: toTitel(projectData.projectnummer, naam),
       type: 'vakantie',
       jaar,
-      naam: `${project.bestemming} - ${project.land}`,
+      naam,
     };
   } else {
     return {
       ...projectData,
+      titel: toTitel(projectData.projectnummer, project.naam),
       type: 'cursus',
       jaar,
       naam: project.naam,
@@ -370,11 +373,21 @@ function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
       some: { id: filter.begeleidDoorPersoonId },
     };
   }
-  if (filter.naam) {
-    whereClause.naam = {
-      contains: filter.naam,
+  if (filter.titelLike) {
+    whereClause.titel = {
+      contains: filter.titelLike,
       mode: 'insensitive',
     };
   }
+  if (filter.organisatieonderdelen) {
+    whereClause.organisatieonderdeel = {
+      in: filter.organisatieonderdelen,
+    };
+  }
+  whereClause.jaar = filter.jaar;
   return whereClause;
+}
+
+export function toTitel(projectnummer: string, projectNaam: string): string {
+  return `${projectnummer} ${projectNaam}`;
 }
