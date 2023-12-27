@@ -1,8 +1,12 @@
 import {
   Contactpersoon,
+  FotoToestemming,
   Geslacht,
+  Persoon,
   UpsertablePersoon,
   calculateAge,
+  fotoToestemmingLabels,
+  notEmpty,
 } from '@rock-solid/shared';
 import { notAvailable, show } from '../shared';
 import { html } from 'lit';
@@ -63,6 +67,53 @@ export function showContactpersoon(contactpersoon: Contactpersoon) {
     ${showPhoneNumber(contactpersoon.telefoon, 'me-2')}</span>
     <rock-icon icon="phone"></rock-icon>
     ${showPhoneNumber(contactpersoon.gsm)}`;
+}
+
+export function showVoedingswens({
+  voedingswens,
+  voedingswensOpmerking,
+}: Pick<Persoon, 'voedingswens' | 'voedingswensOpmerking'>) {
+  return [
+    voedingswens === 'geen' ? undefined : voedingswens,
+    voedingswensOpmerking,
+  ]
+    .filter(notEmpty)
+    .join(': ');
+}
+
+export function showFotoToestemming(toestemming: FotoToestemming): string {
+  switch (determineFotoToestemmingKind(toestemming)) {
+    case 'all':
+      return 'Alle doeleinden';
+    case 'none':
+      return 'Geen doeleinden';
+    case 'some':
+      return `Sommigen: ${Object.keys(fotoToestemmingLabels)
+        .map((key) => toestemmingWhenAllowed(key as keyof FotoToestemming))
+        .filter(notEmpty)
+        .join(', ')}`;
+  }
+
+  function toestemmingWhenAllowed(toestemmingKey: keyof FotoToestemming) {
+    return toestemming[toestemmingKey]
+      ? fotoToestemmingLabels[toestemmingKey]
+      : undefined;
+  }
+}
+
+export function determineFotoToestemmingKind(
+  toestemming: FotoToestemming,
+): 'all' | 'none' | 'some' {
+  const toestemmingValues = Object.keys(fotoToestemmingLabels).map(
+    (key) => toestemming[key as keyof FotoToestemming],
+  );
+  if (toestemmingValues.every((value) => value === true)) {
+    return 'all';
+  }
+  if (toestemmingValues.every((value) => value === false)) {
+    return 'none';
+  }
+  return 'some';
 }
 
 export const geslachtIcons: Record<Geslacht, string> = {

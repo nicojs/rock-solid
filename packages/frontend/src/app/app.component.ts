@@ -33,7 +33,9 @@ export class RockSolidApp extends LitElement {
 
   public override render() {
     return html`<div class="container-fluid">
-        <nav class="navbar navbar-light bg-light justify-content-between">
+        <nav
+          class="d-print-none navbar navbar-light bg-light justify-content-between"
+        >
           <span class="navbar-brand mb-0 h1">
             <img
               src="/rock-solid.png"
@@ -51,7 +53,7 @@ export class RockSolidApp extends LitElement {
         </nav>
         <div class="row">
           <rock-nav
-            class="col-xs-5 col-sm-4 col-md-3 col-lg-2"
+            class="col-xs-5 col-sm-4 col-md-3 col-lg-2 d-print-none"
             .active="${this.route?.path[0]}"
           ></rock-nav>
           <main class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
