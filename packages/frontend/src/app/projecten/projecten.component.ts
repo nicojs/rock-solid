@@ -7,7 +7,6 @@ import {
   toProjectFilter,
   tryParseInt,
   organisatieonderdelen,
-  cursusLabels,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
