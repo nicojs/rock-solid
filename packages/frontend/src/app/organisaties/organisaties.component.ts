@@ -164,7 +164,6 @@ export class OrganisatiesComponent extends RockElement {
           ${this.organisaties
             ? html`
                 <rock-organisaties-list
-                  class="row"
                   .organisaties=${this.organisaties}
                   @delete=${this.deleteOrganisatie}
                 ></rock-organisaties-list>
