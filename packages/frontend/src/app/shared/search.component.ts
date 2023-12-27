@@ -62,9 +62,8 @@ export class SearchComponent<
     return html` <form @submit="${this.submit}">
       ${this.showAdvancedSearch
         ? nothing
-        : html`<div class="row">
-            <div class="col"></div>
-            <div class="col">
+        : html`<div class="row justify-content-end my-4 my-md-0">
+            <div class="col-md-6">
               <div class="input-group">
                 <input
                   class="form-control"
