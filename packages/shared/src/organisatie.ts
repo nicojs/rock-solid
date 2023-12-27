@@ -1,6 +1,7 @@
 import { Upsertable } from './upsertable.js';
 import { Options, groupOptions } from './options.js';
 import { Adres, UpsertableAdres } from './adres.js';
+import { Queryfied, filterMetaQuery } from './util.js';
 
 export interface Organisatie {
   id: number;
@@ -195,3 +196,12 @@ export type Organisatiesoort =
   | 'SociaalCultureleOrganisaties'
   | 'SteunpuntenEnFederaties'
   | 'Anders';
+
+export function toOrganisatieFilter(
+  query: Queryfied<OrganisatieFilter>,
+): OrganisatieFilter {
+  return {
+    ...filterMetaQuery(query),
+    folders: query.folders?.split(',') as Foldersoort[],
+  };
+}

@@ -2,6 +2,7 @@ import { Adres, UpsertableAdres } from './adres.js';
 import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
 import { Upsertable } from './upsertable.js';
+import { Queryfied, filterMetaQuery, tryParseInt } from './util.js';
 
 export interface BasePersoon {
   id: number;
@@ -249,3 +250,26 @@ export const overigPersoonSelecties: Options<OverigPersoonSelectie> =
     raadVanBestuurKeiJong: 'Raad van bestuur Kei-jong',
     raadVanBestuurDeKei: 'Raad van bestuur De Kei',
   });
+
+export function toPersoonFilter(
+  query: Queryfied<PersoonFilter>,
+): PersoonFilter {
+  const {
+    selectie,
+    foldersoorten,
+    laatsteAanmeldingJaarGeleden,
+    minLeeftijd,
+    maxLeeftijd,
+    ...filter
+  } = query;
+  return {
+    ...filterMetaQuery(filter),
+    selectie: selectie?.split(',') as OverigPersoonSelectie[],
+    foldersoorten: foldersoorten?.split(',') as Foldersoort[],
+    ...{
+      laatsteAanmeldingJaarGeleden: tryParseInt(laatsteAanmeldingJaarGeleden),
+      minLeeftijd: tryParseInt(minLeeftijd),
+      maxLeeftijd: tryParseInt(maxLeeftijd),
+    },
+  } as PersoonFilter;
+}

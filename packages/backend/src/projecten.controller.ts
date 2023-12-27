@@ -30,8 +30,8 @@ import { DeelnameMapper } from './services/deelname.mapper.js';
 import { AanmeldingMapper } from './services/aanmelding.mapper.js';
 import { ProjectMapper } from './services/project.mapper.js';
 import { PagePipe } from './pipes/page.pipe.js';
-import { MetaFilterPipe } from './pipes/pipe-utils.js';
 import { Privileges } from './auth/privileges.guard.js';
+import { ProjectFilterPipe } from './pipes/project-filter.pipe.js';
 
 @Controller({ path: 'projecten' })
 export class ProjectenController {
@@ -54,7 +54,7 @@ export class ProjectenController {
   @Get()
   async getAll(
     @Res({ passthrough: true }) resp: Response,
-    @Query(MetaFilterPipe) filter: ProjectFilter,
+    @Query(ProjectFilterPipe) filter: ProjectFilter,
     @Query('_page', PagePipe)
     page?: number,
   ): Promise<Project[]> {

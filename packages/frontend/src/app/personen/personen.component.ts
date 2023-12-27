@@ -1,21 +1,44 @@
 import { html, PropertyValues } from 'lit';
 import {
   BasePersoon,
+  deelnemerLabels,
   DeepPartial,
+  foldersoorten,
+  geslachten,
+  overigPersoonLabels,
+  overigPersoonSelecties,
   Persoon,
+  PersoonFilter,
   PersoonType,
   persoonTypes,
+  Queryfied,
+  toPersoonFilter,
+  tryParseInt,
   UpsertablePersoon,
+  werksituaties,
 } from '@rock-solid/shared';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
-import { capitalize, pluralize } from '../shared';
+import {
+  capitalize,
+  pluralize,
+  toDeelnemersCsv,
+  toOverigePersonenCsv,
+  toQuery,
+} from '../shared';
 import { fullName } from './persoon.pipe';
 import { RockElement } from '../rock-element';
 import { personenStore } from './personen.store';
 import { routesByPersoonType } from './routing-helper';
-
+import {
+  checkboxesItemsControl,
+  FormControl,
+  InputControl,
+  InputType,
+  selectControl,
+} from '../forms';
+import { distinctUntilChanged, map } from 'rxjs';
 @customElement('rock-personen')
 export class PersonenComponent extends RockElement {
   static override styles = [bootstrap];
@@ -35,10 +58,12 @@ export class PersonenComponent extends RockElement {
   @property({ attribute: false, type: Boolean })
   public editIsLoading = false;
 
+  @state()
+  private filter: PersoonFilter = {
+    type: 'deelnemer',
+  };
+
   override update(changedProperties: PropertyValues<PersonenComponent>) {
-    if (changedProperties.has('type')) {
-      personenStore.setFilter({ type: this.type });
-    }
     if (
       changedProperties.has('path') &&
       ['edit', 'display'].includes(this.path[0] ?? '') &&
@@ -49,9 +74,6 @@ export class PersonenComponent extends RockElement {
     super.update(changedProperties);
   }
 
-  @state()
-  private totalCount = 0;
-
   override connectedCallback(): void {
     super.connectedCallback();
     this.subscription.add(
@@ -59,25 +81,28 @@ export class PersonenComponent extends RockElement {
         (personen) => (this.personen = personen),
       ),
     );
-    this.subscription.add(
-      personenStore.totalCount$.subscribe((count) => (this.totalCount = count)),
-    );
+
     this.subscription.add(
       personenStore.focussedItem$.subscribe(
         (item) => (this.focussedPersoon = item),
       ),
     );
-  }
-
-  private searchSubmit(event: CustomEvent<string>) {
-    if (event.detail) {
-      personenStore.setCurrentPage(0, {
-        type: this.type,
-        volledigeNaamLike: event.detail,
-      });
-    } else {
-      personenStore.setCurrentPage(0, undefined);
-    }
+    this.subscription.add(
+      router.routeChange$
+        .pipe(
+          map(
+            ({ query }) => query as Queryfied<PersoonFilter> & { page: string },
+          ),
+        )
+        .pipe(distinctUntilChanged())
+        .subscribe((query) => {
+          const { page, ...filterParams } = query;
+          this.filter = toPersoonFilter(filterParams);
+          this.filter.type = this.type;
+          const currentPage = (tryParseInt(page) ?? 1) - 1;
+          personenStore.setCurrentPage(currentPage, { ...this.filter });
+        }),
+    );
   }
 
   private async createNewPersoon(event: CustomEvent<UpsertablePersoon>) {
@@ -86,6 +111,12 @@ export class PersonenComponent extends RockElement {
       this.editIsLoading = false;
       router.navigate('../list');
     });
+  }
+
+  private doSearch() {
+    const query = toQuery(this.filter);
+    delete query['type']; // not needed, already in the path
+    router.setQuery(query);
   }
 
   private async updatePersoon() {
@@ -106,16 +137,7 @@ export class PersonenComponent extends RockElement {
     switch (this.path[0]) {
       case 'list':
         return html`<div class="row">
-            <h2 class="col-sm-6 col-md-8">
-              ${capitalize(pluralize(this.type))}${this.personen
-                ? html` (${this.totalCount})`
-                : ''}
-            </h2>
-            <div class="col">
-              <rock-text-search
-                @search-submitted=${this.searchSubmit}
-              ></rock-text-search>
-            </div>
+            <h2 class="col">${capitalize(pluralize(this.type))}</h2>
           </div>
           <div class="row">
             <div class="col">
@@ -124,23 +146,31 @@ export class PersonenComponent extends RockElement {
                   persoonTypes[this.type],
                 )}</rock-link
               >
-              <rock-link btn btnOutlineSecondary href="../zoeken"
-                ><rock-icon icon="search"></rock-icon> Geavanceerd
-                zoeken</rock-link
-              >
+              <rock-export
+                .store=${personenStore}
+                .filter=${this.filter}
+                .toCsv=${this.type === 'deelnemer'
+                  ? toDeelnemersCsv
+                  : toOverigePersonenCsv}
+                .exportTitle=${capitalize(pluralize(this.type))}
+              ></rock-export>
             </div>
           </div>
+          <rock-search
+            .mainControl=${mainSearchControl}
+            .advancedControls=${this.type === 'deelnemer'
+              ? deelnemerSearchControls
+              : overigPersoonSearchControls}
+            .filter=${this.filter}
+            @search-submitted=${() => this.doSearch()}
+          ></rock-search>
           ${this.personen
             ? html`<rock-personen-list
                   .type=${this.type}
                   .personen=${this.personen}
                   @delete=${this.deletePersoon}
                 ></rock-personen-list>
-                <rock-paging
-                  @navigate-page=${(event: CustomEvent<number>) =>
-                    personenStore.setCurrentPage(event.detail)}
-                  .store=${personenStore}
-                ></rock-paging> `
+                <rock-paging .store=${personenStore}></rock-paging> `
             : html`<rock-loading></rock-loading>`}`;
       case 'new':
         const persoon: DeepPartial<Persoon> = {
@@ -183,13 +213,57 @@ export class PersonenComponent extends RockElement {
                 .persoon="${this.focussedPersoon}"
               ></rock-display-persoon>`
           : html`<rock-loading></rock-loading>`}`;
-      case 'zoeken':
-        return html`<rock-advanced-search-personen
-          .type=${this.type}
-        ></rock-advanced-search-personen>`;
       default:
         router.navigate(`/${routesByPersoonType[this.type]}/list`);
         return html``;
     }
   }
 }
+
+const mainSearchControl: InputControl<PersoonFilter> = {
+  type: InputType.text,
+  name: 'volledigeNaamLike',
+  label: 'Naam',
+  placeholder: 'Zoek op naam',
+};
+
+const overigPersoonSearchControls: FormControl<PersoonFilter>[] = [
+  checkboxesItemsControl('selectie', overigPersoonSelecties, {
+    label: overigPersoonLabels.selectie,
+  }),
+  checkboxesItemsControl('foldersoorten', foldersoorten, {
+    label: 'Folders',
+  }),
+];
+
+const deelnemerSearchControls: FormControl<PersoonFilter>[] = [
+  selectControl('geslacht', geslachten, {
+    label: deelnemerLabels.geslacht,
+    placeholder: 'Geen filter',
+  }),
+  selectControl('werksituatie', werksituaties, {
+    label: deelnemerLabels.werksituatie,
+    placeholder: 'Geen filter',
+  }),
+  {
+    type: InputType.number,
+    label: 'Laatste aanmelding',
+    name: 'laatsteAanmeldingJaarGeleden',
+    postfix: 'jaar geleden',
+  },
+  {
+    type: InputType.number,
+    label: 'Min leeftijd',
+    name: 'minLeeftijd',
+    postfix: 'jaar oud',
+  },
+  {
+    type: InputType.number,
+    label: 'Max leeftijd',
+    name: 'maxLeeftijd',
+    postfix: 'jaar oud',
+  },
+  checkboxesItemsControl('foldersoorten', foldersoorten, {
+    label: 'Folders',
+  }),
+];

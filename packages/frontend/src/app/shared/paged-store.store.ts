@@ -32,7 +32,7 @@ export class PagedStore<
 
   private filter?: FilterFrom<TRoute>;
 
-  constructor(protected service: TService) {
+  constructor(public readonly service: TService) {
     authStore.jwt$.pipe(filter(notEmpty)).subscribe(() => {
       this.loadPage();
     });
@@ -113,13 +113,27 @@ export class PagedStore<
     this.focussedItemSubject.next(undefined);
   }
 
+  private currentPageAbortController = new AbortController();
   protected loadPage() {
     this.currentPageItemsSubject.next(undefined);
+    this.currentPageAbortController.abort();
+    this.currentPageAbortController = new AbortController();
     from(
-      this.service.getPage(this.currentPageNumberSubject.value, this.filter),
-    ).subscribe((page) => {
-      this.currentPageItemsSubject.next(page.items);
-      this.totalCountSubject.next(page.totalCount);
+      this.service.getPage(
+        this.currentPageNumberSubject.value,
+        this.filter,
+        this.currentPageAbortController.signal,
+      ),
+    ).subscribe({
+      next: (page) => {
+        this.currentPageItemsSubject.next(page.items);
+        this.totalCountSubject.next(page.totalCount);
+      },
+      error: (error: unknown) => {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) {
+          throw error;
+        }
+      },
     });
   }
 }
