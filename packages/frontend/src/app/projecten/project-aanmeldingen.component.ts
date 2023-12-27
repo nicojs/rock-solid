@@ -19,6 +19,7 @@ import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
 import {
+  determineFotoToestemmingKind,
   fullName,
   fullNameWithAge,
   geslachtIcons,
@@ -262,6 +263,15 @@ export class ProjectAanmeldingenComponent extends LitElement {
               )}
             ></rock-project-brieven-verzenden>`
           : html`<rock-loading></rock-loading>`;
+      case 'deelnemerslijst-printen':
+        return this.aanmeldingen
+          ? html`<rock-deelnemerslijst-printen
+              .project=${this.project}
+              .aanmeldingen=${this.aanmeldingen?.filter(
+                ({ status }) => status === 'Bevestigd',
+              )}
+            ></rock-project-brieven-verzenden>`
+          : html`<rock-loading></rock-loading>`;
       case undefined:
         return this.renderProjectAanmeldingen();
       default:
@@ -370,6 +380,14 @@ export class ProjectAanmeldingenComponent extends LitElement {
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/brieven-verzenden"
             ><rock-icon icon="mailbox"></rock-icon> Brieven verzenden</rock-link
+          >
+          <rock-link
+            btn
+            btnOutlineSecondary
+            href="/${pluralize(this.project.type)}/${this.project
+              .id}/aanmeldingen/deelnemerslijst-printen"
+            ><rock-icon icon="printer"></rock-icon> Deelnemerslijst
+            printen</rock-link
           >
           <table class="table table-hover">
             <thead>
@@ -627,21 +645,6 @@ function renderToestemmingFotos(aanmelding: Aanmelding): unknown {
   return deelnemerVerwijderd;
 }
 
-function determineFotoToestemmingKind(
-  toestemming: FotoToestemming,
-): 'all' | 'none' | 'some' {
-  const toestemmingValues = Object.keys(fotoToestemmingLabels).map(
-    (key) => toestemming[key as keyof FotoToestemming],
-  );
-  if (toestemmingValues.every((value) => value === true)) {
-    return 'all';
-  }
-  if (toestemmingValues.every((value) => value === false)) {
-    return 'none';
-  }
-  return 'some';
-}
-
 function renderFotoToestemmingIcon(
   name: string,
   toestemming: FotoToestemming,
@@ -713,10 +716,7 @@ function renderVoedingswens({
           icon="customFood"
         ></rock-icon>`;
       default:
-        return html`<rock-icon
-          icon="checkCircle"
-          title="Geen speciale voedingswens"
-        ></rock-icon>`;
+        return nothing;
     }
   }
 }
