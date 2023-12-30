@@ -37,12 +37,12 @@ export function isActiviteitReportType(
 export type Report = GroupedReport[];
 
 export interface ReportRow {
-  key: string;
+  key?: string;
   count: number;
 }
 
 export interface GroupedReport {
-  key: string;
+  key?: string;
   rows?: ReportRow[];
   total: number;
 }

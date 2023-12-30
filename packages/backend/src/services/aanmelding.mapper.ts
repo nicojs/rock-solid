@@ -15,6 +15,13 @@ import {
   toPersoon,
 } from './persoon.mapper.js';
 import { toPlaats } from './plaats.mapper.js';
+import {
+  aanmeldingsstatusMapper,
+  geslachtMapper,
+  projectTypeMapper,
+  werksituatieMapper,
+  woonsituatieMapper,
+} from './enum.mapper.js';
 
 type DBAanmeldingAggregate = db.Aanmelding & {
   deelnemer: DBPersonAggregate | null;
@@ -42,7 +49,7 @@ export class AanmeldingMapper {
   }
 
   public async create(aanmelding: InsertableAanmelding): Promise<Aanmelding> {
-    const { deelnemer, plaats, ...aanmeldingData } = aanmelding;
+    const { deelnemer, plaats, status, ...aanmeldingData } = aanmelding;
     const {
       verblijfadres,
       domicilieadres,
@@ -65,6 +72,7 @@ export class AanmeldingMapper {
       this.db.aanmelding.create({
         data: {
           ...aanmeldingData,
+          status: aanmeldingsstatusMapper.toDB(status),
           woonsituatie,
           werksituatie,
           geslacht,
@@ -81,7 +89,7 @@ export class AanmeldingMapper {
     });
 
     const dbEersteAanmeldingProjectId =
-      project.type === 'cursus'
+      project.type === projectTypeMapper.toDB('cursus')
         ? eersteCursusAanmeldingId
         : eersteVakantieAanmeldingId;
     const dbEersteAanmelding = dbEersteAanmeldingProjectId
@@ -109,7 +117,7 @@ export class AanmeldingMapper {
           'eersteCursusAanmeldingId' | 'eersteVakantieAanmeldingId'
         >
       > = {};
-      if (project.type === 'cursus') {
+      if (project.type === projectTypeMapper.toDB('cursus')) {
         data.eersteCursusAanmeldingId = dbAanmelding.id;
       } else {
         data.eersteVakantieAanmeldingId = dbAanmelding.id;
@@ -139,11 +147,19 @@ export class AanmeldingMapper {
       projectId,
       plaats,
       id: unused,
+      status,
+      werksituatie,
+      woonsituatie,
+      geslacht,
       ...aanmeldingData
     } = aanmelding;
     const dbAanmelding = await this.db.aanmelding.update({
       data: {
         ...aanmeldingData,
+        status: aanmeldingsstatusMapper.toDB(status),
+        werksituatie: werksituatieMapper.toDB(werksituatie),
+        woonsituatie: woonsituatieMapper.toDB(woonsituatie),
+        geslacht: geslachtMapper.toDB(geslacht),
         plaatsId: plaats?.id,
         rekeninguittrekselNummer:
           aanmeldingData.rekeninguittrekselNummer ?? null,
@@ -170,9 +186,22 @@ export class AanmeldingMapper {
 }
 
 function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
-  const { plaatsId, plaats, deelnemer, ...aanmelding } = raw;
+  const {
+    plaatsId,
+    plaats,
+    deelnemer,
+    werksituatie,
+    woonsituatie,
+    geslacht,
+    status,
+    ...aanmelding
+  } = raw;
   return {
     ...purgeNulls(aanmelding),
+    status: aanmeldingsstatusMapper.toSchema(status),
+    werksituatie: werksituatieMapper.toSchema(werksituatie),
+    woonsituatie: woonsituatieMapper.toSchema(woonsituatie),
+    geslacht: geslachtMapper.toSchema(geslacht),
     plaats: plaats ? toPlaats(plaats) : undefined,
     deelnemer: deelnemer ? (toPersoon(deelnemer) as Deelnemer) : undefined,
   };

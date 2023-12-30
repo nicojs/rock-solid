@@ -43,12 +43,17 @@ export class PersonenController {
     @Query('_page', PagePipe)
     page?: number,
   ): Promise<Persoon[]> {
-    const [people, count] = await Promise.all([
-      this.persoonMapper.getAll(filter, page),
-      this.persoonMapper.count(filter),
-    ]);
-    resp.set(TOTAL_COUNT_HEADER, count.toString());
-    return people;
+    try {
+      const [people, count] = await Promise.all([
+        this.persoonMapper.getAll(filter, page),
+        this.persoonMapper.count(filter),
+      ]);
+      resp.set(TOTAL_COUNT_HEADER, count.toString());
+      return people;
+    } catch (er) {
+      console.error(er);
+      throw er;
+    }
   }
 
   @Get(':id')

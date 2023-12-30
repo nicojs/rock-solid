@@ -21,11 +21,22 @@ import {
   toCreateAdresInput,
   toUpdateAdresInput,
 } from './adres.mapper.js';
+import {
+  communicatievoorkeurMapper,
+  foldersoortMapper,
+  geslachtMapper,
+  overigPersoonSelectieMapper,
+  persoonTypeMapper,
+  voedingswensMapper,
+  werksituatieMapper,
+  woonsituatieMapper,
+} from './enum.mapper.js';
 
 export type DBPersonAggregate = db.Persoon & {
   verblijfadres: DBAdresAggregate | null;
   domicilieadres: DBAdresAggregate | null;
   foldervoorkeuren: db.Foldervoorkeur[];
+  selectie: db.OverigPersoonSelectie[];
   eersteCursusAanmelding: (db.Aanmelding & { project: db.Project }) | null;
   eersteVakantieAanmelding: (db.Aanmelding & { project: db.Project }) | null;
 };
@@ -89,6 +100,12 @@ export class PersoonMapper {
       eersteVakantie,
       contactpersoon,
       fotoToestemming,
+      geslacht,
+      type,
+      woonsituatie,
+      werksituatie,
+      voedingswens,
+      selectie,
       ...props
     } = fillOutAllUpsertablePersoonFields(persoon);
     const dbPersoon = await this.db.persoon.create({
@@ -101,11 +118,22 @@ export class PersoonMapper {
         domicilieadres: domicilieadres
           ? toCreateAdresInput(domicilieadres)
           : undefined,
+        geslacht: geslachtMapper.toDB(geslacht),
+        type: persoonTypeMapper.toDB(type),
+        woonsituatie: woonsituatieMapper.toDB(woonsituatie),
+        werksituatie: werksituatieMapper.toDB(werksituatie),
+        voedingswens: voedingswensMapper.toDB(voedingswens),
+        selectie: {
+          create: selectie?.map((s) => ({
+            selectie: overigPersoonSelectieMapper.toDB(s),
+          })),
+        },
         foldervoorkeuren: foldervoorkeuren
           ? {
-              createMany: {
-                data: foldervoorkeuren,
-              },
+              create: foldervoorkeuren.map(({ communicatie, folder }) => ({
+                communicatie: communicatievoorkeurMapper.toDB(communicatie),
+                folder: foldersoortMapper.toDB(folder),
+              })),
             }
           : undefined,
       },
@@ -129,6 +157,12 @@ export class PersoonMapper {
       eersteVakantie,
       contactpersoon,
       fotoToestemming,
+      woonsituatie,
+      werksituatie,
+      voedingswens,
+      selectie,
+      geslacht,
+      type,
       ...props
     } = fillOutAllPersoonFields(persoon);
     const { verblijfadresId, domicilieadresId } =
@@ -151,6 +185,31 @@ export class PersoonMapper {
           domicilieadres,
           typeof domicilieadresId === 'number',
         ),
+        geslacht: geslachtMapper.toDB(geslacht),
+        type: persoonTypeMapper.toDB(type),
+        woonsituatie: woonsituatieMapper.toDB(woonsituatie),
+        werksituatie: werksituatieMapper.toDB(werksituatie),
+        voedingswens: voedingswensMapper.toDB(voedingswens),
+        selectie: {
+          connectOrCreate: selectie?.map((s) => {
+            const dbValue = overigPersoonSelectieMapper.toDB(s);
+            return {
+              where: {
+                overigPersoonId_selectie: {
+                  overigPersoonId: personId,
+                  selectie: dbValue,
+                },
+              },
+              create: { selectie: dbValue },
+            };
+          }),
+          deleteMany: {
+            overigPersoonId: personId,
+            selectie: {
+              notIn: selectie?.map(overigPersoonSelectieMapper.toDB),
+            },
+          },
+        },
         foldervoorkeuren: toFoldervoorkeurInput(persoon),
       },
       include: includePersoonAggregate,
@@ -212,9 +271,14 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     toestemmingFotosNieuwsbrief,
     toestemmingFotosSocialeMedia,
     toestemmingFotosWebsite,
+    type: dbType,
+    woonsituatie,
+    werksituatie,
+    voedingswens,
+    geslacht,
     ...person
   } = p;
-  return {
+  const common = {
     ...purgeNulls(person),
     contactpersoon: toContactPersoon({
       contactpersoonEmail,
@@ -232,15 +296,39 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     domicilieadres: toAdres(domicilieadres),
     verblijfadres: toAdres(verblijfadres),
     foldervoorkeuren: foldervoorkeuren.map(toFoldervoorkeur),
-    eersteCursus: eersteCursusAanmelding?.project.projectnummer,
-    eersteVakantie: eersteVakantieAanmelding?.project.projectnummer,
+    voedingswens: voedingswensMapper.toSchema(voedingswens),
+    geslacht: geslachtMapper.toSchema(geslacht),
+    woonsituatie: woonsituatieMapper.toSchema(woonsituatie),
+    werksituatie: werksituatieMapper.toSchema(werksituatie),
   };
+  const type = persoonTypeMapper.toSchema(dbType);
+  switch (type) {
+    case 'deelnemer':
+      return {
+        ...common,
+        type,
+        eersteVakantie: eersteVakantieAanmelding?.project.projectnummer,
+        eersteCursus: eersteCursusAanmelding?.project.projectnummer,
+      };
+    case 'overigPersoon':
+      return {
+        ...common,
+        type,
+        selectie: person.selectie.map((s) =>
+          overigPersoonSelectieMapper.toSchema(s.selectie),
+        ),
+      };
+    default:
+      throw new Error(`Unknown persoon type ${type}`);
+  }
 }
 
 function toFoldervoorkeur(foldervoorkeur: db.Foldervoorkeur): Foldervoorkeur {
   return {
-    communicatie: foldervoorkeur.communicatie,
-    folder: foldervoorkeur.folder,
+    communicatie: communicatievoorkeurMapper.toSchema(
+      foldervoorkeur.communicatie,
+    ),
+    folder: foldersoortMapper.toSchema(foldervoorkeur.folder),
   };
 }
 
@@ -253,15 +341,32 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
     maxLeeftijd,
     contactpersoon,
     volledigeNaamLike,
+    type,
+    geslacht,
+    woonsituatie,
+    werksituatie,
+    voedingswens,
     ...where
   } = filter;
   return {
     ...where,
     ...toContactPersoonFields(contactpersoon),
     ...(foldersoorten?.length
-      ? { foldervoorkeuren: { some: { folder: { in: foldersoorten } } } }
+      ? {
+          foldervoorkeuren: {
+            some: { folder: { in: foldersoorten.map(foldersoortMapper.toDB) } },
+          },
+        }
       : {}),
-    ...(selectie?.length ? { selectie: { hasSome: selectie } } : {}),
+    ...(selectie?.length
+      ? {
+          selectie: {
+            some: {
+              selectie: { in: selectie.map(overigPersoonSelectieMapper.toDB) },
+            },
+          },
+        }
+      : {}),
     ...(laatsteAanmeldingJaarGeleden !== undefined
       ? {
           aanmeldingen: {
@@ -276,9 +381,14 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
         }
       : {}),
     geboortedatum: dateRangeFilter({ minLeeftijd, maxLeeftijd }),
+    type: persoonTypeMapper.toDB(type),
+    woonsituatie: woonsituatieMapper.toDB(woonsituatie),
+    werksituatie: werksituatieMapper.toDB(werksituatie),
+    geslacht: geslachtMapper.toDB(geslacht),
+    voedingswens: voedingswensMapper.toDB(voedingswens),
     ...(volledigeNaamLike
       ? {
-          volledigeNaam: { contains: volledigeNaamLike, mode: 'insensitive' },
+          volledigeNaam: { contains: volledigeNaamLike },
         }
       : {}),
   };
@@ -335,7 +445,8 @@ export const includePersoonAggregate = Object.freeze({
       project: true,
     }),
   }),
-} as const);
+  selectie: true,
+} as const satisfies db.Prisma.PersoonInclude);
 
 function toFoldervoorkeurInput(
   persoon: Persoon,
@@ -344,19 +455,27 @@ function toFoldervoorkeurInput(
     deleteMany: {
       persoonId: persoon.id,
       folder: {
-        notIn: persoon.foldervoorkeuren.map(({ folder }) => folder),
+        notIn: persoon.foldervoorkeuren.map(({ folder }) =>
+          foldersoortMapper.toDB(folder),
+        ),
       },
     },
-    upsert: persoon.foldervoorkeuren.map(({ communicatie, folder }) => ({
-      where: {
-        folder_persoonId: {
-          folder,
-          persoonId: persoon.id,
+    upsert: persoon.foldervoorkeuren.map(({ communicatie, folder }) => {
+      const dbFolderVoorkeur = {
+        folder: foldersoortMapper.toDB(folder),
+        communicatie: communicatievoorkeurMapper.toDB(communicatie),
+      };
+      return {
+        where: {
+          folder_persoonId: {
+            folder: dbFolderVoorkeur.folder,
+            persoonId: persoon.id,
+          },
         },
-      },
-      create: { folder, communicatie },
-      update: { folder, communicatie },
-    })),
+        create: dbFolderVoorkeur,
+        update: dbFolderVoorkeur,
+      };
+    }),
   };
 }
 

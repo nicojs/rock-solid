@@ -6,6 +6,13 @@ import {
   stringFromRaw,
   writeOutputJson,
 } from './seed-utils.js';
+import {
+  communicatievoorkeurMapper,
+  foldersoortMapper,
+  overigPersoonSelectieMapper,
+  persoonTypeMapper,
+} from '../services/enum.mapper.js';
+import { Foldersoort, OverigPersoonSelectie } from '@rock-solid/shared';
 
 type JaNee = 'ja' | 'nee';
 
@@ -71,17 +78,23 @@ export async function seedExtraPersonen(
       emailadres: raw['e-mail'],
       verblijfadres,
       telefoonnummer: stringFromRaw(raw.telefoon),
-      type: 'overigPersoon',
-      selectie: selectieFromRaw(raw),
-      foldervoorkeuren: foldervoorkeurenFromRaw(raw),
+      type: persoonTypeMapper.toDB('overigPersoon'),
+      selectie: {
+        create: selectieFromRaw(raw),
+      },
+      foldervoorkeuren: {
+        create: foldervoorkeurenFromRaw(raw),
+      },
       opmerking: stringFromRaw(raw.opmerkingen),
     };
   }
 }
 
-function selectieFromRaw(raw: RawExtraPersoon): db.OverigPersoonSelectie[] {
-  const totalSelectie: db.OverigPersoonSelectie[] = [];
-  function addIfJa(val: JaNee, selectie: db.OverigPersoonSelectie) {
+function selectieFromRaw(
+  raw: RawExtraPersoon,
+): db.Prisma.OverigPersoonSelectieCreateWithoutOverigPersoonInput[] {
+  const totalSelectie: OverigPersoonSelectie[] = [];
+  function addIfJa(val: JaNee, selectie: OverigPersoonSelectie) {
     if (val === 'ja') {
       totalSelectie.push(selectie);
     }
@@ -94,21 +107,26 @@ function selectieFromRaw(raw: RawExtraPersoon): db.OverigPersoonSelectie[] {
   addIfJa(raw['algemene vergadering Kei-Jong'], 'algemeneVergaderingKeiJong');
   addIfJa(raw['raad van bestuur De Kei'], 'raadVanBestuurDeKei');
   addIfJa(raw['raad van bestuur Kei-Jong'], 'raadVanBestuurKeiJong');
-  return totalSelectie;
+  return totalSelectie.map((selectie) => ({
+    selectie: overigPersoonSelectieMapper.toDB(selectie),
+  }));
 }
 
 function foldervoorkeurenFromRaw(
   raw: RawExtraPersoon,
-): db.Prisma.FoldervoorkeurCreateNestedManyWithoutPersoonInput {
-  const voorkeuren: db.Prisma.FoldervoorkeurCreateManyPersoonInput[] = [];
-  function addIfJa(val: JaNee, folder: db.Foldersoort) {
+): db.Prisma.FoldervoorkeurCreateWithoutPersoonInput[] {
+  const voorkeuren: db.Prisma.FoldervoorkeurCreateWithoutPersoonInput[] = [];
+  function addIfJa(val: JaNee, folder: Foldersoort) {
     if (val === 'ja') {
-      voorkeuren.push({ communicatie: 'post', folder });
+      voorkeuren.push({
+        communicatie: communicatievoorkeurMapper.toDB('post'),
+        folder: foldersoortMapper.toDB(folder),
+      });
     }
   }
   addIfJa(raw['folders Kei-Jong (niet Buso)'], 'keiJongNietBuso');
   addIfJa(raw['folders Kei-Jong Buso'], 'keiJongBuso');
   addIfJa(raw['folders cursussen De Kei'], 'deKeiCursussen');
   addIfJa(raw['folders zomervakanties De Kei'], 'deKeiZomervakantie');
-  return { createMany: { data: voorkeuren } };
+  return voorkeuren;
 }

@@ -17,7 +17,7 @@
     "build:db": "lerna run prisma:client:generate --scope=\"@rock-solid/backend\"",
     "build:fe": "lerna run build --scope=\"@rock-solid/frontend\"",
     "predev": "npm run build",
-    "dev": "concurrently \"docker compose up -d || echo 'Docker not installed?'\" npm:dev:tsc npm:dev:backend npm:dev:frontend",
+    "dev": "concurrently npm:dev:tsc npm:dev:backend npm:dev:frontend",
     "start": "npm run -w packages/backend start",
     "dev:backend": "cd packages/backend && npm run dev",
     "dev:frontend": "cd packages/frontend && npm start",
@@ -36,7 +36,6 @@
   "license": "ISC",
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^10.6.1",
-    "@testcontainers/postgresql": "^10.4.0",
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
     "@types/supertest": "^2.0.16",

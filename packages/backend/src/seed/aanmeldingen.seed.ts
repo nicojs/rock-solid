@@ -2,6 +2,11 @@ import * as db from '@prisma/client';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { deduplicate } from '../services/mapper-utils.js';
+import {
+  aanmeldingsstatusMapper,
+  persoonTypeMapper,
+  projectTypeMapper,
+} from '../services/enum.mapper.js';
 
 export interface RawInschrijving {
   deelgenomen: 'Ja' | 'Nee';
@@ -26,7 +31,7 @@ export async function seedAanmeldingen<T extends RawInschrijving>(
     );
   const deelnemerById = (
     await client.persoon.findMany({
-      where: { type: 'deelnemer' },
+      where: { type: persoonTypeMapper.toDB('deelnemer') },
       include: { verblijfadres: true, domicilieadres: true },
     })
   ).reduce(
@@ -53,16 +58,16 @@ export async function seedAanmeldingen<T extends RawInschrijving>(
       number,
       {
         woonplaatsId: number | undefined;
-        woonsituatie: db.Woonsituatie;
-        werksituatie: db.Werksituatie;
-        geslacht: db.Geslacht;
+        woonsituatie: number | null;
+        werksituatie: number | null;
+        geslacht: number | null;
       }
     >(),
   );
 
   const projectenByCode = (
     await client.project.findMany({
-      where: { type },
+      where: { type: projectTypeMapper.toDB(type) },
       include: { activiteiten: { orderBy: { van: 'asc' } } },
     })
   ).reduce((acc, { id, projectnummer, jaar, activiteiten }) => {
@@ -176,13 +181,11 @@ export async function seedAanmeldingen<T extends RawInschrijving>(
         },
         project: { connect: { id: project.id } },
         deelnames: {
-          createMany: {
-            data: project.activiteiten.map((act) => ({
-              activiteitId: act.id,
-              effectieveDeelnamePerunage: raw.deelgenomen === 'Ja' ? 1 : 0,
-              opmerking: raw.opmerkingen.length ? raw.opmerkingen : undefined,
-            })),
-          },
+          create: project.activiteiten.map((act) => ({
+            activiteitId: act.id,
+            effectieveDeelnamePerunage: raw.deelgenomen === 'Ja' ? 1 : 0,
+            opmerking: raw.opmerkingen.length ? raw.opmerkingen : undefined,
+          })),
         },
         plaats: deelnemer.woonplaatsId
           ? {
@@ -192,7 +195,10 @@ export async function seedAanmeldingen<T extends RawInschrijving>(
         geslacht: deelnemer.geslacht,
         werksituatie: deelnemer.werksituatie,
         woonsituatie: deelnemer.woonsituatie,
-        status: raw.deelgenomen === 'Ja' ? 'Bevestigd' : 'Geannuleerd',
+        status:
+          raw.deelgenomen === 'Ja'
+            ? aanmeldingsstatusMapper.toDB('Bevestigd')
+            : aanmeldingsstatusMapper.toDB('Geannuleerd'),
       },
       projectnummer,
     ];

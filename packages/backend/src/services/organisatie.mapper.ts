@@ -20,6 +20,11 @@ import {
   toUpdateAdresInput,
 } from './adres.mapper.js';
 import { handleKnownPrismaErrors } from '../errors/prisma.js';
+import {
+  communicatievoorkeurMapper,
+  foldersoortMapper,
+  organisatiesoortMapper,
+} from './enum.mapper.js';
 
 type DBOrganisatieContactAggregate = db.OrganisatieContact & {
   adres: DBAdresWithPlaats | null;
@@ -28,6 +33,7 @@ type DBOrganisatieContactAggregate = db.OrganisatieContact & {
 
 type DBOrganisatieAggregate = db.Organisatie & {
   contacten: DBOrganisatieContactAggregate[];
+  soorten: db.Organisatiesoort[];
 };
 
 @Injectable()
@@ -42,7 +48,10 @@ export class OrganisatieMapper {
       await this.db.organisatie.findMany({
         where: toWhere(filter),
         orderBy: { naam: 'asc' },
-        include: includeContacten(filter),
+        include: {
+          ...includeContacten(filter),
+          ...includeSoorten,
+        },
         ...toPage(pageNumber),
       });
 
@@ -60,7 +69,10 @@ export class OrganisatieMapper {
   ): Promise<Organisatie | null> {
     const org = await this.db.organisatie.findUnique({
       where: where,
-      include: includeContacten(),
+      include: {
+        ...includeContacten(),
+        ...includeSoorten,
+      },
     });
     if (org) {
       return toOrganisatie(org);
@@ -72,16 +84,24 @@ export class OrganisatieMapper {
   public async create(
     organisatie: UpsertableOrganisatie,
   ): Promise<Organisatie> {
-    const { contacten, id, ...organisatieData } = organisatie;
+    const { contacten, id, soorten, ...organisatieData } = organisatie;
     const dbOrganisatie = await handleKnownPrismaErrors(
       this.db.organisatie.create({
         data: {
           ...organisatieData,
+          soorten: {
+            create: soorten?.map((soort) => ({
+              soort: organisatiesoortMapper.toDB(soort),
+            })),
+          },
           contacten: {
             create: contacten.map(toCreateContactInput),
           },
         },
-        include: includeContacten(),
+        include: {
+          ...includeContacten(),
+          ...includeSoorten,
+        },
       }),
     );
     return toOrganisatie(dbOrganisatie);
@@ -94,12 +114,28 @@ export class OrganisatieMapper {
     where: { id: number };
     data: Organisatie;
   }): Promise<Organisatie> {
-    const { contacten, id, ...props } = data;
+    const { contacten, id, soorten, ...props } = data;
+    const dbSoorten = soorten.map(organisatiesoortMapper.toDB);
     const result = await handleKnownPrismaErrors(
       this.db.organisatie.update({
         where,
         data: {
           ...props,
+          soorten: {
+            deleteMany: {
+              organisatieId: where.id,
+              soort: { notIn: dbSoorten },
+            },
+            connectOrCreate: dbSoorten.map((dbSoort) => ({
+              where: {
+                organisatieId_soort: {
+                  organisatieId: where.id,
+                  soort: dbSoort,
+                },
+              },
+              create: { soort: dbSoort },
+            })),
+          },
           // Update and create contacts that need to be updated or deleted
           contacten: {
             deleteMany: {
@@ -116,7 +152,10 @@ export class OrganisatieMapper {
               .map((contact) => toUpdateContactInput(contact)),
           },
         },
-        include: includeContacten(),
+        include: {
+          ...includeContacten(),
+          ...includeSoorten,
+        },
       }),
     );
 
@@ -163,7 +202,9 @@ function toWhere({
         foldervoorkeuren: folders
           ? {
               some: {
-                folder: { in: folders },
+                folder: {
+                  in: folders.map(foldersoortMapper.toDB),
+                },
               },
             }
           : undefined,
@@ -173,16 +214,17 @@ function toWhere({
   if (naam) {
     where.naam = {
       contains: naam,
-      mode: 'insensitive',
+      // mode: 'insensitive',
     };
   }
   return where;
 }
 
 function toOrganisatie(org: DBOrganisatieAggregate): Organisatie {
-  const { contacten, ...props } = org;
+  const { contacten, soorten, ...props } = org;
   return {
     ...purgeNulls(props),
+    soorten: soorten.map(({ soort }) => organisatiesoortMapper.toSchema(soort)),
     contacten: contacten.map(toContact),
   };
 }
@@ -198,8 +240,10 @@ function toContact(contact: DBOrganisatieContactAggregate): OrganisatieContact {
 
 function toFoldervoorkeur(foldervoorkeur: db.Foldervoorkeur): Foldervoorkeur {
   return {
-    communicatie: foldervoorkeur.communicatie,
-    folder: foldervoorkeur.folder,
+    communicatie: communicatievoorkeurMapper.toSchema(
+      foldervoorkeur.communicatie,
+    ),
+    folder: foldersoortMapper.toSchema(foldervoorkeur.folder),
   };
 }
 
@@ -210,6 +254,10 @@ const includeAdres = Object.freeze({
 const includeFoldervoorkeuren = Object.freeze({
   foldervoorkeuren: true as const,
 });
+
+const includeSoorten = Object.freeze({
+  soorten: true as const,
+} satisfies db.Prisma.OrganisatieInclude);
 
 function includeContacten(filter?: OrganisatieFilter) {
   return {
@@ -225,13 +273,15 @@ function includeContacten(filter?: OrganisatieFilter) {
         ? {
             foldervoorkeuren: {
               some: {
-                folder: { in: filter.folders },
+                folder: {
+                  in: filter.folders.map(foldersoortMapper.toDB),
+                },
               },
             },
           }
         : undefined,
     },
-  } as const;
+  } as const satisfies db.Prisma.OrganisatieInclude;
 }
 
 function toCreateContactInput(
@@ -244,8 +294,8 @@ function toCreateContactInput(
     terAttentieVan: props.terAttentieVan ?? '', // Empty string so we can use the unique key constraint
     foldervoorkeuren: {
       create: foldervoorkeuren?.map(({ communicatie, folder }) => ({
-        communicatie,
-        folder,
+        communicatie: communicatievoorkeurMapper.toDB(communicatie),
+        folder: foldersoortMapper.toDB(folder),
       })),
     },
   };
@@ -264,23 +314,30 @@ function toUpdateContactInput(
         deleteMany: {
           organisatieContactId: contact.id,
           folder: {
-            notIn: contact.foldervoorkeuren.map(({ folder }) => folder),
+            notIn: contact.foldervoorkeuren.map(({ folder }) =>
+              foldersoortMapper.toDB(folder),
+            ),
           },
         },
         upsert: contact.foldervoorkeuren.map(
           ({
             communicatie,
             folder,
-          }): db.Prisma.FoldervoorkeurUpsertWithWhereUniqueWithoutOrganisatieContactInput => ({
-            where: {
-              folder_organisatieContactId: {
-                folder,
-                organisatieContactId: contact.id,
+          }): db.Prisma.FoldervoorkeurUpsertWithWhereUniqueWithoutOrganisatieContactInput => {
+            const dbFolder = foldersoortMapper.toDB(folder);
+            const dbCommunicatie =
+              communicatievoorkeurMapper.toDB(communicatie);
+            return {
+              where: {
+                folder_organisatieContactId: {
+                  folder: dbFolder,
+                  organisatieContactId: contact.id,
+                },
               },
-            },
-            create: { folder, communicatie },
-            update: { folder, communicatie },
-          }),
+              create: { folder: dbFolder, communicatie: dbCommunicatie },
+              update: { folder: dbFolder, communicatie: dbCommunicatie },
+            };
+          },
         ),
       },
     },

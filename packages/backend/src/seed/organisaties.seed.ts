@@ -9,6 +9,11 @@ import {
   stringFromRaw,
   writeOutputJson,
 } from './seed-utils.js';
+import { Foldersoort } from '@rock-solid/shared';
+import {
+  communicatievoorkeurMapper,
+  foldersoortMapper,
+} from '../services/enum.mapper.js';
 
 interface RawOrganisatie {
   Naam: string;
@@ -87,7 +92,6 @@ export async function seedOrganisaties(
     return {
       naam: raw.Naam,
       website: fromRawWebsite(raw.website),
-      soorten: [],
       contacten: {
         create: [
           {
@@ -96,7 +100,9 @@ export async function seedOrganisaties(
             telefoonnummer: stringFromRaw(raw.telefoon),
             emailadres: stringFromRaw(raw['e-mail']),
             opmerking: stringFromRaw(raw.opmerkingen),
-            foldervoorkeuren: foldervoorkeurenFromRaw(raw),
+            foldervoorkeuren: {
+              create: foldervoorkeurenFromRaw(raw),
+            },
           },
         ],
       },
@@ -116,24 +122,26 @@ export async function seedOrganisaties(
 
   function foldervoorkeurenFromRaw(
     raw: RawOrganisatie,
-  ): db.Prisma.FoldervoorkeurCreateNestedManyWithoutOrganisatieContactInput {
-    const voorkeuren: db.Prisma.FoldervoorkeurCreateManyOrganisatieContactInput[] =
+  ): db.Prisma.FoldervoorkeurUncheckedCreateWithoutOrganisatieContactInput[] {
+    const voorkeuren: db.Prisma.FoldervoorkeurUncheckedCreateWithoutOrganisatieContactInput[] =
       [];
     addIfJa('folders Kei-Jong (niet Buso)', 'keiJongNietBuso');
     addIfJa('folders Kei-Jong Buso', 'keiJongBuso');
     addIfJa('folders cursussen De Kei', 'deKeiCursussen');
     addIfJa('folders wintervakanties De Kei', 'deKeiWintervakantie');
     addIfJa('folders zomervakanties De Kei', 'deKeiZomervakantie');
-    return { createMany: { data: voorkeuren } };
+    return voorkeuren;
 
     function addIfJa<Key extends keyof RawOrganisatie & `folders ${string}`>(
       prop: Key,
-      folder: db.Foldersoort,
+      folder: Foldersoort,
     ) {
       if (raw[prop] === 'ja') {
         voorkeuren.push({
-          communicatie: raw['mailing op e-mail'] ? 'email' : 'post',
-          folder,
+          communicatie: communicatievoorkeurMapper.toDB(
+            raw['mailing op e-mail'] ? 'email' : 'post',
+          ),
+          folder: foldersoortMapper.toDB(folder),
         });
       }
     }

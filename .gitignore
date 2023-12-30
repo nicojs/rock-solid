@@ -7,3 +7,5 @@ package.release.json
 /packages/backend/import
 /.deploy
 *.zip
+*.db
+*.db-journal

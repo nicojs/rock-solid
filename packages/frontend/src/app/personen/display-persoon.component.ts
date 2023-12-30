@@ -7,7 +7,6 @@ import {
   persoonLabels,
   Project,
   Vakantie,
-  voedingswensen,
 } from '@rock-solid/shared';
 import { html, nothing, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -27,6 +26,7 @@ import {
   showContactpersoon,
   showEmail,
   showPhoneNumber,
+  showVoedingswens,
 } from './persoon.pipe';
 
 @customElement('rock-display-persoon')
@@ -108,7 +108,7 @@ export class DisplayPersoonComponent extends RockElement {
           ${this.renderDefinition('telefoonnummer', showPhoneNumber)}
           ${this.renderDefinition(
             'voedingswens',
-            voedingswensen[this.persoon.voedingswens],
+            showVoedingswens(this.persoon),
           )}
           ${this.renderDefinition('verblijfadres', showAdres)}
           ${this.renderDefinition(

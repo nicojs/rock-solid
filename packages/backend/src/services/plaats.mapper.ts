@@ -14,7 +14,7 @@ export class PlaatsMapper {
   async getAll(filter: PlaatsFilter): Promise<Plaats[]> {
     const plaatsen = await this.db.plaats.findMany({
       where: {
-        volledigeNaam: { contains: filter.search, mode: 'insensitive' },
+        volledigeNaam: { contains: filter.search },
         id: { gt: 1 }, // Plaats 1 is "onbekend"
       },
       orderBy: [{ volledigeNaam: 'asc' }],

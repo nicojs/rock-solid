@@ -17,6 +17,8 @@ export async function seedPlaatsen(client: db.PrismaClient) {
     ),
   ) as RawPlaats[];
 
-  await client.plaats.createMany({ data: plaatsen });
+  await Promise.all(
+    plaatsen.map((plaats) => client.plaats.create({ data: plaats })),
+  );
   console.log(`Seeded ${plaatsen.length} plaatsen`);
 }
