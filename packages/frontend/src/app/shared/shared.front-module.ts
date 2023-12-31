@@ -6,3 +6,4 @@ import './paging.component';
 import './modal.component';
 import './search.component';
 import './export.component';
+import './technical-error-message.component';
