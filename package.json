@@ -29,7 +29,8 @@
     "import:csv2json": "node tasks/import-csv2json.mjs",
     "deploy:prepare": "tasks/prepare-deploy.sh",
     "deploy:acc:az": "az webapp deployment source config-zip --resource-group acc-rock-solid --name acc-rock-solid-web-app --src .deploy/deploy.zip",
-    "deploy:acc": "npm run clean && npm run import:az2csv && npm run import:csv2json && npm run build:src && npm run deploy:prepare && npm run deploy:acc:az"
+    "deploy:acc:prepare": "npm run clean && npm run import:az2csv && npm run import:csv2json && npm run build:src && npm run deploy:prepare",
+    "deploy:acc": "npm run deploy:acc:prepare && npm run deploy:acc:az"
   },
   "keywords": [],
   "author": "",
