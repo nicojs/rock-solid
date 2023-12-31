@@ -39,4 +39,4 @@ jobs:
           app-name: 'acc-rock-solid-web-app'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_35F484F8BBAC4B1EA23E4581204A754E }}
+          publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
