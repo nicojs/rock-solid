@@ -9,6 +9,7 @@ export interface Organisatie {
   emailadres?: string;
   website?: string;
   soorten: Organisatiesoort[];
+  soortOpmerking?: string;
   contacten: OrganisatieContact[];
 }
 
@@ -43,6 +44,7 @@ export const organisatieColumnNames: Record<keyof Organisatie, string> =
     emailadres: 'Emailadres',
     adres: 'Adres',
     soorten: 'Soort(en)',
+    soortOpmerking: 'Soort opmerking',
     contacten: 'Contact(en)',
   });
 

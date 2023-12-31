@@ -3,6 +3,8 @@ import {
   Privilege,
   UpsertableOrganisatie,
   groupedOrganisatieSoorten,
+  organisatieColumnNames,
+  organisatieSoorten,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -58,14 +60,33 @@ const organisatieControls: FormControl<Organisatie>[] = [
   {
     name: 'naam',
     type: InputType.text,
+    label: organisatieColumnNames.naam,
     validators: { required: true },
   },
   {
     name: 'website',
     type: InputType.url,
+    label: organisatieColumnNames.website,
     placeholder: 'https://dekei.be',
   },
-  checkboxesGroupedItemsControl('soorten', groupedOrganisatieSoorten),
+  checkboxesGroupedItemsControl('soorten', groupedOrganisatieSoorten, {
+    label: organisatieColumnNames.soorten,
+  }),
+  {
+    name: 'soortOpmerking',
+    label: organisatieColumnNames.soortOpmerking,
+    type: InputType.text,
+    validators: {
+      custom: (value, org) => {
+        const { soorten } = org;
+        if (soorten.includes('Anders') && !value) {
+          return `Soort opmerking is verplicht wanneer "${organisatieSoorten.Anders}" is geselecteerd.`;
+        }
+        return '';
+      },
+    },
+    dependsOn: ['soorten'],
+  },
   formArray(
     'contacten',
     [

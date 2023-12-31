@@ -41,6 +41,7 @@ export class OrganisatiesListComponent extends LitElement {
   }
 
   override render() {
+    console.log(this.organisaties);
     return html` ${this.organisaties
       ? html`${this.organisaties.length
           ? this.renderTable()
@@ -48,7 +49,7 @@ export class OrganisatiesListComponent extends LitElement {
       : html`<rock-loading></rock-loading>`}`;
   }
 
-  private renderTable(): unknown {
+  private renderTable() {
     return html`<div class="row">
       <table class="table table-hover">
         <thead>
@@ -68,7 +69,7 @@ export class OrganisatiesListComponent extends LitElement {
               org.contacten.length === 0 ? 1 : org.contacten.length;
             return html`<tr>
                 <td rowspan="${rowSpan}">${org.naam}</td>
-                ${renderContactTableData(org.contacten[0]!)}
+                ${renderContactTableData(org.contacten[0])}
                 <td rowspan="${rowSpan}">
                   <rock-link btn btnSecondary href="../edit/${org.id}"
                     ><rock-icon icon="pencil"></rock-icon
@@ -93,12 +94,15 @@ export class OrganisatiesListComponent extends LitElement {
         </tbody>
       </table>
     </div>`;
-    function renderContactTableData(contact: OrganisatieContact) {
-      return html`<td>${show(contact.terAttentieVan)}</td>
-        <td>${show(contact.telefoonnummer)}</td>
-        <td>${show(contact.emailadres)}</td>
-        <td>${showAdres(contact.adres)}</td>
-        <td>${showFoldervoorkeurBadges(contact.foldervoorkeuren)}</td>`;
+    function renderContactTableData(contact?: OrganisatieContact) {
+      if (contact) {
+        return html`<td>${show(contact.terAttentieVan)}</td>
+          <td>${show(contact.telefoonnummer)}</td>
+          <td>${show(contact.emailadres)}</td>
+          <td>${showAdres(contact.adres)}</td>
+          <td>${showFoldervoorkeurBadges(contact.foldervoorkeuren)}</td>`;
+      }
+      return html`<td class="text-center bg-body-secondary" colspan="5"></td>`;
     }
   }
 }
