@@ -78,7 +78,6 @@ export class OrganisatieMapper {
   public async create(
     organisatie: UpsertableOrganisatie,
   ): Promise<Organisatie> {
-    throw new Error('test');
     const { contacten, id, soorten, ...organisatieData } = organisatie;
     const dbOrganisatie = await handleKnownPrismaErrors(
       this.db.organisatie.create({
