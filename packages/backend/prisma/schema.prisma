@@ -2,50 +2,50 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x"]
+  provider = "prisma-client-js"
+  // binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 model Persoon {
   id                  Int              @id @default(autoincrement())
-  voornaam            String?          @db.VarChar(128)
-  achternaam          String           @db.VarChar(128)
-  volledigeNaam       String           @db.VarChar(256)
-  emailadres          String?          @db.VarChar(256)
+  voornaam            String?
+  achternaam          String
+  volledigeNaam       String
+  emailadres          String?
   verblijfadresId     Int?
   verblijfadres       Adres?           @relation(name: "verblijfadres", fields: [verblijfadresId], references: [id])
   domicilieadresId    Int?
   domicilieadres      Adres?           @relation(name: "domicilieadres", fields: [domicilieadresId], references: [id])
-  geboortedatum       DateTime?        @db.Date
-  geboorteplaats      String?          @db.VarChar(256)
-  geslacht            Geslacht         @default(onbekend)
-  geslachtOpmerking   String?          @db.VarChar(256)
-  rekeningnummer      String?          @db.VarChar(256)
-  rijksregisternummer String?          @db.VarChar(256)
-  telefoonnummer      String?          @db.VarChar(256)
-  gsmNummer           String?          @db.VarChar(256)
-  opmerking           String?          @db.VarChar(1024)
-  type                PersoonType      @default(deelnemer)
+  geboortedatum       DateTime?
+  geboorteplaats      String?
+  geslacht            Int?
+  geslachtOpmerking   String?
+  rekeningnummer      String?
+  rijksregisternummer String?
+  telefoonnummer      String?
+  gsmNummer           String?
+  opmerking           String?
+  type                Int
   foldervoorkeuren    Foldervoorkeur[]
 
   // Deelnemer
-  woonsituatie                 Woonsituatie    @default(onbekend)
-  woonsituatieOpmerking        String?         @db.VarChar(256)
-  werksituatie                 Werksituatie    @default(onbekend)
-  opleidingsvorm               Opleidingsvorm?
-  werksituatieOpmerking        String?         @db.VarChar(256)
-  voedingswens                 Voedingswens    @default(geen)
-  voedingswensOpmerking        String?         @db.VarChar(256)
-  begeleidendeDienst           String?         @db.VarChar(256)
-  contactpersoon               String?         @db.VarChar(256)
-  contactpersoonTelefoon       String?         @db.VarChar(256)
-  contactpersoonGsm            String?         @db.VarChar(256)
-  contactpersoonEmail          String?         @db.VarChar(256)
+  woonsituatie                 Int?
+  woonsituatieOpmerking        String?
+  werksituatie                 Int?
+  opleidingsvorm               Int?
+  werksituatieOpmerking        String?
+  voedingswens                 Int?
+  voedingswensOpmerking        String?
+  begeleidendeDienst           String?
+  contactpersoon               String?
+  contactpersoonTelefoon       String?
+  contactpersoonGsm            String?
+  contactpersoonEmail          String?
   aanmeldingen                 Aanmelding[]
   eersteCursusAanmelding       Aanmelding?     @relation("eersteCursusAanmelding", fields: [eersteCursusAanmeldingId], references: [id])
   eersteCursusAanmeldingId     Int?
@@ -60,31 +60,35 @@ model Persoon {
   // OverigePersonen
   selectie           OverigPersoonSelectie[]
   begeleidtProjecten Project[]
+}
 
-  @@map("persoon")
+model OverigPersoonSelectie {
+  overigPersoonId Int
+  selectie        Int
+  overigPersoon   Persoon @relation(fields: [overigPersoonId], references: [id])
+
+  @@id([overigPersoonId, selectie])
 }
 
 model Adres {
   id         Int     @id @default(autoincrement())
   plaats     Plaats  @relation(fields: [plaatsId], references: [id])
-  straatnaam String  @db.VarChar(64)
-  huisnummer String  @db.VarChar(10)
-  busnummer  String? @db.VarChar(10)
+  straatnaam String
+  huisnummer String
+  busnummer  String?
   plaatsId   Int
 
   verblijfpersonen     Persoon[]            @relation("verblijfadres")
   domiciliepersonen    Persoon[]            @relation("domicilieadres")
   organisatieContacten OrganisatieContact[]
-
-  @@map("adres")
 }
 
 model Plaats {
   id            Int    @id @default(autoincrement())
-  deelgemeente  String @db.VarChar(256)
-  gemeente      String @db.VarChar(256)
-  postcode      String @unique @db.VarChar(10)
-  volledigeNaam String @db.VarChar(256)
+  deelgemeente  String
+  gemeente      String
+  postcode      String @unique
+  volledigeNaam String
   provincieId   Int
 
   Adressen     Adres[]
@@ -93,57 +97,53 @@ model Plaats {
   @@index(deelgemeente)
   @@index(gemeente)
   @@index(provincieId)
-  @@map("plaats")
 }
 
 model Project {
   id            Int          @id @default(autoincrement())
-  projectnummer String       @unique @db.VarChar(40)
-  naam          String       @db.VarChar(216)
-  titel         String       @db.VarChar(256)
-  type          ProjectType
+  projectnummer String       @unique
+  naam          String
+  titel         String
+  type          Int
   activiteiten  Activiteit[]
   aanmeldingen  Aanmelding[]
   begeleiders   Persoon[]
   jaar          Int
-  saldo         Decimal?     @db.Money
+  saldo         Decimal?
 
   // Cursus
-  organisatieonderdeel Organisatieonderdeel?
+  organisatieonderdeel Int?
 
   // Vakantie. Total price is saldo + voorschot
   bestemming String?
   land       String?
-  seizoen    VakantieSeizoen?
-  voorschot  Decimal?         @db.Money
-
-  @@map("project")
+  seizoen    Int?
+  voorschot  Decimal?
 }
 
 model Aanmelding {
-  id                           Int               @id @default(autoincrement())
+  id                           Int        @id @default(autoincrement())
   projectId                    Int
-  project                      Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project                      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   deelnemerId                  Int?
-  deelnemer                    Persoon?          @relation(fields: [deelnemerId], references: [id])
+  deelnemer                    Persoon?   @relation(fields: [deelnemerId], references: [id])
   deelnames                    Deelname[]
-  rekeninguittrekselNummer     String?           @db.VarChar(32)
-  tijdstipVanAanmelden         DateTime          @default(now())
-  status                       Aanmeldingsstatus @default(Aangemeld)
+  rekeninguittrekselNummer     String?
+  tijdstipVanAanmelden         DateTime   @default(now())
+  status                       Int        @default(0)
   bevestigingsbriefVerzondenOp DateTime?
   vervoersbriefVerzondenOp     DateTime?
 
   // Fields copied from deelnemer when created
   plaats                     Plaats?      @relation(fields: [plaatsId], references: [id])
   plaatsId                   Int?
-  werksituatie               Werksituatie @default(onbekend)
-  woonsituatie               Woonsituatie @default(onbekend)
-  geslacht                   Geslacht     @default(onbekend)
+  werksituatie               Int?
+  woonsituatie               Int?
+  geslacht                   Int?
   eersteCursusAanmeldingen   Persoon[]    @relation("eersteCursusAanmelding")
   eersteVakantieAanmeldingen Persoon[]    @relation("eersteVakantieAanmelding")
 
   @@unique([projectId, deelnemerId])
-  @@map("aanmelding")
 }
 
 model Activiteit {
@@ -158,10 +158,8 @@ model Activiteit {
   deelnames        Deelname[]
 
   // Vakanties
-  verblijf VakantieVerblijf?
-  vervoer  VakantieVervoer?
-
-  @@map("activiteit")
+  verblijf Int?
+  vervoer  Int?
 }
 
 model Deelname {
@@ -171,224 +169,51 @@ model Deelname {
   activiteit                 Activiteit @relation(fields: [activiteitId], references: [id], onDelete: Cascade)
   activiteitId               Int
   effectieveDeelnamePerunage Float
-  opmerking                  String?    @db.VarChar(512)
+  opmerking                  String?
 
   @@unique([aanmeldingId, activiteitId])
-  @@map("deelname")
 }
 
 model Organisatie {
   id        Int                  @id @default(autoincrement())
-  naam      String               @unique @db.VarChar(256)
-  website   String?              @db.VarChar(256)
+  naam      String               @unique
+  website   String?
   soorten   Organisatiesoort[]
   contacten OrganisatieContact[]
+}
 
-  @@map("organisatie")
+model Organisatiesoort {
+  organisatieId Int
+  soort         Int
+  organisatie   Organisatie @relation(fields: [organisatieId], references: [id], onDelete: Cascade)
+
+  @@id([organisatieId, soort])
 }
 
 model OrganisatieContact {
   id               Int              @id @default(autoincrement())
   organisatieId    Int
-  terAttentieVan   String           @db.VarChar(256)
-  afdeling         String?          @db.VarChar(256)
-  emailadres       String?          @db.VarChar(256)
-  telefoonnummer   String?          @db.VarChar(256)
+  terAttentieVan   String
+  afdeling         String?
+  emailadres       String?
+  telefoonnummer   String?
   adres            Adres?           @relation(fields: [adresId], references: [id])
   adresId          Int?
-  opmerking        String?          @db.VarChar(1024)
+  opmerking        String?
   foldervoorkeuren Foldervoorkeur[]
   organisatie      Organisatie      @relation(fields: [organisatieId], references: [id], onDelete: Cascade)
-
-  @@map("organisatie_contact")
-}
-
-enum Aanmeldingsstatus {
-  Aangemeld
-  Bevestigd
-  OpWachtlijst
-  Geannuleerd
-}
-
-enum Organisatiesoort {
-  AmbulanteWoonondersteuning
-  ResidentieleWoonondersteuningMinderjarigen
-  ResidentieleWoonondersteuningMeerderjarigen
-  Pleegzorg
-  RechtstreeksToegankelijkeHulp
-  BijzondereJeugdzorg
-  Psychiatrie
-  Maatwerkbedrijf
-  Dagwerking
-  BegeleidWerkOfVrijwilligerswerk
-  ArbeidstrajectBegeleiding
-  Arbeidszorg
-  BuSO
-  CLB
-  CentraBasiseducatie
-  CAW
-  JAC
-  OCMW
-  GGZ
-  Justitiehuizen
-  OndersteuningTrajectbegeleiding
-  Vrijetijdsaanbod
-  Algemeen
-  Jeugdorganisatie
-  Jeugddienst
-  SociaalCultureleOrganisaties
-  SteunpuntenEnFederaties
-  Anders
-
-  @@map("organisatiesoort")
 }
 
 model Foldervoorkeur {
-  id                   Int                  @id @default(autoincrement())
-  communicatie         Communicatievoorkeur
-  folder               Foldersoort
+  id                   Int                 @id @default(autoincrement())
+  communicatie         Int
+  folder               Int
   organisatieContactId Int?
   persoonId            Int?
-  organisatieContact   OrganisatieContact?  @relation(fields: [organisatieContactId], references: [id])
-  persoon              Persoon?             @relation(fields: [persoonId], references: [id])
+  organisatieContact   OrganisatieContact? @relation(fields: [organisatieContactId], references: [id])
+  persoon              Persoon?            @relation(fields: [persoonId], references: [id])
 
   @@unique([folder, persoonId])
   @@unique([folder, organisatieContactId])
   @@index([folder])
-  @@map("foldervoorkeur")
-}
-
-enum Communicatievoorkeur {
-  post
-  email
-  postEnEmail
-
-  @@map("communicatie_voorkeur")
-}
-
-enum Foldersoort {
-  deKeiCursussen
-  deKeiZomervakantie
-  deKeiWintervakantie
-  keiJongNietBuso
-  keiJongBuso
-  infoboekje
-
-  @@map("foldersoort")
-}
-
-enum ProjectType {
-  cursus
-  vakantie
-
-  @@map("project_type")
-}
-
-enum OverigPersoonSelectie {
-  algemeneVergaderingDeBedding
-  algemeneVergaderingDeKei
-  algemeneVergaderingKeiJong
-  raadVanBestuurDeKei
-  raadVanBestuurKeiJong
-  personeel
-  vakantieVrijwilliger
-
-  @@map("overig_persoon_selectie")
-}
-
-enum Organisatieonderdeel {
-  keiJongBuSO
-  keiJongNietBuSO
-  deKei
-
-  @@map("organisatieonderdeel")
-}
-
-enum PersoonType {
-  deelnemer
-  overigPersoon
-
-  @@map("persoon_type")
-}
-
-enum Geslacht {
-  onbekend
-  man
-  vrouw
-  x
-
-  @@map("geslacht")
-}
-
-enum Woonsituatie {
-  onbekend
-  oudersMetProfessioneleBegeleiding
-  oudersZonderProfessioneleBegeleiding
-  residentieleWoonondersteuning
-  zelfstandigMetProfessioneleBegeleiding
-  zelfstandigZonderProfessioneleBegeleiding
-  anders
-
-  @@map("woonsituatie")
-}
-
-enum Opleidingsvorm {
-  onbekend
-  opleidingsvorm1
-  opleidingsvorm2
-  opleidingsvorm3
-  alternerendeBeroepsopleiding
-  regulierOnderwijsMetExtraOndersteuning
-
-  @@map("opleidingsvorm")
-}
-
-enum Werksituatie {
-  onbekend
-  school
-  dagbesteding
-  vrijwilligerswerk
-  maatwerkbedrijf
-  arbeidszorg
-  arbeidstrajectbegeleiding
-  reguliereArbeidscircuit
-  pensioen
-  werkzoekend
-
-  @@map("werksituatie")
-}
-
-enum Voedingswens {
-  geen
-  vegetarisch
-  halal
-  anders
-
-  @@map("voedingswens")
-}
-
-enum VakantieVerblijf {
-  hotelOfPension
-  vakantiehuis
-  boot
-
-  @@map("vakantie_verblijf")
-}
-
-enum VakantieVervoer {
-  vliegtuig
-  autocarNacht
-  autocarOverdag
-  trein
-  minibus
-  boot
-
-  @@map("vakantie_vervoer")
-}
-
-enum VakantieSeizoen {
-  zomer
-  winter
-
-  @@map("vakantie_seizoen")
 }

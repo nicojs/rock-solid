@@ -175,7 +175,6 @@ export class PersonenComponent extends RockElement {
       case 'new':
         const persoon: DeepPartial<Persoon> = {
           type: this.type,
-          voedingswens: 'geen',
           verblijfadres: {},
           geslacht: 'onbekend',
           foldervoorkeuren: [],

@@ -7,7 +7,13 @@ import {
   stringFromRaw,
   writeOutputJson,
 } from './seed-utils.js';
-import { calculateAge } from '@rock-solid/shared';
+import { Geslacht, calculateAge } from '@rock-solid/shared';
+import {
+  communicatievoorkeurMapper,
+  foldersoortMapper,
+  geslachtMapper,
+  persoonTypeMapper,
+} from '../services/enum.mapper.js';
 
 interface RawDeelnemer {
   '': string;
@@ -47,6 +53,7 @@ interface RawDeelnemer {
   werksituatie: string;
   woonsituatie: string;
 }
+const rawGeslachten = Object.freeze(['man', 'vrouw']);
 
 export async function seedDeelnemers(
   client: db.PrismaClient,
@@ -67,6 +74,7 @@ export async function seedDeelnemers(
     });
     persoonIdByTitle.set(title, id);
   }
+
   await writeOutputJson(
     'deelnemers-lookup.json',
     Object.fromEntries(persoonIdByTitle.entries()),
@@ -104,12 +112,9 @@ export async function seedDeelnemers(
         geboortedatum,
         verblijfadres,
         domicilieadres,
-        geslacht:
-          raw.geslacht === 'man'
-            ? db.Geslacht.man
-            : raw.geslacht === 'vrouw'
-              ? db.Geslacht.vrouw
-              : db.Geslacht.onbekend,
+        geslacht: rawGeslachten.includes(raw.geslacht)
+          ? geslachtMapper.toDB(raw.geslacht as Geslacht)
+          : geslachtMapper.toDB('onbekend'),
         geboorteplaats: stringFromRaw(raw.geboorteplaats),
         gsmNummer: stringFromRaw(raw.GSM),
         begeleidendeDienst: stringFromRaw(raw['Begeleidende dienst']),
@@ -121,7 +126,7 @@ export async function seedDeelnemers(
         werksituatieOpmerking: stringFromRaw(raw.werksituatie),
         telefoonnummer: stringFromRaw(raw.telefoon),
         opmerking: stringFromRaw(raw.opmerkingen),
-        type: 'deelnemer',
+        type: persoonTypeMapper.toDB('deelnemer'),
         foldervoorkeuren: {
           create: foldervoorkeurFromRaw(raw, geboortedatum),
         },
@@ -130,376 +135,27 @@ export async function seedDeelnemers(
   }
 }
 
+const post = communicatievoorkeurMapper.toDB('post');
 function foldervoorkeurFromRaw(
   raw: RawDeelnemer,
   geboortedatum: Date | undefined,
 ): db.Prisma.FoldervoorkeurCreateWithoutPersoonInput | undefined {
   if (raw.cursussen === 'Ja') {
     if (!geboortedatum || calculateAge(geboortedatum) >= 31) {
-      return { communicatie: 'post', folder: 'deKeiCursussen' };
+      return {
+        communicatie: post,
+        folder: foldersoortMapper.toDB('deKeiCursussen'),
+      };
     } else if (raw['Kei-Jong BUSO'] === 'Ja') {
-      return { communicatie: 'post', folder: 'keiJongBuso' };
+      return {
+        communicatie: post,
+        folder: foldersoortMapper.toDB('keiJongBuso'),
+      };
     } else {
-      return { communicatie: 'post', folder: 'keiJongNietBuso' };
+      return {
+        communicatie: post,
+        folder: foldersoortMapper.toDB('keiJongNietBuso'),
+      };
     }
   }
 }
-
-export async function seedFakePersonen(client: db.PrismaClient) {
-  const adressen: db.Adres[] = [];
-
-  const plaatsenCount = await client.plaats.count();
-
-  for (let i = 0; i < 100; i++) {
-    for (const straatnaam of fakeStraatnamen) {
-      adressen.push(
-        await client.adres.create({
-          data: {
-            huisnummer: Math.floor(Math.random() * 123).toString(),
-            straatnaam,
-            plaats: {
-              connect: { id: Math.floor(Math.random() * plaatsenCount) },
-            },
-          },
-        }),
-      );
-    }
-  }
-
-  await client.persoon.createMany({
-    data: fakeManVoornamen.map((voornaam, index) => {
-      const achternaam = fakeAchternamen[index % fakeAchternamen.length]!;
-      return {
-        achternaam,
-        voornaam,
-        volledigeNaam: `${voornaam} ${achternaam}`,
-        geslacht: 'man' as const,
-        verblijfadresId: adressen[index % adressen.length]!.id,
-      };
-    }),
-  });
-  await client.persoon.createMany({
-    data: fakeVrouwVoornamen.map((voornaam, index) => {
-      const achternaam = fakeAchternamen[index % fakeAchternamen.length]!;
-      return {
-        achternaam,
-        voornaam,
-        volledigeNaam: `${voornaam} ${achternaam}`,
-        geslacht: 'man' as const,
-        verblijfadresId: adressen[index % adressen.length]!.id,
-      };
-    }),
-  });
-  console.log(
-    `Seeded ${fakeManVoornamen.length + fakeVrouwVoornamen.length} deelnemers`,
-  );
-}
-
-const fakeManVoornamen = [
-  'Noah',
-  'Sem',
-  'Liam',
-  'Lucas',
-  'Daan',
-  'Finn',
-  'Levi',
-  'Luuk',
-  'Mees',
-  'James',
-  'Milan',
-  'Sam',
-  'Noud',
-  'Luca',
-  'Benjamin',
-  'Bram',
-  'Mason',
-  'Max',
-  'Thomas',
-  'Adam',
-  'Jesse',
-  'Hugo',
-  'Boaz',
-  'Olivier',
-  'Teun',
-  'Julian',
-  'Lars',
-  'Gijs',
-  'Thijs',
-  'Siem',
-  'Guus',
-  'Mats',
-  'Zayn',
-  'Otis',
-  'Jens',
-  'Jack',
-  'Floris',
-  'Ties',
-  'Vince',
-  'Joep',
-  'David',
-  'Stijn',
-  'Jan',
-  'Sven',
-  'Dex',
-  'Jurre',
-  'Morris',
-  'Quinn',
-  'Ruben',
-  'Owen',
-  'Jayden',
-  'Mohammed',
-  'Tobias',
-  'Moos',
-  'Robin',
-  'Jace',
-  'Tijn',
-  'Tim',
-  'Abel',
-  'Willem',
-  'Oliver',
-  'Cas',
-  'Fedde',
-  'Ryan',
-  'Roan',
-  'Jaxx',
-  'Xavi',
-  'Daniël',
-  'Alexander',
-  'Dean',
-  'Dani',
-  'Ezra',
-  'Jake',
-  'Jip',
-  'Sepp',
-  'Mohamed',
-  'Pepijn',
-  'Tom',
-  'Jason',
-  'Aiden',
-  'Jax',
-  'Pim',
-  'Kai',
-  'Nathan',
-  'Rayan',
-  'Melle',
-  'Oscar',
-  'Elias',
-  'Mick',
-  'Boris',
-  'Senn',
-  'Samuel',
-  'Lenn',
-  'Hidde',
-  'Amir',
-  'Johannes',
-  'Riley',
-  'Job',
-  'Joshua',
-  'Niek',
-];
-const fakeVrouwVoornamen = [
-  'Emma',
-  'Julia',
-  'Mila',
-  'Tess',
-  'Sophie',
-  'Zoë',
-  'Sara',
-  'Nora',
-  'Yara',
-  'Eva',
-  'Liv',
-  'Lotte',
-  'Evi',
-  'Noor',
-  'Anna',
-  'Milou',
-  'Olivia',
-  'Saar',
-  'Lauren',
-  'Nina',
-  'Lieke',
-  'Fleur',
-  'Lynn',
-  'Sofie',
-  'Elin',
-  'Fien',
-  'Nova',
-  'Sarah',
-  'Maud',
-  'Lina',
-  'Mia',
-  'Loïs',
-  'Sofia',
-  'Emily',
-  'Roos',
-  'Fenna',
-  'Ella',
-  'Isa',
-  'Hailey',
-  'Luna',
-  'Hannah',
-  'Julie',
-  'Noa',
-  'Elena',
-  'Sophia',
-  'Bo',
-  'Suze',
-  'Lara',
-  'Maria',
-  'Jasmijn',
-  'Lena',
-  'Esmee',
-  'Cato',
-  'Amy',
-  'Vera',
-  'Lisa',
-  'Liz',
-  'Juul',
-  'Floor',
-  'Hanna',
-  'Norah',
-  'Rosa',
-  'Noé',
-  'Ivy',
-  'Charlotte',
-  'Isabella',
-  'Amber',
-  'Feline',
-  'Elise',
-  'Puck',
-  'Veerle',
-  'Lizzy',
-  'Lize',
-  'Linde',
-  'Livia',
-  'Naomi',
-  'Rosie',
-  'Charlie',
-  'Merel',
-  'Isabel',
-  'Liva',
-  'Fenne',
-  'Anne',
-  'Maeve',
-  'Kiki',
-  'Jill',
-  'Amira',
-  'Benthe',
-  'Iris',
-  'Romy',
-  'Romée',
-  'Eline',
-  'Sanne',
-  'Tessa',
-  'Fiene',
-  'Lola',
-  'Loua',
-  'Femke',
-  'Nola',
-  'Fay',
-];
-const fakeAchternamen = [
-  'de Jong',
-  'Jansen',
-  'de Vries',
-  'van den Berg',
-  'van Dijk',
-  'Bakker',
-  'Janssen',
-  'Visser',
-  'Smit',
-  'Meijer',
-  'de Boer',
-  'Mulder',
-  'de Groot',
-  'Bos',
-  'Vos',
-  'Peters',
-  'Hendriks',
-  'van Leeuwen',
-  'Dekker',
-  'Brouwer',
-  'de Wit',
-  'Dijkstra',
-  'Smits',
-  'de Graaf',
-  'van der Meer',
-  'van der Linden',
-  'Kok',
-  'Jacobs',
-  'de Haan',
-  'Vermeulen',
-  'van den Heuvel',
-  'van der Veen',
-  'van den Broek',
-  'de Bruijn',
-  'de Bruin',
-  'van der Heijden',
-  'Schouten',
-  'van Beek',
-  'Willems',
-  'van Vliet',
-  'van de Ven',
-  'Hoekstra',
-  'Maas',
-  'Verhoeven',
-  'Koster',
-  'van Dam',
-  'van der Wal',
-  'Prins',
-  'Blom',
-  'Huisman',
-  'Peeters',
-  'de Jonge',
-  'Kuipers',
-  'van Veen',
-  'Post',
-  'Kuiper',
-  'Veenstra',
-  'Kramer',
-  'van den Brink',
-  'Scholten',
-  'van Wijk',
-  'Postma',
-  'Martens',
-  'Vink',
-  'de Ruiter',
-  'Timmermans',
-  'Groen',
-  'Gerritsen',
-  'Jonker',
-  'van Loon',
-  'Boer',
-  'van der Velde',
-  'Willemsen',
-  'Smeets',
-  'de Lange',
-  'de Vos',
-  'Bosch',
-  'van Dongen',
-  'Schipper',
-  'de Koning',
-  'van der Laan',
-  'Koning',
-  'van der Velden',
-  'Driessen',
-  'van Doorn',
-  'Hermans',
-  'Evers',
-  'van den Bosch',
-  'van der Meulen',
-  'Hofman',
-  'Bosman',
-  'Wolters',
-  'Sanders',
-  'van der Horst',
-  'Mol',
-  'Kuijpers',
-  'Molenaar',
-  'van de Pol',
-  'de Leeuw',
-  'Verbeek',
-];
-
-const fakeStraatnamen = ['Veldstraat', 'Loverslane', 'Steenweg', 'Fakestreet'];

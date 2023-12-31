@@ -18,12 +18,12 @@ export class DBService
           url: databaseUrl,
         },
       },
-      log: [
-        {
-          emit: 'event',
-          level: 'query',
-        },
-      ],
+      // log: [
+      //   {
+      //     emit: 'event',
+      //     level: 'query',
+      //   },
+      // ],
     });
     // this.$on('query', async (e) => {
     //   console.log(`${e.query} ${e.params}`);

@@ -213,14 +213,14 @@ describe(ProjectenController.name, () => {
       const expectedCursus: Cursus = {
         type: 'cursus',
         begeleiders: [],
-        id: 1,
+        id,
         projectnummer: '123',
         naam: 'Foo project',
         jaar: 2011,
         organisatieonderdeel: 'deKei',
         activiteiten: [
           {
-            id: 1,
+            id: actual.activiteiten[0]!.id,
             van: new Date(2011, 2, 2, 20, 0, 0),
             totEnMet: new Date(2011, 2, 4, 16, 0, 0),
             vormingsuren: 20,

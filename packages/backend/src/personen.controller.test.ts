@@ -128,14 +128,16 @@ describe(PersonenController.name, () => {
       ]);
 
       // Act
-      const [oo, ba, bazQu, ond, fooBaz, noFilter] = await Promise.all([
+      const [oo, ba, bazQu, ond, fooBaz] = await Promise.all([
         harness.getAllPersonen({ volledigeNaamLike: 'oo' }),
         harness.getAllPersonen({ volledigeNaamLike: 'ba' }),
         harness.getAllPersonen({ volledigeNaamLike: 'Baz qu' }),
         harness.getAllPersonen({ volledigeNaamLike: 'ond' }),
         harness.getAllPersonen({ volledigeNaamLike: 'foo Baz' }),
-        harness.getAllPersonen({ volledigeNaamLike: undefined }),
       ]);
+      const noFilter = await harness.getAllPersonen({
+        volledigeNaamLike: undefined,
+      });
 
       // Assert
       expect(oo).deep.eq([fooBar]);

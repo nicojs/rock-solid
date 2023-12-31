@@ -2,10 +2,6 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import request from 'supertest';
 import chai from 'chai';
-import {
-  PostgreSqlContainer,
-  StartedPostgreSqlContainer,
-} from '@testcontainers/postgresql';
 import { Test } from '@nestjs/testing';
 import { AppModule } from './app.module.js';
 import { JwtService } from '@nestjs/jwt';
@@ -57,7 +53,6 @@ const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
 
 export class RockSolidDBContainer {
-  private readonly db;
   private client;
   #seedPlaats?: Plaats;
 
@@ -68,8 +63,7 @@ export class RockSolidDBContainer {
     return this.#seedPlaats;
   }
 
-  private constructor(db: StartedPostgreSqlContainer) {
-    this.db = db;
+  private constructor(public readonly connectionUri: string) {
     this.client = new PrismaClient({
       datasources: {
         db: {
@@ -89,16 +83,17 @@ export class RockSolidDBContainer {
   }
 
   static async start() {
-    const postgres = await new PostgreSqlContainer().start();
-    console.log(`Started database container@${postgres.getConnectionUri()}`);
+    // const postgres = await new PostgreSqlContainer().start();
+    const connectionUri = 'file:./test.db?connection_limit=1';
+    console.log(`Started db@${connectionUri}`);
     await execAsync('npm run prisma:push:force', {
       env: {
         ...process.env,
-        DATABASE_URL: postgres.getConnectionUri(),
+        DATABASE_URL: connectionUri,
       },
       cwd,
     });
-    const db = new RockSolidDBContainer(postgres);
+    const db = new RockSolidDBContainer(connectionUri);
     await db.init();
     return db;
   }
@@ -128,18 +123,26 @@ export class RockSolidDBContainer {
    * Clears all state from the database (except seeded data).
    */
   async clear(): Promise<void> {
-    await this.client.$queryRaw`
-      TRUNCATE TABLE foldervoorkeur, aanmelding, deelname, activiteit, organisatie_contact, organisatie, "_PersoonToProject", persoon, project, adres, plaats RESTART IDENTITY;`;
+    await this.client.$queryRaw`DELETE FROM Foldervoorkeur`;
+    await this.client.$queryRaw`DELETE FROM Aanmelding`;
+    await this.client.$queryRaw`DELETE FROM Deelname`;
+    await this.client.$queryRaw`DELETE FROM Activiteit`;
+    await this.client.$queryRaw`DELETE FROM OrganisatieContact`;
+    await this.client.$queryRaw`DELETE FROM Organisatiesoort`;
+    await this.client.$queryRaw`DELETE FROM Organisatie`;
+    await this.client.$queryRaw`DELETE FROM "_PersoonToProject"`;
+    await this.client.$queryRaw`DELETE FROM OverigPersoonSelectie`;
+    await this.client.$queryRaw`DELETE FROM Persoon`;
+    await this.client.$queryRaw`DELETE FROM Project`;
+    await this.client.$queryRaw`DELETE FROM Adres`;
+    await this.client.$queryRaw`DELETE FROM Plaats`;
+    await this.client
+      .$queryRaw`UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'Plaats'`;
     await this.seed();
   }
 
   async stop() {
     await this.client.$disconnect();
-    await this.db.stop();
-  }
-
-  get connectionUri() {
-    return this.db.getConnectionUri();
   }
 }
 
@@ -452,6 +455,7 @@ export const factory = {
       projectnummer: `00${seed++}`,
       naam: `Test project ${seed}`,
       activiteiten: [this.activiteit()],
+      organisatieonderdeel: 'deKei',
       ...overrides,
     };
   },

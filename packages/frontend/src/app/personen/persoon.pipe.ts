@@ -73,12 +73,7 @@ export function showVoedingswens({
   voedingswens,
   voedingswensOpmerking,
 }: Pick<Persoon, 'voedingswens' | 'voedingswensOpmerking'>) {
-  return [
-    voedingswens === 'geen' ? undefined : voedingswens,
-    voedingswensOpmerking,
-  ]
-    .filter(notEmpty)
-    .join(': ');
+  return [voedingswens, voedingswensOpmerking].filter(notEmpty).join(': ');
 }
 
 export function showFotoToestemming(toestemming: FotoToestemming): string {

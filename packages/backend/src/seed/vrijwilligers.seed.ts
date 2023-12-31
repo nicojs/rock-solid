@@ -7,6 +7,12 @@ import {
   stringFromRaw,
   writeOutputJson,
 } from './seed-utils.js';
+import {
+  communicatievoorkeurMapper,
+  foldersoortMapper,
+  overigPersoonSelectieMapper,
+  persoonTypeMapper,
+} from '../services/enum.mapper.js';
 
 interface RawVrijwilliger {
   titel: string;
@@ -80,9 +86,13 @@ export async function seedVrijwilligers(
         verblijfadres,
         gsmNummer: stringFromRaw(raw.GSM),
         telefoonnummer: stringFromRaw(raw.telefoon),
-        type: 'overigPersoon',
+        type: persoonTypeMapper.toDB('overigPersoon'),
         foldervoorkeuren,
-        selectie: ['vakantieVrijwilliger'],
+        selectie: {
+          create: {
+            selectie: overigPersoonSelectieMapper.toDB('vakantieVrijwilliger'),
+          },
+        },
         opmerking: stringFromRaw(raw.opmerkingen),
       },
     ];
@@ -94,10 +104,14 @@ export async function seedVrijwilligers(
  */
 const foldervoorkeuren: db.Prisma.FoldervoorkeurCreateNestedManyWithoutPersoonInput =
   {
-    createMany: {
-      data: [
-        { communicatie: 'email', folder: 'deKeiWintervakantie' },
-        { communicatie: 'email', folder: 'deKeiZomervakantie' },
-      ],
-    },
+    create: [
+      {
+        communicatie: communicatievoorkeurMapper.toDB('email'),
+        folder: foldersoortMapper.toDB('deKeiWintervakantie'),
+      },
+      {
+        communicatie: communicatievoorkeurMapper.toDB('email'),
+        folder: foldersoortMapper.toDB('deKeiZomervakantie'),
+      },
+    ],
   };

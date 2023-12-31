@@ -2,6 +2,10 @@ import * as db from '@prisma/client';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { prijsFromRaw, readImportJson, writeOutputJson } from './seed-utils.js';
 import { toTitel } from '../services/project.mapper.js';
+import {
+  organisatieonderdeelMapper,
+  projectTypeMapper,
+} from '../services/enum.mapper.js';
 
 interface RawCursus {
   titel: string;
@@ -67,8 +71,8 @@ export async function seedCursussen(
       if (iteration) {
         // Second activity
         (
-          preExistingProject.activiteiten!.createMany!
-            .data as db.Prisma.ActiviteitCreateManyProjectInput[]
+          preExistingProject.activiteiten!
+            .create! as db.Prisma.ActiviteitCreateWithoutProjectInput[]
         ).push(...activiteitenFromRaw(raw));
       } else {
         importErrors.addError('project_nummer_exists', {
@@ -83,23 +87,19 @@ export async function seedCursussen(
       naam: raw.cursusnaam,
       projectnummer,
       titel: toTitel(projectnummer, raw.cursusnaam),
-      type: 'cursus',
+      type: projectTypeMapper.toDB('cursus'),
       jaar: parseInt(raw.jaar),
       organisatieonderdeel,
       saldo: prijsFromRaw(raw.prijs),
       activiteiten: {
-        createMany: {
-          data: activiteitenFromRaw(raw),
-        },
+        create: activiteitenFromRaw(raw),
       },
     };
     projectsByCode.set(projectnummer, project);
     return project;
   }
 
-  function organisatieOnderdeelFromRaw(
-    raw: RawCursus,
-  ): db.Organisatieonderdeel | undefined {
+  function organisatieOnderdeelFromRaw(raw: RawCursus): number | undefined {
     const deKei = raw['De Kei'] === 'Ja';
     const digistap = raw.Digistap === 'Ja';
     const keiJongBuso = raw['Kei-Jong BUSO'] === 'Ja';
@@ -115,21 +115,21 @@ export async function seedCursussen(
       return undefined;
     }
     return deKei
-      ? 'deKei'
+      ? organisatieonderdeelMapper.toDB('deKei')
       : keiJongNietBuso
-        ? 'keiJongNietBuSO'
+        ? organisatieonderdeelMapper.toDB('keiJongNietBuSO')
         : keiJongBuso
-          ? 'keiJongBuSO'
+          ? organisatieonderdeelMapper.toDB('keiJongBuSO')
           : raw.titel.includes('DK/')
-            ? 'deKei'
+            ? organisatieonderdeelMapper.toDB('deKei')
             : raw.titel.includes('KJ/')
-              ? 'keiJongNietBuSO'
+              ? organisatieonderdeelMapper.toDB('keiJongNietBuSO')
               : undefined;
   }
 
   function activiteitenFromRaw(
     raw: RawCursus,
-  ): db.Prisma.ActiviteitCreateManyProjectInput[] {
+  ): db.Prisma.ActiviteitCreateWithoutProjectInput[] {
     if (raw.data) {
       return raw.data
         .split(',')

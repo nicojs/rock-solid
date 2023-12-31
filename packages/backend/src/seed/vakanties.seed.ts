@@ -2,6 +2,13 @@ import * as db from '@prisma/client';
 import { ImportErrors, notEmpty } from './import-errors.js';
 import { prijsFromRaw, readImportJson, writeOutputJson } from './seed-utils.js';
 import { toTitel } from '../services/project.mapper.js';
+import {
+  organisatieonderdeelMapper,
+  projectTypeMapper,
+  vakantieseizoenMapper,
+  vakantieVerblijfMapper,
+  vakantieVervoerMapper,
+} from '../services/enum.mapper.js';
 
 type RawVerblijf = 'hotel of pension' | 'vakantiehuis' | 'boot' | '';
 type RawVervoer =
@@ -75,18 +82,18 @@ export async function seedVakanties(
       naam,
       projectnummer,
       titel: toTitel(projectnummer, naam),
-      type: 'vakantie',
+      type: projectTypeMapper.toDB('vakantie'),
       jaar: parseInt(raw.jaar),
-      seizoen: raw.seizoen === 'winter' ? 'winter' : 'zomer',
-      organisatieonderdeel: 'deKei',
+      seizoen: vakantieseizoenMapper.toDB(
+        raw.seizoen === 'winter' ? 'winter' : 'zomer',
+      ),
+      organisatieonderdeel: organisatieonderdeelMapper.toDB('deKei'),
       saldo: prijsFromRaw(raw.saldo),
       voorschot: prijsFromRaw(raw.vosal),
       bestemming: raw.bestemming,
       land: raw.land,
       activiteiten: {
-        createMany: {
-          data: activiteitenFromRaw(raw),
-        },
+        create: activiteitenFromRaw(raw),
       },
     };
     projectsByCode.set(projectnummer, project);
@@ -95,7 +102,7 @@ export async function seedVakanties(
 
   function activiteitenFromRaw(
     raw: RawVakantie,
-  ): db.Prisma.ActiviteitCreateManyProjectInput[] {
+  ): db.Prisma.ActiviteitCreateWithoutProjectInput[] {
     if (raw.jaar) {
       const jaar = parseInt(raw.jaar, 10);
       const maand = raw.seizoen === 'winter' ? 0 : 8; // 🤷‍♀️
@@ -112,34 +119,32 @@ export async function seedVakanties(
     return [];
   }
 }
-function verblijfFromRaw(
-  verblijf: RawVerblijf,
-): db.VakantieVerblijf | undefined {
+function verblijfFromRaw(verblijf: RawVerblijf): number | undefined {
   switch (verblijf) {
     case 'boot':
-      return 'boot';
+      return vakantieVerblijfMapper.toDB('boot');
     case 'hotel of pension':
-      return 'hotelOfPension';
+      return vakantieVerblijfMapper.toDB('hotelOfPension');
     case 'vakantiehuis':
-      return 'vakantiehuis';
+      return vakantieVerblijfMapper.toDB('vakantiehuis');
     case '':
       return;
   }
 }
-function vervoerFromRaw(vervoer: RawVervoer): db.VakantieVervoer | undefined {
+function vervoerFromRaw(vervoer: RawVervoer): number | undefined {
   switch (vervoer) {
     case 'autocar nacht':
-      return 'autocarNacht';
+      return vakantieVervoerMapper.toDB('autocarNacht');
     case 'autocar overdag':
-      return 'autocarOverdag';
+      return vakantieVervoerMapper.toDB('autocarOverdag');
     case 'boot':
-      return 'boot';
+      return vakantieVervoerMapper.toDB('boot');
     case 'minibus':
-      return 'minibus';
+      return vakantieVervoerMapper.toDB('minibus');
     case 'trein':
-      return 'trein';
+      return vakantieVervoerMapper.toDB('trein');
     case 'vliegtuig':
-      return 'vliegtuig';
+      return vakantieVervoerMapper.toDB('vliegtuig');
     case '':
       return;
   }

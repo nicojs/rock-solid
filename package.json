@@ -17,7 +17,7 @@
     "build:db": "lerna run prisma:client:generate --scope=\"@rock-solid/backend\"",
     "build:fe": "lerna run build --scope=\"@rock-solid/frontend\"",
     "predev": "npm run build",
-    "dev": "concurrently \"docker compose up -d || echo 'Docker not installed?'\" npm:dev:tsc npm:dev:backend npm:dev:frontend",
+    "dev": "concurrently npm:dev:tsc npm:dev:backend npm:dev:frontend",
     "start": "npm run -w packages/backend start",
     "dev:backend": "cd packages/backend && npm run dev",
     "dev:frontend": "cd packages/frontend && npm start",
@@ -29,14 +29,14 @@
     "import:csv2json": "node tasks/import-csv2json.mjs",
     "deploy:prepare": "tasks/prepare-deploy.sh",
     "deploy:acc:az": "az webapp deployment source config-zip --resource-group acc-rock-solid --name acc-rock-solid-web-app --src .deploy/deploy.zip",
-    "deploy:acc": "npm run clean && npm run import:az2csv && npm run import:csv2json && npm run build:src && npm run deploy:prepare && npm run deploy:acc:az"
+    "deploy:acc:prepare": "npm run clean && npm run import:az2csv && npm run build:src && npm run deploy:prepare",
+    "deploy:acc": "npm run deploy:acc:prepare && npm run deploy:acc:az"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^10.6.1",
-    "@testcontainers/postgresql": "^10.4.0",
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
     "@types/supertest": "^2.0.16",

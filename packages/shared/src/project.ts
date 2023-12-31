@@ -165,14 +165,14 @@ export type UpsertableProject = UpsertableCursus | UpsertableVakantie;
 
 export type UpsertableCursus = Upsertable<
   Omit<Cursus, 'activiteiten'>,
-  'projectnummer' | 'naam'
+  'projectnummer' | 'naam' | 'type' | 'organisatieonderdeel'
 > & {
   type: 'cursus';
   activiteiten: UpsertableActiviteit[];
 };
 export type UpsertableVakantie = Upsertable<
   Omit<Vakantie, 'activiteiten'>,
-  'projectnummer' | 'bestemming' | 'land'
+  'projectnummer' | 'bestemming' | 'land' | 'type'
 > & {
   type: 'vakantie';
   activiteiten: UpsertableActiviteit[];

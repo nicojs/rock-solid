@@ -24,6 +24,14 @@ import {
   includePersoonAggregate,
   toPersoon,
 } from './persoon.mapper.js';
+import {
+  aanmeldingsstatusMapper,
+  organisatieonderdeelMapper,
+  projectTypeMapper,
+  vakantieseizoenMapper,
+  vakantieVerblijfMapper,
+  vakantieVervoerMapper,
+} from './enum.mapper.js';
 
 const includeAggregate = {
   activiteiten: {
@@ -217,18 +225,25 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
   } = project;
   if (project.type === 'vakantie') {
     const naam = `${project.bestemming} - ${project.land}`;
+
     return {
       ...projectData,
+      organisatieonderdeel: undefined,
+      seizoen: vakantieseizoenMapper.toDB(project.seizoen),
       titel: toTitel(projectData.projectnummer, naam),
-      type: 'vakantie',
+      type: projectTypeMapper.toDB('vakantie'),
       jaar,
       naam,
     };
   } else {
     return {
       ...projectData,
+      organisatieonderdeel: organisatieonderdeelMapper.toDB(
+        project.organisatieonderdeel,
+      ),
+      seizoen: vakantieseizoenMapper.toDB(undefined),
       titel: toTitel(projectData.projectnummer, project.naam),
-      type: 'cursus',
+      type: projectTypeMapper.toDB('cursus'),
       jaar,
       naam: project.naam,
     };
@@ -242,6 +257,8 @@ function toDBActiviteit(
     aantalDeelnemersuren,
     aantalDeelnames,
     metOvernachting: unused,
+    verblijf,
+    vervoer,
     ...data
   } = activiteit;
   const { van, totEnMet } = data;
@@ -251,6 +268,8 @@ function toDBActiviteit(
     van.getDate() !== totEnMet.getDate();
   return {
     ...data,
+    verblijf: vakantieVerblijfMapper.toDB(verblijf),
+    vervoer: vakantieVervoerMapper.toDB(vervoer),
     metOvernachting,
   };
 }
@@ -278,7 +297,9 @@ function toProjectAanmelding(
 ): AanmeldingOf<Project> {
   return {
     ...toProject(projectWithAanmelding),
-    status: projectWithAanmelding.aanmeldingen[0]!.status,
+    status: aanmeldingsstatusMapper.toSchema(
+      projectWithAanmelding.aanmeldingen[0]!.status,
+    ),
   };
 }
 
@@ -304,17 +325,19 @@ function toProject({
   const saldo = dbSaldo ?? undefined;
   let prijs = saldo;
   switch (type) {
-    case 'cursus':
+    case projectTypeMapper.toDB('cursus'):
       return {
         ...project,
-        type,
+        type: 'cursus',
         activiteiten:
           projectProperties.activiteiten?.map(toCursusActiviteit) ?? [],
-        organisatieonderdeel: projectProperties.organisatieonderdeel!,
+        organisatieonderdeel: organisatieonderdeelMapper.toSchema(
+          projectProperties.organisatieonderdeel!,
+        ),
         saldo,
         prijs,
       };
-    case 'vakantie':
+    case projectTypeMapper.toDB('vakantie'):
       const voorschot = project.voorschot as Decimal | undefined;
       if (saldo !== undefined || voorschot !== undefined) {
         prijs = new Decimal(0);
@@ -332,13 +355,12 @@ function toProject({
         saldo,
         voorschot,
         prijs,
-        type,
+        type: 'vakantie',
         bestemming: bestemming!,
         land: land!,
       };
     default:
-      const none: never = type;
-      throw new Error(`Project type ${none} not supported`);
+      throw new Error(`Project type ${type} not supported`);
   }
 }
 
@@ -353,16 +375,21 @@ function toCursusActiviteit(val: DBActiviteitAggregate): CursusActiviteit {
 }
 
 function toVakantieActiviteit(val: DBActiviteitAggregate): VakantieActiviteit {
-  const { projectId, _count, ...activiteitData } = purgeNulls(val);
+  const { projectId, _count, verblijf, vervoer, ...activiteitData } =
+    purgeNulls(val);
   return {
     ...activiteitData,
+    verblijf: vakantieVerblijfMapper.toSchema(verblijf),
+    vervoer: vakantieVervoerMapper.toSchema(vervoer),
     aantalDeelnames: _count.deelnames,
     aantalDeelnemersuren: -1,
   };
 }
 
 function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
-  const whereClause: db.Prisma.ProjectWhereInput = { type: filter.type };
+  const whereClause: db.Prisma.ProjectWhereInput = {
+    type: projectTypeMapper.toDB(filter.type),
+  };
   if (filter.aanmeldingPersoonId) {
     whereClause.aanmeldingen = {
       some: { deelnemerId: filter.aanmeldingPersoonId },
@@ -374,14 +401,11 @@ function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
     };
   }
   if (filter.titelLike) {
-    whereClause.titel = {
-      contains: filter.titelLike,
-      mode: 'insensitive',
-    };
+    whereClause.titel = { contains: filter.titelLike };
   }
   if (filter.organisatieonderdelen) {
     whereClause.organisatieonderdeel = {
-      in: filter.organisatieonderdelen,
+      in: filter.organisatieonderdelen.map(organisatieonderdeelMapper.toDB),
     };
   }
   whereClause.jaar = filter.jaar;

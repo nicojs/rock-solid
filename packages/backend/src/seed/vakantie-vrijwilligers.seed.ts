@@ -1,6 +1,7 @@
 import * as db from '@prisma/client';
 import { ImportErrors } from './import-errors.js';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
+import { projectTypeMapper } from '../services/enum.mapper.js';
 
 interface RawVakantieVrijwilliger {
   titel: string;
@@ -30,7 +31,7 @@ export async function seedVakantieVrijwilligers(
 
   const vakantiesByCode = (
     await client.project.findMany({
-      where: { type: 'vakantie' },
+      where: { type: projectTypeMapper.toDB('vakantie') },
       include: { activiteiten: { orderBy: { van: 'asc' } } },
     })
   ).reduce((acc, vakantie) => {

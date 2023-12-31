@@ -14,7 +14,7 @@ export interface BasePersoon {
   emailadres?: string;
   geboortedatum?: Date;
   geboorteplaats?: string;
-  voedingswens: Voedingswens;
+  voedingswens?: Voedingswens;
   voedingswensOpmerking?: string;
   geslacht: Geslacht;
   geslachtOpmerking?: string;
@@ -168,7 +168,7 @@ export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
   selectie: 'Selectie',
 };
 
-export type Voedingswens = 'geen' | 'vegetarisch' | 'halal' | 'anders';
+export type Voedingswens = 'vegetarisch' | 'halal' | 'anders';
 export const voedingswensen: Options<Voedingswens> = Object.freeze({
   geen: 'Geen speciale voedingswensen',
   vegetarisch: 'Vegetarisch',
