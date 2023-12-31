@@ -4,9 +4,6 @@
 name: Build and deploy Node.js app to Azure Web App - acc-rock-solid-web-app
 
 on:
-  push:
-    branches:
-      - feat/sqlite
   workflow_dispatch:
 
 jobs:
@@ -16,7 +13,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
