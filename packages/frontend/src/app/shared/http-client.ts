@@ -1,7 +1,9 @@
 import { loginUrl, UnprocessableEntityBody } from '@rock-solid/shared';
 import { authStore, AuthStore } from '../auth';
-import { UniquenessFailedError } from './errors';
+import { InternalError, UniquenessFailedError } from './errors';
 import { HttpStatus } from './http-status';
+import { ModalComponent } from './modal.component';
+import { html } from 'lit';
 
 export class HttpClient {
   constructor(private auth: AuthStore = authStore) {
@@ -43,9 +45,19 @@ export class HttpClient {
         case 'uniqueness_failed':
           throw new UniquenessFailedError(body.fields);
       }
-    } else {
-      return response;
     }
+    if (response.status >= 500) {
+      const responseText = await response.text();
+      const technicalDetails = `Status: ${response.status}. Response: ${responseText}`;
+      ModalComponent.instance.alert(
+        html`<rock-technical-error-message
+          .technicalDetails=${technicalDetails}
+        ></rock-technical-error-message>`,
+        'Fout opgetreden',
+      );
+      throw new InternalError(technicalDetails);
+    }
+    return response;
   }
 }
 

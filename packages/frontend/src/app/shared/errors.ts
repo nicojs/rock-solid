@@ -12,6 +12,12 @@ export class UniquenessFailedError extends Error {
   }
 }
 
+export class InternalError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
 export function handleUniquenessError<T>(
   reporter: (errorMessage: string) => void,
 ) {
