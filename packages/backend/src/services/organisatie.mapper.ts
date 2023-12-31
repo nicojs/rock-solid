@@ -48,10 +48,7 @@ export class OrganisatieMapper {
       await this.db.organisatie.findMany({
         where: toWhere(filter),
         orderBy: { naam: 'asc' },
-        include: {
-          ...includeContacten(filter),
-          ...includeSoorten,
-        },
+        include: includeOrganisatie(filter),
         ...toPage(pageNumber),
       });
 
@@ -69,10 +66,7 @@ export class OrganisatieMapper {
   ): Promise<Organisatie | null> {
     const org = await this.db.organisatie.findUnique({
       where: where,
-      include: {
-        ...includeContacten(),
-        ...includeSoorten,
-      },
+      include: includeOrganisatie(),
     });
     if (org) {
       return toOrganisatie(org);
@@ -84,6 +78,7 @@ export class OrganisatieMapper {
   public async create(
     organisatie: UpsertableOrganisatie,
   ): Promise<Organisatie> {
+    throw new Error('test');
     const { contacten, id, soorten, ...organisatieData } = organisatie;
     const dbOrganisatie = await handleKnownPrismaErrors(
       this.db.organisatie.create({
@@ -98,10 +93,7 @@ export class OrganisatieMapper {
             create: contacten.map(toCreateContactInput),
           },
         },
-        include: {
-          ...includeContacten(),
-          ...includeSoorten,
-        },
+        include: includeOrganisatie(),
       }),
     );
     return toOrganisatie(dbOrganisatie);
@@ -152,10 +144,7 @@ export class OrganisatieMapper {
               .map((contact) => toUpdateContactInput(contact)),
           },
         },
-        include: {
-          ...includeContacten(),
-          ...includeSoorten,
-        },
+        include: includeOrganisatie(),
       }),
     );
 
@@ -255,11 +244,7 @@ const includeFoldervoorkeuren = Object.freeze({
   foldervoorkeuren: true as const,
 });
 
-const includeSoorten = Object.freeze({
-  soorten: true as const,
-} satisfies db.Prisma.OrganisatieInclude);
-
-function includeContacten(filter?: OrganisatieFilter) {
+function includeOrganisatie(filter?: OrganisatieFilter) {
   return {
     contacten: {
       include: {
@@ -281,6 +266,7 @@ function includeContacten(filter?: OrganisatieFilter) {
           }
         : undefined,
     },
+    soorten: true,
   } as const satisfies db.Prisma.OrganisatieInclude;
 }
 

@@ -305,11 +305,6 @@ export class ReactiveFormInputControl<
   private updateValue(value: unknown) {
     (this.entity as any)[this.control.name] = value;
     this.validate();
-    const updatedEvent = new CustomEvent<string>('input-updated', {
-      bubbles: true,
-      composed: true,
-      detail: this.control.name,
-    });
-    this.dispatchEvent(updatedEvent);
+    this.dispatchValueUpdatedEvent();
   }
 }

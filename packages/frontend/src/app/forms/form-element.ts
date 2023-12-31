@@ -27,4 +27,13 @@ export abstract class FormControlElement<TEntity> extends FormElement<TEntity> {
   get name() {
     return generateInputName(this.path, this.control.name);
   }
+
+  protected dispatchValueUpdatedEvent() {
+    const updatedEvent = new CustomEvent<string>('input-updated', {
+      bubbles: true,
+      composed: true,
+      detail: this.control.name,
+    });
+    this.dispatchEvent(updatedEvent);
+  }
 }

@@ -46,6 +46,7 @@ describe(OrganisatiesController.name, () => {
               'AmbulanteWoonondersteuning',
               'BegeleidWerkOfVrijwilligerswerk',
             ],
+            soortOpmerking: 'Begeleid maar is toch ambulant',
             contacten: [
               {
                 terAttentieVan: 'Foo',
@@ -85,6 +86,7 @@ describe(OrganisatiesController.name, () => {
           'AmbulanteWoonondersteuning',
           'BegeleidWerkOfVrijwilligerswerk',
         ],
+        soortOpmerking: 'Begeleid maar is toch ambulant',
       };
       expect(actualOrganisatie).deep.equal(expectedOrganisatie);
     });

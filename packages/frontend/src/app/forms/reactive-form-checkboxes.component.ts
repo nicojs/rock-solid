@@ -90,6 +90,7 @@ export class ReactiveFormTags<
             } else {
               uncheckAction(key);
             }
+            this.dispatchValueUpdatedEvent();
           }}"
         />
         <label for="${this.name}-${key}" class="form-check-label"

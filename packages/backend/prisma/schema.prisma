@@ -47,15 +47,15 @@ model Persoon {
   contactpersoonGsm            String?
   contactpersoonEmail          String?
   aanmeldingen                 Aanmelding[]
-  eersteCursusAanmelding       Aanmelding?     @relation("eersteCursusAanmelding", fields: [eersteCursusAanmeldingId], references: [id])
+  eersteCursusAanmelding       Aanmelding?  @relation("eersteCursusAanmelding", fields: [eersteCursusAanmeldingId], references: [id])
   eersteCursusAanmeldingId     Int?
-  eersteVakantieAanmelding     Aanmelding?     @relation("eersteVakantieAanmelding", fields: [eersteVakantieAanmeldingId], references: [id])
+  eersteVakantieAanmelding     Aanmelding?  @relation("eersteVakantieAanmelding", fields: [eersteVakantieAanmeldingId], references: [id])
   eersteVakantieAanmeldingId   Int?
-  toestemmingFotosFolder       Boolean         @default(false)
-  toestemmingFotosWebsite      Boolean         @default(false)
-  toestemmingFotosSocialeMedia Boolean         @default(false)
-  toestemmingFotosNieuwsbrief  Boolean         @default(false)
-  toestemmingFotosInfoboekje   Boolean         @default(false)
+  toestemmingFotosFolder       Boolean      @default(false)
+  toestemmingFotosWebsite      Boolean      @default(false)
+  toestemmingFotosSocialeMedia Boolean      @default(false)
+  toestemmingFotosNieuwsbrief  Boolean      @default(false)
+  toestemmingFotosInfoboekje   Boolean      @default(false)
 
   // OverigePersonen
   selectie           OverigPersoonSelectie[]
@@ -135,13 +135,13 @@ model Aanmelding {
   vervoersbriefVerzondenOp     DateTime?
 
   // Fields copied from deelnemer when created
-  plaats                     Plaats?      @relation(fields: [plaatsId], references: [id])
+  plaats                     Plaats?   @relation(fields: [plaatsId], references: [id])
   plaatsId                   Int?
   werksituatie               Int?
   woonsituatie               Int?
   geslacht                   Int?
-  eersteCursusAanmeldingen   Persoon[]    @relation("eersteCursusAanmelding")
-  eersteVakantieAanmeldingen Persoon[]    @relation("eersteVakantieAanmelding")
+  eersteCursusAanmeldingen   Persoon[] @relation("eersteCursusAanmelding")
+  eersteVakantieAanmeldingen Persoon[] @relation("eersteVakantieAanmelding")
 
   @@unique([projectId, deelnemerId])
 }
@@ -175,11 +175,12 @@ model Deelname {
 }
 
 model Organisatie {
-  id        Int                  @id @default(autoincrement())
-  naam      String               @unique
-  website   String?
-  soorten   Organisatiesoort[]
-  contacten OrganisatieContact[]
+  id             Int                  @id @default(autoincrement())
+  naam           String               @unique
+  website        String?
+  soorten        Organisatiesoort[]
+  soortOpmerking String?
+  contacten      OrganisatieContact[]
 }
 
 model Organisatiesoort {
