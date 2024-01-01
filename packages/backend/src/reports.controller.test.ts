@@ -71,7 +71,7 @@ describe(ReportsController.name, () => {
         );
         const expectedReport: Report = [
           { key: 'arbeidszorg', total: 2 },
-          { key: 'onbekend', total: 1 },
+          { total: 1 },
         ];
         expect(report).deep.eq(expectedReport);
       });
@@ -85,7 +85,7 @@ describe(ReportsController.name, () => {
         );
         const expectedReport: Report = [
           { key: 'residentieleWoonondersteuning', total: 2 },
-          { key: 'onbekend', total: 1 },
+          { total: 1 },
         ];
         expect(report).deep.eq(expectedReport);
       });

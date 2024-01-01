@@ -507,8 +507,8 @@ function fillOutAllUpsertablePersoonFields(
 function fillOutAllPersoonFields(persoon: Persoon): AllPersoonFields {
   return {
     selectie: [],
-    woonsituatie: 'onbekend',
-    werksituatie: 'onbekend',
+    woonsituatie: undefined,
+    werksituatie: undefined,
     fotoToestemming: {
       folder: false,
       infoboekje: false,

@@ -111,9 +111,15 @@ export function determineFotoToestemmingKind(
   return 'some';
 }
 
-export const geslachtIcons: Record<Geslacht, string> = {
+const geslachtIcons: Record<Geslacht, string> = {
   man: 'genderMale',
   vrouw: 'genderFemale',
   x: 'genderTrans',
-  onbekend: 'questionCircle',
 };
+
+export function iconForGeslacht(geslacht?: Geslacht) {
+  if (!geslacht) {
+    return 'questionCircle';
+  }
+  return geslachtIcons[geslacht];
+}

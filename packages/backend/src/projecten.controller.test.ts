@@ -559,10 +559,10 @@ describe(ProjectenController.name, () => {
       });
 
       // Assert
-      deelnemer.woonsituatie = 'onbekend';
-      deelnemer.werksituatie = 'onbekend';
+      deelnemer.woonsituatie = undefined;
+      deelnemer.werksituatie = undefined;
       deelnemer.verblijfadres = undefined;
-      deelnemer.geslacht = 'onbekend';
+      deelnemer.geslacht = undefined;
       await harness.updateDeelnemer(deelnemer);
       const actualAanmelding = (await harness.getAanmeldingen(project.id)).find(
         ({ id }) => id === actualAanmeldingId,
@@ -587,9 +587,6 @@ describe(ProjectenController.name, () => {
         harness.createProject(factory.cursus()),
         harness.createDeelnemer(
           factory.deelnemer({
-            werksituatie: 'onbekend',
-            woonsituatie: 'onbekend',
-            geslacht: 'onbekend',
             domicilieadres: undefined,
             verblijfadres: undefined,
           }),

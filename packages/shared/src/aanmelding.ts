@@ -11,9 +11,9 @@ export interface Aanmelding {
   rekeninguittrekselNummer?: string;
   opmerking?: string;
   deelnemer?: Deelnemer;
-  werksituatie: Werksituatie;
-  woonsituatie: Woonsituatie;
-  geslacht: Geslacht;
+  werksituatie?: Werksituatie;
+  woonsituatie?: Woonsituatie;
+  geslacht?: Geslacht;
   plaats?: Plaats;
   bevestigingsbriefVerzondenOp?: Date;
   vervoersbriefVerzondenOp?: Date;

@@ -23,6 +23,8 @@ import {
   activiteitGroupingFieldOptions,
   isActiviteitGroupingField,
   isActiviteitReportType,
+  woonsituaties,
+  Woonsituatie,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, nothing, PropertyValues } from 'lit';
@@ -38,6 +40,7 @@ import {
   showOrganisatieonderdeel,
   showProvincie,
   toCsv,
+  unknown,
 } from '../shared';
 
 const GROUP1_TITLE = 'Totaal';
@@ -363,17 +366,18 @@ function showGroupKey(
   switch (group) {
     case 'jaar':
     case 'project':
-    case 'woonsituatie':
     case 'geslacht':
-      return show(key);
+      return show(key, unknown);
     case 'provincie':
       return showProvincie(
         (typeof key === 'string' && parseInt(key)) || undefined,
       );
     case 'organisatieonderdeel':
       return showOrganisatieonderdeel(key as Organisatieonderdeel | undefined);
+    case 'woonsituatie':
+      return key ? woonsituaties[key as Woonsituatie] : unknown;
     case 'werksituatie':
-      return werksituaties[key as Werksituatie];
+      return key ? werksituaties[key as Werksituatie] : unknown;
   }
 }
 function reportRoot<

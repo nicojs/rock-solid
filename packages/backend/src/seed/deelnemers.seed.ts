@@ -138,7 +138,7 @@ export async function seedDeelnemers(
         domicilieadres,
         geslacht: rawGeslachten.includes(raw.geslacht)
           ? geslachtMapper.toDB(raw.geslacht as Geslacht)
-          : geslachtMapper.toDB('onbekend'),
+          : geslachtMapper.toDB(undefined),
         geboorteplaats: stringFromRaw(raw.geboorteplaats),
         gsmNummer: stringFromRaw(raw.GSM),
         begeleidendeDienst: stringFromRaw(raw['Begeleidende dienst']),
