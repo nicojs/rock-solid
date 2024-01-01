@@ -22,7 +22,7 @@ import {
   determineFotoToestemmingKind,
   fullName,
   fullNameWithAge,
-  geslachtIcons,
+  iconForGeslacht,
 } from '../personen/persoon.pipe';
 import {
   TypeAheadHint,
@@ -158,13 +158,13 @@ export class ProjectAanmeldingenComponent extends LitElement {
       if (!deelnemer.domicilieadres && !deelnemer.verblijfadres) {
         missingFields.push(aanmeldingLabels.plaats);
       }
-      if (deelnemer.geslacht === 'onbekend') {
+      if (!deelnemer.geslacht) {
         missingFields.push(aanmeldingLabels.geslacht);
       }
-      if (deelnemer.werksituatie === 'onbekend') {
+      if (!deelnemer.werksituatie) {
         missingFields.push(aanmeldingLabels.werksituatie);
       }
-      if (deelnemer.woonsituatie === 'onbekend') {
+      if (!deelnemer.woonsituatie) {
         missingFields.push(aanmeldingLabels.woonsituatie);
       }
       if (missingFields.length) {
@@ -677,9 +677,6 @@ function deelnemerLink(deelnemer: Deelnemer) {
 }
 
 function renderGeslacht(aanmelding: Aanmelding) {
-  if (!aanmelding.geslacht) {
-    return nothing;
-  }
   const title = `Geslacht: ${aanmelding.geslacht}${
     aanmelding.deelnemer?.geslachtOpmerking
       ? ` (${aanmelding.deelnemer.geslachtOpmerking})`
@@ -687,7 +684,7 @@ function renderGeslacht(aanmelding: Aanmelding) {
   }`;
   return html`<rock-icon
     title="${title}"
-    icon="${geslachtIcons[aanmelding.geslacht]}"
+    icon="${iconForGeslacht(aanmelding.geslacht)}"
   ></rock-icon>`;
 }
 
@@ -725,13 +722,13 @@ function renderWarning(aanmelding: Aanmelding) {
   if (!aanmelding.plaats) {
     missingFields.push(aanmeldingLabels.plaats);
   }
-  if (aanmelding.woonsituatie === 'onbekend') {
+  if (!aanmelding.woonsituatie) {
     missingFields.push(aanmeldingLabels.woonsituatie);
   }
-  if (aanmelding.werksituatie === 'onbekend') {
+  if (!aanmelding.werksituatie) {
     missingFields.push(aanmeldingLabels.werksituatie);
   }
-  if (aanmelding.geslacht === 'onbekend') {
+  if (!aanmelding.geslacht) {
     missingFields.push(aanmeldingLabels.geslacht);
   }
   if (missingFields.length) {

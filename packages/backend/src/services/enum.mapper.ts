@@ -16,26 +16,16 @@ import {
   Woonsituatie,
 } from '@rock-solid/shared';
 
-type EnumDBMap<T extends string> = Record<Exclude<T, 'onbekend'>, number>;
-type DBType<T extends string, U extends T | undefined> = U extends
-  | undefined
-  | 'onbekend'
+type EnumDBMap<T extends string> = Record<T, number>;
+type DBType<T extends string, U extends T | undefined> = U extends undefined
   ? undefined
   : number;
 type SchemaType<
   T extends string,
   U extends number | undefined | null,
-> = U extends undefined | null
-  ? 'onbekend' extends T
-    ? 'onbekend'
-    : undefined
-  : T;
+> = U extends undefined | null ? undefined : T;
 
-function createEnumMapper<T extends string>(
-  name: string,
-  map: EnumDBMap<T>,
-  hasOnbekend: 'onbekend' extends T ? true : false,
-) {
+function createEnumMapper<T extends string>(name: string, map: EnumDBMap<T>) {
   const reverseMap: Readonly<Record<number, T>> = Object.entries(map).reduce(
     (acc, [k, v]) => {
       const dbValue = v as number;
@@ -48,10 +38,10 @@ function createEnumMapper<T extends string>(
   );
   return {
     toDB<U extends T | undefined>(value: U): DBType<T, U> {
-      if (value === 'onbekend' || value === undefined) {
+      if (value === undefined) {
         return undefined as DBType<T, U>;
       }
-      const result = map[value as unknown as Exclude<T, 'onbekend'>];
+      const result = map[value];
       if (result === undefined) {
         throw new Error(`Value ${value} is not a valid enum value for ${name}`);
       }
@@ -59,9 +49,6 @@ function createEnumMapper<T extends string>(
     },
     toSchema<U extends undefined | null | number>(value: U): SchemaType<T, U> {
       if (value === undefined || value === null) {
-        if (hasOnbekend) {
-          return 'onbekend' as SchemaType<T, U>;
-        }
         return undefined as SchemaType<T, U>;
       }
       const mapped = reverseMap[value as number];
@@ -73,68 +60,44 @@ function createEnumMapper<T extends string>(
   };
 }
 
-export const geslachtMapper = createEnumMapper<Geslacht>(
-  'geslacht',
-  {
-    man: 1,
-    vrouw: 2,
-    x: 3,
-  },
-  true,
-);
+export const geslachtMapper = createEnumMapper<Geslacht>('geslacht', {
+  man: 1,
+  vrouw: 2,
+  x: 3,
+});
 
-export const persoonTypeMapper = createEnumMapper<PersoonType>(
-  'persoonType',
-  {
-    deelnemer: 1,
-    overigPersoon: 2,
-  },
-  false,
-);
+export const persoonTypeMapper = createEnumMapper<PersoonType>('persoonType', {
+  deelnemer: 1,
+  overigPersoon: 2,
+});
 
 export const communicatievoorkeurMapper =
-  createEnumMapper<Communicatievoorkeur>(
-    'communicatievoorkeur',
-    {
-      email: 1,
-      post: 2,
-      postEnEmail: 3,
-    },
-    false,
-  );
+  createEnumMapper<Communicatievoorkeur>('communicatievoorkeur', {
+    email: 1,
+    post: 2,
+    postEnEmail: 3,
+  });
 
-export const foldersoortMapper = createEnumMapper<Foldersoort>(
-  'foldersoort',
-  {
-    deKeiCursussen: 1,
-    deKeiWintervakantie: 2,
-    deKeiZomervakantie: 3,
-    keiJongBuso: 4,
-    keiJongNietBuso: 5,
-    infoboekje: 6,
-  },
-  false,
-);
+export const foldersoortMapper = createEnumMapper<Foldersoort>('foldersoort', {
+  deKeiCursussen: 1,
+  deKeiWintervakantie: 2,
+  deKeiZomervakantie: 3,
+  keiJongBuso: 4,
+  keiJongNietBuso: 5,
+  infoboekje: 6,
+});
 
-export const projectTypeMapper = createEnumMapper<ProjectType>(
-  'projectType',
-  {
-    cursus: 1,
-    vakantie: 2,
-  },
-  false,
-);
+export const projectTypeMapper = createEnumMapper<ProjectType>('projectType', {
+  cursus: 1,
+  vakantie: 2,
+});
 
 export const organisatieonderdeelMapper =
-  createEnumMapper<Organisatieonderdeel>(
-    'organisatieonderdeel',
-    {
-      deKei: 1,
-      keiJongBuSO: 2,
-      keiJongNietBuSO: 3,
-    },
-    false,
-  );
+  createEnumMapper<Organisatieonderdeel>('organisatieonderdeel', {
+    deKei: 1,
+    keiJongBuSO: 2,
+    keiJongNietBuSO: 3,
+  });
 
 export const woonsituatieMapper = createEnumMapper<Woonsituatie>(
   'woonsituatie',
@@ -146,7 +109,6 @@ export const woonsituatieMapper = createEnumMapper<Woonsituatie>(
     zelfstandigZonderProfessioneleBegeleiding: 5,
     anders: 6,
   },
-  true,
 );
 
 export const werksituatieMapper = createEnumMapper<Werksituatie>(
@@ -162,7 +124,6 @@ export const werksituatieMapper = createEnumMapper<Werksituatie>(
     vrijwilligerswerk: 9,
     werkzoekend: 10,
   },
-  true,
 );
 
 export const aanmeldingsstatusMapper = createEnumMapper<Aanmeldingsstatus>(
@@ -173,23 +134,18 @@ export const aanmeldingsstatusMapper = createEnumMapper<Aanmeldingsstatus>(
     Geannuleerd: 2,
     OpWachtlijst: 3,
   },
-  false,
 );
 
 export const overigPersoonSelectieMapper =
-  createEnumMapper<OverigPersoonSelectie>(
-    'overigPersoonSelectie',
-    {
-      algemeneVergaderingDeBedding: 1,
-      algemeneVergaderingDeKei: 2,
-      algemeneVergaderingKeiJong: 3,
-      personeel: 4,
-      raadVanBestuurDeKei: 5,
-      raadVanBestuurKeiJong: 6,
-      vakantieVrijwilliger: 7,
-    },
-    false,
-  );
+  createEnumMapper<OverigPersoonSelectie>('overigPersoonSelectie', {
+    algemeneVergaderingDeBedding: 1,
+    algemeneVergaderingDeKei: 2,
+    algemeneVergaderingKeiJong: 3,
+    personeel: 4,
+    raadVanBestuurDeKei: 5,
+    raadVanBestuurKeiJong: 6,
+    vakantieVrijwilliger: 7,
+  });
 
 export const vakantieseizoenMapper = createEnumMapper<VakantieSeizoen>(
   'vakantieseizoen',
@@ -197,7 +153,6 @@ export const vakantieseizoenMapper = createEnumMapper<VakantieSeizoen>(
     winter: 1,
     zomer: 2,
   },
-  false,
 );
 
 export const vakantieVerblijfMapper = createEnumMapper<VakantieVerblijf>(
@@ -207,7 +162,6 @@ export const vakantieVerblijfMapper = createEnumMapper<VakantieVerblijf>(
     hotelOfPension: 2,
     vakantiehuis: 3,
   },
-  false,
 );
 
 export const vakantieVervoerMapper = createEnumMapper<VakantieVervoer>(
@@ -220,7 +174,6 @@ export const vakantieVervoerMapper = createEnumMapper<VakantieVervoer>(
     trein: 5,
     vliegtuig: 6,
   },
-  false,
 );
 
 export const organisatiesoortMapper = createEnumMapper<Organisatiesoort>(
@@ -255,7 +208,6 @@ export const organisatiesoortMapper = createEnumMapper<Organisatiesoort>(
     SteunpuntenEnFederaties: 27,
     Anders: 100,
   },
-  false,
 );
 
 export const voedingswensMapper = createEnumMapper<Voedingswens>(
@@ -265,5 +217,4 @@ export const voedingswensMapper = createEnumMapper<Voedingswens>(
     halal: 2,
     anders: 100,
   },
-  false,
 );

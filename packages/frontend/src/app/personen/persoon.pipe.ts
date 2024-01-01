@@ -8,13 +8,13 @@ import {
   fotoToestemmingLabels,
   notEmpty,
 } from '@rock-solid/shared';
-import { notAvailable, show } from '../shared';
+import { notAvailable, show, unknown } from '../shared';
 import { html } from 'lit';
 
-export function fullNameOrOnbekend(
+export function fullNameOrUnknown(
   persoon?: Pick<UpsertablePersoon, 'achternaam' | 'voornaam'>,
 ) {
-  return persoon ? fullName(persoon) : 'Onbekend';
+  return persoon ? fullName(persoon) : unknown;
 }
 
 export function fullName(
@@ -111,9 +111,15 @@ export function determineFotoToestemmingKind(
   return 'some';
 }
 
-export const geslachtIcons: Record<Geslacht, string> = {
+const geslachtIcons: Record<Geslacht, string> = {
   man: 'genderMale',
   vrouw: 'genderFemale',
   x: 'genderTrans',
-  onbekend: 'questionCircle',
 };
+
+export function iconForGeslacht(geslacht?: Geslacht) {
+  if (!geslacht) {
+    return 'questionCircle';
+  }
+  return geslachtIcons[geslacht];
+}

@@ -16,7 +16,7 @@ export interface BasePersoon {
   geboorteplaats?: string;
   voedingswens?: Voedingswens;
   voedingswensOpmerking?: string;
-  geslacht: Geslacht;
+  geslacht?: Geslacht;
   geslachtOpmerking?: string;
   rekeningnummer?: string;
   rijksregisternummer?: string;
@@ -94,9 +94,9 @@ export interface Deelnemer extends BasePersoon {
   type: 'deelnemer';
   begeleidendeDienst?: string;
   contactpersoon: Contactpersoon;
-  woonsituatie: Woonsituatie;
+  woonsituatie?: Woonsituatie;
   woonsituatieOpmerking?: string;
-  werksituatie: Werksituatie;
+  werksituatie?: Werksituatie;
   werksituatieOpmerking?: string;
   eersteCursus?: string;
   eersteVakantie?: string;
@@ -177,7 +177,6 @@ export const voedingswensen: Options<Voedingswens> = Object.freeze({
 });
 
 export type Werksituatie =
-  | 'onbekend'
   | 'school'
   | 'dagbesteding'
   | 'vrijwilligerswerk'
@@ -189,7 +188,6 @@ export type Werksituatie =
   | 'werkzoekend';
 
 export const werksituaties: Options<Werksituatie> = Object.freeze({
-  onbekend: 'onbekend',
   school: 'school',
   dagbesteding: 'dagbesteding',
   vrijwilligerswerk: 'vrijwilligerswerk',
@@ -202,7 +200,6 @@ export const werksituaties: Options<Werksituatie> = Object.freeze({
 });
 
 export type Woonsituatie =
-  | 'onbekend'
   | 'oudersMetProfessioneleBegeleiding'
   | 'oudersZonderProfessioneleBegeleiding'
   | 'residentieleWoonondersteuning'
@@ -210,7 +207,6 @@ export type Woonsituatie =
   | 'zelfstandigZonderProfessioneleBegeleiding'
   | 'anders';
 export const woonsituaties: Options<Woonsituatie> = Object.freeze({
-  onbekend: 'Onbekend',
   oudersMetProfessioneleBegeleiding:
     '(Pleeg)ouders met professionele begeleiding',
   oudersZonderProfessioneleBegeleiding:
@@ -223,9 +219,8 @@ export const woonsituaties: Options<Woonsituatie> = Object.freeze({
   anders: 'Anders, namelijk',
 });
 
-export type Geslacht = 'onbekend' | 'man' | 'vrouw' | 'x';
+export type Geslacht = 'man' | 'vrouw' | 'x';
 export const geslachten: Options<Geslacht> = Object.freeze({
-  onbekend: 'onbekend',
   man: 'man',
   vrouw: 'vrouw',
   x: 'X',

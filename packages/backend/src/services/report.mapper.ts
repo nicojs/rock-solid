@@ -253,7 +253,7 @@ function keyFromGroupField(
       return organisatieonderdeelMapper.toSchema(keyAsNumberIfString());
     default:
       if (key === null || key === undefined) {
-        return 'onbekend';
+        return undefined;
       }
       return String(key);
   }

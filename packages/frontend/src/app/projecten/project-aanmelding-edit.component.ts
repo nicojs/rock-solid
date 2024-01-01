@@ -12,7 +12,7 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl, InputType } from '../forms';
-import { fullNameOrOnbekend } from '../personen/persoon.pipe';
+import { fullNameOrUnknown } from '../personen/persoon.pipe';
 import { printProject } from './project.pipes';
 
 @customElement('rock-project-aanmelding-edit')
@@ -27,7 +27,7 @@ export class ProjectAanmeldingEditComponent extends LitElement {
 
   public override render() {
     return html`<h2>
-        Aanmelding van ${fullNameOrOnbekend(this.aanmelding.deelnemer)} voor
+        Aanmelding van ${fullNameOrUnknown(this.aanmelding.deelnemer)} voor
         ${printProject(this.project)}
       </h2>
       ${this.aanmelding.deelnemer

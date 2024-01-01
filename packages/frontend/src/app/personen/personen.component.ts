@@ -176,14 +176,9 @@ export class PersonenComponent extends RockElement {
         const persoon: DeepPartial<Persoon> = {
           type: this.type,
           verblijfadres: {},
-          geslacht: 'onbekend',
           foldervoorkeuren: [],
           fotoToestemming: {},
         };
-        if (persoon.type === 'deelnemer') {
-          persoon.werksituatie = 'onbekend';
-          persoon.woonsituatie = 'onbekend';
-        }
         return html`<h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading
             ? html`<rock-loading></rock-loading>`
