@@ -1,6 +1,6 @@
 import * as db from '@prisma/client';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
-import { ImportErrors, notEmpty } from './import-errors.js';
+import { ImportDiagnostics, notEmpty } from './import-errors.js';
 import { deduplicate } from '../services/mapper-utils.js';
 import {
   aanmeldingsstatusMapper,
@@ -20,7 +20,7 @@ export async function seedAanmeldingen<T extends RawInschrijving>(
   inschrijvingenRaw: T[],
   type: 'cursus' | 'vakantie',
   getProjectnummer: (raw: T) => string | undefined,
-  importErrors: ImportErrors<T>,
+  importErrors: ImportDiagnostics<T>,
 ) {
   const deelnemerIdByTitles =
     deelnemersLookup ??
@@ -133,7 +133,7 @@ export async function seedAanmeldingen<T extends RawInschrijving>(
   console.log(`Seeded ${aanmeldingen.length} ${type} aanmeldingen`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
-    `${type}-aanmeldingen-import-errors.json`,
+    `${type}-aanmeldingen-import-diagnostics.json`,
     importErrors,
     readonly,
   );

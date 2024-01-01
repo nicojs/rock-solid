@@ -1,5 +1,5 @@
 import * as db from '@prisma/client';
-import { ImportErrors } from './import-errors.js';
+import { ImportDiagnostics } from './import-errors.js';
 import { readImportJson } from './seed-utils.js';
 import { seedAanmeldingen } from './aanmeldingen.seed.js';
 
@@ -24,7 +24,7 @@ export async function seedCursusAanmeldingen(
   deelnemersLookup: Map<string, number> | undefined,
   readonly: boolean,
 ) {
-  const importErrors = new ImportErrors<RawCursusInschrijving>();
+  const importErrors = new ImportDiagnostics<RawCursusInschrijving>();
 
   const inschrijvingenRaw = await readImportJson<RawCursusInschrijving[]>(
     'cursus-inschrijvingen.json',

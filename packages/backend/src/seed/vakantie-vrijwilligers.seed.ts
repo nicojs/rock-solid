@@ -1,5 +1,5 @@
 import * as db from '@prisma/client';
-import { ImportErrors } from './import-errors.js';
+import { ImportDiagnostics } from './import-errors.js';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
 import { projectTypeMapper } from '../services/enum.mapper.js';
 
@@ -15,7 +15,7 @@ export async function seedVakantieVrijwilligers(
   vrijwilligersLookup: Map<string, number> | undefined,
   readonly: boolean,
 ) {
-  const importErrors = new ImportErrors<RawVakantieVrijwilliger>();
+  const importErrors = new ImportDiagnostics<RawVakantieVrijwilliger>();
   const vrijwilligerIdByTitle =
     vrijwilligersLookup ??
     new Map(
@@ -80,7 +80,7 @@ export async function seedVakantieVrijwilligers(
   console.log(`Seeded ${vakantieVrijwilligerCount} vakantie vrijwilligers`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
-    'vakantie-vrijwilligers-import-errors.json',
+    'vakantie-vrijwilligers-import-diagnostics.json',
     importErrors,
     readonly,
   );

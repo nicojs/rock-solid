@@ -1,5 +1,5 @@
 import db from '@prisma/client';
-import { ImportErrors } from './import-errors.js';
+import { ImportDiagnostics } from './import-errors.js';
 
 const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
 
@@ -8,7 +8,7 @@ export class AdresSeeder<TRaw> {
 
   constructor(
     private client: db.PrismaClient,
-    private importErrors: ImportErrors<TRaw>,
+    private importErrors: ImportDiagnostics<TRaw>,
   ) {}
 
   async init() {
