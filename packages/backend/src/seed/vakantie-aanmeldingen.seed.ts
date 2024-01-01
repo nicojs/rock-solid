@@ -1,5 +1,5 @@
 import * as db from '@prisma/client';
-import { ImportErrors } from './import-errors.js';
+import { ImportDiagnostics } from './import-errors.js';
 import { readImportJson } from './seed-utils.js';
 import { seedAanmeldingen } from './aanmeldingen.seed.js';
 
@@ -29,7 +29,7 @@ export async function seedVakantieAanmeldingen(
     aanmeldingenRaw,
     'vakantie',
     getProjectnummer,
-    new ImportErrors(),
+    new ImportDiagnostics(),
   );
 
   function getProjectnummer(raw: RawVakantieInschrijving) {

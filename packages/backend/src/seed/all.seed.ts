@@ -9,6 +9,7 @@ import { seedExtraPersonen } from './extra-personen.seed.js';
 import { seedVakanties } from './vakanties.seed.js';
 import { seedVakantieAanmeldingen } from './vakantie-aanmeldingen.seed.js';
 import { seedVakantieVrijwilligers } from './vakantie-vrijwilligers.seed.js';
+import { deleteDeelnemers } from './delete-deelnemers.seed.js';
 
 async function main() {
   const readonly = process.argv.includes('--readonly');
@@ -26,6 +27,7 @@ async function main() {
     await seedVakanties(client, readonly);
     await seedVakantieVrijwilligers(client, vrijwilligersLookup, readonly);
     await seedVakantieAanmeldingen(client, deelnemersLookup, readonly);
+    await deleteDeelnemers(client, deelnemersLookup, readonly);
   } finally {
     await client.$disconnect();
   }

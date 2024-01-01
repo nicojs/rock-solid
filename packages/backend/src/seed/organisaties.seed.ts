@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as db from '@prisma/client';
 import { AdresSeeder } from './adres-seeder.js';
-import { ImportErrors } from './import-errors.js';
+import { ImportDiagnostics } from './import-errors.js';
 import {
   groupBy,
   pickNotEmpty,
@@ -47,7 +47,7 @@ export async function seedOrganisaties(
   const organisatiesRaw =
     await readImportJson<RawOrganisatie[]>('organisaties.json');
 
-  const importErrors = new ImportErrors<RawOrganisatie>();
+  const importErrors = new ImportDiagnostics<RawOrganisatie>();
 
   const adresSeeder = new AdresSeeder(client, importErrors);
   await adresSeeder.init();
@@ -82,7 +82,7 @@ export async function seedOrganisaties(
   console.log(`Seeded ${orgs.length} organisaties`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
-    'organisatie-import-errors.json',
+    'organisatie-import-diagnostics.json',
     importErrors,
     readonly,
   );

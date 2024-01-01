@@ -1,6 +1,6 @@
 import db from '@prisma/client';
 import { AdresSeeder } from './adres-seeder.js';
-import { ImportErrors } from './import-errors.js';
+import { ImportDiagnostics } from './import-errors.js';
 import {
   readImportJson,
   stringFromRaw,
@@ -43,7 +43,7 @@ export async function seedExtraPersonen(
   client: db.PrismaClient,
   readonly: boolean,
 ) {
-  const importErrors = new ImportErrors<RawExtraPersoon>();
+  const importErrors = new ImportDiagnostics<RawExtraPersoon>();
   const extraPersonenRaw = await readImportJson<RawExtraPersoon[]>(
     'extra-personen.json',
   );
@@ -61,7 +61,7 @@ export async function seedExtraPersonen(
   console.log(`Seeded ${extraPersonen.length} extra-personen`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
-    'extra-personen-import-errors.json',
+    'extra-personen-import-diagnostics.json',
     importErrors,
     readonly,
   );

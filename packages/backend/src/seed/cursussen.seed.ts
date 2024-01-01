@@ -1,5 +1,5 @@
 import * as db from '@prisma/client';
-import { ImportErrors, notEmpty } from './import-errors.js';
+import { ImportDiagnostics, notEmpty } from './import-errors.js';
 import { prijsFromRaw, readImportJson, writeOutputJson } from './seed-utils.js';
 import { toTitel } from '../services/project.mapper.js';
 import {
@@ -25,7 +25,7 @@ interface RawCursus {
   schooljaar: string;
 }
 
-const importErrors = new ImportErrors<RawCursus>();
+const importErrors = new ImportDiagnostics<RawCursus>();
 // can parse these things:
 // DK/21/882 - Online Digitaal ontmoeten
 // DK/22/090-2 - Goed in je vel
@@ -50,7 +50,11 @@ export async function seedCursussen(
 
   console.log(`Seeded ${cursussen.length} cursussen`);
   console.log(`(${importErrors.report})`);
-  await writeOutputJson('cursussen-import-errors.json', importErrors, readonly);
+  await writeOutputJson(
+    'cursussen-import-diagnostics.json',
+    importErrors,
+    readonly,
+  );
   function fromRaw(raw: RawCursus): db.Prisma.ProjectCreateInput | undefined {
     const projectNummerMatch = projectnummerRegex.exec(raw.titel);
     if (!projectNummerMatch) {

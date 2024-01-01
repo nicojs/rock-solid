@@ -1,6 +1,6 @@
 import db from '@prisma/client';
 import { AdresSeeder } from './adres-seeder.js';
-import { ImportErrors } from './import-errors.js';
+import { ImportDiagnostics } from './import-errors.js';
 import {
   datumFromRaw,
   readImportJson,
@@ -59,10 +59,34 @@ export async function seedDeelnemers(
   client: db.PrismaClient,
   readonly: boolean,
 ) {
-  const importErrors = new ImportErrors<RawDeelnemer>();
+  const importDiagnostics = new ImportDiagnostics<RawDeelnemer>();
   const deelnemersRaw = await readImportJson<RawDeelnemer[]>('deelnemers.json');
 
-  const adresSeeder = new AdresSeeder(client, importErrors);
+  // Deelnemers Rita has more up-to-date adres fields
+  const deelnemersRitaRaw = await readImportJson<RawDeelnemer[]>(
+    'deelnemers-rita.json',
+  );
+  const deelnemersOverrides = new Map(
+    deelnemersRitaRaw.map((d) => [
+      d[''],
+      { adres: d.adres, postcode: d.postcode },
+    ]),
+  );
+  const deelnemersAdresUpdated: string[] = [];
+  for (const deelnemer of deelnemersRaw) {
+    const { adres, postcode } = deelnemersOverrides.get(deelnemer[''])!;
+    if (deelnemer.adres !== adres || deelnemer.postcode !== postcode) {
+      importDiagnostics.addInfo('updatedAdres', {
+        item: deelnemer,
+        detail: 'Adres geüpdatet na aanpassing excel van Rita',
+      });
+      deelnemersAdresUpdated.push(deelnemer['']);
+      deelnemer.adres = adres;
+      deelnemer.postcode = postcode;
+    }
+  }
+
+  const adresSeeder = new AdresSeeder(client, importDiagnostics);
   await adresSeeder.init();
 
   const deelnemers = deelnemersRaw.map(fromRaw);
@@ -82,10 +106,10 @@ export async function seedDeelnemers(
   );
   console.log(`✅ deelnemers-lookup.json (${persoonIdByTitle.size})`);
   console.log(`Seeded ${deelnemers.length} deelnemers`);
-  console.log(`(${importErrors.report})`);
+  console.log(`(${importDiagnostics.report})`);
   await writeOutputJson(
-    'deelnemers-import-errors.json',
-    importErrors,
+    'deelnemers-import-diagnostics.json',
+    importDiagnostics,
     readonly,
   );
 
