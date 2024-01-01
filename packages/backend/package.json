@@ -9,7 +9,7 @@
   "scripts": {
     "prisma:client:generate": "prisma generate",
     "prisma:migrate:create": "prisma migrate dev --name ",
-    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:deploy": "node ../../node_modules/prisma/build/index.js migrate deploy",
     "prisma:push:force": "prisma db push --force-reset",
     "prisma:seed": "node dist/seed/all.seed.js",
     "prisma:seed:readonly": "npm run prisma:seed -- --readonly",
