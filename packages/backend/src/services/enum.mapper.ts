@@ -16,7 +16,7 @@ import {
   Woonsituatie,
 } from '@rock-solid/shared';
 
-type EnumDBMap<T extends string> = Record<Exclude<T, 'onbekend'>, number>;
+type EnumDBMap<T extends string> = Record<T, number>;
 type DBType<T extends string, U extends T | undefined> = U extends undefined
   ? undefined
   : number;
@@ -38,10 +38,10 @@ function createEnumMapper<T extends string>(name: string, map: EnumDBMap<T>) {
   );
   return {
     toDB<U extends T | undefined>(value: U): DBType<T, U> {
-      if (value === 'onbekend' || value === undefined) {
+      if (value === undefined) {
         return undefined as DBType<T, U>;
       }
-      const result = map[value as unknown as Exclude<T, 'onbekend'>];
+      const result = map[value];
       if (result === undefined) {
         throw new Error(`Value ${value} is not a valid enum value for ${name}`);
       }
