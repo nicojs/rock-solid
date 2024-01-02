@@ -27,7 +27,8 @@
       "skipFiles": ["<node_internals>/**"],
       "type": "node",
       "outputCapture": "std",
-      "outFiles": ["${workspaceFolder}/**/*.js", "!**/node_modules/**"]
+      "outFiles": ["${workspaceFolder}/**/*.js", "!**/node_modules/**"],
+      "envFile": "${workspaceFolder}/.env"
     },
     {
       "name": "🧲 Attach to backend",

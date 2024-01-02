@@ -7,6 +7,7 @@ export interface User {
 export type UserRole = 'admin' | 'projectverantwoordelijke';
 export type Privilege =
   | 'read'
+  | 'read:backup'
   | 'write:projecten'
   | 'write:organisaties'
   | 'write:aanmeldingen'
@@ -23,6 +24,7 @@ export const logoutUrl = '/auth/logout';
 export const privileges: Record<UserRole, Privilege[]> = {
   admin: [
     'read',
+    'read:backup',
     'write:projecten',
     'write:organisaties',
     'write:aanmeldingen',

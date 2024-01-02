@@ -37,7 +37,10 @@ export function downloadCsv(csv: string, fileName = 'download') {
   // Creating a Blob for having a csv file format
   // and passing the data with type
   const blob = new Blob([csv], { type: 'text/csv' });
+  download(blob, fileName);
+}
 
+export function download(blob: Blob, fileName: string) {
   // Creating an object for downloading url
   const url = window.URL.createObjectURL(blob);
 
