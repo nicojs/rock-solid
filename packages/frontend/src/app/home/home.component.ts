@@ -38,40 +38,49 @@ export class HomeComponent extends LitElement {
         </h2>
       </div>
       <div class="row">
-        <div class="card ${colClass}">
-          <div class="card-header">Deelnemersuren Kei-Jong</div>
-          <div class="card-body">
-            <h5 class="card-title">
-              <span class="text-success"
-                >${this.deelnemersUrenKeiJongThisYear}</span
+        <div class="${colClass}">
+          <div class="card">
+            <div class="card-header">Deelnemersuren Kei-Jong</div>
+            <div class="card-body">
+              <h5 class="card-title">
+                <span class="text-success"
+                  >${this.deelnemersUrenKeiJongThisYear}</span
+                >
+                deelnemersuren in ${this.year}
+              </h5>
+              <p class="card-text">
+                Deelnemersuren voor Kei-Jong in ${this.year}
+              </p>
+              <rock-link href="/cursussen" btn btnPrimary
+                >Naar cursussen</rock-link
               >
-              deelnemersuren in ${this.year}
-            </h5>
-            <p class="card-text">
-              Deelnemersuren voor Kei-Jong in ${this.year}
-            </p>
-            <rock-link href="/cursussen" btn btnPrimary
-              >Naar cursussen</rock-link
-            >
+            </div>
           </div>
         </div>
-        <img class="${colClass}" src="/rock-solid.png" />
-        <div class="card ${colClass}">
-          <div class="card-header">Begeleidingsuren De Kei</div>
-          <div class="card-body">
-            <h5 class="card-title">
-              <span class="text-success"
-                >${this.begeleidingsurenDeKeiThisYear}</span
+        <div class="${colClass}">
+          <img class="w-100" src="/rock-solid.png" />
+        </div>
+        <div class="${colClass}">
+          <div class="card">
+            <div class="card-header">Begeleidingsuren De Kei</div>
+            <div class="card-body">
+              <h5 class="card-title">
+                <span class="text-success"
+                  >${this.begeleidingsurenDeKeiThisYear}</span
+                >
+                begeleidingsuren in ${this.year}
+              </h5>
+              <p class="card-text">Begeleidingsuren De Kei in ${this.year}</p>
+              <rock-link href="/cursussen" btn btnPrimary
+                >Naar cursussen</rock-link
               >
-              begeleidingsuren in ${this.year}
-            </h5>
-            <p class="card-text">Begeleidingsuren De Kei in ${this.year}</p>
-            <rock-link href="/cursussen" btn btnPrimary
-              >Naar cursussen</rock-link
-            >
+            </div>
           </div>
         </div>
       </div>
+      <footer class="py-3 my-4 align-bottom">
+        <rock-export-database></rock-export-database>
+      </footer>
     </div>`;
   }
 

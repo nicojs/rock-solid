@@ -19,6 +19,8 @@ import { AuthModule, JwtAuthGuard } from './auth/index.js';
 import { ReportsController } from './reports.controller.js';
 import { ReportMapper } from './services/report.mapper.js';
 import { PrivilegesGuard } from './auth/privileges.guard.js';
+import { BackupController } from './backup.controller.js';
+import { BackupService } from './services/backup.service.js';
 
 const rootPath = fileURLToPath(
   new URL('../../../node_modules/@rock-solid/frontend/dist', import.meta.url),
@@ -38,6 +40,7 @@ const rootPath = fileURLToPath(
     PlaatsenController,
     AuthController,
     ReportsController,
+    BackupController,
   ],
   providers: [
     PersoonMapper,
@@ -47,6 +50,7 @@ const rootPath = fileURLToPath(
     OrganisatieMapper,
     DeelnameMapper,
     ReportMapper,
+    BackupService,
     { provide: 'DatabaseUrl', useValue: process.env['DATABASE_URL'] },
     DBService,
     { provide: APP_GUARD, useClass: JwtAuthGuard },

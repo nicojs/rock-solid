@@ -29,6 +29,7 @@ export class DBService
     //   console.log(`${e.query} ${e.params}`);
     // });
   }
+
   async onModuleInit() {
     await this.$connect();
   }

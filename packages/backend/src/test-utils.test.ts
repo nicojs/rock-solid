@@ -219,7 +219,7 @@ class IntegrationTestingHarness {
     req = req
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
-      .parse(parseJson)
+      .parse(parseBody)
       .send(body);
     return this.authenticateRequest(req);
   }
@@ -497,37 +497,60 @@ after(async () => {
 /**
  * Parses the response body as JSON using the Rock Solid reviver.
  * Grabbed from superagent, but altered for RockSolid
- * @see https://github.com/ladjs/superagent/blob/master/src/node/parsers/json.js
  * @param res The supertest response
  * @param cb The callback to invoke when response is parsed
  */
-function parseJson(
+function parseBody(
   res: request.Response,
   cb: (err: Error | null, body: any) => void,
 ) {
-  res.text = '';
-  res.setEncoding('utf8');
-  res.on('data', (chunk) => {
-    res.text += chunk;
-  });
-  res.on('end', () => {
-    let body;
-    type SupertestError = Error & {
-      rawResponse: string | null;
-      statusCode: number;
-    };
+  const contentType: string | undefined =
+    res.headers['content-type']?.split(';')[0];
+  switch (contentType) {
+    case 'application/json':
+      // See https://github.com/ladjs/superagent/blob/master/src/node/parsers/json.js
+      res.text = '';
+      res.setEncoding('utf8');
+      res.on('data', (chunk) => {
+        res.text += chunk;
+      });
+      res.on('end', () => {
+        let body;
+        type SupertestError = Error & {
+          rawResponse: string | null;
+          statusCode: number;
+        };
 
-    let error: SupertestError | null = null;
-    try {
-      body = res.text && parse(res.text);
-    } catch (err: any) {
-      error = err as SupertestError;
-      error.rawResponse = res.text || null;
-      error.statusCode = res.statusCode;
-    } finally {
-      cb(error, body);
-    }
-  });
+        let error: SupertestError | null = null;
+        try {
+          body = res.text && parse(res.text);
+        } catch (err: any) {
+          error = err as SupertestError;
+          error.rawResponse = res.text || null;
+          error.statusCode = res.statusCode;
+        } finally {
+          cb(error, body);
+        }
+      });
+      break;
+    case 'application/octet-stream':
+      // Grabbed from: https://github.com/ladjs/superagent/blob/master/src/node/parsers/image.js
+      const data: any[] = [];
+      res.on('data', (chunk) => {
+        data.push(chunk);
+      });
+      res.on('end', () => {
+        cb(null, Buffer.concat(data));
+      });
+      break;
+    case undefined:
+      cb(null, undefined);
+      break;
+    default:
+      throw new Error(
+        `Content-Type "${contentType}" is not supported yet by the test harness. Please add it to the "${parseBody.name}" function.`,
+      );
+  }
 }
 
 export function byId(a: { id: number }, b: { id: number }) {
