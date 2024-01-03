@@ -321,29 +321,240 @@ describe(PersonenController.name, () => {
       );
     });
 
+    it('by laatsteAanmeldingMinimaalJaarGeleden', async () => {
+      // Arrange
+      const {
+        deelnemer1,
+        deelnemer2,
+        deelnemer3,
+        deelnemer4,
+        deelnemerNoAanmeldingen,
+      } = await arrangeJaarGeledenDeelnemers();
+
+      // Act
+      const [deelnemersOneYearAgo, deelnemersTwoYearsAgo, noFilter] =
+        await Promise.all([
+          harness.getAllPersonen({
+            laatsteAanmeldingMinimaalJaarGeleden: 1,
+          }),
+          harness.getAllPersonen({
+            laatsteAanmeldingMinimaalJaarGeleden: 2,
+          }),
+          harness.getAllPersonen({
+            laatsteAanmeldingMinimaalJaarGeleden: undefined,
+          }),
+        ]);
+
+      // Assert
+      expect(deelnemersOneYearAgo).deep.eq([deelnemer1]);
+      expect(deelnemersTwoYearsAgo.sort(byId)).deep.eq(
+        [deelnemer1, deelnemer2, deelnemer4].sort(byId),
+      );
+      expect(noFilter.sort(byId)).deep.eq(
+        [
+          deelnemer1,
+          deelnemer2,
+          deelnemer3,
+          deelnemer4,
+          deelnemerNoAanmeldingen,
+        ].sort(byId),
+      );
+    });
+
+    it('by laatsteAanmeldingMaximaalJaarGeleden', async () => {
+      // Arrange
+      const {
+        deelnemer1,
+        deelnemer2,
+        deelnemer3,
+        deelnemer4,
+        deelnemerNoAanmeldingen,
+      } = await arrangeJaarGeledenDeelnemers();
+
+      // Act
+      const [
+        deelnemersMax1Year,
+        deelnemersMax2YearsAgo,
+        deelnemersMax3YearsAgo,
+        deelnemersMax4YearsAgo,
+        noFilter,
+      ] = await Promise.all([
+        harness.getAllPersonen({
+          laatsteAanmeldingMaximaalJaarGeleden: 1,
+        }),
+        harness.getAllPersonen({
+          laatsteAanmeldingMaximaalJaarGeleden: 2,
+        }),
+        harness.getAllPersonen({
+          laatsteAanmeldingMaximaalJaarGeleden: 3,
+        }),
+        harness.getAllPersonen({
+          laatsteAanmeldingMaximaalJaarGeleden: 4,
+        }),
+        harness.getAllPersonen({
+          laatsteAanmeldingMaximaalJaarGeleden: undefined,
+        }),
+      ]);
+
+      // Assert
+      expect(deelnemersMax1Year.sort(byId)).deep.eq(
+        [deelnemer1, deelnemer2, deelnemer3, deelnemer4].sort(byId),
+      );
+      expect(deelnemersMax2YearsAgo.sort(byId)).deep.eq(
+        [deelnemer2, deelnemer3, deelnemer4].sort(byId),
+      );
+      expect(deelnemersMax3YearsAgo).deep.eq([deelnemer3]);
+      expect(deelnemersMax4YearsAgo).deep.eq([]);
+      expect(noFilter.sort(byId)).deep.eq(
+        [
+          deelnemer1,
+          deelnemer2,
+          deelnemer3,
+          deelnemer4,
+          deelnemerNoAanmeldingen,
+        ].sort(byId),
+      );
+    });
+
+    it('by laatsteAanmeldingMaximaalJaarGeleden and laatsteAanmeldingMinimaalJaarGeleden', async () => {
+      // Arrange
+      const { deelnemer1, deelnemer2, deelnemer4 } =
+        await arrangeJaarGeledenDeelnemers();
+
+      // Act
+      const [deelnemersLastYear, deelnemers2YearAgoExact] = await Promise.all([
+        harness.getAllPersonen({
+          laatsteAanmeldingMaximaalJaarGeleden: 1,
+          laatsteAanmeldingMinimaalJaarGeleden: 1,
+        }),
+        harness.getAllPersonen({
+          laatsteAanmeldingMaximaalJaarGeleden: 2,
+          laatsteAanmeldingMinimaalJaarGeleden: 2,
+        }),
+      ]);
+
+      // Assert
+      expect(deelnemersLastYear).deep.eq([deelnemer1]);
+      expect(deelnemers2YearAgoExact.sort(byId)).deep.eq(
+        [deelnemer2, deelnemer4].sort(byId),
+      );
+    });
+
+    it('by zonderAanmeldingen', async () => {
+      // Arrange
+      const { deelnemerNoAanmeldingen } = await arrangeJaarGeledenDeelnemers();
+
+      // Act
+      const [zonderAanmeldingen, nietZonderAanmeldingen, noFilter] =
+        await Promise.all([
+          harness.getAllPersonen({ zonderAanmeldingen: true }),
+          harness.getAllPersonen({ zonderAanmeldingen: false }),
+          harness.getAllPersonen({ zonderAanmeldingen: undefined }),
+        ]);
+
+      await harness.getAllPersonen({ zonderAanmeldingen: true });
+      // Assert
+      expect(zonderAanmeldingen).deep.eq([deelnemerNoAanmeldingen]);
+      expect(nietZonderAanmeldingen).lengthOf(5);
+      expect(noFilter).lengthOf(5);
+      // zonderAanmeldingen false or undefined should be the same (it's a checkbox)
+      expect(noFilter.sort(byId)).deep.eq(nietZonderAanmeldingen.sort(byId));
+    });
+
+    async function arrangeJaarGeledenDeelnemers() {
+      const { y, m, d } = today();
+      const lastYear = new Date(y - 1, m, d);
+      const twoYearAgo = new Date(y - 2, m, d);
+      const threeYearsAgo = new Date(y - 3, m, d);
+      const [
+        deelnemer1,
+        deelnemer2,
+        deelnemer3,
+        deelnemer4,
+        deelnemerNoAanmeldingen,
+      ] = await Promise.all([
+        harness.createDeelnemer(factory.deelnemer({ achternaam: '1' })),
+        harness.createDeelnemer(factory.deelnemer({ achternaam: '2' })),
+        harness.createDeelnemer(factory.deelnemer({ achternaam: '3' })),
+        harness.createDeelnemer(factory.deelnemer({ achternaam: '4' })),
+        harness.createDeelnemer(
+          factory.deelnemer({ achternaam: 'no aanmeldingen' }),
+        ),
+      ]);
+
+      const [projectOneYearAgo, projectTwoYearsAgo, projectThreeYearsAgo] =
+        await Promise.all([
+          harness.createProject(
+            factory.cursus({
+              activiteiten: [factory.activiteit({ van: lastYear })],
+            }),
+          ),
+          harness.createProject(
+            factory.cursus({
+              activiteiten: [factory.activiteit({ van: twoYearAgo })],
+            }),
+          ),
+          harness.createProject(
+            factory.cursus({
+              activiteiten: [factory.activiteit({ van: threeYearsAgo })],
+            }),
+          ),
+        ]);
+
+      await Promise.all([
+        harness.createAanmelding({
+          deelnemerId: deelnemer1.id,
+          projectId: projectOneYearAgo.id,
+        }),
+        harness.createAanmelding({
+          deelnemerId: deelnemer2.id,
+          projectId: projectTwoYearsAgo.id,
+        }),
+        harness.createAanmelding({
+          deelnemerId: deelnemer3.id,
+          projectId: projectThreeYearsAgo.id,
+        }),
+        harness.createAanmelding({
+          deelnemerId: deelnemer4.id,
+          projectId: projectThreeYearsAgo.id,
+        }),
+      ]);
+      // Create aanmelding is currently not thread-safe.
+      await harness.createAanmelding({
+        deelnemerId: deelnemer4.id,
+        projectId: projectTwoYearsAgo.id,
+      });
+      deelnemer1.eersteCursus = projectOneYearAgo.projectnummer;
+      deelnemer2.eersteCursus = projectTwoYearsAgo.projectnummer;
+      deelnemer3.eersteCursus = projectThreeYearsAgo.projectnummer;
+      deelnemer4.eersteCursus = projectThreeYearsAgo.projectnummer;
+      return {
+        deelnemer1,
+        deelnemer2,
+        deelnemer3,
+        deelnemer4,
+        projectOneYearAgo,
+        projectTwoYearsAgo,
+        projectThreeYearsAgo,
+        deelnemerNoAanmeldingen,
+      };
+    }
+
     async function arrangeLeeftijdDeelnemers() {
-      const now = new Date();
+      const { y, m, d } = today();
 
       const [deelnemer18Y, deelnemer17Y, deelnemerNoGeboortedatum] =
         await Promise.all([
           harness.createDeelnemer(
             factory.deelnemer({
               achternaam: '18Years',
-              geboortedatum: new Date(
-                now.getFullYear() - 18,
-                now.getMonth(),
-                now.getDate(),
-              ),
+              geboortedatum: new Date(y - 18, m, d),
             }),
           ),
           harness.createDeelnemer(
             factory.deelnemer({
               achternaam: '17Years',
-              geboortedatum: new Date(
-                now.getFullYear() - 18,
-                now.getMonth(),
-                now.getDate() + 1,
-              ),
+              geboortedatum: new Date(y - 18, m, d + 1),
             }),
           ),
           harness.createDeelnemer(
@@ -471,3 +682,11 @@ describe(PersonenController.name, () => {
     });
   });
 });
+
+function today() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const d = now.getDate();
+  return { y, m, d };
+}

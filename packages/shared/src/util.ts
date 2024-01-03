@@ -76,6 +76,19 @@ export function tryParseInt(val: string | undefined): number | undefined {
   return parsed;
 }
 
+export function tryParseBoolean(val: string | undefined): boolean | undefined {
+  if (val === undefined) {
+    return undefined;
+  }
+  if (val === 'true') {
+    return true;
+  }
+  if (val === 'false') {
+    return false;
+  }
+  return undefined;
+}
+
 /**
  * Represents a URL query (e.g. `?foo=bar&baz=qux` = `{ foo: 'bar', baz: 'qux' }`)
  */

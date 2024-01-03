@@ -9,7 +9,7 @@ export class RouteParams {
   ) {}
 
   static parse(
-    href: string,
+    href = `${window.location.pathname}${window.location.search}`,
     base = `${window.location.protocol}//${window.location.host}`,
   ): RouteParams {
     const { pathname, searchParams } = new URL(href, base);
@@ -38,13 +38,13 @@ export class RouteParams {
 
 export class Router {
   private navigatorSubject = new BehaviorSubject<RouteParams>(
-    RouteParams.parse(`${window.location.pathname}${window.location.search}`),
+    RouteParams.parse(),
   );
   public routeChange$ = this.navigatorSubject.asObservable();
 
   constructor() {
     fromEvent(window, 'popstate')
-      .pipe(map(() => RouteParams.parse(window.location.pathname)))
+      .pipe(map(() => RouteParams.parse()))
       .subscribe(this.navigatorSubject);
   }
 

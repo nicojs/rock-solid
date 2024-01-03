@@ -2,7 +2,12 @@ import { Adres, UpsertableAdres } from './adres.js';
 import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
 import { Upsertable } from './upsertable.js';
-import { Queryfied, filterMetaQuery, tryParseInt } from './util.js';
+import {
+  Queryfied,
+  filterMetaQuery,
+  tryParseBoolean,
+  tryParseInt,
+} from './util.js';
 
 export interface BasePersoon {
   id: number;
@@ -69,7 +74,9 @@ export type PersoonFilter = Partial<
     }
 > & {
   foldersoorten?: Foldersoort[];
-  laatsteAanmeldingJaarGeleden?: number;
+  laatsteAanmeldingMinimaalJaarGeleden?: number;
+  laatsteAanmeldingMaximaalJaarGeleden?: number;
+  zonderAanmeldingen?: boolean;
   minLeeftijd?: number;
   maxLeeftijd?: number;
   volledigeNaamLike?: string;
@@ -98,7 +105,9 @@ export interface Deelnemer extends BasePersoon {
   woonsituatieOpmerking?: string;
   werksituatie?: Werksituatie;
   werksituatieOpmerking?: string;
+  /** Projectnummer van de eerste cursus */
   eersteCursus?: string;
+  /** Projectnummer van de eerste vakantie */
   eersteVakantie?: string;
   fotoToestemming: FotoToestemming;
 }
@@ -252,7 +261,9 @@ export function toPersoonFilter(
   const {
     selectie,
     foldersoorten,
-    laatsteAanmeldingJaarGeleden,
+    laatsteAanmeldingMinimaalJaarGeleden,
+    laatsteAanmeldingMaximaalJaarGeleden,
+    zonderAanmeldingen,
     minLeeftijd,
     maxLeeftijd,
     ...filter
@@ -261,10 +272,14 @@ export function toPersoonFilter(
     ...filterMetaQuery(filter),
     selectie: selectie?.split(',') as OverigPersoonSelectie[],
     foldersoorten: foldersoorten?.split(',') as Foldersoort[],
-    ...{
-      laatsteAanmeldingJaarGeleden: tryParseInt(laatsteAanmeldingJaarGeleden),
-      minLeeftijd: tryParseInt(minLeeftijd),
-      maxLeeftijd: tryParseInt(maxLeeftijd),
-    },
+    laatsteAanmeldingMinimaalJaarGeleden: tryParseInt(
+      laatsteAanmeldingMinimaalJaarGeleden,
+    ),
+    laatsteAanmeldingMaximaalJaarGeleden: tryParseInt(
+      laatsteAanmeldingMaximaalJaarGeleden,
+    ),
+    minLeeftijd: tryParseInt(minLeeftijd),
+    maxLeeftijd: tryParseInt(maxLeeftijd),
+    zonderAanmeldingen: tryParseBoolean(zonderAanmeldingen),
   } as PersoonFilter;
 }
