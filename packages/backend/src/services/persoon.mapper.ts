@@ -336,7 +336,9 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
   const {
     foldersoorten,
     selectie,
-    laatsteAanmeldingJaarGeleden,
+    laatsteAanmeldingMinimaalJaarGeleden,
+    laatsteAanmeldingMaximaalJaarGeleden,
+    zonderAanmeldingen,
     minLeeftijd,
     maxLeeftijd,
     contactpersoon,
@@ -350,7 +352,6 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
   } = filter;
   return {
     ...where,
-    ...toContactPersoonFields(contactpersoon),
     ...(foldersoorten?.length
       ? {
           foldervoorkeuren: {
@@ -367,19 +368,11 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
           },
         }
       : {}),
-    ...(laatsteAanmeldingJaarGeleden !== undefined
-      ? {
-          aanmeldingen: {
-            some: {
-              project: {
-                jaar: {
-                  gte: new Date().getFullYear() - laatsteAanmeldingJaarGeleden,
-                },
-              },
-            },
-          },
-        }
-      : {}),
+    ...aanmeldingenWhere({
+      laatsteAanmeldingMinimaalJaarGeleden,
+      laatsteAanmeldingMaximaalJaarGeleden,
+      zonderAanmeldingen,
+    }),
     geboortedatum: dateRangeFilter({ minLeeftijd, maxLeeftijd }),
     type: persoonTypeMapper.toDB(type),
     woonsituatie: woonsituatieMapper.toDB(woonsituatie),
@@ -395,6 +388,56 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
 }
 
 type LeeftijdRangeFilter = Pick<PersoonFilter, 'minLeeftijd' | 'maxLeeftijd'>;
+
+function aanmeldingenWhere({
+  laatsteAanmeldingMaximaalJaarGeleden,
+  laatsteAanmeldingMinimaalJaarGeleden,
+  zonderAanmeldingen,
+}: Pick<
+  PersoonFilter,
+  | 'laatsteAanmeldingMinimaalJaarGeleden'
+  | 'laatsteAanmeldingMaximaalJaarGeleden'
+  | 'zonderAanmeldingen'
+>): db.Prisma.PersoonWhereInput {
+  const thisYear = new Date().getFullYear();
+
+  const someFilters: db.Prisma.AanmeldingWhereInput[] = [];
+  const everyFilters: db.Prisma.AanmeldingWhereInput[] = [];
+  if (laatsteAanmeldingMaximaalJaarGeleden !== undefined) {
+    const maximaalFilter = {
+      project: {
+        jaar: {
+          lte: thisYear - laatsteAanmeldingMaximaalJaarGeleden,
+        },
+      },
+    };
+    // Also fill in `someFilters`, so that empty aanmeldingen don't get returned
+    someFilters.push(maximaalFilter);
+    everyFilters.push(maximaalFilter);
+  }
+  if (laatsteAanmeldingMinimaalJaarGeleden !== undefined) {
+    const minimaalFilter = {
+      project: {
+        jaar: {
+          gte: thisYear - laatsteAanmeldingMinimaalJaarGeleden,
+        },
+      },
+    };
+    someFilters.push(minimaalFilter);
+  }
+
+  let zonderFilter: db.Prisma.AanmeldingWhereInput | undefined;
+  if (zonderAanmeldingen) {
+    zonderFilter = {};
+  }
+  return {
+    aanmeldingen: {
+      some: someFilters.length ? { AND: someFilters } : undefined,
+      every: everyFilters.length ? { AND: everyFilters } : undefined,
+      none: zonderFilter,
+    },
+  };
+}
 
 function dateRangeFilter({
   minLeeftijd,

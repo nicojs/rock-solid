@@ -242,8 +242,19 @@ const deelnemerSearchControls: FormControl<PersoonFilter>[] = [
   {
     type: InputType.number,
     label: 'Laatste aanmelding',
-    name: 'laatsteAanmeldingJaarGeleden',
-    postfix: 'jaar geleden',
+    name: 'laatsteAanmeldingMinimaalJaarGeleden',
+    postfix: 'jaar geleden of korter',
+  },
+  {
+    type: InputType.number,
+    label: 'Laatste aanmelding',
+    name: 'laatsteAanmeldingMaximaalJaarGeleden',
+    postfix: 'jaar geleden of langer',
+  },
+  {
+    type: InputType.checkbox,
+    label: 'Zonder aanmeldingen',
+    name: 'zonderAanmeldingen',
   },
   {
     type: InputType.number,
