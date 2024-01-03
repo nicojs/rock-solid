@@ -1,11 +1,20 @@
 name: Deploy
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Choose environment'
+        required: true
+        default: 'Acceptance'
+        options:
+          - 'Acceptance'
+          - 'Production'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: 'Acceptance'
+    environment: ${{ github.event.inputs.environment }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v3
@@ -25,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Acceptance'
+      name: ${{ github.event.inputs.environment }}
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
