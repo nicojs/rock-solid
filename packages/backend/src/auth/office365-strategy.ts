@@ -67,7 +67,9 @@ export class Office365Strategy extends PassportStrategy(
         ? 'admin'
         : groupIds.includes(authConstants.projectverantwoordelijkeGroupObjectId)
           ? 'projectverantwoordelijke'
-          : undefined);
+          : groupIds.includes(authConstants.financieelBeheerderGroupObjectId)
+            ? 'financieelBeheerder'
+            : undefined);
     if (!role) {
       throw new UnauthorizedException(
         `Not authorized, as the user does not belong to a RockSolid group.`,

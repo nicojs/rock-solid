@@ -1,4 +1,4 @@
-import { logoutUrl, User } from '@rock-solid/shared';
+import { logoutUrl, User, userRoleNames } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Subscription } from 'rxjs';
@@ -27,7 +27,9 @@ export class UserComponent extends LitElement {
   protected override render() {
     return html` <nav class="navbar navbar-light bg-light">
       Ingelogd als
-      ${this.user ? `${this.user.name} (${this.user.role})` : 'gast'}${this.user
+      ${this.user
+        ? `${this.user.name} (${userRoleNames[this.user.role]})`
+        : 'gast'}${this.user
         ? html`&nbsp;<a class="text-reset" href="#" @click=${this.logoff}
               >uitloggen</a
             >`

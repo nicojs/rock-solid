@@ -4,7 +4,10 @@ export interface User {
   role: UserRole;
 }
 
-export type UserRole = 'admin' | 'projectverantwoordelijke';
+export type UserRole =
+  | 'admin'
+  | 'projectverantwoordelijke'
+  | 'financieelBeheerder';
 export type Privilege =
   | 'read'
   | 'read:backup'
@@ -13,6 +16,12 @@ export type Privilege =
   | 'write:aanmeldingen'
   | 'write:deelnames'
   | 'write:personen';
+
+export const userRoleNames: Record<UserRole, string> = {
+  admin: 'Admin',
+  projectverantwoordelijke: 'Projectverantwoordelijke',
+  financieelBeheerder: 'Financieel beheerder',
+};
 
 export interface LoginResponse {
   user: User;
@@ -32,4 +41,5 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'write:personen',
   ],
   projectverantwoordelijke: ['read', 'write:deelnames'],
+  financieelBeheerder: ['read', 'write:aanmeldingen'],
 };
