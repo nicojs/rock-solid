@@ -232,6 +232,14 @@ describe(OrganisatiesController.name, () => {
       await harness.get(`/organisaties/${org.id}`).expect(404);
     });
 
+    it('should delete the organisatiesoort', async () => {
+      const org = await harness.createOrganisatie({
+        soorten: ['AmbulanteWoonondersteuning'],
+      });
+      await harness.delete(`/organisaties/${org.id}`).expect(204);
+      await harness.get(`/organisaties/${org.id}`).expect(404);
+    });
+
     it('should result in a 404 when the organisatie does not exist', async () => {
       await harness.delete(`/organisaties/999`).expect(404);
     });

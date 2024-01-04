@@ -65,7 +65,7 @@ model Persoon {
 model OverigPersoonSelectie {
   overigPersoonId Int
   selectie        Int
-  overigPersoon   Persoon @relation(fields: [overigPersoonId], references: [id])
+  overigPersoon   Persoon @relation(fields: [overigPersoonId], references: [id], onDelete: Cascade)
 
   @@id([overigPersoonId, selectie])
 }
