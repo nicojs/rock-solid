@@ -65,7 +65,7 @@ export class Office365Strategy extends PassportStrategy(
       authConstants.roleOverride ??
       (groupIds.includes(authConstants.adminGroupObjectId)
         ? 'admin'
-        : groupIds.includes(authConstants.adminGroupObjectId)
+        : groupIds.includes(authConstants.projectverantwoordelijkeGroupObjectId)
           ? 'projectverantwoordelijke'
           : undefined);
     if (!role) {
