@@ -40,6 +40,7 @@ interface RawRitaDeelnemer {
   werksituatie: string;
   woonsituatie: string;
   'direct verwijderen na migreren': 'ja' | '';
+  'adres verwijderen na migreren': 'ja' | '';
 }
 
 export async function deleteDeelnemers(
@@ -63,29 +64,59 @@ export async function deleteDeelnemers(
   const deelnemersToDelete = deelnemersRitaRaw.filter(
     (d) => d['direct verwijderen na migreren'] === 'ja',
   );
+  const adressenToDelete = deelnemersRitaRaw.filter(
+    (d) =>
+      d['adres verwijderen na migreren'] === 'ja' &&
+      d['direct verwijderen na migreren'] !== 'ja',
+  );
   deelnemersToDelete.forEach((item) =>
     importDiagnostics.addInfo('deleted', {
       item,
       detail: 'Verwijderd op aanvraag van Rita',
     }),
   );
+  adressenToDelete.forEach((item) => {
+    importDiagnostics.addInfo('adres verwijderd', {
+      item,
+      detail: 'Verwijderd na migratie',
+    });
+  });
   const deelnemerIdsToDelete = deelnemersToDelete.map(
     (deelnemer) => deelnemerIdByTitles.get(deelnemer[''])!,
   );
-  const { count } = await client.persoon.deleteMany({
+  const deelnemerIdsHomeless = adressenToDelete.map(
+    (deelnemer) => deelnemerIdByTitles.get(deelnemer[''])!,
+  );
+  const { count: deleteCount } = await client.persoon.deleteMany({
     where: { id: { in: deelnemerIdsToDelete } },
   });
-  if (count === deelnemerIdsToDelete.length) {
-    console.log(`Deleted ${count} deelnemers`);
-    await writeOutputJson(
-      'deelnemers-delete-diagnostics.json',
-      importDiagnostics,
-      readonly,
-    );
-    console.log(`(${importDiagnostics.report})`);
+  const { count: homelessCount } = await client.persoon.updateMany({
+    data: {
+      domicilieadresId: null,
+      verblijfadresId: null,
+    },
+    where: {
+      id: { in: deelnemerIdsHomeless },
+    },
+  });
+  if (deleteCount === deelnemerIdsToDelete.length) {
+    console.log(`Deleted ${deleteCount} deelnemers`);
   } else {
     throw new Error(
-      `Deleted ${count} deelnemers, expected ${deelnemerIdsToDelete.length}`,
+      `Deleted ${deleteCount} deelnemers, expected ${deelnemerIdsToDelete.length}`,
     );
   }
+  if (homelessCount === deelnemerIdsHomeless.length) {
+    console.log(`Deleted ${homelessCount} deelnemer adressen.`);
+  } else {
+    throw new Error(
+      `Deleted ${deleteCount} deelnemers, expected ${deelnemerIdsToDelete.length}`,
+    );
+  }
+  await writeOutputJson(
+    'deelnemers-delete-diagnostics.json',
+    importDiagnostics,
+    readonly,
+  );
+  console.log(`(${importDiagnostics.report})`);
 }
