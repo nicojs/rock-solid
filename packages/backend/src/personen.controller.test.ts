@@ -681,6 +681,21 @@ describe(PersonenController.name, () => {
       expect(actualDeelnemer.fotoToestemming).deep.eq(fotoToestemming);
     });
   });
+
+  describe('DELETE /persoon/:id', () => {
+    it('should delete an overig persoon with selectie', async () => {
+      // Arrange
+      const overigPersoon = await harness.createOverigPersoon(
+        factory.overigPersoon({ selectie: ['personeel'] }),
+      );
+
+      // Act
+      await harness.delete(`/personen/${overigPersoon.id}`).expect(204);
+
+      // Assert
+      await harness.get(`/personen/${overigPersoon.id}`).expect(404);
+    });
+  });
 });
 
 function today() {
