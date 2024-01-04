@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import request from 'supertest';
-import chai from 'chai';
+import { config as chaiConfig } from 'chai';
 import { Test } from '@nestjs/testing';
 import { AppModule } from './app.module.js';
 import { JwtService } from '@nestjs/jwt';
@@ -46,7 +46,7 @@ import { toPlaats } from './services/plaats.mapper.js';
 /**
  * @see https://stackoverflow.com/questions/45881829/how-to-have-mocha-show-entire-object-in-diff-on-assertion-error
  */
-chai.config.truncateThreshold = 0;
+chaiConfig.truncateThreshold = 0;
 process.env.TZ = 'Etc/UTC';
 
 const execAsync = promisify(exec);
