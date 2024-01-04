@@ -1,4 +1,4 @@
-import { Privilege, privileges } from '@rock-solid/shared';
+import { Privilege, privileges, userRoleNames } from '@rock-solid/shared';
 import { PartInfo, PartType, directive } from 'lit/directive.js';
 import { AsyncDirective } from 'lit/async-directive.js';
 import { Subscription } from 'rxjs';
@@ -34,7 +34,7 @@ class PrivilegeDirective extends AsyncDirective {
           if (btn.parentElement) {
             btn.parentElement.title = btn.disabled
               ? `Als ${
-                  user?.role ?? 'uitgelogd persoon'
+                  user?.role ? userRoleNames[user?.role] : 'uitgelogd persoon'
                 } mag je deze actie niet uitvoeren.`
               : '';
           }
