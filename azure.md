@@ -14,7 +14,7 @@ https://github.com/marketplace/actions/azure-login#configure-a-service-principal
 
 ```
 SUBSCRIPTION_ID=12345678-abcd-9012-3456-efghijklmnop
-az account login
+az login
 az account set --subscription $SUBSCRIPTION_ID
 ```
 
@@ -26,43 +26,6 @@ az group create --name $RES_GROUP --location westeurope
 az configure --defaults location=westeurope
 ```
 
-## Networking
-
-Topology:
-
-```
-00000000 00000000 00000000 00000000
-00000000 00000000 11111111 11111111
-10.0.0.0/16
-
-Subnet DB
-00000000 00000000 00000000 00000000
-00000000 00000000 00000000 00000111
-10.0.0.0/29
-
-Subnet Web
-00000000 00000000 00000001 00000000
-00000000 00000000 00000001 00000111
-10.0.1.0/29
-```
-
-```shell
-VNET=acc-rock-solid-vnet
-
-az network vnet create --name $VNET  \
-  --resource-group $RES_GROUP \
-  --address-prefix 10.0.0.0/16 
-
-az network vnet subnet create --vnet-name $VNET \
-   --resource-group $RES_GROUP \
-   --name DB \
-   --address-prefixes 10.0.0.0/29
-
-az network vnet subnet create --vnet-name $VNET \
-   --resource-group $RES_GROUP \
-   --name Web \
-   --address-prefixes 10.0.1.0/29  
-```
 
 ## Key vault
 
@@ -70,24 +33,6 @@ az network vnet subnet create --vnet-name $VNET \
 AKV_NAME=acc-rock-solid-kv      # Azure Key Vault vault name
 
 az keyvault create -g $RES_GROUP -n $AKV_NAME
-```
-
-## Database
-
-```
-DB_NAME=acc-rock-solid-db
-az postgres flexible-server create --database-name $DB_NAME \
-    --resource-group $RES_GROUP \
-    --vnet $VNET \
-    --subnet DB \
-    --sku-name Standard_B1ms \
-    --tier Burstable
-```
-
-> Do you want to create a new private DNS zone server415881925.private.postgres.database.azure.com in resource group acc-rock-solid (y/n): y
-
-```
-DATABASE_URL=postgresql://user:password@server123456.postgres.database.azure.com/postgres?sslmode=require
 ```
 
 ## Create App and certificate
@@ -100,13 +45,14 @@ OFFICE_365_CLIENT_ID="12345678-abcd-9012-3456-efghijklmnop"
 OFFICE_365_CLIENT_SECRET="super-secret"
 ```
 
+## Choose JWT_SECRET
+
+JWT_SECRET=super_secret
+
+
 ## Add those keys
 
 ```sh
-az keyvault secret set \
-  --vault-name $AKV_NAME \
-  --name rock-solid-db-url \
-  --value $DATABASE_URL
 az keyvault secret set \
   --vault-name $AKV_NAME \
   --name rock-solid-jwt-secret \
@@ -125,73 +71,37 @@ az keyvault secret set \
   --value $OFFICE_365_CLIENT_SECRET
 ```
 
-## Run your app in Azure App Service directly from a ZIP package
-
-```sh
-zip -r deploy.zip .deploy/
-```
-
 ## Env
 
 ```sh
 RES_GROUP=acc-rock-solid # Resource Group name
 AKV_NAME=acc-rock-solid-kv   # Azure Key Vault vault name
 APP_NAME=acc-rock-solid-web
-APP_SERVICE_PLAN=acc-rock-solid-web
-VNET=acc-rock-solid-vnet
-SUBNET=web
+APP_SERVICE_PLAN=acc-rock-solid-web-plan
+DATABASE_URL="file:./acc.db?connection_limit=1"
 ```
 
 ### Create
 
 ```sh
-APP_NAME=acc-rock-solid-web-app
-APP_SERVICE_PLAN=acc-rock-solid-web-plan
-
 az appservice plan create --is-linux --name $APP_SERVICE_PLAN --resource-group $RES_GROUP --sku B1
-az webapp create -g $RES_GROUP -p $APP_SERVICE_PLAN -n $APP_NAME --runtime "NODE:16-lts" --vnet $VNET --subnet web
+az webapp create -g $RES_GROUP -p $APP_SERVICE_PLAN -n $APP_NAME --runtime "NODE:20-lts"
 
-az webapp config appsettings set --resource-group $RES_GROUP --name $APP_NAME --settings 'BASE_URL'="https://$APP_NAME.azurewebsites.net" 'DATABASE_URL'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-db-url --query value -o tsv) 'JWT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-jwt-secret --query value -o tsv) 'OFFICE_365_TENANT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-tenant-id --query value -o tsv) 'OFFICE_365_CLIENT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-id --query value -o tsv) 'OFFICE_365_CLIENT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-secret --query value -o tsv) WEBSITE_RUN_FROM_PACKAGE="1"
-
-
-az webapp connection create postgres-flexible --client-type nodejs --resource-group $RES_GROUP -n $APP_NAME --target-resource-group $RES_GROUP --server acc-rock-solid-db.postgres.database.azure.com --database rock-solid-db  --secret name=XX secret=XX
+az webapp config appsettings set --resource-group $RES_GROUP --name $APP_NAME --settings 'BASE_URL'="https://$APP_NAME.azurewebsites.net" 'DATABASE_URL'="$DATABASE_URL" 'JWT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-jwt-secret --query value -o tsv) 'OFFICE_365_TENANT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-tenant-id --query value -o tsv) 'OFFICE_365_CLIENT_ID'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-id --query value -o tsv) 'OFFICE_365_CLIENT_SECRET'=$(az keyvault secret show --vault-name $AKV_NAME -n rock-solid-office-365-client-secret --query value -o tsv)
 ```
 
-## Create service principal
+## Deploy the package using Azure login CI/CD
 
-See https://github.com/marketplace/actions/azure-login#configure-deployment-credentials
+Use the `azure/webapps-deploy` action with the `publish-profile` you download from the azure portal:
 
-```sh
-SP_NAME=acc-rock-solid
-az ad sp create-for-rbac --name $SP_NAME --role contributor \
-                         --scopes /subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RES_GROUP \
-                         --sdk-auth
-```
-
-Add under `AZURE_CREDENTIALS` in gh secrets
-
-### Deploy the package
-
-```sh
-# Preview command
-az webapp deploy --resource-group $RES_GROUP --name $APP_NAME --src-path .deploy/deploy.zip
-
-# Stable?? command
-az webapp deployment source config-zip --resource-group $RES_GROUP --name $APP_NAME --src .deploy/deploy.zip
-```
-
-## Azure login CI/CD
-
-### Configure a service principal with a secret
-
-```sh
-RES_GROUP=acc-rock-solid # Resource Group name
-APP_NAME=acc-rock-solid-web
-SUBSCRIPTION_ID=some_guid
-
-az ad sp create-for-rbac --name $APP_NAME --role contributor \
-                          --scopes /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RES_GROUP} \
-                          --sdk-auth
+```yml
+      - id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: '${{ vars.APP_NAME }}'
+          slot-name: 'Production'
+          package: .
+          publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
 ```
 
 ## Azure file storage
