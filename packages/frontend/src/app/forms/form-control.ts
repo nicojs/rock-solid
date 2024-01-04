@@ -323,6 +323,7 @@ export interface RadioInputControl<
   type: InputType.radio;
   name: TKey;
   items: Options<TEntity[TKey] & string>;
+  allowDeselect?: boolean;
 }
 
 export function radioControl<

@@ -660,6 +660,57 @@ describe(PersonenController.name, () => {
       expect(actualDeelnemer.contactpersoon).deep.eq(contactpersoon);
     });
 
+    it('should be able to delete nullable fields', async () => {
+      // Arrange
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        voedingswens: 'vegetarisch',
+        geslacht: 'man',
+        woonsituatie: 'oudersMetProfessioneleBegeleiding',
+        begeleidendeDienst: 'begeleidendeDienst',
+        geboorteplaats: 'geboorteplaats',
+        gsmNummer: 'gsm',
+        telefoonnummer: 'tel',
+        emailadres: 'email',
+        geboortedatum: new Date(2010, 1, 1),
+        opmerking: 'opmerking',
+        rekeningnummer: '123',
+        rijksregisternummer: '123',
+        voedingswensOpmerking: 'opmerking',
+        werksituatieOpmerking: 'opmerking',
+        woonsituatieOpmerking: 'opmerking',
+        voornaam: 'voornaam',
+        werksituatie: 'werkzoekend',
+        geslachtOpmerking: 'geslacht',
+      });
+      delete deelnemer.voedingswens;
+      delete deelnemer.geslacht;
+
+      // Act
+      await harness.updateDeelnemer(deelnemer);
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.voedingswens).undefined;
+      expect(actualDeelnemer.geslacht).undefined;
+      expect(actualDeelnemer.woonsituatie).undefined;
+      expect(actualDeelnemer.begeleidendeDienst).undefined;
+      expect(actualDeelnemer.geboorteplaats).undefined;
+      expect(actualDeelnemer.gsmNummer).undefined;
+      expect(actualDeelnemer.telefoonnummer).undefined;
+      expect(actualDeelnemer.emailadres).undefined;
+      expect(actualDeelnemer.geboortedatum).undefined;
+      expect(actualDeelnemer.opmerking).undefined;
+      expect(actualDeelnemer.rekeningnummer).undefined;
+      expect(actualDeelnemer.rijksregisternummer).undefined;
+      expect(actualDeelnemer.voedingswensOpmerking).undefined;
+      expect(actualDeelnemer.werksituatieOpmerking).undefined;
+      expect(actualDeelnemer.woonsituatieOpmerking).undefined;
+      expect(actualDeelnemer.voornaam).undefined;
+      expect(actualDeelnemer.werksituatie).undefined;
+      expect(actualDeelnemer.geslachtOpmerking).undefined;
+    });
+
     it('should be able to update fototoestemming fields', async () => {
       // Arrange
       const fotoToestemming: FotoToestemming = {

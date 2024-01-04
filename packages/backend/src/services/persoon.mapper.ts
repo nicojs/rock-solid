@@ -14,7 +14,7 @@ import {
   UpsertableOverigPersoon,
   UpsertablePersoon,
 } from '@rock-solid/shared';
-import { purgeNulls } from './mapper-utils.js';
+import { ExplicitUpdate, explicitUpdate, purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 import {
   toAdres,
@@ -164,16 +164,17 @@ export class PersoonMapper {
       geslacht,
       type,
       ...props
-    } = fillOutAllPersoonFields(persoon);
+    } = fillAllPersonFields(persoon);
     const { verblijfadresId, domicilieadresId } =
       await this.db.persoon.findUniqueOrThrow({
         where: { id: personId },
         select: { verblijfadresId: true, domicilieadresId: true },
       });
+    const fields = explicitUpdate(props);
     const result = await this.db.persoon.update({
       where,
       data: {
-        ...props,
+        ...fields,
         ...toContactPersoonFields(contactpersoon),
         ...toFotoToestemmingFields(fotoToestemming),
         volledigeNaam: computeVolledigeNaam(props),
@@ -185,8 +186,8 @@ export class PersoonMapper {
           domicilieadres,
           typeof domicilieadresId === 'number',
         ),
-        geslacht: geslachtMapper.toDB(geslacht),
         type: persoonTypeMapper.toDB(type),
+        geslacht: geslachtMapper.toDB(geslacht),
         woonsituatie: woonsituatieMapper.toDB(woonsituatie),
         werksituatie: werksituatieMapper.toDB(werksituatie),
         voedingswens: voedingswensMapper.toDB(voedingswens),
@@ -246,7 +247,10 @@ export class PersoonMapper {
 function computeVolledigeNaam({
   voornaam,
   achternaam,
-}: Pick<Persoon, 'voornaam' | 'achternaam'>) {
+}: {
+  voornaam?: string | undefined | null;
+  achternaam: string;
+}) {
   return `${voornaam ? `${voornaam} ` : ''}${achternaam}`;
 }
 
@@ -527,10 +531,12 @@ type AllUpsertablePersoonFields = Omit<UpsertableDeelnemer, 'type'> &
     type: PersoonType;
   };
 
-type AllPersoonFields = Omit<Deelnemer, 'type'> &
-  Omit<OverigPersoon, 'type'> & {
-    type: PersoonType;
-  };
+type AllPersoonFields = ExplicitUpdate<
+  Omit<Deelnemer, 'type'> &
+    Omit<OverigPersoon, 'type'> & {
+      type: PersoonType;
+    }
+>;
 
 /**
  * This is a hack to make it easier to work with the UpsertablePersoon type
@@ -547,11 +553,31 @@ function fillOutAllUpsertablePersoonFields(
 /**
  * This is a hack to make it easier to work with the Persoon type
  */
-function fillOutAllPersoonFields(persoon: Persoon): AllPersoonFields {
+function fillAllPersonFields(persoon: Persoon): AllPersoonFields {
   return {
     selectie: [],
-    woonsituatie: undefined,
-    werksituatie: undefined,
+    woonsituatieOpmerking: null,
+    woonsituatie: null,
+    werksituatie: null,
+    voedingswens: null,
+    begeleidendeDienst: null,
+    domicilieadres: null,
+    eersteCursus: null,
+    eersteVakantie: null,
+    voornaam: null,
+    verblijfadres: null,
+    werksituatieOpmerking: null,
+    emailadres: null,
+    rekeningnummer: null,
+    rijksregisternummer: null,
+    geboortedatum: null,
+    geboorteplaats: null,
+    voedingswensOpmerking: null,
+    geslacht: null,
+    geslachtOpmerking: null,
+    telefoonnummer: null,
+    gsmNummer: null,
+    opmerking: null,
     fotoToestemming: {
       folder: false,
       infoboekje: false,

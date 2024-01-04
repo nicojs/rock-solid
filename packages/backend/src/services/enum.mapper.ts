@@ -17,9 +17,11 @@ import {
 } from '@rock-solid/shared';
 
 type EnumDBMap<T extends string> = Record<T, number>;
-type DBType<T extends string, U extends T | undefined> = U extends undefined
-  ? undefined
-  : number;
+type DBType<
+  T extends string,
+  U extends T | undefined | null,
+> = U extends undefined ? undefined : U extends null ? null : number;
+
 type SchemaType<
   T extends string,
   U extends number | undefined | null,
@@ -36,17 +38,20 @@ function createEnumMapper<T extends string>(name: string, map: EnumDBMap<T>) {
     },
     {} as Record<number, T>,
   );
+
+  function toDB<U extends T | undefined | null>(value: U): DBType<T, U> {
+    if (value === undefined || value === null) {
+      return value as unknown as DBType<T, U>;
+    }
+    const result = map[value];
+    if (result === undefined) {
+      throw new Error(`Value ${value} is not a valid enum value for ${name}`);
+    }
+    return result as DBType<T, U>;
+  }
+
   return {
-    toDB<U extends T | undefined>(value: U): DBType<T, U> {
-      if (value === undefined) {
-        return undefined as DBType<T, U>;
-      }
-      const result = map[value];
-      if (result === undefined) {
-        throw new Error(`Value ${value} is not a valid enum value for ${name}`);
-      }
-      return result as DBType<T, U>;
-    },
+    toDB,
     toSchema<U extends undefined | null | number>(value: U): SchemaType<T, U> {
       if (value === undefined || value === null) {
         return undefined as SchemaType<T, U>;
