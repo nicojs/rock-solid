@@ -1,10 +1,12 @@
 import { html, PropertyValues } from 'lit';
 import {
   BasePersoon,
+  Deelnemer,
   deelnemerLabels,
   DeepPartial,
   foldersoorten,
   geslachten,
+  OverigPersoon,
   overigPersoonLabels,
   overigPersoonSelecties,
   Persoon,
@@ -173,12 +175,16 @@ export class PersonenComponent extends RockElement {
                 <rock-paging .store=${personenStore}></rock-paging> `
             : html`<rock-loading></rock-loading>`}`;
       case 'new':
-        const persoon: DeepPartial<Persoon> = {
+        const persoon: DeepPartial<Deelnemer | OverigPersoon> = {
           type: this.type,
           verblijfadres: {},
           foldervoorkeuren: [],
-          fotoToestemming: {},
         };
+        if (this.type === 'deelnemer') {
+          const d = persoon as DeepPartial<Deelnemer>;
+          d.contactpersoon = {};
+          d.fotoToestemming = {};
+        }
         return html`<h2>${capitalize(persoonTypes[this.type])} toevoegen</h2>
           ${this.editIsLoading
             ? html`<rock-loading></rock-loading>`
