@@ -10,7 +10,6 @@ import {
   overigPersoonLabels,
   overigPersoonSelecties,
   Persoon,
-  PersoonByType,
   PersoonFilter,
   PersoonType,
   persoonTypes,
