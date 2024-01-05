@@ -461,6 +461,43 @@ describe(PersonenController.name, () => {
       expect(noFilter.sort(byId)).deep.eq(nietZonderAanmeldingen.sort(byId));
     });
 
+    it('by metVerblijfadres', async () => {
+      // Arrange
+      const [deelnemerNoVerblijfadres, deelnemerMetVerblijfadres] =
+        await Promise.all([
+          harness.createDeelnemer(
+            factory.deelnemer({ verblijfadres: undefined }),
+          ),
+          harness.createDeelnemer(
+            factory.deelnemer({
+              verblijfadres: {
+                straatnaam: 'Kerkstraat',
+                huisnummer: '123',
+                plaats: harness.db.seedPlaats,
+              },
+            }),
+          ),
+        ]);
+
+      // Act
+      const [metVerblijfadres, zonderVerblijfadres, noFilter] =
+        await Promise.all([
+          harness.getAllPersonen({ metVerblijfadres: true }),
+          harness.getAllPersonen({ metVerblijfadres: false }),
+          harness.getAllPersonen({ metVerblijfadres: undefined }),
+        ]);
+
+      // Assert
+      expect(metVerblijfadres).deep.eq([deelnemerMetVerblijfadres]);
+      expect(zonderVerblijfadres.sort(byId)).deep.eq(
+        // because it is a checkbox in the frontend
+        [deelnemerNoVerblijfadres, deelnemerMetVerblijfadres].sort(byId),
+      );
+      expect(noFilter.sort(byId)).deep.eq(
+        [deelnemerNoVerblijfadres, deelnemerMetVerblijfadres].sort(byId),
+      );
+    });
+
     async function arrangeJaarGeledenDeelnemers() {
       const { y, m, d } = today();
       const lastYear = new Date(y - 1, m, d);

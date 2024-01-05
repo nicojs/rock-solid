@@ -351,6 +351,7 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
     woonsituatie,
     werksituatie,
     voedingswens,
+    metVerblijfadres,
     ...where
   } = filter;
   return {
@@ -380,6 +381,7 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
     type: persoonTypeMapper.toDB(type),
     woonsituatie: woonsituatieMapper.toDB(woonsituatie),
     werksituatie: werksituatieMapper.toDB(werksituatie),
+    verblijfadresId: metVerblijfadres ? { not: null } : undefined,
     geslacht: geslachtMapper.toDB(geslacht),
     voedingswens: voedingswensMapper.toDB(voedingswens),
     ...(volledigeNaamLike

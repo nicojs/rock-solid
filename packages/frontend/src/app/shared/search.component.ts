@@ -37,7 +37,6 @@ export class SearchComponent<
     this.advancedControls.forEach((control) => {
       (this.filter[control.name as keyof TFilter] as undefined) = undefined;
     });
-    console.log(this.filter);
     this.dispatchEvent(
       new CustomEvent('search-submitted', {
         bubbles: true,

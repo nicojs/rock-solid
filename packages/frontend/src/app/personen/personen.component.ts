@@ -221,6 +221,14 @@ const mainSearchControl: InputControl<PersoonFilter> = {
   placeholder: 'Zoek op naam',
 };
 
+const basePersoonFilers: FormControl<PersoonFilter>[] = [
+  {
+    type: InputType.checkbox,
+    label: 'Met adres',
+    name: 'metVerblijfadres',
+  },
+];
+
 const overigPersoonSearchControls: FormControl<PersoonFilter>[] = [
   checkboxesItemsControl('selectie', overigPersoonSelecties, {
     label: overigPersoonLabels.selectie,
@@ -228,6 +236,7 @@ const overigPersoonSearchControls: FormControl<PersoonFilter>[] = [
   checkboxesItemsControl('foldersoorten', foldersoorten, {
     label: 'Folders',
   }),
+  ...basePersoonFilers,
 ];
 
 const deelnemerSearchControls: FormControl<PersoonFilter>[] = [
@@ -271,4 +280,5 @@ const deelnemerSearchControls: FormControl<PersoonFilter>[] = [
   checkboxesItemsControl('foldersoorten', foldersoorten, {
     label: 'Folders',
   }),
+  ...basePersoonFilers,
 ];

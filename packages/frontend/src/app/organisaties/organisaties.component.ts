@@ -207,4 +207,9 @@ const mainSearchControl: InputControl<OrganisatieFilter> = {
 
 const advancedSearchControls: FormControl<OrganisatieFilter>[] = [
   checkboxesItemsControl('folders', foldersoorten, { label: 'Folders' }),
+  {
+    name: 'metAdres',
+    label: 'Met adres',
+    type: InputType.checkbox,
+  },
 ];

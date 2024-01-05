@@ -46,7 +46,7 @@ export class OrganisatieMapper {
   ): Promise<Organisatie[]> {
     const dbOrganisaties: DBOrganisatieAggregate[] =
       await this.db.organisatie.findMany({
-        where: toWhere(filter),
+        where: where(filter),
         orderBy: { naam: 'asc' },
         include: includeOrganisatie(filter),
         ...toPage(pageNumber),
@@ -57,7 +57,7 @@ export class OrganisatieMapper {
 
   public async count(filter: OrganisatieFilter): Promise<number> {
     return await this.db.organisatie.count({
-      where: toWhere(filter),
+      where: where(filter),
     });
   }
 
@@ -180,26 +180,17 @@ export class OrganisatieMapper {
   }
 }
 
-function toWhere({
+function where({
   folders,
+  metAdres,
   naam,
 }: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
-  const where: db.Prisma.OrganisatieWhereInput = {};
-  if (folders) {
-    where.contacten = {
-      some: {
-        foldervoorkeuren: folders
-          ? {
-              some: {
-                folder: {
-                  in: folders.map(foldersoortMapper.toDB),
-                },
-              },
-            }
-          : undefined,
-      },
-    };
-  }
+  const where: db.Prisma.OrganisatieWhereInput = {
+    contacten: {
+      some: { AND: whereOrganisatieContacten({ folders, metAdres }) },
+    },
+  };
+
   if (naam) {
     where.naam = {
       contains: naam,
@@ -207,6 +198,37 @@ function toWhere({
     };
   }
   return where;
+}
+
+function whereOrganisatieContacten({
+  folders,
+  metAdres,
+}: Pick<
+  OrganisatieFilter,
+  'folders' | 'metAdres'
+>): db.Prisma.OrganisatieContactWhereInput[] {
+  const whereContacten: db.Prisma.OrganisatieContactWhereInput[] = [];
+
+  if (folders) {
+    whereContacten.push({
+      foldervoorkeuren: folders
+        ? {
+            some: {
+              folder: {
+                in: folders.map(foldersoortMapper.toDB),
+              },
+            },
+          }
+        : undefined,
+    });
+  }
+  if (metAdres) {
+    whereContacten.push({
+      adres: { isNot: null },
+    });
+  }
+
+  return whereContacten;
 }
 
 function toOrganisatie(org: DBOrganisatieAggregate): Organisatie {
@@ -254,17 +276,7 @@ function includeOrganisatie(filter?: OrganisatieFilter) {
       orderBy: {
         terAttentieVan: 'asc',
       },
-      where: filter?.folders
-        ? {
-            foldervoorkeuren: {
-              some: {
-                folder: {
-                  in: filter.folders.map(foldersoortMapper.toDB),
-                },
-              },
-            },
-          }
-        : undefined,
+      where: { AND: whereOrganisatieContacten(filter ?? {}) },
     },
     soorten: true,
   } as const satisfies db.Prisma.OrganisatieInclude;
