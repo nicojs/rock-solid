@@ -3,10 +3,8 @@ import {
   EntityFrom,
   UpsertableFrom,
   FilterFrom,
-  notEmpty,
 } from '@rock-solid/shared';
-import { BehaviorSubject, from, tap, of, filter, Observable } from 'rxjs';
-import { authStore } from '../auth';
+import { BehaviorSubject, from, tap, of, Observable } from 'rxjs';
 import { RestService } from './rest-service';
 
 /**
