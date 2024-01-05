@@ -127,6 +127,10 @@ export const persoonTypes: Options<PersoonType> = Object.freeze({
   deelnemer: 'deelnemer',
   overigPersoon: 'overig persoon',
 });
+export type PersoonByType = {
+  deelnemer: Deelnemer;
+  overigPersoon: OverigPersoon;
+};
 
 export const persoonLabels: Record<keyof Persoon, string> = {
   id: 'id',
