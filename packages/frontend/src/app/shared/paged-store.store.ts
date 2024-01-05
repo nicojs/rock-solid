@@ -32,11 +32,7 @@ export class PagedStore<
 
   private filter?: FilterFrom<TRoute>;
 
-  constructor(public readonly service: TService) {
-    authStore.jwt$.pipe(filter(notEmpty)).subscribe(() => {
-      this.loadPage();
-    });
-  }
+  constructor(public readonly service: TService) {}
 
   create(data: UpsertableFrom<TRoute>) {
     return from(this.service.create(data)).pipe(tap(() => this.loadPage()));

@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 import { html, LitElement, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { router, RouteParams } from './router';
 import { bootstrap } from '../styles';
 import style from './app.component.scss';
@@ -22,14 +22,8 @@ export class RockSolidApp extends LitElement {
     this.sub?.unsubscribe();
   }
 
-  @property()
+  @state()
   public route?: RouteParams;
-
-  @property()
-  public params?: Record<string, string>;
-
-  @property()
-  public query?: Record<string, string>;
 
   public override render() {
     return html`<div class="container-fluid">
@@ -68,15 +62,15 @@ export class RockSolidApp extends LitElement {
     switch (this.route?.path[0]) {
       case 'login':
         return html`<rock-login
-          .queryString="${this.route.queryString}"
+          .queryString=${this.route.queryString}
         ></rock-login>`;
       case 'cursussen':
       case 'vakanties':
         const projectType: ProjectType =
           this.route.path[0] === 'cursussen' ? 'cursus' : 'vakantie';
         return html`<rock-projecten
-          .path="${this.route.path.slice(1)}"
-          .type="${projectType}"
+          .path=${this.route.path.slice(1)}
+          .type=${projectType}
           .query="${this.route.query}"
         ></rock-projecten>`;
       case 'overige-personen':
@@ -84,12 +78,14 @@ export class RockSolidApp extends LitElement {
         const persoonType: PersoonType =
           this.route?.path[0] === 'deelnemers' ? 'deelnemer' : 'overigPersoon';
         return html`<rock-personen
-          .type="${persoonType}"
+          .type=${persoonType}
           .path="${this.route.path.slice(1)}"
+          .query=${this.route.query}
         ></rock-personen>`;
       case 'organisaties':
         return html`<rock-organisaties
           .path=${this.route.path.slice(1)}
+          .query=${this.route.query}
         ></rock-organisaties>`;
       case 'rapportages':
         return html`<rock-rapportages

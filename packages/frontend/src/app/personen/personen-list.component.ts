@@ -12,6 +12,7 @@ import {
 import { fullName, fullNameWithAge } from './persoon.pipe';
 import { ModalComponent } from '../shared/modal.component';
 import { privilege } from '../auth/privilege.directive';
+import { routesByPersoonType } from './routing-helper';
 
 @customElement('rock-personen-list')
 export class PersonenComponent extends LitElement {
@@ -79,10 +80,18 @@ export class PersonenComponent extends LitElement {
                 : nothing}
               <td>${showFoldervoorkeurBadges(persoon.foldervoorkeuren)}</td>
               <td>
-                <rock-link btn btnSecondary href="../display/${persoon.id}"
+                <rock-link
+                  btn
+                  btnSecondary
+                  href="/${routesByPersoonType[
+                    this.type
+                  ]}/display/${persoon.id}"
                   ><rock-icon icon="eye"></rock-icon
                 ></rock-link>
-                <rock-link btn btnSecondary href="../edit/${persoon.id}"
+                <rock-link
+                  btn
+                  btnSecondary
+                  href="/${routesByPersoonType[this.type]}/edit/${persoon.id}"
                   ><rock-icon icon="pencil"></rock-icon
                 ></rock-link>
                 <span>

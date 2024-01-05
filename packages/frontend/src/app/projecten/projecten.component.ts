@@ -27,7 +27,6 @@ import {
   InputType,
   checkboxesItemsControl,
 } from '../forms';
-import { distinctUntilChanged, map } from 'rxjs';
 
 @customElement('rock-projecten')
 export class ProjectenComponent extends RockElement {
@@ -35,6 +34,9 @@ export class ProjectenComponent extends RockElement {
 
   @property()
   public path!: string[];
+
+  @property({ attribute: false })
+  public query?: Queryfied<ProjectFilter> & { page: string };
 
   @property()
   public type: ProjectType = 'cursus';
@@ -71,28 +73,9 @@ export class ProjectenComponent extends RockElement {
         (focussedProject) => (this.focussedProject = focussedProject),
       ),
     );
-    this.subscription.add(
-      router.routeChange$
-        .pipe(
-          map(
-            ({ query }) => query as Queryfied<ProjectFilter> & { page: string },
-          ),
-        )
-        .pipe(distinctUntilChanged())
-        .subscribe((query) => {
-          const { page, ...filterParams } = query;
-          this.filter = toProjectFilter(filterParams);
-          this.filter.type = this.type;
-          const currentPage = (tryParseInt(page) ?? 1) - 1;
-          projectenStore.setCurrentPage(currentPage, { ...this.filter });
-        }),
-    );
   }
 
   override update(props: PropertyValues<ProjectenComponent>): void {
-    if (props.has('type')) {
-      projectenStore.setFilter({ type: this.type });
-    }
     if (props.has('path')) {
       const [projectId, page] = this.path;
       if (projectId && ['edit', 'aanmeldingen', 'deelnames'].includes(page!)) {
@@ -108,6 +91,13 @@ export class ProjectenComponent extends RockElement {
         };
         this.newProject = project;
       }
+    }
+    if ((props.has('query') || props.has('path')) && this.query) {
+      const { page, ...filterParams } = this.query;
+      this.filter = toProjectFilter(filterParams);
+      this.filter.type = this.type;
+      const currentPage = (tryParseInt(page) ?? 1) - 1;
+      projectenStore.setCurrentPage(currentPage, { ...this.filter });
     }
     super.update(props);
   }
@@ -158,7 +148,7 @@ export class ProjectenComponent extends RockElement {
 
   override render() {
     switch (this.path[0]) {
-      case 'list':
+      case undefined:
         return html`<div class="row">
             <h2 class="col">${capitalize(pluralize(this.type))}</h2>
           </div>
@@ -225,7 +215,7 @@ export class ProjectenComponent extends RockElement {
             return html`<rock-loading></rock-loading>`;
           }
         }
-        router.navigate(`/${pluralize(this.type)}/list`);
+        router.navigate(`/${pluralize(this.type)}`);
         return html``;
     }
   }

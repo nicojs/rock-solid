@@ -57,6 +57,15 @@ export class Router {
   }
 
   navigate(path: string) {
+    if (
+      !path.startsWith('/') &&
+      !path.startsWith('http://') &&
+      !path.startsWith('https://')
+    ) {
+      throw new Error(
+        `Relative paths are not supported tried to navigate to: ${path}`,
+      );
+    }
     const route = this.resolve(path);
     window.history.pushState({}, '', route.pathname);
     this.navigatorSubject.next(route);

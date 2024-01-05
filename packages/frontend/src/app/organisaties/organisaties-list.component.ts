@@ -70,7 +70,10 @@ export class OrganisatiesListComponent extends LitElement {
                 <td rowspan="${rowSpan}">${org.naam}</td>
                 ${renderContactTableData(org.contacten[0])}
                 <td rowspan="${rowSpan}">
-                  <rock-link btn btnSecondary href="../edit/${org.id}"
+                  <rock-link
+                    btn
+                    btnSecondary
+                    href="/organisaties/edit/${org.id}"
                     ><rock-icon icon="pencil"></rock-icon
                   ></rock-link>
                   <button
