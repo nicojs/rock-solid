@@ -2,14 +2,10 @@ import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { createRef, ref } from 'lit/directives/ref.js';
-import {
-  AutocompleteComponent,
-  capitalize,
-  FocusState,
-  TypeAheadHint,
-} from '../shared';
+import { capitalize, TypeAheadHint } from '../shared';
 import { ArrayItem, KeysOfType, TagsControl } from './form-control';
 import { FormControlElement } from './form-element';
+import { fromEvent, map, tap } from 'rxjs';
 
 @customElement('rock-reactive-form-tags')
 export class ReactiveFormTags<
@@ -42,6 +38,24 @@ export class ReactiveFormTags<
   }
   private addTag(tag: ArrayItem<TEntity[TKey]>) {
     this.tags = [...this.tags, tag];
+  }
+
+  override firstUpdated() {
+    this.subscription.add(
+      fromEvent(this.input, 'keydown')
+        .pipe(
+          map((event) => event as KeyboardEvent),
+          tap((event) => {
+            if (event.key === 'Backspace' && this.input.value.length === 0) {
+              const lastTag = this.tags.at(-1);
+              if (lastTag) {
+                this.removeTag(lastTag);
+              }
+            }
+          }),
+        )
+        .subscribe(),
+    );
   }
 
   public override render() {

@@ -1,9 +1,9 @@
-import { LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { FormControl } from './form-control';
 import { generateInputName } from './common';
+import { RockElement } from '../rock-element';
 
-export abstract class FormElement<TEntity> extends LitElement {
+export abstract class FormElement<TEntity> extends RockElement {
   override createRenderRoot() {
     // Use light dom, so input elements participate in form validation 🤷‍♂️
     return this;
