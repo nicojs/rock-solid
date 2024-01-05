@@ -197,9 +197,10 @@ function controlsFor<TType extends PersoonType>(
         label: deelnemerLabels.fotoToestemming,
       }),
     );
+  } else {
+    controls.push(...voedingswensControls);
   }
   controls.push(
-    ...voedingswensControls,
     formArray('foldervoorkeuren', foldervoorkeurControls),
     {
       name: 'rekeningnummer',
