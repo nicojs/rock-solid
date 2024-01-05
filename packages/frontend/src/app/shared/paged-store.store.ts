@@ -3,10 +3,8 @@ import {
   EntityFrom,
   UpsertableFrom,
   FilterFrom,
-  notEmpty,
 } from '@rock-solid/shared';
-import { BehaviorSubject, from, tap, of, filter, Observable } from 'rxjs';
-import { authStore } from '../auth';
+import { BehaviorSubject, from, tap, of, Observable } from 'rxjs';
 import { RestService } from './rest-service';
 
 /**
@@ -32,11 +30,7 @@ export class PagedStore<
 
   private filter?: FilterFrom<TRoute>;
 
-  constructor(public readonly service: TService) {
-    authStore.jwt$.pipe(filter(notEmpty)).subscribe(() => {
-      this.loadPage();
-    });
-  }
+  constructor(public readonly service: TService) {}
 
   create(data: UpsertableFrom<TRoute>) {
     return from(this.service.create(data)).pipe(tap(() => this.loadPage()));

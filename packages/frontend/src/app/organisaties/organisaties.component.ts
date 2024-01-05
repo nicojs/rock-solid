@@ -21,7 +21,6 @@ import {
   InputType,
   checkboxesItemsControl,
 } from '../forms';
-import { distinctUntilChanged, map } from 'rxjs';
 
 @customElement('rock-organisaties')
 export class OrganisatiesComponent extends RockElement {
@@ -29,6 +28,9 @@ export class OrganisatiesComponent extends RockElement {
 
   @property({ attribute: false })
   public path: string[] = [];
+
+  @property({ attribute: false })
+  public query?: Queryfied<OrganisatieFilter> & { page: string };
 
   @state()
   private organisaties: Organisatie[] | undefined;
@@ -60,22 +62,6 @@ export class OrganisatiesComponent extends RockElement {
         (org) => (this.organisatieToEdit = org),
       ),
     );
-    this.subscription.add(
-      router.routeChange$
-        .pipe(
-          map(
-            ({ query }) =>
-              query as Queryfied<OrganisatieFilter> & { page: string },
-          ),
-        )
-        .pipe(distinctUntilChanged())
-        .subscribe((query) => {
-          const { page, ...filterParams } = query;
-          this.filter = toOrganisatieFilter(filterParams);
-          const currentPage = (tryParseInt(page) ?? 1) - 1;
-          organisatieStore.setCurrentPage(currentPage, { ...this.filter });
-        }),
-    );
   }
 
   override update(props: PropertyValues<OrganisatiesComponent>): void {
@@ -90,6 +76,12 @@ export class OrganisatiesComponent extends RockElement {
         organisatieStore.removeFocus();
       }
     }
+    if ((props.has('query') || props.has('path')) && this.query) {
+      const { page, ...filterParams } = this.query;
+      this.filter = toOrganisatieFilter(filterParams);
+      const currentPage = (tryParseInt(page) ?? 1) - 1;
+      organisatieStore.setCurrentPage(currentPage, { ...this.filter });
+    }
     super.update(props);
   }
 
@@ -102,7 +94,7 @@ export class OrganisatiesComponent extends RockElement {
       .subscribe({
         next: () => {
           this.errorMessage = '';
-          router.navigate(`../list`);
+          this.navigateToOrganisatiesPage();
         },
         complete: () => {
           this.loading = false;
@@ -119,7 +111,7 @@ export class OrganisatiesComponent extends RockElement {
       .subscribe({
         next: () => {
           this.errorMessage = '';
-          router.navigate('../../list');
+          this.navigateToOrganisatiesPage();
         },
         complete: () => {
           this.loading = false;
@@ -136,7 +128,7 @@ export class OrganisatiesComponent extends RockElement {
 
   override render() {
     switch (this.path[0]) {
-      case 'list':
+      case undefined:
         return html`
           <div class="row">
             <h2 class="col">Organisaties</h2>
@@ -189,8 +181,12 @@ export class OrganisatiesComponent extends RockElement {
             ></rock-edit-organisatie>`
           : html`<rock-loading></rock-loading>`}`;
       default:
-        router.navigate(`/organisaties/list`);
+        this.navigateToOrganisatiesPage();
     }
+  }
+
+  private navigateToOrganisatiesPage() {
+    router.navigate('/organisaties');
   }
 }
 

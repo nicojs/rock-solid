@@ -40,7 +40,7 @@ import {
   InputType,
   selectControl,
 } from '../forms';
-import { distinctUntilChanged, map } from 'rxjs';
+
 @customElement('rock-personen')
 export class PersonenComponent extends RockElement {
   static override styles = [bootstrap];
@@ -56,6 +56,9 @@ export class PersonenComponent extends RockElement {
 
   @property({ attribute: false })
   public path: string[] = [];
+
+  @property({ attribute: false })
+  public query?: Queryfied<PersoonFilter> & { page: string };
 
   @property({ attribute: false, type: Boolean })
   public editIsLoading = false;
@@ -73,6 +76,16 @@ export class PersonenComponent extends RockElement {
     ) {
       personenStore.setFocus(this.path[1]);
     }
+    if (
+      (changedProperties.has('query') || changedProperties.has('path')) &&
+      this.query
+    ) {
+      const { page, ...filterParams } = this.query;
+      this.filter = toPersoonFilter(filterParams);
+      this.filter.type = this.type;
+      const currentPage = (tryParseInt(page) ?? 1) - 1;
+      personenStore.setCurrentPage(currentPage, { ...this.filter });
+    }
     super.update(changedProperties);
   }
 
@@ -89,29 +102,13 @@ export class PersonenComponent extends RockElement {
         (item) => (this.focussedPersoon = item),
       ),
     );
-    this.subscription.add(
-      router.routeChange$
-        .pipe(
-          map(
-            ({ query }) => query as Queryfied<PersoonFilter> & { page: string },
-          ),
-        )
-        .pipe(distinctUntilChanged())
-        .subscribe((query) => {
-          const { page, ...filterParams } = query;
-          this.filter = toPersoonFilter(filterParams);
-          this.filter.type = this.type;
-          const currentPage = (tryParseInt(page) ?? 1) - 1;
-          personenStore.setCurrentPage(currentPage, { ...this.filter });
-        }),
-    );
   }
 
   private async createNewPersoon(event: CustomEvent<UpsertablePersoon>) {
     this.editIsLoading = true;
     personenStore.create(event.detail).subscribe(() => {
       this.editIsLoading = false;
-      router.navigate('../list');
+      this.navigateToProjectenPage();
     });
   }
 
@@ -127,7 +124,7 @@ export class PersonenComponent extends RockElement {
       .update(this.focussedPersoon!.id, this.focussedPersoon!)
       .subscribe(() => {
         this.editIsLoading = false;
-        router.navigate('../../list');
+        this.navigateToProjectenPage();
       });
   }
 
@@ -137,13 +134,16 @@ export class PersonenComponent extends RockElement {
 
   override render() {
     switch (this.path[0]) {
-      case 'list':
+      case undefined:
         return html`<div class="row">
             <h2 class="col">${capitalize(pluralize(this.type))}</h2>
           </div>
           <div class="row">
             <div class="col">
-              <rock-link href="../new" btn btnSuccess
+              <rock-link
+                href="/${routesByPersoonType[this.type]}/new"
+                btn
+                btnSuccess
                 ><rock-icon icon="personPlus"></rock-icon> ${capitalize(
                   persoonTypes[this.type],
                 )}</rock-link
@@ -214,9 +214,13 @@ export class PersonenComponent extends RockElement {
               ></rock-display-persoon>`
           : html`<rock-loading></rock-loading>`}`;
       default:
-        router.navigate(`/${routesByPersoonType[this.type]}/list`);
+        this.navigateToProjectenPage();
         return html``;
     }
+  }
+
+  private navigateToProjectenPage() {
+    router.navigate(`/${routesByPersoonType[this.type]}`);
   }
 }
 
