@@ -11,7 +11,6 @@ import {
   voedingswensen,
   Privilege,
   persoonLabels,
-  Contactpersoon,
   deelnemerLabels,
   fotoToestemmingLabels,
   PersoonType,
@@ -84,9 +83,11 @@ function controlsFor<TType extends PersoonType>(
     },
   ];
 
-  const controls: FormControl<OverigPersoon & Deelnemer>[] = [];
+  const controls: FormControl<BasePersoon>[] = [];
   if (type === 'overigPersoon') {
-    controls.push(checkboxesItemsControl('selectie', overigPersoonSelecties));
+    (controls as FormControl<OverigPersoon>[]).push(
+      checkboxesItemsControl('selectie', overigPersoonSelecties),
+    );
   }
 
   controls.push(
@@ -141,7 +142,7 @@ function controlsFor<TType extends PersoonType>(
   );
 
   if (type === 'deelnemer') {
-    controls.push(
+    (controls as FormControl<Deelnemer>[]).push(
       radioControl('werksituatie', werksituaties, { allowDeselect: true }),
       {
         name: 'werksituatieOpmerking',
