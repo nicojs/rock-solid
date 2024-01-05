@@ -94,9 +94,8 @@ export class ReactiveFormTags<
               ) => {
                 this.addTag(ev.detail.value);
                 this.input.value = '';
+                this.input.dispatchEvent(new Event('input'));
                 this.input.focus();
-                (ev.target as AutocompleteComponent).focusState =
-                  FocusState.None;
               }}
             ></rock-autocomplete>
           </div>
