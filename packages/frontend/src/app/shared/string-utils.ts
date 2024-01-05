@@ -75,8 +75,8 @@ const basePersoonColumns = Object.freeze([
 ] as const) satisfies readonly (keyof BasePersoon)[];
 
 const adresCsvColumns = Object.freeze([
-  'postcode',
   'adres',
+  'postcode',
   'gemeente',
   'deelgemeente',
 ] as const) satisfies readonly (keyof ReturnType<typeof adresCsvFields>)[];
@@ -183,7 +183,6 @@ export function toOrganisatiesCsv(organisaties: Organisatie[]): string {
       'website',
       'terAttentieVan',
       'foldervoorkeuren',
-      'adres',
       'emailadres',
       'telefoonnummer',
       'soorten',
