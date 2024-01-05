@@ -11,7 +11,7 @@ import {
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
-import { purgeNulls } from './mapper-utils.js';
+import { ExplicitNulls, purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 import {
   DBAdresWithPlaats,
@@ -105,7 +105,8 @@ export class OrganisatieMapper {
     where: { id: number };
     data: Organisatie;
   }): Promise<Organisatie> {
-    const { contacten, id, soorten, ...props } = data;
+    const { contacten, id, soorten, ...props } =
+      toUpdateOrganisatieFields(data);
     const dbSoorten = soorten.map(organisatiesoortMapper.toDB);
     const result = await handleKnownPrismaErrors(
       this.db.organisatie.update({
@@ -135,10 +136,10 @@ export class OrganisatieMapper {
                 notIn: contacten.map(({ id }) => id).filter(notEmpty),
               },
             },
-            create: data.contacten
+            create: contacten
               .filter((contact) => empty(contact.id))
               .map(toCreateContactInput),
-            update: data.contacten
+            update: contacten
               .filter((contact) => notEmpty(contact.id))
               .map((contact) => toUpdateContactInput(contact)),
           },
@@ -270,7 +271,7 @@ function includeOrganisatie(filter?: OrganisatieFilter) {
 }
 
 function toCreateContactInput(
-  contact: UpsertableOrganisatieContact,
+  contact: UpsertableOrganisatieContact | OrganisatieContactUpdateFields,
 ): db.Prisma.OrganisatieContactCreateWithoutOrganisatieInput {
   const { adres, id, foldervoorkeuren, ...props } = contact;
   return {
@@ -287,7 +288,7 @@ function toCreateContactInput(
 }
 
 function toUpdateContactInput(
-  contact: OrganisatieContact,
+  contact: OrganisatieContactUpdateFields,
 ): db.Prisma.OrganisatieContactUpdateWithWhereUniqueWithoutOrganisatieInput {
   return {
     where: { id: contact.id },
@@ -326,5 +327,29 @@ function toUpdateContactInput(
         ),
       },
     },
+  };
+}
+
+type OrganisatieUpdateFields = ExplicitNulls<
+  Omit<Organisatie, 'contacten'> & {
+    contacten: OrganisatieContactUpdateFields[];
+  }
+>;
+
+type OrganisatieContactUpdateFields = ExplicitNulls<OrganisatieContact>;
+
+function toUpdateOrganisatieFields(org: Organisatie): OrganisatieUpdateFields {
+  return {
+    ...org,
+    soortOpmerking: org.soortOpmerking ?? null,
+    website: org.website ?? null,
+    contacten: org.contacten.map((cont) => ({
+      ...cont,
+      terAttentieVan: cont.terAttentieVan ?? null,
+      telefoonnummer: cont.telefoonnummer ?? null,
+      emailadres: cont.emailadres ?? null,
+      adres: cont.adres ?? null,
+      afdeling: cont.afdeling ?? null,
+    })),
   };
 }

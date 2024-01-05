@@ -114,7 +114,6 @@ export interface Deelnemer extends BasePersoon {
 
 export interface OverigPersoon extends BasePersoon {
   type: 'overigPersoon';
-  vrijwilligerOpmerking?: string;
   selectie: OverigPersoonSelectie[];
 }
 
@@ -173,17 +172,15 @@ export const fotoToestemmingLabels: Record<keyof FotoToestemming, string> = {
 
 export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
   ...persoonLabels,
-  vrijwilligerOpmerking: 'Vrijwilliger opmerking',
   selectie: 'Selectie',
 };
 
 export type Voedingswens = 'vegetarisch' | 'halal' | 'anders';
-export const voedingswensen: Options<Voedingswens> = Object.freeze({
-  geen: 'Geen speciale voedingswensen',
+export const voedingswensen: Options<Voedingswens> = {
   vegetarisch: 'Vegetarisch',
   halal: 'Halal',
   anders: 'Andere voedingswensen',
-});
+};
 
 export type Werksituatie =
   | 'school'

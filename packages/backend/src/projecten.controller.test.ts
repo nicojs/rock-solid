@@ -471,6 +471,43 @@ describe(ProjectenController.name, () => {
     });
   });
 
+  describe('PUT /projecten', () => {
+    it('should be able to delete nullable fields', async () => {
+      // Arrange
+      const project = await harness.createProject(
+        factory.cursus({
+          saldo: new Decimal(2000),
+          prijs: new Decimal(2000),
+          activiteiten: [
+            factory.activiteit({ vormingsuren: 23, begeleidingsuren: 50 }),
+          ],
+        }),
+      );
+
+      // Act
+      const actual = await harness.updateProject({
+        ...project,
+        saldo: undefined,
+        prijs: undefined,
+        activiteiten: project.activiteiten.map((act) => ({
+          ...act,
+          vormingsuren: undefined,
+          begeleidingsuren: undefined,
+        })),
+      });
+
+      // Assert
+      const { activiteiten, prijs, saldo, voorschot, ...expectedProject } =
+        project;
+      const { vormingsuren, begeleidingsuren, ...expectedActiviteit } =
+        activiteiten[0]!;
+      expect(actual).deep.eq({
+        ...expectedProject,
+        activiteiten: [expectedActiviteit],
+      });
+    });
+  });
+
   describe('PATCH /projecten/:id/aanmeldingen', () => {
     let project: Project;
     let deelnemer1: Deelnemer;

@@ -26,7 +26,7 @@ export function toNullableAdres(
 }
 
 export function toCreateAdresInput(
-  adres: UpsertableAdres | undefined,
+  adres: UpsertableAdres | undefined | null,
 ): db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput | undefined {
   if (adres) {
     const { plaats, id, ...props } = adres;
@@ -46,7 +46,7 @@ export function toCreateAdresInput(
  * @param adresCurrentlyExists True if the current adres exists in the database. Unfortunately, `deleteIfExists` doesn't currently exist.
  */
 export function toUpdateAdresInput(
-  adres: UpsertableAdres | undefined,
+  adres: UpsertableAdres | undefined | null,
   adresCurrentlyExists: boolean,
 ): db.Prisma.AdresUpdateOneWithoutDomiciliepersonenNestedInput {
   if (adres) {

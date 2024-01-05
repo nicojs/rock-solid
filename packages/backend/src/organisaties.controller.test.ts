@@ -1,4 +1,4 @@
-import { Organisatie } from '@rock-solid/shared';
+import { Organisatie, OrganisatieContact } from '@rock-solid/shared';
 import { OrganisatiesController } from './organisaties.controller.js';
 import { factory, harness } from './test-utils.test.js';
 import { expect } from 'chai';
@@ -217,6 +217,55 @@ describe(OrganisatiesController.name, () => {
       const updatedDisney = await harness.getOrganisatie(disney.id);
       expect(updatedDisney.contacten[0]!.adres).undefined;
       expect(updatedDisney.contacten[1]!.adres).undefined;
+    });
+
+    it('should be able to delete nullable fields', async () => {
+      // Arrange
+      const contact = disney.contacten[0]!;
+      await harness.updateOrganisatie({
+        ...disney,
+        contacten: [
+          {
+            ...contact,
+            afdeling: 'afd',
+            emailadres: 'e@mail.com',
+            telefoonnummer: 'tel',
+            terAttentieVan: 'tav',
+          },
+        ],
+        soortOpmerking: 'soort opm',
+        website: 'example.com',
+      });
+
+      // Arrange
+      await harness.updateOrganisatie({
+        ...disney,
+        contacten: [
+          {
+            ...contact,
+            adres: undefined,
+            afdeling: undefined,
+            emailadres: undefined,
+            telefoonnummer: undefined,
+            terAttentieVan: undefined,
+            foldervoorkeuren: [],
+          },
+        ],
+        soortOpmerking: undefined,
+        website: undefined,
+      });
+
+      // Assert
+      const actual = await harness.getOrganisatie(disney.id);
+      expect(actual.contacten).lengthOf(1);
+      const expectedContact: OrganisatieContact = {
+        id: contact.id,
+        terAttentieVan: '',
+        foldervoorkeuren: [],
+      };
+      expect(actual.contacten[0]).deep.eq(expectedContact);
+      expect(actual.soortOpmerking).eq(undefined);
+      expect(actual.website).eq(undefined);
     });
   });
 

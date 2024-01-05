@@ -11,6 +11,12 @@ export type NullsPurged<T> = T extends Array<infer U>
           : NullsPurged<T[K]>;
       };
 
+export type ExplicitNulls<T> = {
+  [K in keyof T]-?: undefined extends T[K]
+    ? Exclude<T[K], undefined> | null
+    : T[K];
+};
+
 export function purgeNulls<T>(value: T): NullsPurged<T> {
   if (Array.isArray(value)) {
     return value.map(purgeNulls) as NullsPurged<T>;

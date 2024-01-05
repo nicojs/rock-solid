@@ -221,14 +221,17 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
     aantalAanmeldingen,
     type,
     prijs,
+    saldo,
+    voorschot,
     ...projectData
   } = project;
   if (project.type === 'vakantie') {
     const naam = `${project.bestemming} - ${project.land}`;
-
     return {
       ...projectData,
       organisatieonderdeel: undefined,
+      voorschot: voorschot ?? null,
+      saldo: saldo ?? null,
       seizoen: vakantieseizoenMapper.toDB(project.seizoen),
       titel: toTitel(projectData.projectnummer, naam),
       type: projectTypeMapper.toDB('vakantie'),
@@ -241,6 +244,8 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
       organisatieonderdeel: organisatieonderdeelMapper.toDB(
         project.organisatieonderdeel,
       ),
+      saldo: saldo ?? null,
+      voorschot: voorschot ?? null,
       seizoen: vakantieseizoenMapper.toDB(undefined),
       titel: toTitel(projectData.projectnummer, project.naam),
       type: projectTypeMapper.toDB('cursus'),
@@ -257,6 +262,8 @@ function toDBActiviteit(
     aantalDeelnemersuren,
     aantalDeelnames,
     metOvernachting: unused,
+    vormingsuren,
+    begeleidingsuren,
     verblijf,
     vervoer,
     ...data
@@ -270,6 +277,8 @@ function toDBActiviteit(
     ...data,
     verblijf: vakantieVerblijfMapper.toDB(verblijf),
     vervoer: vakantieVervoerMapper.toDB(vervoer),
+    vormingsuren: vormingsuren ?? null,
+    begeleidingsuren: begeleidingsuren ?? null,
     metOvernachting,
   };
 }
@@ -307,7 +316,6 @@ function toProject({
   type,
   begeleiders,
   _count,
-  saldo: dbSaldo,
   bestemming,
   land,
   ...projectProperties
@@ -321,9 +329,11 @@ function toProject({
     jaar: projectProperties.jaar,
     naam: projectProperties.naam,
     voorschot: projectProperties.voorschot,
+    saldo: projectProperties.saldo,
   });
-  const saldo = dbSaldo ?? undefined;
-  let prijs = saldo;
+  const saldo = project.saldo ?? undefined;
+  const voorschot = project.voorschot;
+  const prijs = calculatePrijs(saldo, voorschot);
   switch (type) {
     case projectTypeMapper.toDB('cursus'):
       return {
@@ -338,16 +348,6 @@ function toProject({
         prijs,
       };
     case projectTypeMapper.toDB('vakantie'):
-      const voorschot = project.voorschot as Decimal | undefined;
-      if (saldo !== undefined || voorschot !== undefined) {
-        prijs = new Decimal(0);
-        if (saldo !== undefined) {
-          prijs = saldo;
-        }
-        if (voorschot !== undefined) {
-          prijs = voorschot.add(prijs);
-        }
-      }
       return {
         ...project,
         activiteiten:
@@ -362,6 +362,23 @@ function toProject({
     default:
       throw new Error(`Project type ${type} not supported`);
   }
+}
+
+function calculatePrijs(
+  saldo: Decimal | undefined,
+  voorschot: Decimal | undefined,
+) {
+  let prijs: Decimal | undefined;
+  if (saldo !== undefined || voorschot !== undefined) {
+    prijs = new Decimal(0);
+    if (saldo !== undefined) {
+      prijs = saldo;
+    }
+    if (voorschot !== undefined) {
+      prijs = voorschot.add(prijs);
+    }
+  }
+  return prijs;
 }
 
 function toCursusActiviteit(val: DBActiviteitAggregate): CursusActiviteit {

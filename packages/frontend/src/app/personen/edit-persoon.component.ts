@@ -69,7 +69,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
   },
   { name: 'voornaam', type: InputType.text },
   { name: 'emailadres', type: InputType.email },
-  radioControl('geslacht', geslachten),
+  radioControl('geslacht', geslachten, { allowDeselect: true }),
   {
     name: 'geslachtOpmerking',
     type: InputType.text,
@@ -83,7 +83,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
       max: new Date(new Date().getFullYear() - 5, 1, 1),
     },
   },
-  radioControl('voedingswens', voedingswensen),
+  radioControl('voedingswens', voedingswensen, { allowDeselect: true }),
   {
     name: 'voedingswensOpmerking',
     type: InputType.text,
@@ -93,7 +93,7 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
         if (value || entity.voedingswens !== 'anders') {
           return '';
         }
-        return `Voedingswens opmerking is verplicht bij voedingswens "${voedingswensen.anders}" is`;
+        return `${persoonLabels.voedingswensOpmerking} is wanneer bij ${persoonLabels.voedingswens} "${voedingswensen.anders}" gevuld is.`;
       },
     },
     dependsOn: ['voedingswens'],
@@ -139,11 +139,6 @@ const basePersoonFormControls: FormControl<BasePersoon>[] = [
 
 const overigPersoonFormControls: FormControl<OverigPersoon>[] = [
   ...basePersoonFormControls,
-  {
-    name: 'vrijwilligerOpmerking',
-    label: 'Vrijwilliger opmerking',
-    type: InputType.text,
-  },
   checkboxesItemsControl('selectie', overigPersoonSelecties),
 ];
 const contactPersoonControls: readonly FormControl<Contactpersoon>[] =
@@ -172,10 +167,10 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
     required: false,
     requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
   }),
-  radioControl('woonsituatie', woonsituaties),
+  radioControl('woonsituatie', woonsituaties, { allowDeselect: true }),
   {
     name: 'woonsituatieOpmerking',
-    label: 'Opmerking',
+    label: deelnemerLabels.woonsituatieOpmerking,
     type: InputType.text,
     validators: {
       custom(value, entity) {
@@ -187,19 +182,19 @@ const deelnemerFormControls: FormControl<Deelnemer>[] = [
     },
     dependsOn: ['woonsituatie'],
   },
-  radioControl('werksituatie', werksituaties),
+  radioControl('werksituatie', werksituaties, { allowDeselect: true }),
   {
     name: 'werksituatieOpmerking',
-    label: 'Opmerking',
+    label: deelnemerLabels.werksituatieOpmerking,
     type: InputType.text,
   },
   {
     name: 'begeleidendeDienst',
-    label: deelnemerLabels['begeleidendeDienst'],
+    label: deelnemerLabels.begeleidendeDienst,
     type: InputType.text,
   },
   checkboxesPropsControl('fotoToestemming', fotoToestemmingLabels, {
-    label: deelnemerLabels['fotoToestemming'],
+    label: deelnemerLabels.fotoToestemming,
   }),
   formGroup('contactpersoon', contactPersoonControls, { required: true }),
 ];

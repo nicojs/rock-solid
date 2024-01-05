@@ -6,7 +6,6 @@ import { Queryfied, filterMetaQuery } from './util.js';
 export interface Organisatie {
   id: number;
   naam: string;
-  emailadres?: string;
   website?: string;
   soorten: Organisatiesoort[];
   soortOpmerking?: string;
