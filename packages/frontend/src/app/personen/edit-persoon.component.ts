@@ -67,10 +67,29 @@ const controlsByType: { [K in PersoonType]: FormControl<PersoonByType[K]>[] } =
 function controlsFor<TType extends PersoonType>(
   type: TType,
 ): FormControl<TType extends 'deelnemer' ? Deelnemer : OverigPersoon>[] {
+  const voedingswensControls: FormControl<BasePersoon>[] = [
+    radioControl('voedingswens', voedingswensen, { allowDeselect: true }),
+    {
+      name: 'voedingswensOpmerking',
+      type: InputType.text,
+      label: persoonLabels.voedingswensOpmerking,
+      validators: {
+        custom(value, entity) {
+          if (value || entity.voedingswens !== 'anders') {
+            return '';
+          }
+          return `${persoonLabels.voedingswensOpmerking} is wanneer bij ${persoonLabels.voedingswens} "${voedingswensen.anders}" gevuld is.`;
+        },
+      },
+      dependsOn: ['voedingswens'],
+    },
+  ];
+
   const controls: FormControl<OverigPersoon & Deelnemer>[] = [];
   if (type === 'overigPersoon') {
     controls.push(checkboxesItemsControl('selectie', overigPersoonSelecties));
   }
+
   controls.push(
     { name: 'voornaam', type: InputType.text },
     {
@@ -86,6 +105,16 @@ function controlsFor<TType extends PersoonType>(
       required: false,
       requiredLabel: 'Verblijfadres invullen',
     }),
+  );
+  if (type === 'deelnemer') {
+    controls.push(
+      formGroup('domicilieadres', adresControls, {
+        required: false,
+        requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
+      }),
+    );
+  }
+  controls.push(
     {
       name: 'gsmNummer',
       label: 'GSM',
@@ -157,33 +186,20 @@ function controlsFor<TType extends PersoonType>(
           },
           {
             name: 'gsm',
+            label: 'GSM',
             type: InputType.tel,
           },
         ],
         { required: true },
       ),
-      radioControl('voedingswens', voedingswensen, { allowDeselect: true }),
-      {
-        name: 'voedingswensOpmerking',
-        type: InputType.text,
-        label: persoonLabels.voedingswensOpmerking,
-        validators: {
-          custom(value, entity) {
-            if (value || entity.voedingswens !== 'anders') {
-              return '';
-            }
-            return `${persoonLabels.voedingswensOpmerking} is wanneer bij ${persoonLabels.voedingswens} "${voedingswensen.anders}" gevuld is.`;
-          },
-        },
-        dependsOn: ['voedingswens'],
-      } as FormControl<Deelnemer>,
-
+      ...voedingswensControls,
       checkboxesPropsControl('fotoToestemming', fotoToestemmingLabels, {
         label: deelnemerLabels.fotoToestemming,
       }),
     );
   }
   controls.push(
+    ...voedingswensControls,
     formArray('foldervoorkeuren', foldervoorkeurControls),
     {
       name: 'rekeningnummer',
