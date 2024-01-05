@@ -11,21 +11,11 @@ export type NullsPurged<T> = T extends Array<infer U>
           : NullsPurged<T[K]>;
       };
 
-export type ExplicitUpdate<T> = {
+export type ExplicitNulls<T> = {
   [K in keyof T]-?: undefined extends T[K]
     ? Exclude<T[K], undefined> | null
     : T[K];
 };
-
-/** Shallow replaces `undefined` with `null`, useful to create an update query for an existing entity */
-export function explicitUpdate<T extends Record<string, unknown>>(
-  obj: T,
-): ExplicitUpdate<T> {
-  return Object.entries(obj).reduce((acc, [key, val]) => {
-    acc[key] = val === undefined ? null : val;
-    return acc;
-  }, {} as any);
-}
 
 export function purgeNulls<T>(value: T): NullsPurged<T> {
   if (Array.isArray(value)) {

@@ -26,7 +26,7 @@ export function toNullableAdres(
 }
 
 export function toCreateAdresInput(
-  adres: UpsertableAdres | undefined,
+  adres: UpsertableAdres | undefined | null,
 ): db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput | undefined {
   if (adres) {
     const { plaats, id, ...props } = adres;

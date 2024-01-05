@@ -148,7 +148,11 @@ export class ReactiveFormInputControl<
         @change="${(e: Event) => {
           const inputEl = e.target as HTMLInputElement;
           if (control.type === InputType.currency) {
-            this.updateValue(new Decimal(inputEl.value));
+            if (inputEl.value) {
+              this.updateValue(new Decimal(inputEl.value));
+            } else {
+              this.updateValue(undefined);
+            }
           } else {
             let val: number | undefined = inputEl.valueAsNumber;
             if (isNaN(val)) {
@@ -284,15 +288,25 @@ export class ReactiveFormInputControl<
 
     return html` ${Object.entries(control.items).map(([key, value]) => {
       const id = `${this.inputId}-${key}`;
+      const currentRadioRef = createRef<HTMLInputElement>();
       return html`<div class="form-check me-2">
         <input
           class="form-check-input"
           type="radio"
           name=${this.name}
           ${ref(this.inputRef)}
+          ${ref(currentRadioRef)}
           id=${id}
           ?required=${control.validators?.required}
           ?checked=${isChecked(key)}
+          @click=${() => {
+            if (control.allowDeselect) {
+              if (isChecked(key)) {
+                currentRadioRef.value!.checked = false;
+                this.updateValue(undefined);
+              }
+            }
+          }}
           @change="${() => {
             this.updateValue(key);
           }}"

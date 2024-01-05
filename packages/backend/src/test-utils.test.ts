@@ -294,6 +294,15 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
+  async updateProject<TProject extends Project>(
+    project: TProject,
+  ): Promise<TProject extends { type: 'cursus' } ? Cursus : Vakantie> {
+    const response = await this.put(`/projecten/${project.id}`, project).expect(
+      200,
+    );
+    return response.body;
+  }
+
   async createDeelnemer(deelnemer: UpsertableDeelnemer): Promise<Deelnemer> {
     return await this.createPersoon(deelnemer);
   }

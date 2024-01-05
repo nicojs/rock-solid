@@ -14,7 +14,7 @@ import {
   UpsertableOverigPersoon,
   UpsertablePersoon,
 } from '@rock-solid/shared';
-import { ExplicitUpdate, explicitUpdate, purgeNulls } from './mapper-utils.js';
+import { ExplicitNulls, purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 import {
   toAdres,
@@ -164,17 +164,16 @@ export class PersoonMapper {
       geslacht,
       type,
       ...props
-    } = fillAllPersonFields(persoon);
+    } = toUpdatePersonFields(persoon);
     const { verblijfadresId, domicilieadresId } =
       await this.db.persoon.findUniqueOrThrow({
         where: { id: personId },
         select: { verblijfadresId: true, domicilieadresId: true },
       });
-    const fields = explicitUpdate(props);
     const result = await this.db.persoon.update({
       where,
       data: {
-        ...fields,
+        ...props,
         ...toContactPersoonFields(contactpersoon),
         ...toFotoToestemmingFields(fotoToestemming),
         volledigeNaam: computeVolledigeNaam(props),
@@ -531,7 +530,7 @@ type AllUpsertablePersoonFields = Omit<UpsertableDeelnemer, 'type'> &
     type: PersoonType;
   };
 
-type AllPersoonFields = ExplicitUpdate<
+type PersoonUpdateFields = ExplicitNulls<
   Omit<Deelnemer, 'type'> &
     Omit<OverigPersoon, 'type'> & {
       type: PersoonType;
@@ -553,7 +552,7 @@ function fillOutAllUpsertablePersoonFields(
 /**
  * This is a hack to make it easier to work with the Persoon type
  */
-function fillAllPersonFields(persoon: Persoon): AllPersoonFields {
+function toUpdatePersonFields(persoon: Persoon): PersoonUpdateFields {
   return {
     selectie: [],
     woonsituatieOpmerking: null,
