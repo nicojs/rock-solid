@@ -102,6 +102,11 @@ describe(OrganisatiesController.name, () => {
           contacten: [
             factory.organisatieContact({
               terAttentieVan: 'Hans',
+              adres: {
+                straatnaam: 'AcmeStreet',
+                huisnummer: '1',
+                plaats: harness.db.seedPlaats,
+              },
               foldervoorkeuren: [
                 { folder: 'deKeiCursussen', communicatie: 'post' },
               ],
@@ -136,7 +141,7 @@ describe(OrganisatiesController.name, () => {
     });
 
     describe('filters', () => {
-      it('should be able to filter naam', async () => {
+      it('by naam', async () => {
         // Act
         const [acmeOrgs, disneyOrgs] = await Promise.all([
           harness.getAllOrganisaties({ naam: 'acme' }),
@@ -148,7 +153,7 @@ describe(OrganisatiesController.name, () => {
         expect(disneyOrgs.map(({ id }) => id)).deep.eq([disney.id]);
       });
 
-      it('should be able to filter on foldervoorkeur', async () => {
+      it('by foldervoorkeur', async () => {
         // Act
         const [deKeiCursussenOrgs, keiJongBusoOrgs] = await Promise.all([
           harness.getAllOrganisaties({ folders: ['deKeiCursussen'] }),
@@ -170,6 +175,27 @@ describe(OrganisatiesController.name, () => {
         expect(
           disneyOrg.contacten.map(({ terAttentieVan }) => terAttentieVan),
         ).deep.eq(['Mickey']);
+      });
+
+      it('by metAdres', async () => {
+        // Act
+        const [metAdresOrgs, zonderAdresOrgs, noFilter] = await Promise.all([
+          harness.getAllOrganisaties({ metAdres: true }),
+          harness.getAllOrganisaties({ metAdres: false }),
+          harness.getAllOrganisaties({ metAdres: false }),
+        ]);
+
+        // Assert
+        expect(metAdresOrgs.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(metAdresOrgs[0]?.contacten).lengthOf(1);
+        expect(metAdresOrgs[0]?.contacten[0]?.terAttentieVan).eq('Hans');
+        expect(zonderAdresOrgs.map(({ id }) => id)).deep.eq([
+          acme.id,
+          disney.id,
+        ]);
+        expect(noFilter.map(({ id }) => id)).deep.eq([acme.id, disney.id]);
+        expect(zonderAdresOrgs[0]?.contacten).lengthOf(2);
+        expect(zonderAdresOrgs[1]?.contacten).lengthOf(1);
       });
     });
   });

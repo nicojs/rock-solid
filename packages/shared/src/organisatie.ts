@@ -1,7 +1,7 @@
 import { Upsertable } from './upsertable.js';
 import { Options, groupOptions } from './options.js';
 import { Adres, UpsertableAdres } from './adres.js';
-import { Queryfied, filterMetaQuery } from './util.js';
+import { Queryfied, filterMetaQuery, tryParseBoolean } from './util.js';
 
 export interface Organisatie {
   id: number;
@@ -62,6 +62,7 @@ export const organisatieContactColumnNames: Record<
 export type OrganisatieFilter = {
   naam?: string;
   folders?: Foldersoort[];
+  metAdres?: boolean;
 };
 
 export type UpsertableOrganisatie = Upsertable<
@@ -204,5 +205,6 @@ export function toOrganisatieFilter(
   return {
     ...filterMetaQuery(query),
     folders: query.folders?.split(',') as Foldersoort[],
+    metAdres: tryParseBoolean(query.metAdres),
   };
 }

@@ -80,6 +80,7 @@ export type PersoonFilter = Partial<
   minLeeftijd?: number;
   maxLeeftijd?: number;
   volledigeNaamLike?: string;
+  metVerblijfadres?: boolean;
 };
 
 export interface Contactpersoon {
@@ -261,6 +262,7 @@ export function toPersoonFilter(
     laatsteAanmeldingMinimaalJaarGeleden,
     laatsteAanmeldingMaximaalJaarGeleden,
     zonderAanmeldingen,
+    metVerblijfadres,
     minLeeftijd,
     maxLeeftijd,
     ...filter
@@ -278,5 +280,6 @@ export function toPersoonFilter(
     minLeeftijd: tryParseInt(minLeeftijd),
     maxLeeftijd: tryParseInt(maxLeeftijd),
     zonderAanmeldingen: tryParseBoolean(zonderAanmeldingen),
+    metVerblijfadres: tryParseBoolean(metVerblijfadres),
   } as PersoonFilter;
 }

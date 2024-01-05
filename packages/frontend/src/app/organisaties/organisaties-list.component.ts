@@ -41,7 +41,6 @@ export class OrganisatiesListComponent extends LitElement {
   }
 
   override render() {
-    console.log(this.organisaties);
     return html` ${this.organisaties
       ? html`${this.organisaties.length
           ? this.renderTable()

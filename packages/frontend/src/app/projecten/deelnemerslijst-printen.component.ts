@@ -46,7 +46,6 @@ export class DeelnemerslijstPrintenComponent extends RockElement {
   }
 
   public override render() {
-    console.log('rendered');
     return html`<h1>${printProject(this.project)}</h1>
       <div class="row">
         <table class="table table-striped table-sm table-bordered">
