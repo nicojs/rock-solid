@@ -29,7 +29,6 @@ import {
   checkboxesItemsControl,
   radioControl,
   checkboxesPropsControl,
-  InputControl,
 } from '../forms';
 
 @customElement('rock-edit-persoon')
