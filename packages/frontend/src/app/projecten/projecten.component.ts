@@ -27,6 +27,7 @@ import {
   InputType,
   checkboxesItemsControl,
 } from '../forms';
+import { routesByProjectType } from './routing-helper';
 
 @customElement('rock-projecten')
 export class ProjectenComponent extends RockElement {
@@ -92,7 +93,11 @@ export class ProjectenComponent extends RockElement {
         this.newProject = project;
       }
     }
-    if ((props.has('query') || props.has('path')) && this.query) {
+    if (
+      (props.has('query') || props.has('path')) &&
+      this.query &&
+      !this.path.length
+    ) {
       const { page, ...filterParams } = this.query;
       this.filter = toProjectFilter(filterParams);
       this.filter.type = this.type;
@@ -110,7 +115,7 @@ export class ProjectenComponent extends RockElement {
       .subscribe({
         next: () => {
           this.errorMessage = undefined;
-          router.navigate(`/${pluralize(this.type)}/list`);
+          this.navigateToProjectenPage();
         },
         complete: () => (this.loading = false),
       });
@@ -124,7 +129,7 @@ export class ProjectenComponent extends RockElement {
       .subscribe({
         next: () => {
           this.errorMessage = undefined;
-          router.navigate(`/${pluralize(this.type)}/list`);
+          this.navigateToProjectenPage();
         },
         complete: () => (this.loading = false),
       });
@@ -154,7 +159,10 @@ export class ProjectenComponent extends RockElement {
           </div>
           <div class="row">
             <div class="col">
-              <rock-link href="/${pluralize(this.type)}/new" btn btnSuccess
+              <rock-link
+                href="/${routesByProjectType[this.type]}/new"
+                btn
+                btnSuccess
                 ><rock-icon icon="journalPlus" size="md"></rock-icon>
                 ${capitalize(this.type)}</rock-link
               >
@@ -215,9 +223,13 @@ export class ProjectenComponent extends RockElement {
             return html`<rock-loading></rock-loading>`;
           }
         }
-        router.navigate(`/${pluralize(this.type)}`);
+        this.navigateToProjectenPage();
         return html``;
     }
+  }
+
+  private navigateToProjectenPage() {
+    router.navigate(`/${routesByProjectType[this.type]}`);
   }
 }
 
