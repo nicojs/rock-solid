@@ -76,7 +76,11 @@ export class OrganisatiesComponent extends RockElement {
         organisatieStore.removeFocus();
       }
     }
-    if ((props.has('query') || props.has('path')) && this.query) {
+    if (
+      (props.has('query') || props.has('path')) &&
+      this.query &&
+      !this.path.length
+    ) {
       const { page, ...filterParams } = this.query;
       this.filter = toOrganisatieFilter(filterParams);
       const currentPage = (tryParseInt(page) ?? 1) - 1;
