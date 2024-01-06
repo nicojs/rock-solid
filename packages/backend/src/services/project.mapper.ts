@@ -355,6 +355,7 @@ function toProject({
         saldo,
         voorschot,
         prijs,
+        seizoen: vakantieseizoenMapper.toSchema(projectProperties.seizoen),
         type: 'vakantie',
         bestemming: bestemming!,
         land: land!,
