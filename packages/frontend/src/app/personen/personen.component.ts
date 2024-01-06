@@ -68,17 +68,18 @@ export class PersonenComponent extends RockElement {
     type: 'deelnemer',
   };
 
-  override update(changedProperties: PropertyValues<PersonenComponent>) {
+  override update(props: PropertyValues<PersonenComponent>) {
     if (
-      changedProperties.has('path') &&
+      props.has('path') &&
       ['edit', 'display'].includes(this.path[0] ?? '') &&
       this.path[1]
     ) {
       personenStore.setFocus(this.path[1]);
     }
     if (
-      (changedProperties.has('query') || changedProperties.has('path')) &&
-      this.query
+      (props.has('query') || props.has('path')) &&
+      this.query &&
+      !this.path.length
     ) {
       const { page, ...filterParams } = this.query;
       this.filter = toPersoonFilter(filterParams);
@@ -86,7 +87,7 @@ export class PersonenComponent extends RockElement {
       const currentPage = (tryParseInt(page) ?? 1) - 1;
       personenStore.setCurrentPage(currentPage, { ...this.filter });
     }
-    super.update(changedProperties);
+    super.update(props);
   }
 
   override connectedCallback(): void {
@@ -108,7 +109,7 @@ export class PersonenComponent extends RockElement {
     this.editIsLoading = true;
     personenStore.create(event.detail).subscribe(() => {
       this.editIsLoading = false;
-      this.navigateToProjectenPage();
+      this.navigateToPersonenPage();
     });
   }
 
@@ -124,7 +125,7 @@ export class PersonenComponent extends RockElement {
       .update(this.focussedPersoon!.id, this.focussedPersoon!)
       .subscribe(() => {
         this.editIsLoading = false;
-        this.navigateToProjectenPage();
+        this.navigateToPersonenPage();
       });
   }
 
@@ -214,12 +215,12 @@ export class PersonenComponent extends RockElement {
               ></rock-display-persoon>`
           : html`<rock-loading></rock-loading>`}`;
       default:
-        this.navigateToProjectenPage();
+        this.navigateToPersonenPage();
         return html``;
     }
   }
 
-  private navigateToProjectenPage() {
+  private navigateToPersonenPage() {
     router.navigate(`/${routesByPersoonType[this.type]}`);
   }
 }

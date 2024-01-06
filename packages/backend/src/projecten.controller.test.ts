@@ -417,6 +417,7 @@ describe(ProjectenController.name, () => {
         type: 'vakantie',
         bestemming: 'Hanover',
         land: 'Germany',
+        seizoen: 'winter',
       } as const satisfies Partial<Project>;
       const project = factory.vakantie({
         activiteiten: [factory.activiteit(activiteitData)],
@@ -433,6 +434,7 @@ describe(ProjectenController.name, () => {
         aantalAanmeldingen: 0,
         begeleiders: [],
         jaar: 2011,
+        seizoen: 'winter',
         activiteiten: [
           {
             ...activiteitData,
