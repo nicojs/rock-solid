@@ -8,12 +8,12 @@ import {
 import * as db from '@prisma/client';
 import {
   DBAdresWithPlaats,
-  toAdres,
   toCreateAdresInput,
   toNullableAdres,
   toUpdateAdresInput,
 } from './adres.mapper.js';
 import { ExplicitNulls } from './mapper-utils.js';
+import { handleKnownPrismaErrors } from '../errors/index.js';
 
 type DBCursusLocatieAggregate = db.CursusLocatie & {
   adres: DBAdresWithPlaats | null;
@@ -52,13 +52,15 @@ export class CursusLocatieMapper {
 
   async create(cursusLocatie: UpsertableCursusLocatie): Promise<CursusLocatie> {
     const { adres, id, ...props } = toUpdateCursusLocatieFields(cursusLocatie);
-    const created = await this.db.cursusLocatie.create({
-      data: {
-        ...props,
-        adres: adres ? toCreateAdresInput(adres) : undefined,
-      },
-      include: includeAdres,
-    });
+    const created = await handleKnownPrismaErrors(
+      this.db.cursusLocatie.create({
+        data: {
+          ...props,
+          adres: adres ? toCreateAdresInput(adres) : undefined,
+        },
+        include: includeAdres,
+      }),
+    );
     return toCursusLocatie(created);
   }
 
@@ -73,14 +75,16 @@ export class CursusLocatieMapper {
       where: { id },
       select: { adresId: true },
     });
-    const updated = await this.db.cursusLocatie.update({
-      where: { id },
-      data: {
-        ...props,
-        adres: toUpdateAdresInput(adres, adresId !== null),
-      },
-      include: includeAdres,
-    });
+    const updated = await handleKnownPrismaErrors(
+      this.db.cursusLocatie.update({
+        where: { id },
+        data: {
+          ...props,
+          adres: toUpdateAdresInput(adres, adresId !== null),
+        },
+        include: includeAdres,
+      }),
+    );
     return toCursusLocatie(updated);
   }
 

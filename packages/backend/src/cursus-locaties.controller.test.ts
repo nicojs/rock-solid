@@ -95,6 +95,18 @@ describe(CursusLocatiesController.name, () => {
       });
       expect(actual).deep.equal(created);
     });
+
+    it('should return a 422 "Unprocessable Entity" when the name already exists', async () => {
+      // Arrange
+      const cursusLocatie = factory.cursusLocatie({
+        naam: 'locatie 1',
+        adres: factory.adres({ straatnaam: 'straat 1' }),
+      });
+
+      // Act
+      await harness.createCursusLocatie(cursusLocatie);
+      await harness.post('/cursus-locaties').send(cursusLocatie).expect(422);
+    });
   });
 
   describe('PUT /cursus-locaties/:id', () => {
@@ -144,6 +156,23 @@ describe(CursusLocatiesController.name, () => {
       const expected: CursusLocatie = { id, naam: 'locatie 2' };
       expect(updated).deep.equal(expected);
       expect(actual).deep.equal(updated);
+    });
+
+    it('should return a 422 "Unprocessable Entity" when the name already exists', async () => {
+      // Arrange
+      const cursusLocatie1 = factory.cursusLocatie({
+        naam: 'locatie 1',
+        adres: factory.adres({ straatnaam: 'straat 1' }),
+      });
+      const cursusLocatie2 = factory.cursusLocatie({
+        naam: 'locatie 2',
+        adres: factory.adres({ straatnaam: 'straat 2' }),
+      });
+      const { id } = await harness.createCursusLocatie(cursusLocatie1);
+      await harness.createCursusLocatie(cursusLocatie2);
+
+      // Act & Assert
+      await harness.put(`/cursus-locaties/${id}`, cursusLocatie2).expect(422);
     });
   });
 
