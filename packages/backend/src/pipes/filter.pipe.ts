@@ -20,4 +20,3 @@ export class OrganisatieFilterPipe implements PipeTransform {
     return toOrganisatieFilter(value);
   }
 }
-
