@@ -37,6 +37,9 @@ import {
   UpsertableAdres,
   PersoonFilter,
   Persoon,
+  UpsertableCursusLocatie,
+  CursusLocatieFilter,
+  CursusLocatie,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -134,6 +137,7 @@ export class RockSolidDBContainer {
     await this.client.$queryRaw`DELETE FROM OverigPersoonSelectie`;
     await this.client.$queryRaw`DELETE FROM Persoon`;
     await this.client.$queryRaw`DELETE FROM Project`;
+    await this.client.$queryRaw`DELETE FROM CursusLocatie`;
     await this.client.$queryRaw`DELETE FROM Adres`;
     await this.client.$queryRaw`DELETE FROM Plaats`;
     await this.client
@@ -303,9 +307,48 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
+  async createCursusLocatie(
+    cursusLocatie: UpsertableCursusLocatie,
+  ): Promise<CursusLocatie> {
+    const response = await this.post(`/cursus-locaties`, cursusLocatie).expect(
+      201,
+    );
+    return response.body;
+  }
+
+  async updateCursusLocatie(
+    id: number,
+    cursusLocatie: UpsertableCursusLocatie,
+  ): Promise<CursusLocatie> {
+    const response = await this.put(
+      `/cursus-locaties/${id}`,
+      cursusLocatie,
+    ).expect(200);
+    return response.body;
+  }
+
+  async deleteCursusLocatie(id: number): Promise<void> {
+    await this.delete(`/cursus-locaties/${id}`).expect(204);
+  }
+
+  public async getAllCursusLocaties(
+    filter?: CursusLocatieFilter,
+  ): Promise<CursusLocatie[]> {
+    const response = await this.get(
+      `/cursus-locaties${toQueryString(filter)}`,
+    ).expect(200);
+    return response.body;
+  }
+
+  public async getCursusLocatie(id: number): Promise<CursusLocatie> {
+    const response = await this.get(`/cursus-locaties/${id}`).expect(200);
+    return response.body;
+  }
+
   async createDeelnemer(deelnemer: UpsertableDeelnemer): Promise<Deelnemer> {
     return await this.createPersoon(deelnemer);
   }
+
   async updateDeelnemer(deelnemer: Deelnemer): Promise<Deelnemer> {
     const response = await this.put(
       `/personen/${deelnemer.id}`,
@@ -486,6 +529,15 @@ export const factory = {
     return {
       van,
       totEnMet: new Date(van.getFullYear(), van.getMonth(), van.getDate() + 2),
+      ...overrides,
+    };
+  },
+
+  cursusLocatie(
+    overrides?: Partial<UpsertableCursusLocatie>,
+  ): UpsertableCursusLocatie {
+    return {
+      naam: 'Onbekend',
       ...overrides,
     };
   },

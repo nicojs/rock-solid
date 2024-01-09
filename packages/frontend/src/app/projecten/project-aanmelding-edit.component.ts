@@ -107,6 +107,7 @@ const aanmeldingControls: FormControl<Aanmelding>[] = [
     label: aanmeldingLabels.geslacht,
     type: InputType.radio,
     items: geslachten,
+    allowDeselect: true,
   },
   {
     name: 'tijdstipVanAanmelden',

@@ -15,7 +15,8 @@ export type Privilege =
   | 'write:organisaties'
   | 'write:aanmeldingen'
   | 'write:deelnames'
-  | 'write:personen';
+  | 'write:personen'
+  | 'write:cursus-locaties';
 
 export const userRoleNames: Record<UserRole, string> = {
   admin: 'Admin',
@@ -39,6 +40,7 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'write:aanmeldingen',
     'write:deelnames',
     'write:personen',
+    'write:cursus-locaties',
   ],
   projectverantwoordelijke: ['read', 'write:deelnames'],
   financieelBeheerder: ['read', 'write:aanmeldingen'],

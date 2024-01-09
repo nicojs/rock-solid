@@ -19,11 +19,11 @@ import {
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { OrganisatieFilterPipe } from './pipes/organisatie-filter.pipe.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import { OrganisatieMapper } from './services/organisatie.mapper.js';
 import { Privileges } from './auth/privileges.guard.js';
 import { NumberPipe } from './pipes/number.pipe.js';
+import { OrganisatieFilterPipe } from './pipes/filter.pipe.js';
 
 @Controller({ path: 'organisaties' })
 export class OrganisatiesController {
