@@ -72,6 +72,7 @@ export class OrganisatiesListComponent extends LitElement {
                 <td rowspan="${rowSpan}">
                   <rock-link
                     btn
+                    sm
                     btnSecondary
                     href="/organisaties/edit/${org.id}"
                     ><rock-icon icon="pencil"></rock-icon
@@ -80,7 +81,7 @@ export class OrganisatiesListComponent extends LitElement {
                     @click=${() => this.deleteOrganisatie(org)}
                     type="button"
                     ${privilege('write:organisaties')}
-                    class="btn btn-danger"
+                    class="btn btn-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>
                   </button>

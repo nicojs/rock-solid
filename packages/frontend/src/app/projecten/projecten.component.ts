@@ -7,7 +7,6 @@ import {
   toProjectFilter,
   tryParseInt,
   organisatieonderdelen,
-  projectLabels,
   allProjectLabels,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';

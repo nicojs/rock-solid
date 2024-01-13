@@ -39,7 +39,7 @@ export class LocatieListComponent extends LitElement {
   }
   private renderTable() {
     return html`<div class="row">
-      <table class="table table-hover">
+      <table class="table table-hover table-sm">
         <thead>
           <tr>
             <th>Naam</th>
@@ -54,14 +54,14 @@ export class LocatieListComponent extends LitElement {
                 <td>${loc.naam}</td>
                 <td>${showAdres(loc.adres)}</td>
                 <td>
-                  <rock-link btn btnSecondary href="/locaties/edit/${loc.id}"
+                  <rock-link btn sm btnSecondary href="/locaties/edit/${loc.id}"
                     ><rock-icon icon="pencil"></rock-icon
                   ></rock-link>
                   <button
                     @click=${() => this.deleteLocatie(loc)}
                     type="button"
                     ${privilege('write:locaties')}
-                    class="btn btn-danger"
+                    class="btn btn-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>
                   </button>

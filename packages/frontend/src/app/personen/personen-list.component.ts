@@ -83,6 +83,7 @@ export class PersonenComponent extends LitElement {
                 <rock-link
                   btn
                   btnSecondary
+                  sm
                   href="/${routesByPersoonType[
                     this.type
                   ]}/display/${persoon.id}"
@@ -90,6 +91,7 @@ export class PersonenComponent extends LitElement {
                 ></rock-link>
                 <rock-link
                   btn
+                  sm
                   btnSecondary
                   href="/${routesByPersoonType[this.type]}/edit/${persoon.id}"
                   ><rock-icon icon="pencil"></rock-icon
@@ -99,7 +101,7 @@ export class PersonenComponent extends LitElement {
                     @click=${() => this.deletePersoon(persoon)}
                     type="button"
                     ${privilege('write:personen')}
-                    class="btn btn-danger"
+                    class="btn btn-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>
                   </button>

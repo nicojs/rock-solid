@@ -389,7 +389,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
             ><rock-icon icon="printer"></rock-icon> Deelnemerslijst
             printen</rock-link
           >
-          <table class="table table-hover">
+          <table class="table table-hover table-sm">
             <thead>
               <tr>
                 <th
@@ -471,6 +471,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     <td>
                       <rock-link
                         btn
+                        sm
                         title="Wijzigen"
                         btnOutlinePrimary
                         href="/${pluralize(this.project.type)}/${this.project
@@ -481,7 +482,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                         ? html`<button
                             title="Bevestigen"
                             ${privilege('write:aanmeldingen')}
-                            class="btn btn-outline-success"
+                            class="btn btn-outline-success btn-sm"
                             type="button"
                             @click=${() =>
                               this.patchStatus(aanmelding, 'Bevestigd')}
@@ -491,7 +492,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                         : html`<button
                             title="Aanmelden"
                             ${privilege('write:aanmeldingen')}
-                            class="btn btn-outline-success"
+                            class="btn btn-outline-success btn-sm"
                             type="button"
                             @click=${() =>
                               this.patchStatus(aanmelding, 'Aangemeld')}
@@ -501,7 +502,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       <button
                         title="Naar wachtlijst"
                         ${privilege('write:aanmeldingen')}
-                        class="btn btn-outline-warning"
+                        class="btn btn-outline-warning btn-sm"
                         type="button"
                         @click=${() =>
                           this.patchStatus(aanmelding, 'OpWachtlijst')}
@@ -511,7 +512,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       <button
                         title="Annuleren"
                         ${privilege('write:aanmeldingen')}
-                        class="btn btn-outline-danger"
+                        class="btn btn-outline-danger btn-sm"
                         type="button"
                         @click=${() =>
                           this.patchStatus(aanmelding, 'Geannuleerd')}
@@ -544,7 +545,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
     return html`<span
       ><button
         title="Verwijderen"
-        class="btn btn-danger ${floatEnd ? 'float-end' : ''}"
+        class="btn btn-danger btn-sm ${floatEnd ? 'float-end' : ''}"
         type="button"
         ${privilege('write:aanmeldingen')}
         @click=${() => this.deleteAanmelding(aanmelding)}
