@@ -139,7 +139,7 @@ export class AanmeldingMapper {
 
   public async update(
     id: number,
-    aanmelding: Partial<Aanmelding>,
+    aanmelding: Partial<UpdatableAanmelding>,
   ): Promise<Aanmelding> {
     const {
       deelnemer: persoon,
@@ -151,6 +151,7 @@ export class AanmeldingMapper {
       werksituatie,
       woonsituatie,
       geslacht,
+      overrideDeelnemerFields,
       ...aanmeldingData
     } = aanmelding;
     const dbAanmelding = await this.db.aanmelding.update({
@@ -169,6 +170,16 @@ export class AanmeldingMapper {
       },
       include: includeDeelnemer,
     });
+    if (overrideDeelnemerFields && dbAanmelding.deelnemerId !== null) {
+      await this.db.persoon.update({
+        data: {
+          werksituatie: dbAanmelding.werksituatie,
+          woonsituatie: dbAanmelding.woonsituatie,
+          geslacht: dbAanmelding.geslacht,
+        },
+        where: { id: dbAanmelding.deelnemerId },
+      });
+    }
     return toAanmelding(dbAanmelding);
   }
 

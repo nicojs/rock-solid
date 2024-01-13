@@ -18,7 +18,6 @@ export interface Aanmelding {
   plaats?: Plaats;
   bevestigingsbriefVerzondenOp?: Date;
   vervoersbriefVerzondenOp?: Date;
-
   status: Aanmeldingsstatus;
 }
 
@@ -44,7 +43,9 @@ export type InsertableAanmelding = Upsertable<
   'deelnemerId' | 'projectId'
 >;
 
-export type UpdatableAanmelding = Upsertable<Aanmelding, 'id'>;
+export type UpdatableAanmelding = Upsertable<Aanmelding, 'id'> & {
+  overrideDeelnemerFields?: boolean;
+};
 
 export const aanmeldingLabels: Labels<Aanmelding> = {
   id: 'id',
