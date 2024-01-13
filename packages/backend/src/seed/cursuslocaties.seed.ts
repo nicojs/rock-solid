@@ -60,9 +60,9 @@ export async function seedCursuslocaties(
     })
     .filter(notEmpty);
 
-  const locatieMap = new Map<string, db.Locatie>();
+  const locatieMapper = new LocatieMapper(client);
 
-  const stats = { updated: 0, created: 0 };
+  let updated = 0;
   for (const { locaties, cursus, raw } of cursussenMetLocaties) {
     const activiteiten = cursus.activiteiten.sort(
       (a, b) => a.van.getTime() - b.van.getTime(),
@@ -77,24 +77,17 @@ export async function seedCursuslocaties(
       const activiteit = activiteiten[i];
       const locatieNaam = locaties[i]!;
       if (activiteit && locatieNaam !== '') {
-        let locatie = locatieMap.get(locatieNaam);
-        if (!locatie) {
-          locatie = await client.locatie.create({
-            data: { naam: locatieNaam },
-          });
-          stats.created++;
-          locatieMap.set(locatieNaam, locatie);
-        }
+        const locatie = await locatieMapper.upsert(locatieNaam);
         await client.activiteit.update({
           where: { id: activiteit.id },
           data: { locatie: { connect: { id: locatie.id } } },
         });
-        stats.updated++;
+        updated++;
       }
     }
   }
   console.log(
-    `Seeded ${stats.created} locaties, updated ${stats.updated} activiteiten`,
+    `Seeded ${locatieMapper.created} locaties, updated ${updated} activiteiten`,
   );
   console.log(`(${importDiagnostics.report})`);
   await writeOutputJson(
@@ -102,4 +95,48 @@ export async function seedCursuslocaties(
     importDiagnostics,
     readonly,
   );
+}
+
+class LocatieMapper {
+  map = new Map<string, db.Locatie>();
+  #created = 0;
+  constructor(private client: db.PrismaClient) {}
+
+  get created() {
+    return this.#created;
+  }
+
+  async upsert(name: string) {
+    name = this.normalize(name);
+    let locatie = this.map.get(name.toLowerCase());
+    if (!locatie) {
+      locatie = await this.client.locatie.create({
+        data: { naam: name },
+      });
+      this.#created++;
+      this.map.set(name.toLowerCase(), locatie);
+    }
+    return locatie;
+  }
+
+  private normalize(name: string) {
+    return this.#naamOverrides[name.toLowerCase()] ?? name;
+  }
+
+  #malle = 'Provinciaal Vormingscentrum Malle';
+  #scoutshuis = 'Scoutshuis Antwerpen';
+  #hanenbos = 'Hanenbos';
+
+  #naamOverrides: Record<string, string> = {
+    scouthuis: this.#scoutshuis,
+    scoutshuis: this.#scoutshuis,
+    antwerpen: this.#scoutshuis,
+    'het scoutshuis': this.#scoutshuis,
+    malle: this.#malle,
+    pvc: this.#malle,
+    'pvc malle': this.#malle,
+    'lokalen gezin en handicap': 'Lokalen Gezin en Handicap',
+    hanenbo: this.#hanenbos,
+    'hanenbos beersel': this.#hanenbos,
+  };
 }
