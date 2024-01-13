@@ -7,7 +7,7 @@ import {
   type UpsertableDeelname,
   type InsertableAanmelding,
   type UpsertableProject,
-  UpdatableAanmelding,
+  type UpdatableAanmelding,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -138,7 +138,7 @@ export class ProjectenController {
   async updateAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
     @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
-    @Body() aanmelding: InsertableAanmelding,
+    @Body() aanmelding: UpdatableAanmelding,
   ): Promise<Aanmelding> {
     aanmelding.projectId = projectId;
     return this.aanmeldingMapper.update(aanmeldingId, aanmelding);

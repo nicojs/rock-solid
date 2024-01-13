@@ -768,6 +768,98 @@ describe(ProjectenController.name, () => {
       };
       expect(actualAanmelding).deep.include(expectedAanmelding);
     });
+
+    it('should override deelnemer "werksituatie", "woonsituatie" and "geslacht" when "overrideDeelnemerFields": true', async () => {
+      // Arrange
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+
+      // Act
+      await harness.updateAanmelding({
+        ...aanmelding,
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+        overrideDeelnemerFields: true,
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      const expectedDeelnemer: Partial<Deelnemer> = {
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+      };
+      expect(actualDeelnemer).deep.include(expectedDeelnemer);
+    });
+
+    it('should not override deelnemer "werksituatie", "woonsituatie" and "geslacht" when "overrideDeelnemerFields": false', async () => {
+      // Arrange
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+
+      // Act
+      await harness.updateAanmelding({
+        ...aanmelding,
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+        overrideDeelnemerFields: false,
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.werksituatie).undefined;
+      expect(actualDeelnemer.woonsituatie).undefined;
+      expect(actualDeelnemer.geslacht).undefined;
+    });
+
+    it('should not override deelnemer "werksituatie", "woonsituatie" and "geslacht" when "overrideDeelnemerFields": undefined', async () => {
+      // Arrange
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+
+      // Act
+      await harness.updateAanmelding({
+        ...aanmelding,
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.werksituatie).undefined;
+      expect(actualDeelnemer.woonsituatie).undefined;
+      expect(actualDeelnemer.geslacht).undefined;
+    });
+
+    it('should not override deelnemer "werksituatie", "woonsituatie" and "geslacht" when "overrideDeelnemerFields": true but the deelnemer does not exist anymore', async () => {
+      // Arrange
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+      await harness.deleteDeelnemer(deelnemer.id);
+
+      // Act
+      await harness.updateAanmelding({
+        ...aanmelding,
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+        overrideDeelnemerFields: true,
+      });
+
+      // Assert
+      await harness.get(`/personen/${deelnemer.id}`).expect(404);
+    });
   });
 
   describe('DELETE /projecten/:id', () => {

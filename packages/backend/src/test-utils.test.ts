@@ -274,7 +274,7 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async updateAanmelding(aanmelding: Aanmelding): Promise<Aanmelding> {
+  async updateAanmelding(aanmelding: UpdatableAanmelding): Promise<Aanmelding> {
     const response = await this.put(
       `/projecten/${aanmelding.projectId}/aanmeldingen/${aanmelding.id}`,
       aanmelding,

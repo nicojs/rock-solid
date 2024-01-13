@@ -1,10 +1,10 @@
 import {
-  Aanmelding,
   aanmeldingLabels,
   aanmeldingsstatussen,
   geslachten,
   Privilege,
   Project,
+  UpdatableAanmelding,
   werksituaties,
   woonsituaties,
 } from '@rock-solid/shared';
@@ -23,7 +23,7 @@ export class ProjectAanmeldingEditComponent extends LitElement {
   public project!: Project;
 
   @property()
-  public aanmelding!: Aanmelding;
+  public aanmelding!: UpdatableAanmelding;
 
   public override render() {
     return html`<h2>
@@ -77,7 +77,7 @@ export class ProjectAanmeldingEditComponent extends LitElement {
   }
 }
 
-const aanmeldingControls: FormControl<Aanmelding>[] = [
+const aanmeldingControls: FormControl<UpdatableAanmelding>[] = [
   {
     name: 'status',
     label: aanmeldingLabels.status,
@@ -124,5 +124,14 @@ const aanmeldingControls: FormControl<Aanmelding>[] = [
     name: 'rekeninguittrekselNummer',
     label: 'Rekeninguittreksel nummer',
     type: InputType.text,
+  },
+  {
+    name: 'overrideDeelnemerFields',
+    type: InputType.checkbox,
+    label: `Update ook de "${
+      'woonsituatie' satisfies keyof UpdatableAanmelding
+    }", "${'werksituatie' satisfies keyof UpdatableAanmelding}" en "${
+      'geslacht' satisfies keyof UpdatableAanmelding
+    }" bij de deelnemer`,
   },
 ];
