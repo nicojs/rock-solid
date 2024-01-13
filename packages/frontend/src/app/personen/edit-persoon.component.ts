@@ -133,13 +133,20 @@ function controlsFor<TType extends PersoonType>(
         max: new Date(new Date().getFullYear() - 5, 1, 1),
       },
     },
-    radioControl('geslacht', geslachten, { allowDeselect: true }),
-    {
-      name: 'geslachtOpmerking',
-      type: InputType.text,
-      label: persoonLabels.geslachtOpmerking,
-    },
   );
+
+  if (type === 'deelnemer') {
+    controls.push({
+      name: 'geboorteplaats',
+      type: InputType.text,
+      label: persoonLabels.geboorteplaats,
+    });
+  }
+  controls.push(radioControl('geslacht', geslachten, { allowDeselect: true }), {
+    name: 'geslachtOpmerking',
+    type: InputType.text,
+    label: persoonLabels.geslachtOpmerking,
+  });
 
   if (type === 'deelnemer') {
     (controls as FormControl<Deelnemer>[]).push(
