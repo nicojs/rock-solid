@@ -37,10 +37,6 @@ type DBOrganisatieAggregate = db.Organisatie & {
   soorten: db.Organisatiesoort[];
 };
 
-const includeAdres = Object.freeze({
-  adres: includeAdresWithPlaats,
-});
-
 const includeAggregate = Object.freeze({
   foldervoorkeuren: true as const,
   adres: includeAdresWithPlaats,

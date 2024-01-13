@@ -3,7 +3,6 @@ import {
   DeepPartial,
   GroupedOptions,
   Options,
-  Plaats,
 } from '@rock-solid/shared';
 import { TypeAheadHint } from '../shared';
 
