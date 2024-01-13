@@ -37,10 +37,9 @@ import {
   UpsertableAdres,
   PersoonFilter,
   Persoon,
-  UpsertableCursusLocatie,
-  CursusLocatieFilter,
-  CursusLocatie,
-  PAGE_SIZE,
+  UpsertableLocatie,
+  LocatieFilter,
+  Locatie,
   PAGE_QUERY_STRING_NAME,
   TOTAL_COUNT_HEADER,
 } from '@rock-solid/shared';
@@ -140,7 +139,7 @@ export class RockSolidDBContainer {
     await this.client.$queryRaw`DELETE FROM OverigPersoonSelectie`;
     await this.client.$queryRaw`DELETE FROM Persoon`;
     await this.client.$queryRaw`DELETE FROM Project`;
-    await this.client.$queryRaw`DELETE FROM CursusLocatie`;
+    await this.client.$queryRaw`DELETE FROM Locatie`;
     await this.client.$queryRaw`DELETE FROM Adres`;
     await this.client.$queryRaw`DELETE FROM Plaats`;
     await this.client
@@ -310,43 +309,36 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async createCursuslocatie(
-    cursusLocatie: UpsertableCursusLocatie,
-  ): Promise<CursusLocatie> {
-    const response = await this.post(`/cursuslocaties`, cursusLocatie).expect(
-      201,
+  async createLocatie(cursusLocatie: UpsertableLocatie): Promise<Locatie> {
+    const response = await this.post(`/locaties`, cursusLocatie).expect(201);
+    return response.body;
+  }
+
+  async updateLocatie(
+    id: number,
+    cursusLocatie: UpsertableLocatie,
+  ): Promise<Locatie> {
+    const response = await this.put(`/locaties/${id}`, cursusLocatie).expect(
+      200,
     );
     return response.body;
   }
 
-  async updateCursusLocatie(
-    id: number,
-    cursusLocatie: UpsertableCursusLocatie,
-  ): Promise<CursusLocatie> {
-    const response = await this.put(
-      `/cursuslocaties/${id}`,
-      cursusLocatie,
-    ).expect(200);
-    return response.body;
+  async deleteLocatie(id: number): Promise<void> {
+    await this.delete(`/locaties/${id}`).expect(204);
   }
 
-  async deleteCursusLocatie(id: number): Promise<void> {
-    await this.delete(`/cursuslocaties/${id}`).expect(204);
-  }
-
-  public async getAllCursusLocaties(
-    filter?: CursusLocatieFilter,
-  ): Promise<CursusLocatie[]> {
-    const request = this.get(`/cursuslocaties${toQueryString(filter)}`);
+  public async getAllLocaties(filter?: LocatieFilter): Promise<Locatie[]> {
+    const request = this.get(`/locaties${toQueryString(filter)}`);
     const response = await request.expect(200);
     return response.body;
   }
-  public async getCursusLocatiesPage(
+  public async getLocatiesPage(
     page: number,
-    filter?: CursusLocatieFilter,
-  ): Promise<[body: CursusLocatie[], totalCount: number]> {
+    filter?: LocatieFilter,
+  ): Promise<[body: Locatie[], totalCount: number]> {
     const response = await this.get(
-      `/cursuslocaties${toQueryString({
+      `/locaties${toQueryString({
         ...filter,
         [PAGE_QUERY_STRING_NAME]: page,
       })}`,
@@ -354,8 +346,8 @@ class IntegrationTestingHarness {
     return [response.body, +response.get(TOTAL_COUNT_HEADER)];
   }
 
-  public async getCursusLocatie(id: number): Promise<CursusLocatie> {
-    const response = await this.get(`/cursuslocaties/${id}`).expect(200);
+  public async getLocatie(id: number): Promise<Locatie> {
+    const response = await this.get(`/locaties/${id}`).expect(200);
     return response.body;
   }
 
@@ -547,9 +539,7 @@ export const factory = {
     };
   },
 
-  cursuslocatie(
-    overrides?: Partial<UpsertableCursusLocatie>,
-  ): UpsertableCursusLocatie {
+  locatie(overrides?: Partial<UpsertableLocatie>): UpsertableLocatie {
     return {
       naam: 'Onbekend',
       ...overrides,

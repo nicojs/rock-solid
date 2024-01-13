@@ -2,39 +2,39 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { RockElement } from '../rock-element';
 import { bootstrap } from '../../styles';
 import {
-  CursusLocatie,
-  CursusLocatieFilter,
+  Locatie,
+  LocatieFilter,
   DeepPartial,
   Queryfied,
-  UpsertableCursusLocatie,
-  cursusLocatieLabels,
-  toCursusLocatieFilter,
+  UpsertableLocatie,
+  locatieLabels,
+  toLocatieFilter,
   tryParseInt,
 } from '@rock-solid/shared';
-import { cursusLocatieStore } from './cursuslocatie.store';
+import { locatieStore } from './locatie.store';
 import { PropertyValues, html } from 'lit';
 import { handleUniquenessError, toQuery } from '../shared';
 import { router } from '../router';
 import { InputControl, InputType } from '../forms';
 
-@customElement('rock-cursuslocaties')
-export class CursusLocatiesComponent extends RockElement {
+@customElement('rock-locaties')
+export class LocatiesComponent extends RockElement {
   static override styles = [bootstrap];
 
   @property({ attribute: false })
   public path: string[] = [];
 
   @property({ attribute: false })
-  public query?: Queryfied<CursusLocatieFilter> & { page: string };
+  public query?: Queryfied<LocatieFilter> & { page: string };
 
   @state()
-  private cursuslocaties?: CursusLocatie[];
+  private locaties?: Locatie[];
 
   @state()
-  private cursuslocatieToEdit?: CursusLocatie;
+  private locatieToEdit?: Locatie;
 
   @state()
-  private newCursuslocatie = newCursuslocatie();
+  private newLocatie = newLocatie();
 
   @state()
   private errorMessage?: string;
@@ -43,32 +43,30 @@ export class CursusLocatiesComponent extends RockElement {
   private loading = false;
 
   @state()
-  private filter: CursusLocatieFilter = {};
+  private filter: LocatieFilter = {};
 
   override connectedCallback(): void {
     super.connectedCallback();
     this.subscription.add(
-      cursusLocatieStore.currentPageItem$.subscribe((cursuslocaties) => {
-        this.cursuslocaties = cursuslocaties;
+      locatieStore.currentPageItem$.subscribe((locaties) => {
+        this.locaties = locaties;
       }),
     );
     this.subscription.add(
-      cursusLocatieStore.focussedItem$.subscribe(
-        (org) => (this.cursuslocatieToEdit = org),
-      ),
+      locatieStore.focussedItem$.subscribe((org) => (this.locatieToEdit = org)),
     );
   }
 
-  override update(props: PropertyValues<CursusLocatiesComponent>): void {
+  override update(props: PropertyValues<LocatiesComponent>): void {
     if (props.has('path')) {
       this.errorMessage = undefined;
       if (this.path[0] === 'new') {
-        this.newCursuslocatie = newCursuslocatie();
+        this.newLocatie = newLocatie();
       }
       if (this.path[0] === 'edit' && this.path[1]) {
-        cursusLocatieStore.setFocus(this.path[1]);
+        locatieStore.setFocus(this.path[1]);
       } else {
-        cursusLocatieStore.removeFocus();
+        locatieStore.removeFocus();
       }
     }
     if (
@@ -77,28 +75,28 @@ export class CursusLocatiesComponent extends RockElement {
       !this.path.length
     ) {
       const { page, ...filterParams } = this.query;
-      this.filter = toCursusLocatieFilter(filterParams);
+      this.filter = toLocatieFilter(filterParams);
       const currentPage = (tryParseInt(page) ?? 1) - 1;
-      cursusLocatieStore.setCurrentPage(currentPage, { ...this.filter });
+      locatieStore.setCurrentPage(currentPage, { ...this.filter });
     }
     super.update(props);
   }
 
-  private async createCursuslocatie(locatie: UpsertableCursusLocatie) {
+  private async createLocatie(locatie: UpsertableLocatie) {
     this.loading = true;
     this.errorMessage = '';
-    cursusLocatieStore
+    locatieStore
       .create(locatie)
       .pipe(
         handleUniquenessError(
           (message) => (this.errorMessage = message),
-          cursusLocatieLabels,
+          locatieLabels,
         ),
       )
       .subscribe({
         next: () => {
           this.errorMessage = '';
-          navigateToCursuslocatiesPage();
+          navigateToLocatiesPage();
         },
         complete: () => {
           this.loading = false;
@@ -106,42 +104,42 @@ export class CursusLocatiesComponent extends RockElement {
       });
   }
 
-  private async updateCursuslocatie() {
+  private async updateLocatie() {
     this.loading = true;
     this.errorMessage = '';
-    cursusLocatieStore
-      .update(this.cursuslocatieToEdit!.id, this.cursuslocatieToEdit!)
+    locatieStore
+      .update(this.locatieToEdit!.id, this.locatieToEdit!)
       .pipe(
         handleUniquenessError(
           (message) => (this.errorMessage = message),
-          cursusLocatieLabels,
+          locatieLabels,
         ),
       )
       .subscribe({
         next: () => {
           this.errorMessage = '';
-          navigateToCursuslocatiesPage();
+          navigateToLocatiesPage();
         },
         complete: () => {
           this.loading = false;
         },
       });
   }
-  private async deleteCursuslocatie(ev: CustomEvent<CursusLocatie>) {
-    cursusLocatieStore.delete(ev.detail.id).subscribe();
+  private async deleteLocatie(ev: CustomEvent<Locatie>) {
+    locatieStore.delete(ev.detail.id).subscribe();
   }
 
   override render() {
     switch (this.path[0]) {
       case undefined:
         return html`<div class="row">
-            <h2 class="col">Cursuslocaties</h2>
+            <h2 class="col">Locaties</h2>
           </div>
           <div class="row">
             <div class="col">
-              <rock-link href="/cursuslocaties/new" btn btnSuccess
+              <rock-link href="/locaties/new" btn btnSuccess
                 ><rock-icon icon="journalPlus" size="md"></rock-icon>
-                Cursuslocatie</rock-link
+                Locatie</rock-link
               >
             </div>
           </div>
@@ -150,48 +148,48 @@ export class CursusLocatiesComponent extends RockElement {
             .filter=${this.filter}
             @search-submitted=${() => router.setQuery(toQuery(this.filter))}
           ></rock-search>
-          ${this.cursuslocaties !== undefined
+          ${this.locaties !== undefined
             ? html`
-                <rock-cursuslocatie-list
-                  .cursuslocaties=${this.cursuslocaties}
-                  @delete=${this.deleteCursuslocatie}
-                ></rock-cursuslocatie-list>
-                <rock-paging .store=${cursusLocatieStore}></rock-paging>
+                <rock-locatie-list
+                  .locaties=${this.locaties}
+                  @delete=${this.deleteLocatie}
+                ></rock-locatie-list>
+                <rock-paging .store=${locatieStore}></rock-paging>
               `
             : html`<rock-loading></rock-loading>`}`;
       case 'new':
         return this.loading
           ? html`<rock-loading></rock-loading>`
-          : html`<rock-edit-cursuslocatie
-              .cursuslocatie="${this.newCursuslocatie}"
+          : html`<rock-edit-locatie
+              .locatie="${this.newLocatie}"
               .errorMessage=${this.errorMessage}
-              @cursuslocatie-submitted="${(event: CustomEvent<CursusLocatie>) =>
-                this.createCursuslocatie(event.detail)}"
-            ></rock-edit-cursuslocatie>`;
+              @locatie-submitted="${(event: CustomEvent<Locatie>) =>
+                this.createLocatie(event.detail)}"
+            ></rock-edit-locatie>`;
       case 'edit':
-        return html`${this.cursuslocatieToEdit
-          ? html`<rock-edit-cursuslocatie
-              .cursuslocatie="${this.cursuslocatieToEdit}"
+        return html`${this.locatieToEdit
+          ? html`<rock-edit-locatie
+              .locatie="${this.locatieToEdit}"
               .errorMessage=${this.errorMessage}
-              @cursuslocatie-submitted=${() => this.updateCursuslocatie()}
-            ></rock-edit-cursuslocatie>`
+              @locatie-submitted=${() => this.updateLocatie()}
+            ></rock-edit-locatie>`
           : html`<rock-loading></rock-loading>`}`;
       default:
-        navigateToCursuslocatiesPage();
+        navigateToLocatiesPage();
     }
   }
 }
-function navigateToCursuslocatiesPage() {
-  router.navigate('/cursuslocaties');
+function navigateToLocatiesPage() {
+  router.navigate('/locaties');
 }
 
-const mainSearchControl: InputControl<CursusLocatieFilter> = {
+const mainSearchControl: InputControl<LocatieFilter> = {
   type: InputType.text,
   name: 'naam',
   label: 'Naam',
   placeholder: 'Zoek op naam',
 };
 
-function newCursuslocatie(): DeepPartial<CursusLocatie> {
+function newLocatie(): DeepPartial<Locatie> {
   return {};
 }

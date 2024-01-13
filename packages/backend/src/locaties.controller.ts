@@ -13,33 +13,33 @@ import {
   Res,
 } from '@nestjs/common';
 import {
-  type CursusLocatieFilter,
-  toCursusLocatieFilter,
-  CursusLocatie,
-  type UpsertableCursusLocatie,
+  type LocatieFilter,
+  toLocatieFilter,
+  Locatie,
+  type UpsertableLocatie,
   TOTAL_COUNT_HEADER,
   PAGE_QUERY_STRING_NAME,
 } from '@rock-solid/shared';
-import { CursuslocatieMapper } from './services/cursuslocatie.mapper.js';
+import { LocatieMapper } from './services/locatie.mapper.js';
 import { Privileges } from './auth/privileges.guard.js';
 import { NumberPipe } from './pipes/number.pipe.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import type { Response } from 'express';
 
-@Controller({ path: 'cursuslocaties' })
-export class CursusLocatiesController {
-  constructor(private cursusLocatieMapper: CursuslocatieMapper) {}
+@Controller({ path: 'locaties' })
+export class LocatiesController {
+  constructor(private locatieMapper: LocatieMapper) {}
 
   @Get()
   async getAll(
     @Res({ passthrough: true }) resp: Response,
-    @Query({ transform: toCursusLocatieFilter })
-    filter: CursusLocatieFilter,
+    @Query({ transform: toLocatieFilter })
+    filter: LocatieFilter,
     @Query(PAGE_QUERY_STRING_NAME, PagePipe) page?: number,
-  ): Promise<CursusLocatie[]> {
+  ): Promise<Locatie[]> {
     const [locaties, count] = await Promise.all([
-      this.cursusLocatieMapper.getAll(filter, page),
-      this.cursusLocatieMapper.count(filter),
+      this.locatieMapper.getAll(filter, page),
+      this.locatieMapper.count(filter),
     ]);
     resp.set(TOTAL_COUNT_HEADER, count.toString());
 
@@ -47,8 +47,8 @@ export class CursusLocatiesController {
   }
 
   @Get(':id')
-  async get(@Param('id', NumberPipe) id: number): Promise<CursusLocatie> {
-    const locatie = await this.cursusLocatieMapper.get(id);
+  async get(@Param('id', NumberPipe) id: number): Promise<Locatie> {
+    const locatie = await this.locatieMapper.get(id);
     if (locatie) {
       return locatie;
     } else {
@@ -57,25 +57,25 @@ export class CursusLocatiesController {
   }
 
   @Post()
-  @Privileges('write:cursuslocaties')
+  @Privileges('write:locaties')
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() cursusLocatie: UpsertableCursusLocatie) {
-    return this.cursusLocatieMapper.create(cursusLocatie);
+  async create(@Body() locatie: UpsertableLocatie) {
+    return this.locatieMapper.create(locatie);
   }
 
   @Put(':id')
-  @Privileges('write:cursuslocaties')
+  @Privileges('write:locaties')
   async update(
     @Param('id', NumberPipe) id: number,
-    @Body() cursusLocatie: UpsertableCursusLocatie,
+    @Body() locatie: UpsertableLocatie,
   ) {
-    return this.cursusLocatieMapper.update(id, cursusLocatie);
+    return this.locatieMapper.update(id, locatie);
   }
 
   @Delete(':id')
-  @Privileges('write:cursuslocaties')
+  @Privileges('write:locaties')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', NumberPipe) id: number): Promise<void> {
-    return this.cursusLocatieMapper.delete(id);
+    return this.locatieMapper.delete(id);
   }
 }

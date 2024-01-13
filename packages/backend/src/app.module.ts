@@ -21,8 +21,8 @@ import { ReportMapper } from './services/report.mapper.js';
 import { PrivilegesGuard } from './auth/privileges.guard.js';
 import { BackupController } from './backup.controller.js';
 import { BackupService } from './services/backup.service.js';
-import { CursusLocatiesController } from './cursuslocaties.controller.js';
-import { CursuslocatieMapper } from './services/cursuslocatie.mapper.js';
+import { LocatiesController } from './locaties.controller.js';
+import { LocatieMapper } from './services/locatie.mapper.js';
 
 const rootPath = fileURLToPath(
   new URL('../../../node_modules/@rock-solid/frontend/dist', import.meta.url),
@@ -39,7 +39,7 @@ const rootPath = fileURLToPath(
     PersonenController,
     ProjectenController,
     OrganisatiesController,
-    CursusLocatiesController,
+    LocatiesController,
     PlaatsenController,
     AuthController,
     ReportsController,
@@ -51,7 +51,7 @@ const rootPath = fileURLToPath(
     AanmeldingMapper,
     PlaatsMapper,
     OrganisatieMapper,
-    CursuslocatieMapper,
+    LocatieMapper,
     DeelnameMapper,
     ReportMapper,
     BackupService,

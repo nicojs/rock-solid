@@ -33,8 +33,8 @@ import { fullName } from '../personen/persoon.pipe';
 import { persoonService } from '../personen/persoon.service';
 import { capitalize } from '../shared';
 import { printProject } from './project.pipes';
-import { cursusLocatieService } from '../cursuslocaties/cursuslocatie.service';
-import { showCursuslocatie } from '../cursuslocaties/cursuslocatie.pipe';
+import { locatieService } from '../locaties/locatie.service';
+import { showLocatie } from '../locaties/locatie.pipe';
 
 @customElement('rock-project-edit')
 export class ProjectEditComponent extends LitElement {
@@ -150,8 +150,8 @@ const cursusActiviteitenControls: FormControl<CursusActiviteit>[] = [
     name: 'locatie',
     type: InputType.autocomplete,
     label: 'Locatie',
-    searchAction: (text) => cursusLocatieService.getAll({ naam: text }),
-    labelFor: showCursuslocatie,
+    searchAction: (text) => locatieService.getAll({ naam: text }),
+    labelFor: showLocatie,
   },
 ];
 const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [

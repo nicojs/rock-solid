@@ -60,7 +60,7 @@ export async function seedCursuslocaties(
     })
     .filter(notEmpty);
 
-  const locatieMap = new Map<string, db.CursusLocatie>();
+  const locatieMap = new Map<string, db.Locatie>();
 
   const stats = { updated: 0, created: 0 };
   for (const { locaties, cursus, raw } of cursussenMetLocaties) {
@@ -79,7 +79,7 @@ export async function seedCursuslocaties(
       if (activiteit && locatieNaam !== '') {
         let locatie = locatieMap.get(locatieNaam);
         if (!locatie) {
-          locatie = await client.cursusLocatie.create({
+          locatie = await client.locatie.create({
             data: { naam: locatieNaam },
           });
           stats.created++;
@@ -87,7 +87,7 @@ export async function seedCursuslocaties(
         }
         await client.activiteit.update({
           where: { id: activiteit.id },
-          data: { cursusLocatie: { connect: { id: locatie.id } } },
+          data: { locatie: { connect: { id: locatie.id } } },
         });
         stats.updated++;
       }

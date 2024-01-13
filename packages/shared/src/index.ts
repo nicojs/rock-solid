@@ -16,4 +16,4 @@ export * from './decimal.js';
 export * from './error.js';
 export * from './report.js';
 export * from './http-helpers.js';
-export * from './cursuslocatie.js';
+export * from './locatie.js';

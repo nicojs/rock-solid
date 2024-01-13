@@ -18,7 +18,7 @@ export type Privilege =
   | 'write:aanmeldingen'
   | 'write:deelnames'
   | 'write:personen'
-  | 'write:cursuslocaties';
+  | 'write:locaties';
 
 export const userRoleNames: Options<UserRole> = {
   admin: 'Admin',
@@ -42,7 +42,7 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'write:aanmeldingen',
     'write:deelnames',
     'write:personen',
-    'write:cursuslocaties',
+    'write:locaties',
   ],
   projectverantwoordelijke: ['read', 'write:deelnames'],
   financieelBeheerder: ['read', 'write:aanmeldingen'],

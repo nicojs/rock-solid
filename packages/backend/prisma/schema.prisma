@@ -81,7 +81,7 @@ model Adres {
   verblijfpersonen     Persoon[]            @relation("verblijfadres")
   domiciliepersonen    Persoon[]            @relation("domicilieadres")
   organisatieContacten OrganisatieContact[]
-  cursusLocaties       CursusLocatie[]
+  cursusLocaties       Locatie[]
 }
 
 model Plaats {
@@ -159,15 +159,15 @@ model Activiteit {
   deelnames        Deelname[]
 
   // Cursussen
-  cursusLocatieId Int?
-  cursusLocatie   CursusLocatie? @relation(fields: [cursusLocatieId], references: [id])
+  locatieId Int?
+  locatie   Locatie? @relation(fields: [locatieId], references: [id])
 
   // Vakanties
   verblijf Int?
   vervoer  Int?
 }
 
-model CursusLocatie {
+model Locatie {
   id      Int    @id @default(autoincrement())
   naam    String @unique
   adresId Int?

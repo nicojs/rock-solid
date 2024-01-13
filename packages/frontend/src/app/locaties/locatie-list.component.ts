@@ -1,4 +1,4 @@
-import { CursusLocatie } from '@rock-solid/shared';
+import { Locatie } from '@rock-solid/shared';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -6,22 +6,22 @@ import { ModalComponent } from '../shared/modal.component';
 import { showAdres } from '../shared';
 import { privilege } from '../auth/privilege.directive';
 
-@customElement('rock-cursuslocatie-list')
-export class CursuslocatieListComponent extends LitElement {
+@customElement('rock-locatie-list')
+export class LocatieListComponent extends LitElement {
   static override styles = [bootstrap];
 
   @property({ attribute: false })
-  private cursuslocaties!: CursusLocatie[];
+  private locaties!: Locatie[];
 
-  private deleteCursuslocatie(loc: CursusLocatie) {
+  private deleteLocatie(loc: Locatie) {
     ModalComponent.instance
       .confirm(
-        html`Weet je zeker dat je cursuslocatie
-          <strong>${loc.naam}</strong> wilt verwijderen?`,
+        html`Weet je zeker dat je locatie <strong>${loc.naam}</strong> wilt
+          verwijderen?`,
       )
       .then((confirmed) => {
         if (confirmed) {
-          const deleteEvent = new CustomEvent<CursusLocatie>('delete', {
+          const deleteEvent = new CustomEvent<Locatie>('delete', {
             bubbles: true,
             composed: true,
             detail: loc,
@@ -33,9 +33,9 @@ export class CursuslocatieListComponent extends LitElement {
   }
 
   override render() {
-    return html`${this.cursuslocaties.length
+    return html`${this.locaties.length
       ? this.renderTable()
-      : html`<div>Geen cursuslocaties gevonden 🤷‍♂️</div>`}`;
+      : html`<div>Geen locaties gevonden 🤷‍♂️</div>`}`;
   }
   private renderTable() {
     return html`<div class="row">
@@ -48,22 +48,19 @@ export class CursuslocatieListComponent extends LitElement {
           </tr>
         </thead>
         <tbody>
-          ${this.cursuslocaties!.map(
+          ${this.locaties!.map(
             (loc) =>
               html`<tr>
                 <td>${loc.naam}</td>
                 <td>${showAdres(loc.adres)}</td>
                 <td>
-                  <rock-link
-                    btn
-                    btnSecondary
-                    href="/cursuslocaties/edit/${loc.id}"
+                  <rock-link btn btnSecondary href="/locaties/edit/${loc.id}"
                     ><rock-icon icon="pencil"></rock-icon
                   ></rock-link>
                   <button
-                    @click=${() => this.deleteCursuslocatie(loc)}
+                    @click=${() => this.deleteLocatie(loc)}
                     type="button"
-                    ${privilege('write:cursuslocaties')}
+                    ${privilege('write:locaties')}
                     class="btn btn-danger"
                   >
                     <rock-icon icon="trash"></rock-icon>

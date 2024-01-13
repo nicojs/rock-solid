@@ -33,7 +33,7 @@ import {
   vakantieVervoerMapper,
 } from './enum.mapper.js';
 import { includeAdresWithPlaats, DBAdresWithPlaats } from './adres.mapper.js';
-import { toCursuslocatie } from './cursuslocatie.mapper.js';
+import { toCursuslocatie } from './locatie.mapper.js';
 
 const includeAggregate = {
   activiteiten: {
@@ -48,7 +48,7 @@ const includeAggregate = {
           deelnames: true,
         },
       },
-      cursusLocatie: {
+      locatie: {
         include: {
           adres: includeAdresWithPlaats,
         },
@@ -289,7 +289,7 @@ function toCreateDBActiviteit(
     vormingsuren: vormingsuren ?? null,
     begeleidingsuren: begeleidingsuren ?? null,
     metOvernachting,
-    cursusLocatie: locatie
+    locatie: locatie
       ? {
           connect: {
             id: locatie.id,
@@ -305,7 +305,7 @@ function toUpdateManyDBActiviteit({
 }: UpsertableActiviteit): db.Prisma.ActiviteitUncheckedUpdateManyInput {
   return {
     ...toCreateDBActiviteit(activiteit),
-    cursusLocatieId: locatie?.id ?? null,
+    locatieId: locatie?.id ?? null,
   };
 }
 
@@ -317,7 +317,7 @@ type DBActiviteitAggregate = db.Activiteit & {
   _count: {
     deelnames: number;
   };
-  cursusLocatie: {
+  locatie: {
     id: number;
     naam: string;
     adres: DBAdresWithPlaats | null;
@@ -414,17 +414,11 @@ function calculatePrijs(
 }
 
 function toCursusActiviteit({
-  cursusLocatie,
+  locatie: cursusLocatie,
   ...val
 }: DBActiviteitAggregate): CursusActiviteit {
-  const {
-    cursusLocatieId,
-    projectId,
-    verblijf,
-    vervoer,
-    _count,
-    ...activiteitData
-  } = purgeNulls(val);
+  const { locatieId, projectId, verblijf, vervoer, _count, ...activiteitData } =
+    purgeNulls(val);
   return {
     ...activiteitData,
     locatie: toCursuslocatie(cursusLocatie),

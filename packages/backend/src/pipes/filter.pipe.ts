@@ -1,16 +1,16 @@
 import {
-  CursusLocatieFilter,
+  LocatieFilter,
   OrganisatieFilter,
   Queryfied,
-  toCursusLocatieFilter,
+  toLocatieFilter,
   toOrganisatieFilter,
 } from '@rock-solid/shared';
 import { PipeTransform, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CursusLocatieFilterPipe implements PipeTransform {
-  transform(value: Queryfied<CursusLocatieFilter>): CursusLocatieFilter {
-    return toCursusLocatieFilter(value);
+  transform(value: Queryfied<LocatieFilter>): LocatieFilter {
+    return toLocatieFilter(value);
   }
 }
 

@@ -476,12 +476,8 @@ describe(ProjectenController.name, () => {
     it("should connect the cursuslocatie to it's activiteiten", async () => {
       // Arrange
       const [loc, loc2] = await Promise.all([
-        harness.createCursuslocatie(
-          factory.cursuslocatie({ naam: 'locatie 1' }),
-        ),
-        harness.createCursuslocatie(
-          factory.cursuslocatie({ naam: 'locatie 2' }),
-        ),
+        harness.createLocatie(factory.locatie({ naam: 'locatie 1' })),
+        harness.createLocatie(factory.locatie({ naam: 'locatie 2' })),
       ]);
 
       // Act
@@ -541,12 +537,8 @@ describe(ProjectenController.name, () => {
     it('should connect a new cursuslocatie', async () => {
       // Arrange
       const [loc1, loc2] = await Promise.all([
-        harness.createCursuslocatie(
-          factory.cursuslocatie({ naam: 'locatie 1' }),
-        ),
-        harness.createCursuslocatie(
-          factory.cursuslocatie({ naam: 'locatie 2' }),
-        ),
+        harness.createLocatie(factory.locatie({ naam: 'locatie 1' })),
+        harness.createLocatie(factory.locatie({ naam: 'locatie 2' })),
       ]);
       const project = await harness.createProject(
         factory.cursus({
@@ -574,8 +566,8 @@ describe(ProjectenController.name, () => {
 
     it('should disconnect a missing cursuslocatie', async () => {
       // Arrange
-      const loc = await harness.createCursuslocatie(
-        factory.cursuslocatie({ naam: 'locatie 1' }),
+      const loc = await harness.createLocatie(
+        factory.locatie({ naam: 'locatie 1' }),
       );
       const project = await harness.createProject(
         factory.cursus({
@@ -598,8 +590,8 @@ describe(ProjectenController.name, () => {
 
     it('should connect a locatie to a new activiteit', async () => {
       // Arrange
-      const loc = await harness.createCursuslocatie(
-        factory.cursuslocatie({ naam: 'locatie 1' }),
+      const loc = await harness.createLocatie(
+        factory.locatie({ naam: 'locatie 1' }),
       );
       const project = await harness.createProject(
         factory.cursus({

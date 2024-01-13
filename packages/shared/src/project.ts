@@ -4,7 +4,7 @@ import { OverigPersoon } from './persoon.js';
 import { Upsertable } from './upsertable.js';
 import { Aanmeldingsstatus } from './aanmelding.js';
 import { Labels, Queryfied, filterMetaQuery, tryParseInt } from './util.js';
-import { CursusLocatie } from './cursuslocatie.js';
+import { Locatie } from './locatie.js';
 
 export interface BaseProject {
   id: number;
@@ -108,7 +108,7 @@ export interface BaseActiviteit {
 }
 
 export interface CursusActiviteit extends BaseActiviteit {
-  locatie?: CursusLocatie;
+  locatie?: Locatie;
 }
 
 export interface VakantieActiviteit extends BaseActiviteit {
