@@ -6,11 +6,12 @@ import {
   Deelnemer,
   deelnemerLabels,
   Organisatie,
-  organisatieColumnNames,
+  organisatieLabels,
   organisatieContactColumnNames,
   organisatieSoorten,
   OverigPersoon,
   overigPersoonLabels,
+  Labels,
 } from '@rock-solid/shared';
 import {
   capitalize,
@@ -188,7 +189,7 @@ export function toOrganisatiesCsv(organisaties: Organisatie[]): string {
       'soorten',
       ...adresCsvColumns,
     ],
-    { ...organisatieColumnNames, ...organisatieContactColumnNames },
+    { ...organisatieLabels, ...organisatieContactColumnNames },
     {
       foldervoorkeuren: foldervoorkeurenCsv,
       soorten: optionsCsv(organisatieSoorten),
@@ -199,7 +200,7 @@ export function toOrganisatiesCsv(organisaties: Organisatie[]): string {
 export function toCsv<T>(
   values: T[],
   columns: ReadonlyArray<keyof T & string>,
-  columnLabels: Partial<Record<keyof T, string>>,
+  columnLabels: Partial<Labels<T>>,
   valueFactory: ValueFactory<T>,
 ): string {
   // The excel csv delimiter is the opposite of the decimal separator, see https://www.ablebits.com/office-addins-blog/change-excel-csv-delimiter/

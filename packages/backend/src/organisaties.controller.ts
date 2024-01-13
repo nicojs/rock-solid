@@ -3,6 +3,7 @@ import {
   type OrganisatieFilter,
   TOTAL_COUNT_HEADER,
   type UpsertableOrganisatie,
+  PAGE_QUERY_STRING_NAME,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -19,11 +20,11 @@ import {
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { OrganisatieFilterPipe } from './pipes/organisatie-filter.pipe.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import { OrganisatieMapper } from './services/organisatie.mapper.js';
 import { Privileges } from './auth/privileges.guard.js';
 import { NumberPipe } from './pipes/number.pipe.js';
+import { OrganisatieFilterPipe } from './pipes/filter.pipe.js';
 
 @Controller({ path: 'organisaties' })
 export class OrganisatiesController {
@@ -33,7 +34,7 @@ export class OrganisatiesController {
   async getAll(
     @Res({ passthrough: true }) resp: Response,
     @Query(OrganisatieFilterPipe) filter: OrganisatieFilter,
-    @Query('_page', PagePipe) page?: number,
+    @Query(PAGE_QUERY_STRING_NAME, PagePipe) page?: number,
   ): Promise<Organisatie[]> {
     const [people, count] = await Promise.all([
       this.organisatieMapper.getAll(filter, page),

@@ -93,3 +93,8 @@ export function tryParseBoolean(val: string | undefined): boolean | undefined {
  * Represents a URL query (e.g. `?foo=bar&baz=qux` = `{ foo: 'bar', baz: 'qux' }`)
  */
 export type Query = Record<string, string>;
+
+/**
+ * Define labels for an entity
+ */
+export type Labels<TEntity> = Readonly<Record<keyof TEntity & string, string>>;

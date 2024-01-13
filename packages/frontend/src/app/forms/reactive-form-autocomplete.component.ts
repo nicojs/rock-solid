@@ -1,4 +1,3 @@
-import { Plaats } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -7,17 +6,18 @@ import {
   AutocompleteComponent,
   capitalize,
   FocusState,
-  showPlaats,
-  plaatsService,
   TypeAheadHint,
 } from '../shared';
-import { PlaatsControl } from './form-control';
+import { AutocompleteControl } from './form-control';
 import { FormControlElement } from './form-element';
 
-@customElement('rock-reactive-form-plaats')
-export class ReactiveFormPlaats<TEntity> extends FormControlElement<TEntity> {
+@customElement('rock-reactive-form-autocomplete')
+export class ReactiveFormAutocomplete<
+  TEntity,
+  TValue,
+> extends FormControlElement<TEntity> {
   @property({ attribute: false })
-  public control!: PlaatsControl<TEntity>;
+  public control!: AutocompleteControl<TEntity, TValue>;
 
   @property({ attribute: false })
   private validationMessage = '';
@@ -28,18 +28,18 @@ export class ReactiveFormPlaats<TEntity> extends FormControlElement<TEntity> {
   }
 
   @state()
-  public get plaatsValue() {
-    return this.entity[this.control.name] as unknown as Plaats | undefined;
+  public get value() {
+    return this.entity[this.control.name] as unknown as TValue | undefined;
   }
-  public set plaatsValue(val: Plaats | undefined) {
-    const oldValue = this.plaatsValue;
-    (this.entity[this.control.name] as unknown as Plaats | undefined) = val;
+  public set value(val: TValue | undefined) {
+    const oldValue = this.value;
+    (this.entity[this.control.name] as unknown as TValue | undefined) = val;
     this.updateValidity();
-    this.requestUpdate('plaatsValue', oldValue);
+    this.requestUpdate('value', oldValue);
   }
 
   private updateValidity() {
-    if (this.plaatsValue || !this.control.validators?.required) {
+    if (this.value || !this.control.validators?.required) {
       this.input.setCustomValidity(''); // valid
     } else {
       this.input.setCustomValidity('Selecteer een plaats');
@@ -47,7 +47,9 @@ export class ReactiveFormPlaats<TEntity> extends FormControlElement<TEntity> {
   }
 
   protected override update(
-    changedProperties: PropertyValues<ReactiveFormPlaats<TEntity>>,
+    changedProperties: PropertyValues<
+      ReactiveFormAutocomplete<TEntity, TValue>
+    >,
   ): void {
     super.update(changedProperties);
     if (changedProperties.has('entity')) {
@@ -56,9 +58,11 @@ export class ReactiveFormPlaats<TEntity> extends FormControlElement<TEntity> {
   }
 
   protected override updated(
-    changedProperties: PropertyValues<ReactiveFormPlaats<TEntity>>,
+    changedProperties: PropertyValues<
+      ReactiveFormAutocomplete<TEntity, TValue>
+    >,
   ) {
-    if (changedProperties.has('plaatsValue')) {
+    if (changedProperties.has('value')) {
       // Manual change to value, make sure the change is reflected inside the autocomplete box
       this.input.dispatchEvent(new InputEvent('input'));
     }
@@ -84,10 +88,10 @@ export class ReactiveFormPlaats<TEntity> extends FormControlElement<TEntity> {
           autocomplete="off"
           id="${this.name}"
           name="${this.control.name}"
-          .value="${showPlaats(this.plaatsValue)}"
+          .value="${this.control.labelFor(this.value)}"
           @change=${() => {
             if (this.inputRef.value!.value === '') {
-              this.plaatsValue = undefined;
+              this.value = undefined;
             }
           }}
           ?required=${this.control.validators?.required}
@@ -98,15 +102,15 @@ export class ReactiveFormPlaats<TEntity> extends FormControlElement<TEntity> {
         <rock-autocomplete
           class="col-lg-10 col-md-8"
           placeholder="Woonplaats"
-          .searchAction="${(val: string): Promise<TypeAheadHint<Plaats>[]> =>
-            plaatsService.getAll({ search: val }).then((plaatsen) =>
-              plaatsen.map((plaats) => ({
-                text: showPlaats(plaats),
-                value: plaats,
+          .searchAction="${(search: string): Promise<TypeAheadHint<TValue>[]> =>
+            this.control.searchAction(search).then((values) =>
+              values.map((value) => ({
+                text: this.control.labelFor(value),
+                value,
               })),
             )}"
-          @selected="${(ev: CustomEvent<TypeAheadHint<Plaats>>) => {
-            this.plaatsValue = ev.detail.value;
+          @selected="${(ev: CustomEvent<TypeAheadHint<TValue>>) => {
+            this.value = ev.detail.value;
             this.input.blur();
             (ev.target as AutocompleteComponent).focusState = FocusState.None;
           }}"

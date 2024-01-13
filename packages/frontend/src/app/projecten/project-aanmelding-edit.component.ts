@@ -11,7 +11,7 @@ import {
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { FormControl, InputType } from '../forms';
+import { FormControl, InputType, plaatsControl } from '../forms';
 import { fullNameOrUnknown } from '../personen/persoon.pipe';
 import { printProject } from './project.pipes';
 
@@ -85,11 +85,7 @@ const aanmeldingControls: FormControl<Aanmelding>[] = [
     grouped: false,
     items: aanmeldingsstatussen,
   },
-  {
-    name: 'plaats',
-    label: aanmeldingLabels.plaats,
-    type: InputType.plaats,
-  },
+  plaatsControl('plaats', { label: aanmeldingLabels.plaats }),
   {
     name: 'woonsituatie',
     label: aanmeldingLabels.woonsituatie,
@@ -107,6 +103,7 @@ const aanmeldingControls: FormControl<Aanmelding>[] = [
     label: aanmeldingLabels.geslacht,
     type: InputType.radio,
     items: geslachten,
+    allowDeselect: true,
   },
   {
     name: 'tijdstipVanAanmelden',

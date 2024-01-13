@@ -32,18 +32,25 @@ import {
   vakantieVerblijfMapper,
   vakantieVervoerMapper,
 } from './enum.mapper.js';
+import { includeAdresWithPlaats, DBAdresWithPlaats } from './adres.mapper.js';
+import { toCursuslocatie } from './locatie.mapper.js';
 
 const includeAggregate = {
   activiteiten: {
     orderBy: [
       {
-        van: 'asc' as const,
+        van: 'asc',
       },
     ],
     include: {
       _count: {
         select: {
-          deelnames: true as const,
+          deelnames: true,
+        },
+      },
+      locatie: {
+        include: {
+          adres: includeAdresWithPlaats,
         },
       },
     },
@@ -53,10 +60,10 @@ const includeAggregate = {
   },
   _count: {
     select: {
-      aanmeldingen: true as const,
+      aanmeldingen: true,
     },
   },
-} satisfies Prisma.ProjectInclude;
+} as const satisfies Prisma.ProjectInclude;
 
 /**
  * A data mapper for persoon
@@ -152,7 +159,7 @@ export class ProjectMapper {
         data: {
           ...toDBProject(newProject),
           activiteiten: {
-            create: newProject.activiteiten.map(toDBActiviteit),
+            create: newProject.activiteiten.map(toCreateDBActiviteit),
           },
           begeleiders: {
             connect: newProject.begeleiders?.map(({ id }) => ({ id })),
@@ -188,14 +195,14 @@ export class ProjectMapper {
             },
             create: projectUpdates.activiteiten
               .filter((act) => empty(act.id))
-              .map(toDBActiviteit),
+              .map(toCreateDBActiviteit),
             updateMany: projectUpdates.activiteiten
               .filter((act) => notEmpty(act.id))
               .map((act) => ({
                 where: {
                   id: act.id!,
                 },
-                data: toDBActiviteit(act),
+                data: toUpdateManyDBActiviteit(act),
               })),
           },
           begeleiders: { set: begeleiderIds },
@@ -255,7 +262,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
   }
 }
 
-function toDBActiviteit(
+function toCreateDBActiviteit(
   activiteit: UpsertableActiviteit,
 ): db.Prisma.ActiviteitCreateWithoutProjectInput {
   const {
@@ -266,6 +273,8 @@ function toDBActiviteit(
     begeleidingsuren,
     verblijf,
     vervoer,
+    locatie,
+    id,
     ...data
   } = activiteit;
   const { van, totEnMet } = data;
@@ -280,6 +289,23 @@ function toDBActiviteit(
     vormingsuren: vormingsuren ?? null,
     begeleidingsuren: begeleidingsuren ?? null,
     metOvernachting,
+    locatie: locatie
+      ? {
+          connect: {
+            id: locatie.id,
+          },
+        }
+      : undefined,
+  };
+}
+
+function toUpdateManyDBActiviteit({
+  locatie,
+  ...activiteit
+}: UpsertableActiviteit): db.Prisma.ActiviteitUncheckedUpdateManyInput {
+  return {
+    ...toCreateDBActiviteit(activiteit),
+    locatieId: locatie?.id ?? null,
   };
 }
 
@@ -291,6 +317,11 @@ type DBActiviteitAggregate = db.Activiteit & {
   _count: {
     deelnames: number;
   };
+  locatie: {
+    id: number;
+    naam: string;
+    adres: DBAdresWithPlaats | null;
+  } | null;
 };
 
 interface DBProjectAggregate extends db.Project {
@@ -382,11 +413,15 @@ function calculatePrijs(
   return prijs;
 }
 
-function toCursusActiviteit(val: DBActiviteitAggregate): CursusActiviteit {
-  const { projectId, verblijf, vervoer, _count, ...activiteitData } =
+function toCursusActiviteit({
+  locatie: cursusLocatie,
+  ...val
+}: DBActiviteitAggregate): CursusActiviteit {
+  const { locatieId, projectId, verblijf, vervoer, _count, ...activiteitData } =
     purgeNulls(val);
   return {
     ...activiteitData,
+    locatie: toCursuslocatie(cursusLocatie),
     aantalDeelnames: _count.deelnames,
     aantalDeelnemersuren: -1,
   };

@@ -1,3 +1,5 @@
+import { Options } from './options.js';
+
 export interface User {
   email: string;
   name: string;
@@ -15,9 +17,10 @@ export type Privilege =
   | 'write:organisaties'
   | 'write:aanmeldingen'
   | 'write:deelnames'
-  | 'write:personen';
+  | 'write:personen'
+  | 'write:locaties';
 
-export const userRoleNames: Record<UserRole, string> = {
+export const userRoleNames: Options<UserRole> = {
   admin: 'Admin',
   projectverantwoordelijke: 'Projectverantwoordelijke',
   financieelBeheerder: 'Financieel beheerder',
@@ -39,6 +42,7 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'write:aanmeldingen',
     'write:deelnames',
     'write:personen',
+    'write:locaties',
   ],
   projectverantwoordelijke: ['read', 'write:deelnames'],
   financieelBeheerder: ['read', 'write:aanmeldingen'],

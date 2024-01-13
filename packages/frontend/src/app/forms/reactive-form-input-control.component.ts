@@ -281,9 +281,12 @@ export class ReactiveFormInputControl<
     control: RadioInputControl<TEntity, TKey>,
   ) {
     const isChecked = (value: string) => {
-      return (
-        (this.entity[control.name] as unknown as string | undefined) === value
-      );
+      const checked =
+        (this.entity[control.name] as unknown as string | undefined) === value;
+      if (control.name === 'geslacht') {
+        console.log('isChecked', control.name, value, checked);
+      }
+      return checked;
     };
 
     return html` ${Object.entries(control.items).map(([key, value]) => {
@@ -298,7 +301,7 @@ export class ReactiveFormInputControl<
           ${ref(currentRadioRef)}
           id=${id}
           ?required=${control.validators?.required}
-          ?checked=${isChecked(key)}
+          .checked=${isChecked(key)}
           @click=${() => {
             if (control.allowDeselect) {
               if (isChecked(key)) {

@@ -7,7 +7,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
@@ -81,6 +81,7 @@ model Adres {
   verblijfpersonen     Persoon[]            @relation("verblijfadres")
   domiciliepersonen    Persoon[]            @relation("domicilieadres")
   organisatieContacten OrganisatieContact[]
+  cursusLocaties       Locatie[]
 }
 
 model Plaats {
@@ -157,9 +158,22 @@ model Activiteit {
   metOvernachting  Boolean    @default(false)
   deelnames        Deelname[]
 
+  // Cursussen
+  locatieId Int?
+  locatie   Locatie? @relation(fields: [locatieId], references: [id])
+
   // Vakanties
   verblijf Int?
   vervoer  Int?
+}
+
+model Locatie {
+  id      Int    @id @default(autoincrement())
+  naam    String @unique
+  adresId Int?
+  adres   Adres? @relation(fields: [adresId], references: [id])
+
+  Activiteit Activiteit[]
 }
 
 model Deelname {

@@ -3,7 +3,7 @@ import {
   Privilege,
   UpsertableOrganisatie,
   groupedOrganisatieSoorten,
-  organisatieColumnNames,
+  organisatieLabels,
   organisatieSoorten,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
@@ -60,21 +60,21 @@ const organisatieControls: FormControl<Organisatie>[] = [
   {
     name: 'naam',
     type: InputType.text,
-    label: organisatieColumnNames.naam,
+    label: organisatieLabels.naam,
     validators: { required: true },
   },
   {
     name: 'website',
     type: InputType.url,
-    label: organisatieColumnNames.website,
+    label: organisatieLabels.website,
     placeholder: 'https://dekei.be',
   },
   checkboxesGroupedItemsControl('soorten', groupedOrganisatieSoorten, {
-    label: organisatieColumnNames.soorten,
+    label: organisatieLabels.soorten,
   }),
   {
     name: 'soortOpmerking',
-    label: organisatieColumnNames.soortOpmerking,
+    label: organisatieLabels.soortOpmerking,
     type: InputType.text,
     validators: {
       custom: (value, org) => {

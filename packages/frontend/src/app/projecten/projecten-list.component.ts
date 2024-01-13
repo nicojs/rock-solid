@@ -83,6 +83,7 @@ export class ProjectenListComponent extends LitElement {
           <th>Prijs</th>
           ${isCursus
             ? html`
+                <th>Locatie(s)</th>
                 <th>Organisatieonderdeel</th>
                 <th>Deelnemersuren</th>
               `
@@ -115,6 +116,15 @@ export class ProjectenListComponent extends LitElement {
               <td>${showMoney(project.prijs)}</td>
               ${project.type === 'cursus'
                 ? html`<td>
+                      ${project.activiteiten
+                        .map((act) => act.locatie?.naam)
+                        .filter(notEmpty)
+                        .filter(
+                          (item, index, arr) => arr.indexOf(item) === index,
+                        )
+                        .join(', ')}
+                    </td>
+                    <td>
                       ${project.type === 'cursus'
                         ? organisatieonderdelen[project.organisatieonderdeel]
                         : notAvailable}
@@ -144,6 +154,7 @@ export class ProjectenListComponent extends LitElement {
                     ? html`<rock-link
                         title="Open activiteit"
                         btn
+                        sm
                         ?btnWarning=${!isComplete}
                         ?btnOutlinePrimary=${isComplete}
                         href="/${pluralize(
@@ -165,7 +176,7 @@ export class ProjectenListComponent extends LitElement {
               <td>
                 <button
                   title="Deelnemerslijst downloaden (voor mailing)"
-                  class="btn btn-outline-primary "
+                  class="btn btn-outline-primary btn-sm"
                   type="button"
                   @click=${() => this.downloadDeelnemersLijst(project)}
                 >
@@ -174,6 +185,7 @@ export class ProjectenListComponent extends LitElement {
 
                 <rock-link
                   btn
+                  sm
                   btnOutlinePrimary
                   title="Wijzigen"
                   href="/${pluralize(project.type)}/${project.id}/edit"
@@ -181,6 +193,7 @@ export class ProjectenListComponent extends LitElement {
                 ></rock-link>
                 <rock-link
                   btn
+                  sm
                   btnOutlinePrimary
                   title="Aanmeldingen"
                   href="/${pluralize(project.type)}/${project.id}/aanmeldingen"
@@ -199,7 +212,7 @@ export class ProjectenListComponent extends LitElement {
                     title="${printProject(project)} Verwijderen"
                     type="button"
                     ${privilege('write:projecten')}
-                    class="btn btn-danger"
+                    class="btn btn-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>
                   </button>

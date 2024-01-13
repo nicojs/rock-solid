@@ -1,4 +1,4 @@
-export interface UnprocessableEntityBody {
+export interface UnprocessableEntityBody<T> {
   status: 'uniqueness_failed';
-  readonly fields: readonly string[];
+  readonly fields: ReadonlyArray<keyof T & string>;
 }

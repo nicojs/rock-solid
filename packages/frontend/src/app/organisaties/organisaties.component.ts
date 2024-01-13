@@ -5,6 +5,7 @@ import {
   Queryfied,
   UpsertableOrganisatie,
   foldersoorten,
+  organisatieLabels,
   toOrganisatieFilter,
   tryParseInt,
 } from '@rock-solid/shared';
@@ -94,7 +95,12 @@ export class OrganisatiesComponent extends RockElement {
     this.errorMessage = '';
     organisatieStore
       .create(organisatie)
-      .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
+      .pipe(
+        handleUniquenessError(
+          (message) => (this.errorMessage = message),
+          organisatieLabels,
+        ),
+      )
       .subscribe({
         next: () => {
           this.errorMessage = '';
@@ -111,7 +117,12 @@ export class OrganisatiesComponent extends RockElement {
     this.errorMessage = '';
     organisatieStore
       .update(this.organisatieToEdit!.id, this.organisatieToEdit!)
-      .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
+      .pipe(
+        handleUniquenessError(
+          (message) => (this.errorMessage = message),
+          organisatieLabels,
+        ),
+      )
       .subscribe({
         next: () => {
           this.errorMessage = '';

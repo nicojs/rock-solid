@@ -4,6 +4,10 @@ import { toPlaats } from './plaats.mapper.js';
 
 export type DBAdresWithPlaats = db.Adres & { plaats: db.Plaats };
 
+export const includeAdresWithPlaats = {
+  include: { plaats: true } satisfies db.Prisma.AdresInclude,
+} as const;
+
 export function toAdres(adres: DBAdresWithPlaats | null): Adres | undefined {
   if (adres) {
     const { plaats, plaatsId, busnummer, ...props } = adres;

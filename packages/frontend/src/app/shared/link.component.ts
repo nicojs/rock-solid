@@ -32,6 +32,9 @@ export class Link extends LitElement {
   @property({ type: Boolean })
   public lg = false;
 
+  @property({ type: Boolean })
+  public sm = false;
+
   @property()
   public href = '';
 
@@ -41,6 +44,7 @@ export class Link extends LitElement {
         class="${classMap({
           btn: this.btn,
           'btn-lg': this.lg,
+          'btn-sm': this.sm,
           'btn-primary': this.btnPrimary,
           'btn-success': this.btnSuccess,
           'btn-warning': this.btnWarning,

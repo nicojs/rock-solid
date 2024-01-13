@@ -37,6 +37,11 @@ import {
   UpsertableAdres,
   PersoonFilter,
   Persoon,
+  UpsertableLocatie,
+  LocatieFilter,
+  Locatie,
+  PAGE_QUERY_STRING_NAME,
+  TOTAL_COUNT_HEADER,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -134,6 +139,7 @@ export class RockSolidDBContainer {
     await this.client.$queryRaw`DELETE FROM OverigPersoonSelectie`;
     await this.client.$queryRaw`DELETE FROM Persoon`;
     await this.client.$queryRaw`DELETE FROM Project`;
+    await this.client.$queryRaw`DELETE FROM Locatie`;
     await this.client.$queryRaw`DELETE FROM Adres`;
     await this.client.$queryRaw`DELETE FROM Plaats`;
     await this.client
@@ -294,7 +300,7 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async updateProject<TProject extends Project>(
+  async updateProject<TProject extends UpsertableProject>(
     project: TProject,
   ): Promise<TProject extends { type: 'cursus' } ? Cursus : Vakantie> {
     const response = await this.put(`/projecten/${project.id}`, project).expect(
@@ -303,9 +309,52 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
+  async createLocatie(cursusLocatie: UpsertableLocatie): Promise<Locatie> {
+    const response = await this.post(`/locaties`, cursusLocatie).expect(201);
+    return response.body;
+  }
+
+  async updateLocatie(
+    id: number,
+    cursusLocatie: UpsertableLocatie,
+  ): Promise<Locatie> {
+    const response = await this.put(`/locaties/${id}`, cursusLocatie).expect(
+      200,
+    );
+    return response.body;
+  }
+
+  async deleteLocatie(id: number): Promise<void> {
+    await this.delete(`/locaties/${id}`).expect(204);
+  }
+
+  public async getAllLocaties(filter?: LocatieFilter): Promise<Locatie[]> {
+    const request = this.get(`/locaties${toQueryString(filter)}`);
+    const response = await request.expect(200);
+    return response.body;
+  }
+  public async getLocatiesPage(
+    page: number,
+    filter?: LocatieFilter,
+  ): Promise<[body: Locatie[], totalCount: number]> {
+    const response = await this.get(
+      `/locaties${toQueryString({
+        ...filter,
+        [PAGE_QUERY_STRING_NAME]: page,
+      })}`,
+    ).expect(200);
+    return [response.body, +response.get(TOTAL_COUNT_HEADER)];
+  }
+
+  public async getLocatie(id: number): Promise<Locatie> {
+    const response = await this.get(`/locaties/${id}`).expect(200);
+    return response.body;
+  }
+
   async createDeelnemer(deelnemer: UpsertableDeelnemer): Promise<Deelnemer> {
     return await this.createPersoon(deelnemer);
   }
+
   async updateDeelnemer(deelnemer: Deelnemer): Promise<Deelnemer> {
     const response = await this.put(
       `/personen/${deelnemer.id}`,
@@ -489,6 +538,13 @@ export const factory = {
       ...overrides,
     };
   },
+
+  locatie(overrides?: Partial<UpsertableLocatie>): UpsertableLocatie {
+    return {
+      naam: 'Onbekend',
+      ...overrides,
+    };
+  },
 };
 
 let rockSolidDBContainer: RockSolidDBContainer;
@@ -562,6 +618,18 @@ function parseBody(
   }
 }
 
-export function byId(a: { id: number }, b: { id: number }) {
+export function byId(
+  a: { id: number } | undefined,
+  b: { id: number } | undefined,
+): number {
+  if (!a && !b) {
+    return 0;
+  }
+  if (!a) {
+    return -1;
+  }
+  if (!b) {
+    return 1;
+  }
   return a.id - b.id;
 }

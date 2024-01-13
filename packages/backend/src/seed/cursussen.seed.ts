@@ -42,11 +42,21 @@ export async function seedCursussen(
 
   const cursussen = cursussenRaw.map(fromRaw).filter(notEmpty);
 
-  for (const cursus of cursussen) {
-    await client.project.create({
+  const cursussenByTitle = new Map<string, number>();
+
+  for (const [titel, cursus] of cursussen) {
+    const { id } = await client.project.create({
       data: cursus,
     });
+    cursussenByTitle.set(titel, id);
   }
+
+  await writeOutputJson(
+    'cursussen-lookup.json',
+    Object.fromEntries(cursussenByTitle.entries()),
+    readonly,
+  );
+  console.log(`✅ cursussen-lookup.json (${cursussenByTitle.size})`);
 
   console.log(`Seeded ${cursussen.length} cursussen`);
   console.log(`(${importErrors.report})`);
@@ -55,7 +65,11 @@ export async function seedCursussen(
     importErrors,
     readonly,
   );
-  function fromRaw(raw: RawCursus): db.Prisma.ProjectCreateInput | undefined {
+  return cursussenByTitle;
+
+  function fromRaw(
+    raw: RawCursus,
+  ): [title: string, input: db.Prisma.ProjectCreateInput] | undefined {
     const projectNummerMatch = projectnummerRegex.exec(raw.titel);
     if (!projectNummerMatch) {
       importErrors.addError('project_nummer_parse', {
@@ -100,7 +114,7 @@ export async function seedCursussen(
       },
     };
     projectsByCode.set(projectnummer, project);
-    return project;
+    return [raw.titel, project];
   }
 
   function organisatieOnderdeelFromRaw(raw: RawCursus): number | undefined {

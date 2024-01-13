@@ -12,7 +12,9 @@ export async function handleKnownPrismaErrors<T>(
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       switch (err.code) {
         case PrismaErrorCodes.UniqueConstraintFailed:
-          throw new UniqueKeyFailedError(err.meta!['target'] as string[]);
+          throw new UniqueKeyFailedError<T>(
+            err.meta!['target'] as Array<keyof T & string>,
+          );
         case PrismaErrorCodes.OneOrMoreRecordsRequiredButNotFound:
           throw new NotFoundException(
             'One or more records required but not found',
