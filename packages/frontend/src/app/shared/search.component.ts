@@ -14,7 +14,7 @@ export class SearchComponent<
   public mainControl!: InputControl<TFilter>;
 
   @property()
-  public advancedControls!: FormControl<TFilter>[];
+  public advancedControls?: FormControl<TFilter>[];
 
   @property()
   private filter!: TFilter;
@@ -26,15 +26,15 @@ export class SearchComponent<
     changes: PropertyValueMap<SearchComponent<TFilter>>,
   ): void {
     super.firstUpdated(changes);
-    const advancedSearchKeys = this.advancedControls.map(({ name }) => name);
+    const advancedSearchKeys = this.advancedControls?.map(({ name }) => name);
     this.showAdvancedSearch = Object.entries(this.filter)
-      .filter(([key]) => advancedSearchKeys.includes(key))
+      .filter(([key]) => advancedSearchKeys?.includes(key))
       .some(([, value]) => value !== undefined);
   }
 
   private cancelAdvancedSearch() {
     this.showAdvancedSearch = false;
-    this.advancedControls.forEach((control) => {
+    this.advancedControls?.forEach((control) => {
       (this.filter[control.name as keyof TFilter] as undefined) = undefined;
     });
     this.dispatchEvent(

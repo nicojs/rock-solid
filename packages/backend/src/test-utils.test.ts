@@ -40,6 +40,9 @@ import {
   UpsertableCursusLocatie,
   CursusLocatieFilter,
   CursusLocatie,
+  PAGE_SIZE,
+  PAGE_QUERY_STRING_NAME,
+  TOTAL_COUNT_HEADER,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -298,7 +301,7 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async updateProject<TProject extends Project>(
+  async updateProject<TProject extends UpsertableProject>(
     project: TProject,
   ): Promise<TProject extends { type: 'cursus' } ? Cursus : Vakantie> {
     const response = await this.put(`/projecten/${project.id}`, project).expect(
@@ -307,10 +310,10 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async createCursusLocatie(
+  async createCursuslocatie(
     cursusLocatie: UpsertableCursusLocatie,
   ): Promise<CursusLocatie> {
-    const response = await this.post(`/cursus-locaties`, cursusLocatie).expect(
+    const response = await this.post(`/cursuslocaties`, cursusLocatie).expect(
       201,
     );
     return response.body;
@@ -321,27 +324,38 @@ class IntegrationTestingHarness {
     cursusLocatie: UpsertableCursusLocatie,
   ): Promise<CursusLocatie> {
     const response = await this.put(
-      `/cursus-locaties/${id}`,
+      `/cursuslocaties/${id}`,
       cursusLocatie,
     ).expect(200);
     return response.body;
   }
 
   async deleteCursusLocatie(id: number): Promise<void> {
-    await this.delete(`/cursus-locaties/${id}`).expect(204);
+    await this.delete(`/cursuslocaties/${id}`).expect(204);
   }
 
   public async getAllCursusLocaties(
     filter?: CursusLocatieFilter,
   ): Promise<CursusLocatie[]> {
-    const response = await this.get(
-      `/cursus-locaties${toQueryString(filter)}`,
-    ).expect(200);
+    const request = this.get(`/cursuslocaties${toQueryString(filter)}`);
+    const response = await request.expect(200);
     return response.body;
+  }
+  public async getCursusLocatiesPage(
+    page: number,
+    filter?: CursusLocatieFilter,
+  ): Promise<[body: CursusLocatie[], totalCount: number]> {
+    const response = await this.get(
+      `/cursuslocaties${toQueryString({
+        ...filter,
+        [PAGE_QUERY_STRING_NAME]: page,
+      })}`,
+    ).expect(200);
+    return [response.body, +response.get(TOTAL_COUNT_HEADER)];
   }
 
   public async getCursusLocatie(id: number): Promise<CursusLocatie> {
-    const response = await this.get(`/cursus-locaties/${id}`).expect(200);
+    const response = await this.get(`/cursuslocaties/${id}`).expect(200);
     return response.body;
   }
 
@@ -533,7 +547,7 @@ export const factory = {
     };
   },
 
-  cursusLocatie(
+  cursuslocatie(
     overrides?: Partial<UpsertableCursusLocatie>,
   ): UpsertableCursusLocatie {
     return {
@@ -614,6 +628,18 @@ function parseBody(
   }
 }
 
-export function byId(a: { id: number }, b: { id: number }) {
+export function byId(
+  a: { id: number } | undefined,
+  b: { id: number } | undefined,
+): number {
+  if (!a && !b) {
+    return 0;
+  }
+  if (!a) {
+    return -1;
+  }
+  if (!b) {
+    return 1;
+  }
   return a.id - b.id;
 }

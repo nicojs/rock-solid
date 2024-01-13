@@ -464,6 +464,7 @@ describe(ProjectenController.name, () => {
       const project = await harness.createProject(vakantie);
       assert.equal(project.naam, 'Beach - Spain');
     });
+
     it('should not base the naam on `bestemming - land` for cursus', async () => {
       const vakantie = factory.cursus({
         naam: 'Mijn cursus',
@@ -471,9 +472,37 @@ describe(ProjectenController.name, () => {
       const project = await harness.createProject(vakantie);
       assert.equal(project.naam, 'Mijn cursus');
     });
+
+    it("should connect the cursuslocatie to it's activiteiten", async () => {
+      // Arrange
+      const [loc, loc2] = await Promise.all([
+        harness.createCursuslocatie(
+          factory.cursuslocatie({ naam: 'locatie 1' }),
+        ),
+        harness.createCursuslocatie(
+          factory.cursuslocatie({ naam: 'locatie 2' }),
+        ),
+      ]);
+
+      // Act
+      const actualProject = await harness.createProject(
+        factory.cursus({
+          activiteiten: [
+            factory.activiteit({ locatie: loc }),
+            factory.activiteit({ locatie: loc2 }),
+            factory.activiteit({ locatie: undefined }),
+          ],
+        }),
+      );
+
+      // Assert
+      expect(
+        actualProject.activiteiten.map((a) => a.locatie).sort(byId),
+      ).deep.eq([loc, loc2, undefined].sort(byId));
+    });
   });
 
-  describe('PUT /projecten', () => {
+  describe('PUT /projecten/:id', () => {
     it('should be able to delete nullable fields', async () => {
       // Arrange
       const project = await harness.createProject(
@@ -507,6 +536,90 @@ describe(ProjectenController.name, () => {
         ...expectedProject,
         activiteiten: [expectedActiviteit],
       });
+    });
+
+    it('should connect a new cursuslocatie', async () => {
+      // Arrange
+      const [loc1, loc2] = await Promise.all([
+        harness.createCursuslocatie(
+          factory.cursuslocatie({ naam: 'locatie 1' }),
+        ),
+        harness.createCursuslocatie(
+          factory.cursuslocatie({ naam: 'locatie 2' }),
+        ),
+      ]);
+      const project = await harness.createProject(
+        factory.cursus({
+          activiteiten: [
+            factory.activiteit({ locatie: loc1 }),
+            factory.activiteit({ locatie: loc2 }),
+          ],
+        }),
+      );
+
+      // Act
+      const actualProject = await harness.updateProject({
+        ...project,
+        activiteiten: project.activiteiten.map((a) => ({
+          ...a,
+          locatie: loc2,
+        })),
+      });
+
+      // Assert
+      expect(
+        actualProject.activiteiten.map((a) => a.locatie).sort(byId),
+      ).deep.eq([loc2, loc2].sort(byId));
+    });
+
+    it('should disconnect a missing cursuslocatie', async () => {
+      // Arrange
+      const loc = await harness.createCursuslocatie(
+        factory.cursuslocatie({ naam: 'locatie 1' }),
+      );
+      const project = await harness.createProject(
+        factory.cursus({
+          activiteiten: [factory.activiteit({ locatie: loc })],
+        }),
+      );
+
+      // Act
+      const actualProject = await harness.updateProject({
+        ...project,
+        activiteiten: project.activiteiten.map((a) => ({
+          ...a,
+          locatie: undefined,
+        })),
+      });
+
+      // Assert
+      expect(actualProject.activiteiten[0]!.locatie).undefined;
+    });
+
+    it('should connect a locatie to a new activiteit', async () => {
+      // Arrange
+      const loc = await harness.createCursuslocatie(
+        factory.cursuslocatie({ naam: 'locatie 1' }),
+      );
+      const project = await harness.createProject(
+        factory.cursus({
+          activiteiten: [factory.activiteit({ locatie: undefined })],
+        }),
+      );
+
+      // Act
+      const actualProject = await harness.updateProject({
+        ...project,
+        activiteiten: [
+          ...project.activiteiten,
+          factory.activiteit({ locatie: loc }),
+        ],
+      });
+
+      // Assert
+      expect(actualProject.activiteiten.sort(byId).at(-1)!.locatie).deep.eq(
+        loc,
+      );
     });
   });
 

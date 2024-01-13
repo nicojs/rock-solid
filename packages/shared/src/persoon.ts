@@ -3,6 +3,7 @@ import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
 import { Upsertable } from './upsertable.js';
 import {
+  Labels,
   Queryfied,
   filterMetaQuery,
   tryParseBoolean,
@@ -132,7 +133,7 @@ export type PersoonByType = {
   overigPersoon: OverigPersoon;
 };
 
-export const persoonLabels: Record<keyof Persoon, string> = {
+export const persoonLabels: Labels<Persoon> = {
   id: 'id',
   achternaam: 'Achternaam',
   emailadres: 'Emailadres',
@@ -154,7 +155,7 @@ export const persoonLabels: Record<keyof Persoon, string> = {
   foldervoorkeuren: 'Foldervoorkeuren',
 };
 
-export const deelnemerLabels: Record<keyof Deelnemer, string> = {
+export const deelnemerLabels: Labels<Deelnemer> = {
   ...persoonLabels,
   contactpersoon: 'Contactpersoon',
   begeleidendeDienst: 'Begeleidende dienst',
@@ -167,7 +168,7 @@ export const deelnemerLabels: Record<keyof Deelnemer, string> = {
   werksituatieOpmerking: 'Werksituatie opmerking',
 };
 
-export const fotoToestemmingLabels: Record<keyof FotoToestemming, string> = {
+export const fotoToestemmingLabels: Labels<FotoToestemming> = {
   folder: 'Folder',
   website: 'Website',
   socialeMedia: 'Sociale media',
@@ -175,7 +176,7 @@ export const fotoToestemmingLabels: Record<keyof FotoToestemming, string> = {
   infoboekje: 'Infoboekje',
 };
 
-export const overigPersoonLabels: Record<keyof OverigPersoon, string> = {
+export const overigPersoonLabels: Labels<OverigPersoon> = {
   ...persoonLabels,
   selectie: 'Selectie',
 };

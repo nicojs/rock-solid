@@ -33,13 +33,6 @@ export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
           .path=${this.path}
           ${ref(this.inputRef)}
         ></rock-reactive-form-group>`;
-      case InputType.plaats:
-        return html`<rock-reactive-form-plaats
-          .control=${this.control}
-          .entity=${this.entity}
-          .path=${this.path}
-          ${ref(this.inputRef)}
-        ></rock-reactive-form-plaats>`;
       case InputType.tags:
         return html`<rock-reactive-form-tags
           .control=${this.control}
@@ -54,6 +47,13 @@ export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
           .path=${this.path}
           ${ref(this.inputRef)}
         ></rock-reactive-checkboxes>`;
+      case InputType.autocomplete:
+        return html`<rock-reactive-form-autocomplete
+          .control=${this.control}
+          .entity=${this.entity}
+          .path=${this.path}
+          ${ref(this.inputRef)}
+        ></rock-reactive-form-autocomplete>`;
       default:
         return this.renderInputControl(this.control);
     }

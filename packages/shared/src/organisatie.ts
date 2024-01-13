@@ -1,7 +1,7 @@
 import { Upsertable } from './upsertable.js';
 import { Options, groupOptions } from './options.js';
 import { Adres, UpsertableAdres } from './adres.js';
-import { Queryfied, filterMetaQuery, tryParseBoolean } from './util.js';
+import { Labels, Queryfied, filterMetaQuery, tryParseBoolean } from './util.js';
 
 export interface Organisatie {
   id: number;
@@ -25,39 +25,34 @@ export interface OrganisatieContact extends FolderAdressering {
   telefoonnummer?: string;
 }
 
-export const folderAdresseringColumnNames: Record<
-  keyof FolderAdressering,
-  string
-> = Object.freeze({
-  foldervoorkeuren: 'Foldervoorkeuren',
-  emailadres: 'Emailadres',
-  adres: 'Adres',
-});
-
-export const organisatieColumnNames: Record<keyof Organisatie, string> =
+export const folderAdresseringColumnNames: Labels<FolderAdressering> =
   Object.freeze({
-    id: 'id',
-    naam: 'Naam',
-    opmerking: 'Opmerking',
-    website: 'Website',
+    foldervoorkeuren: 'Foldervoorkeuren',
     emailadres: 'Emailadres',
     adres: 'Adres',
-    soorten: 'Soort(en)',
-    soortOpmerking: 'Soort opmerking',
-    contacten: 'Contact(en)',
   });
 
-export const organisatieContactColumnNames: Record<
-  keyof OrganisatieContact,
-  string
-> = Object.freeze({
+export const organisatieLabels: Labels<Organisatie> = Object.freeze({
   id: 'id',
-  terAttentieVan: 'TAV',
-  afdeling: 'Afdeling',
-  doelgroepen: 'Doelgroepen',
-  telefoonnummer: 'Telefoonnummer',
-  ...folderAdresseringColumnNames,
+  naam: 'Naam',
+  opmerking: 'Opmerking',
+  website: 'Website',
+  emailadres: 'Emailadres',
+  adres: 'Adres',
+  soorten: 'Soort(en)',
+  soortOpmerking: 'Soort opmerking',
+  contacten: 'Contact(en)',
 });
+
+export const organisatieContactColumnNames: Labels<OrganisatieContact> =
+  Object.freeze({
+    id: 'id',
+    terAttentieVan: 'TAV',
+    afdeling: 'Afdeling',
+    doelgroepen: 'Doelgroepen',
+    telefoonnummer: 'Telefoonnummer',
+    ...folderAdresseringColumnNames,
+  });
 
 export type OrganisatieFilter = {
   naam?: string;

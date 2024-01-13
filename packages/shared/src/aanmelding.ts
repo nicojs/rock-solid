@@ -2,6 +2,7 @@ import { Plaats } from './adres.js';
 import { Options } from './options.js';
 import { Deelnemer, Geslacht, Werksituatie, Woonsituatie } from './persoon.js';
 import { Upsertable } from './upsertable.js';
+import { Labels } from './util.js';
 
 export interface Aanmelding {
   id: number;
@@ -45,7 +46,7 @@ export type InsertableAanmelding = Upsertable<
 
 export type UpdatableAanmelding = Upsertable<Aanmelding, 'id'>;
 
-export const aanmeldingLabels: Record<keyof Aanmelding, string> = {
+export const aanmeldingLabels: Labels<Aanmelding> = {
   id: 'id',
   projectId: 'projectId',
   deelnemerId: 'deelnemerId',

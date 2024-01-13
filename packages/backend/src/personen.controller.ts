@@ -5,6 +5,7 @@ import {
   TOTAL_COUNT_HEADER,
   type Project,
   type ProjectFilter,
+  PAGE_QUERY_STRING_NAME,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -40,7 +41,7 @@ export class PersonenController {
   async getAll(
     @Res({ passthrough: true }) resp: Response,
     @Query(PersoonFilterPipe) filter: PersoonFilter,
-    @Query('_page', PagePipe)
+    @Query(PAGE_QUERY_STRING_NAME, PagePipe)
     page?: number,
   ): Promise<Persoon[]> {
     try {

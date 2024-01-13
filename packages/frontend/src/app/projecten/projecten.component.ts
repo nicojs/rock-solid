@@ -7,6 +7,8 @@ import {
   toProjectFilter,
   tryParseInt,
   organisatieonderdelen,
+  projectLabels,
+  allProjectLabels,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -111,7 +113,12 @@ export class ProjectenComponent extends RockElement {
     this.loading = true;
     projectenStore
       .create(project)
-      .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
+      .pipe(
+        handleUniquenessError(
+          (message) => (this.errorMessage = message),
+          allProjectLabels,
+        ),
+      )
       .subscribe({
         next: () => {
           this.errorMessage = undefined;
@@ -125,7 +132,12 @@ export class ProjectenComponent extends RockElement {
     this.loading = true;
     projectenStore
       .update(project.id, project)
-      .pipe(handleUniquenessError((message) => (this.errorMessage = message)))
+      .pipe(
+        handleUniquenessError(
+          (message) => (this.errorMessage = message),
+          allProjectLabels,
+        ),
+      )
       .subscribe({
         next: () => {
           this.errorMessage = undefined;

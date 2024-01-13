@@ -18,6 +18,7 @@ import {
   toNullableAdres,
   toCreateAdresInput,
   toUpdateAdresInput,
+  includeAdresWithPlaats,
 } from './adres.mapper.js';
 import { handleKnownPrismaErrors } from '../errors/prisma.js';
 import {
@@ -35,6 +36,15 @@ type DBOrganisatieAggregate = db.Organisatie & {
   contacten: DBOrganisatieContactAggregate[];
   soorten: db.Organisatiesoort[];
 };
+
+const includeAdres = Object.freeze({
+  adres: includeAdresWithPlaats,
+});
+
+const includeAggregate = Object.freeze({
+  foldervoorkeuren: true as const,
+  adres: includeAdresWithPlaats,
+} as const satisfies db.Prisma.OrganisatieContactInclude);
 
 @Injectable()
 export class OrganisatieMapper {
@@ -158,10 +168,7 @@ export class OrganisatieMapper {
           await this.db.organisatieContact.update({
             where: { id: updatedContact.id },
             data: { adres: { delete: true } },
-            include: {
-              ...includeAdres,
-              ...includeFoldervoorkeuren,
-            },
+            include: includeAggregate,
           });
           updatedContact.adres = null;
         }
@@ -258,21 +265,10 @@ function toFoldervoorkeur(foldervoorkeur: db.Foldervoorkeur): Foldervoorkeur {
   };
 }
 
-const includeAdres = Object.freeze({
-  adres: Object.freeze({ include: Object.freeze({ plaats: true as const }) }),
-});
-
-const includeFoldervoorkeuren = Object.freeze({
-  foldervoorkeuren: true as const,
-});
-
 function includeOrganisatie(filter?: OrganisatieFilter) {
   return {
     contacten: {
-      include: {
-        ...includeAdres,
-        ...includeFoldervoorkeuren,
-      },
+      include: includeAggregate,
       orderBy: {
         terAttentieVan: 'asc',
       },

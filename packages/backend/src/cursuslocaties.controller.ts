@@ -10,27 +10,39 @@ import {
   Post,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
 import {
   type CursusLocatieFilter,
   toCursusLocatieFilter,
   CursusLocatie,
   type UpsertableCursusLocatie,
+  TOTAL_COUNT_HEADER,
+  PAGE_QUERY_STRING_NAME,
 } from '@rock-solid/shared';
-import { CursusLocatieMapper } from './services/cursus-locatie.mapper.js';
+import { CursuslocatieMapper } from './services/cursuslocatie.mapper.js';
 import { Privileges } from './auth/privileges.guard.js';
 import { NumberPipe } from './pipes/number.pipe.js';
+import { PagePipe } from './pipes/page.pipe.js';
+import type { Response } from 'express';
 
-@Controller({ path: 'cursus-locaties' })
+@Controller({ path: 'cursuslocaties' })
 export class CursusLocatiesController {
-  constructor(private cursusLocatieMapper: CursusLocatieMapper) {}
+  constructor(private cursusLocatieMapper: CursuslocatieMapper) {}
 
   @Get()
   async getAll(
+    @Res({ passthrough: true }) resp: Response,
     @Query({ transform: toCursusLocatieFilter })
     filter: CursusLocatieFilter,
+    @Query(PAGE_QUERY_STRING_NAME, PagePipe) page?: number,
   ): Promise<CursusLocatie[]> {
-    const locaties = await this.cursusLocatieMapper.getAll(filter);
+    const [locaties, count] = await Promise.all([
+      this.cursusLocatieMapper.getAll(filter, page),
+      this.cursusLocatieMapper.count(filter),
+    ]);
+    resp.set(TOTAL_COUNT_HEADER, count.toString());
+
     return locaties;
   }
 
@@ -45,14 +57,14 @@ export class CursusLocatiesController {
   }
 
   @Post()
-  @Privileges('write:cursus-locaties')
+  @Privileges('write:cursuslocaties')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() cursusLocatie: UpsertableCursusLocatie) {
     return this.cursusLocatieMapper.create(cursusLocatie);
   }
 
   @Put(':id')
-  @Privileges('write:cursus-locaties')
+  @Privileges('write:cursuslocaties')
   async update(
     @Param('id', NumberPipe) id: number,
     @Body() cursusLocatie: UpsertableCursusLocatie,
@@ -61,7 +73,7 @@ export class CursusLocatiesController {
   }
 
   @Delete(':id')
-  @Privileges('write:cursus-locaties')
+  @Privileges('write:cursuslocaties')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', NumberPipe) id: number): Promise<void> {
     return this.cursusLocatieMapper.delete(id);

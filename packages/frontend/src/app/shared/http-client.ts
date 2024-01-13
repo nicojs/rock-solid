@@ -40,7 +40,7 @@ export class HttpClient {
       window.location.href = loginUrl;
     }
     if (response.status === HttpStatus.UNPROCESSABLE_ENTITY) {
-      const body: UnprocessableEntityBody = await response.json();
+      const body: UnprocessableEntityBody<unknown> = await response.json();
       switch (body.status) {
         case 'uniqueness_failed':
           throw new UniquenessFailedError(body.fields);

@@ -3,7 +3,8 @@ import { Options } from './options.js';
 import { OverigPersoon } from './persoon.js';
 import { Upsertable } from './upsertable.js';
 import { Aanmeldingsstatus } from './aanmelding.js';
-import { Queryfied, filterMetaQuery, tryParseInt } from './util.js';
+import { Labels, Queryfied, filterMetaQuery, tryParseInt } from './util.js';
+import { CursusLocatie } from './cursuslocatie.js';
 
 export interface BaseProject {
   id: number;
@@ -47,7 +48,7 @@ export type AanmeldingOf<T extends Project> = {
   status: Aanmeldingsstatus;
 } & T;
 
-export const projectLabels: Record<keyof BaseProject, string> = {
+export const projectLabels: Labels<BaseProject> = {
   aantalAanmeldingen: 'Aantal aanmeldingen',
   begeleiders: 'Begeleiders',
   id: 'id',
@@ -60,13 +61,13 @@ export const projectLabels: Record<keyof BaseProject, string> = {
   voorschot: 'Voorschot',
 };
 
-export const cursusLabels: Record<keyof Cursus, string> = {
+export const cursusLabels: Labels<Cursus> = {
   ...projectLabels,
   activiteiten: 'Activiteiten',
   organisatieonderdeel: 'Organisatie',
 };
 
-export const vakantieLabels: Record<keyof Vakantie, string> = {
+export const vakantieLabels: Labels<Vakantie> = {
   ...projectLabels,
   bestemming: 'Bestemming',
   land: 'Land',
@@ -74,10 +75,12 @@ export const vakantieLabels: Record<keyof Vakantie, string> = {
   seizoen: 'Seizoen',
 };
 
-export const activiteitLabels: Record<
-  keyof (VakantieActiviteit & CursusActiviteit),
-  string
-> = {
+export const allProjectLabels: Readonly<Labels<Project>> = Object.freeze({
+  ...cursusLabels,
+  ...vakantieLabels,
+});
+
+export const activiteitLabels: Labels<VakantieActiviteit & CursusActiviteit> = {
   aantalDeelnames: 'Aantal deelnames',
   aantalDeelnemersuren: 'Aantal deelnemersuren',
   begeleidingsuren: 'Begeleidingsuren',
@@ -88,6 +91,7 @@ export const activiteitLabels: Record<
   vormingsuren: 'Vormingsuren',
   verblijf: 'Verblijf',
   vervoer: 'Vervoer',
+  locatie: 'Locatie',
 };
 
 export type Activiteit = CursusActiviteit | VakantieActiviteit;
@@ -103,7 +107,9 @@ export interface BaseActiviteit {
   aantalDeelnemersuren: number;
 }
 
-export interface CursusActiviteit extends BaseActiviteit {}
+export interface CursusActiviteit extends BaseActiviteit {
+  locatie?: CursusLocatie;
+}
 
 export interface VakantieActiviteit extends BaseActiviteit {
   verblijf?: VakantieVerblijf;

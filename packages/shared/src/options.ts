@@ -1,4 +1,7 @@
-export type Options<T extends string> = Readonly<Record<T, string>>;
+export type Options<
+  TKey extends string,
+  TValue extends string = string,
+> = Readonly<Record<TKey, TValue>>;
 
 export type GroupedOptions<T extends string> = Readonly<
   Record<string, Record<T, string>>

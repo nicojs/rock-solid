@@ -25,13 +25,13 @@ export enum InputType {
   group = 'group',
 
   // Custom types:
-  plaats = 'plaats',
+  autocomplete = 'autocomplete',
   currency = 'currency',
   tags = 'tags',
   checkboxes = 'checkboxes',
 }
 
-interface Validators<TEntity, TValue> {
+export interface Validators<TEntity, TValue> {
   required?: boolean;
   minLength?: number;
   min?: Date | number;
@@ -52,7 +52,7 @@ export type FormControl<TEntity> =
   | CustomControl<TEntity>;
 
 export type CustomControl<TEntity> =
-  | PlaatsControl<TEntity>
+  | AutocompleteControl<TEntity, any>
   | TagsControl<TEntity, any>
   | CheckboxesControl<TEntity>;
 
@@ -231,10 +231,16 @@ export interface FormGroup<TEntity, TKey extends keyof TEntity> {
   requiredLabel?: string;
 }
 
-export interface PlaatsControl<TEntity>
-  extends BaseInputControl<TEntity, Plaats> {
-  name: KeysOfType<TEntity, Plaats>;
-  type: InputType.plaats;
+export interface AutocompleteControl<TEntity, TValue>
+  extends BaseInputControl<TEntity, TValue> {
+  name: KeysOfType<TEntity, TValue>;
+  type: InputType.autocomplete;
+  searchAction: (text: string) => Promise<TValue[]>;
+  labelFor: (tag: TValue | undefined) => string;
+  /**
+   * The minimal number of characters to type before showing hints
+   */
+  minCharacters?: number;
 }
 
 export type InputControl<TEntity> =

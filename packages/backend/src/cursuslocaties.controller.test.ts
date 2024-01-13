@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { CursusLocatiesController } from './cursus-locaties.controller.js';
+import { CursusLocatiesController } from './cursuslocaties.controller.js';
 import { byId, factory, harness } from './test-utils.test.js';
 import { CursusLocatie } from '@rock-solid/shared';
 
@@ -13,35 +13,35 @@ describe(CursusLocatiesController.name, () => {
   });
 
   describe('auth', () => {
-    it('GET /cursus-locaties should be allowed for projectverantwoordelijke', async () => {
+    it('GET /cursuslocaties should be allowed for projectverantwoordelijke', async () => {
       harness.login({ role: 'projectverantwoordelijke' });
-      await harness.get('/cursus-locaties').expect(200);
+      await harness.get('/cursuslocaties').expect(200);
     });
-    it('POST /cursus-locaties should be allowed for projectverantwoordelijke', async () => {
+    it('POST /cursuslocaties should be allowed for projectverantwoordelijke', async () => {
       harness.login({ role: 'projectverantwoordelijke' });
-      await harness.post('/cursus-locaties').expect(403);
-    });
-
-    it('PUT /cursus-locaties/:id should be allowed for projectverantwoordelijke', async () => {
-      harness.login({ role: 'projectverantwoordelijke' });
-      await harness.put('/cursus-locaties/1').expect(403);
+      await harness.post('/cursuslocaties').expect(403);
     });
 
-    it('DELETE /cursus-locaties/:id should be allowed for projectverantwoordelijke', async () => {
+    it('PUT /cursuslocaties/:id should be allowed for projectverantwoordelijke', async () => {
       harness.login({ role: 'projectverantwoordelijke' });
-      await harness.delete('/cursus-locaties/1').expect(403);
+      await harness.put('/cursuslocaties/1').expect(403);
+    });
+
+    it('DELETE /cursuslocaties/:id should be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.delete('/cursuslocaties/1').expect(403);
     });
   });
 
-  describe('GET /cursus-locaties', () => {
-    it('should return all cursus-locaties', async () => {
+  describe('GET /cursuslocaties', () => {
+    it('should return all cursuslocaties', async () => {
       // Arrange
       const expectedLocaties = await Promise.all([
-        harness.createCursusLocatie(
-          factory.cursusLocatie({ naam: 'locatie 1' }),
+        harness.createCursuslocatie(
+          factory.cursuslocatie({ naam: 'locatie 1' }),
         ),
-        harness.createCursusLocatie(
-          factory.cursusLocatie({
+        harness.createCursuslocatie(
+          factory.cursuslocatie({
             naam: 'locatie 2',
             adres: factory.adres({ straatnaam: 'straat 2' }),
           }),
@@ -55,12 +55,41 @@ describe(CursusLocatiesController.name, () => {
       expect(actualLocaties.sort(byId)).deep.equal(expectedLocaties.sort(byId));
     });
 
+    it('paging', async () => {
+      // Arrange
+      for (let i = 0; i < 4; i++) {
+        const locaties: Promise<CursusLocatie>[] = [];
+        for (let j = 0; j < 5; j++) {
+          locaties.push(
+            harness.createCursuslocatie(
+              factory.cursuslocatie({ naam: `locatie ${i}${j}` }),
+            ),
+          );
+        }
+        await Promise.all(locaties);
+      }
+      await harness.createCursuslocatie(
+        factory.cursuslocatie({ naam: `locatie last` }),
+      );
+
+      // Act
+      const [[firstPage, count], [secondPage]] = await Promise.all([
+        harness.getCursusLocatiesPage(0),
+        harness.getCursusLocatiesPage(1),
+      ]);
+
+      // Assert
+      expect(firstPage).lengthOf(20);
+      expect(secondPage).lengthOf(1);
+      expect(count).equal(21);
+    });
+
     it('by naam', async () => {
       // Arrange
       const locaties = await Promise.all([
-        harness.createCursusLocatie(factory.cursusLocatie({ naam: 'foo' })),
-        harness.createCursusLocatie(factory.cursusLocatie({ naam: 'foobar' })),
-        harness.createCursusLocatie(factory.cursusLocatie({ naam: 'baz' })),
+        harness.createCursuslocatie(factory.cursuslocatie({ naam: 'foo' })),
+        harness.createCursuslocatie(factory.cursuslocatie({ naam: 'foobar' })),
+        harness.createCursuslocatie(factory.cursuslocatie({ naam: 'baz' })),
       ]);
 
       // Act
@@ -75,16 +104,16 @@ describe(CursusLocatiesController.name, () => {
     });
   });
 
-  describe('POST /cursus-locaties', () => {
+  describe('POST /cursuslocaties', () => {
     it('should create a cursus-locatie', async () => {
       // Arrange
-      const cursusLocatie = factory.cursusLocatie({
+      const cursusLocatie = factory.cursuslocatie({
         naam: 'locatie 1',
         adres: factory.adres({ straatnaam: 'straat 1' }),
       });
 
       // Act
-      const created = await harness.createCursusLocatie(cursusLocatie);
+      const created = await harness.createCursuslocatie(cursusLocatie);
       const actual = await harness.getCursusLocatie(created.id);
 
       // Assert
@@ -98,22 +127,22 @@ describe(CursusLocatiesController.name, () => {
 
     it('should return a 422 "Unprocessable Entity" when the name already exists', async () => {
       // Arrange
-      const cursusLocatie = factory.cursusLocatie({
+      const cursusLocatie = factory.cursuslocatie({
         naam: 'locatie 1',
         adres: factory.adres({ straatnaam: 'straat 1' }),
       });
 
       // Act
-      await harness.createCursusLocatie(cursusLocatie);
-      await harness.post('/cursus-locaties').send(cursusLocatie).expect(422);
+      await harness.createCursuslocatie(cursusLocatie);
+      await harness.post('/cursuslocaties').send(cursusLocatie).expect(422);
     });
   });
 
-  describe('PUT /cursus-locaties/:id', () => {
+  describe('PUT /cursuslocaties/:id', () => {
     it('should update a cursus-locatie', async () => {
       // Arrange
-      const { id } = await harness.createCursusLocatie(
-        factory.cursusLocatie({
+      const { id } = await harness.createCursuslocatie(
+        factory.cursuslocatie({
           naam: 'locatie 1',
           adres: factory.adres({ straatnaam: 'straat 1' }),
         }),
@@ -138,8 +167,8 @@ describe(CursusLocatiesController.name, () => {
 
     it('should be able to delete the adres', async () => {
       // Arrange
-      const { id } = await harness.createCursusLocatie(
-        factory.cursusLocatie({
+      const { id } = await harness.createCursuslocatie(
+        factory.cursuslocatie({
           naam: 'locatie 1',
           adres: factory.adres({ straatnaam: 'straat 1' }),
         }),
@@ -160,27 +189,27 @@ describe(CursusLocatiesController.name, () => {
 
     it('should return a 422 "Unprocessable Entity" when the name already exists', async () => {
       // Arrange
-      const cursusLocatie1 = factory.cursusLocatie({
+      const cursusLocatie1 = factory.cursuslocatie({
         naam: 'locatie 1',
         adres: factory.adres({ straatnaam: 'straat 1' }),
       });
-      const cursusLocatie2 = factory.cursusLocatie({
+      const cursusLocatie2 = factory.cursuslocatie({
         naam: 'locatie 2',
         adres: factory.adres({ straatnaam: 'straat 2' }),
       });
-      const { id } = await harness.createCursusLocatie(cursusLocatie1);
-      await harness.createCursusLocatie(cursusLocatie2);
+      const { id } = await harness.createCursuslocatie(cursusLocatie1);
+      await harness.createCursuslocatie(cursusLocatie2);
 
       // Act & Assert
-      await harness.put(`/cursus-locaties/${id}`, cursusLocatie2).expect(422);
+      await harness.put(`/cursuslocaties/${id}`, cursusLocatie2).expect(422);
     });
   });
 
-  describe('DELETE /cursus-locaties/:id', () => {
+  describe('DELETE /cursuslocaties/:id', () => {
     it('should delete a cursus-locatie', async () => {
       // Arrange
-      const { id } = await harness.createCursusLocatie(
-        factory.cursusLocatie({
+      const { id } = await harness.createCursuslocatie(
+        factory.cursuslocatie({
           naam: 'locatie 1',
           adres: factory.adres({ straatnaam: 'straat 1' }),
         }),
@@ -190,7 +219,7 @@ describe(CursusLocatiesController.name, () => {
       await harness.deleteCursusLocatie(id);
 
       // Assert
-      await harness.get(`/cursus-locaties/${id}`).expect(404);
+      await harness.get(`/cursuslocaties/${id}`).expect(404);
     });
   });
 });

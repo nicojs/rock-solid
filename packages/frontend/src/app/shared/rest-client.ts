@@ -1,6 +1,7 @@
 import {
   EntityFrom,
   FilterFrom,
+  PAGE_QUERY_STRING_NAME,
   parse,
   Query,
   RestRoutes,
@@ -34,7 +35,7 @@ export class RestClient {
     filter?: FilterFrom<TRoute>,
     signal?: AbortSignal,
   ): Promise<Page<TRoute>> {
-    const query = { ...filter, _page: page };
+    const query = { ...filter, [PAGE_QUERY_STRING_NAME]: page };
     const response = await this.http.fetch(
       `/api/${route}${toQueryString(query)}`,
       { signal },

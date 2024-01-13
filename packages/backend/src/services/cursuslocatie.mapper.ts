@@ -6,8 +6,11 @@ import {
   UpsertableCursusLocatie,
 } from '@rock-solid/shared';
 import * as db from '@prisma/client';
+import { toPage } from './paging.js';
+
 import {
   DBAdresWithPlaats,
+  includeAdresWithPlaats,
   toCreateAdresInput,
   toNullableAdres,
   toUpdateAdresInput,
@@ -15,27 +18,35 @@ import {
 import { ExplicitNulls } from './mapper-utils.js';
 import { handleKnownPrismaErrors } from '../errors/index.js';
 
-type DBCursusLocatieAggregate = db.CursusLocatie & {
+type DBCursusLocatieAggregate = Omit<db.CursusLocatie, 'adresId'> & {
   adres: DBAdresWithPlaats | null;
 };
 
 const includeAdres = Object.freeze({
-  adres: Object.freeze({ include: Object.freeze({ plaats: true as const }) }),
+  adres: includeAdresWithPlaats,
 });
 
 @Injectable()
-export class CursusLocatieMapper {
+export class CursuslocatieMapper {
   constructor(private db: DBService) {}
 
   async getAll(
     filter: CursusLocatieFilter | undefined,
+    pageNumber: number | undefined,
   ): Promise<CursusLocatie[]> {
     const dbCursusLocaties = await this.db.cursusLocatie.findMany({
       where: where(filter),
       include: includeAdres,
+      ...toPage(pageNumber),
     });
 
-    return dbCursusLocaties.map(toCursusLocatie);
+    return dbCursusLocaties.map(toCursuslocatie);
+  }
+
+  async count(filter: CursusLocatieFilter | undefined): Promise<number> {
+    return this.db.cursusLocatie.count({
+      where: where(filter),
+    });
   }
 
   async get(id: number): Promise<CursusLocatie | undefined> {
@@ -45,7 +56,7 @@ export class CursusLocatieMapper {
     });
 
     if (dbCursusLocatie) {
-      return toCursusLocatie(dbCursusLocatie);
+      return toCursuslocatie(dbCursusLocatie);
     }
     return;
   }
@@ -61,7 +72,7 @@ export class CursusLocatieMapper {
         include: includeAdres,
       }),
     );
-    return toCursusLocatie(created);
+    return toCursuslocatie(created);
   }
 
   async update(id: number, cursusLocatie: UpsertableCursusLocatie) {
@@ -85,7 +96,7 @@ export class CursusLocatieMapper {
         include: includeAdres,
       }),
     );
-    return toCursusLocatie(updated);
+    return toCursuslocatie(updated);
   }
 
   async delete(id: number) {
@@ -93,14 +104,17 @@ export class CursusLocatieMapper {
   }
 }
 
-function toCursusLocatie(
-  dbCursusLocatie: DBCursusLocatieAggregate,
-): CursusLocatie {
+export function toCursuslocatie<
+  T extends DBCursusLocatieAggregate | undefined | null,
+>(dbCursusLocatie?: T): T extends undefined | null ? undefined : CursusLocatie {
+  if (!dbCursusLocatie) {
+    return undefined as T extends undefined | null ? undefined : CursusLocatie;
+  }
   return {
     id: dbCursusLocatie.id,
     naam: dbCursusLocatie.naam,
     adres: toNullableAdres(dbCursusLocatie.adres),
-  };
+  } as T extends undefined | null ? undefined : CursusLocatie;
 }
 function where(
   filter: CursusLocatieFilter | undefined,

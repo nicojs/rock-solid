@@ -1,6 +1,6 @@
 import { Adres, UpsertableAdres } from './adres.js';
 import { Upsertable } from './upsertable.js';
-import { Queryfied } from './util.js';
+import { Labels, Queryfied } from './util.js';
 
 export interface CursusLocatie {
   id: number;
@@ -13,9 +13,9 @@ export type UpsertableCursusLocatie = Upsertable<
   'naam'
 > & { adres?: UpsertableAdres };
 
-export type CursusLocatieFilter = Pick<CursusLocatie, 'naam'>;
+export type CursusLocatieFilter = Partial<Pick<CursusLocatie, 'naam'>>;
 
-export const cursusLocatieLabels: Record<keyof CursusLocatie, string> = {
+export const cursusLocatieLabels: Labels<CursusLocatie> = {
   id: 'id',
   naam: 'Naam',
   adres: 'Adres',

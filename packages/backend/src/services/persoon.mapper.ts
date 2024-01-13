@@ -17,6 +17,7 @@ import {
 import { ExplicitNulls, purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 import {
+  includeAdresWithPlaats,
   toAdres,
   toCreateAdresInput,
   toUpdateAdresInput,
@@ -472,16 +473,8 @@ function dateRangeFilter({
 }
 
 export const includePersoonAggregate = Object.freeze({
-  verblijfadres: Object.freeze({
-    include: Object.freeze({
-      plaats: true,
-    }),
-  }),
-  domicilieadres: Object.freeze({
-    include: Object.freeze({
-      plaats: true,
-    }),
-  }),
+  verblijfadres: includeAdresWithPlaats,
+  domicilieadres: includeAdresWithPlaats,
   foldervoorkeuren: true,
   eersteCursusAanmelding: Object.freeze({
     include: Object.freeze({

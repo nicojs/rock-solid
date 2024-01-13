@@ -3,6 +3,7 @@ import {
   type OrganisatieFilter,
   TOTAL_COUNT_HEADER,
   type UpsertableOrganisatie,
+  PAGE_QUERY_STRING_NAME,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -33,7 +34,7 @@ export class OrganisatiesController {
   async getAll(
     @Res({ passthrough: true }) resp: Response,
     @Query(OrganisatieFilterPipe) filter: OrganisatieFilter,
-    @Query('_page', PagePipe) page?: number,
+    @Query(PAGE_QUERY_STRING_NAME, PagePipe) page?: number,
   ): Promise<Organisatie[]> {
     const [people, count] = await Promise.all([
       this.organisatieMapper.getAll(filter, page),

@@ -11,6 +11,9 @@ import {
   ActiviteitReportFilter,
   AanmeldingGroupField,
   ActiviteitGroupField,
+  CursusLocatie,
+  UpsertableCursusLocatie,
+  CursusLocatieFilter,
 } from './index.js';
 import { Aanmelding } from './aanmelding.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
@@ -56,6 +59,11 @@ type TopRoutes = {
     entity: Plaats;
     upsertableEntity: Plaats;
     filter: PlaatsFilter;
+  };
+  cursuslocaties: {
+    entity: CursusLocatie;
+    upsertableEntity: UpsertableCursusLocatie;
+    filter: CursusLocatieFilter;
   };
 };
 

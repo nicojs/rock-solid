@@ -10,6 +10,7 @@ import { seedVakanties } from './vakanties.seed.js';
 import { seedVakantieAanmeldingen } from './vakantie-aanmeldingen.seed.js';
 import { seedVakantieVrijwilligers } from './vakantie-vrijwilligers.seed.js';
 import { deleteDeelnemers } from './delete-deelnemers.seed.js';
+import { seedCursuslocaties } from './cursuslocaties.seed.js';
 
 async function main() {
   const readonly = process.argv.includes('--readonly');
@@ -17,17 +18,18 @@ async function main() {
   console.log(`Seeding database using timezone ${process.env.TZ}...`);
   try {
     await client.$connect();
-    await seedPlaatsen(client);
-    const deelnemersLookup = await seedDeelnemers(client, readonly);
-    await seedOrganisaties(client, readonly);
-    await seedCursussen(client, readonly);
-    await seedCursusAanmeldingen(client, deelnemersLookup, readonly);
-    const vrijwilligersLookup = await seedVrijwilligers(client, readonly);
-    await seedExtraPersonen(client, readonly);
-    await seedVakanties(client, readonly);
-    await seedVakantieVrijwilligers(client, vrijwilligersLookup, readonly);
-    await seedVakantieAanmeldingen(client, deelnemersLookup, readonly);
-    await deleteDeelnemers(client, deelnemersLookup, readonly);
+    // await seedPlaatsen(client);
+    // const deelnemersLookup = await seedDeelnemers(client, readonly);
+    // await seedOrganisaties(client, readonly);
+    // const cursussenLookup = await seedCursussen(client, readonly);
+    // await seedCursusAanmeldingen(client, deelnemersLookup, readonly);
+    // const vrijwilligersLookup = await seedVrijwilligers(client, readonly);
+    // await seedExtraPersonen(client, readonly);
+    // await seedVakanties(client, readonly);
+    // await seedVakantieVrijwilligers(client, vrijwilligersLookup, readonly);
+    // await seedVakantieAanmeldingen(client, deelnemersLookup, readonly);
+    // await deleteDeelnemers(client, deelnemersLookup, readonly);
+    await seedCursuslocaties(client, undefined, readonly);
   } finally {
     await client.$disconnect();
   }
