@@ -126,6 +126,11 @@ const aanmeldingControls: FormControl<UpdatableAanmelding>[] = [
     type: InputType.text,
   },
   {
+    name: 'opmerking',
+    label: aanmeldingLabels.opmerking,
+    type: InputType.text,
+  },
+  {
     name: 'overrideDeelnemerFields',
     type: InputType.checkbox,
     label: `Update ook de "${

@@ -130,7 +130,7 @@ export class ProjectenController {
     @Body() aanmeldingen: UpdatableAanmelding[],
   ): Promise<Aanmelding[]> {
     aanmeldingen.forEach((aanmelding) => (aanmelding.projectId = projectId));
-    return this.aanmeldingMapper.updateAll(aanmeldingen);
+    return this.aanmeldingMapper.patchAll(aanmeldingen);
   }
 
   @Put(':id/aanmeldingen/:aanmeldingId')
@@ -152,7 +152,7 @@ export class ProjectenController {
     @Body() aanmelding: Partial<Aanmelding>,
   ): Promise<Aanmelding> {
     aanmelding.projectId = projectId;
-    return this.aanmeldingMapper.update(aanmeldingId, aanmelding);
+    return this.aanmeldingMapper.patch(aanmeldingId, aanmelding);
   }
 
   @Delete(':id/aanmeldingen/:aanmeldingId')

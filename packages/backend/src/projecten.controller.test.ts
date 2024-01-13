@@ -719,6 +719,36 @@ describe(ProjectenController.name, () => {
       };
       expect(actualAanmelding).deep.include(expectedAanmelding);
     });
+
+    it('should not delete "werksituatie", "woonsituatie", "geslacht", "plaats" and "opmerking" when not provided', async () => {
+      // Arrange
+      const deelnemer = await harness.createDeelnemer(factory.deelnemer());
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+
+      await harness.updateAanmelding({
+        ...aanmelding,
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+        opmerking: 'Foo',
+      });
+
+      // Act
+      const actualAanmeldingen = await harness.partialUpdateAanmeldingen(
+        project.id,
+        [aanmelding],
+      );
+
+      // Assert
+      const actualAanmelding = actualAanmeldingen[0]!;
+      expect(actualAanmelding.werksituatie).eq('arbeidstrajectbegeleiding');
+      expect(actualAanmelding.woonsituatie).eq('residentieleWoonondersteuning');
+      expect(actualAanmelding.geslacht).eq('x');
+      expect(actualAanmelding.opmerking).eq('Foo');
+    });
   });
 
   describe('PUT /projecten/:id/aanmeldingen/:id', () => {
@@ -745,7 +775,7 @@ describe(ProjectenController.name, () => {
       ]);
     });
 
-    it('should be able to update "werksituatie", "woonsituatie", "geslacht" and "plaats"', async () => {
+    it('should be able to update "werksituatie", "woonsituatie", "geslacht", "plaats", "status", and "opmerking"', async () => {
       // Arrange
       const aanmelding = await harness.createAanmelding({
         projectId: project.id,
@@ -757,6 +787,8 @@ describe(ProjectenController.name, () => {
       aanmelding.woonsituatie = 'residentieleWoonondersteuning';
       aanmelding.geslacht = 'x';
       aanmelding.plaats = plaats;
+      aanmelding.status = 'Bevestigd';
+      aanmelding.opmerking = 'Foo';
       const actualAanmelding = await harness.updateAanmelding(aanmelding);
 
       // Assert
@@ -765,10 +797,37 @@ describe(ProjectenController.name, () => {
         woonsituatie: 'residentieleWoonondersteuning',
         geslacht: 'x',
         plaats,
+        status: 'Bevestigd',
+        opmerking: 'Foo',
       };
       expect(actualAanmelding).deep.include(expectedAanmelding);
     });
 
+    it('should be able to delete "werksituatie", "woonsituatie", "geslacht", "plaats" and "opmerking"', async () => {
+      // Arrange
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+      await harness.updateAanmelding({
+        ...aanmelding,
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+        plaats: plaats,
+        opmerking: 'Foo',
+      });
+
+      // Act
+      const actualAanmelding = await harness.updateAanmelding(aanmelding);
+
+      // Assert
+      expect(actualAanmelding.werksituatie).undefined;
+      expect(actualAanmelding.woonsituatie).undefined;
+      expect(actualAanmelding.geslacht).undefined;
+      expect(actualAanmelding.plaats).undefined;
+      expect(actualAanmelding.opmerking).undefined;
+    });
     it('should override deelnemer "werksituatie", "woonsituatie" and "geslacht" when "overrideDeelnemerFields": true', async () => {
       // Arrange
       const aanmelding = await harness.createAanmelding({

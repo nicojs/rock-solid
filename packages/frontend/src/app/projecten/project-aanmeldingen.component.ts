@@ -431,6 +431,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                   <small>(leeftijd op startdatum)</small>
                 </th>
                 <th class="align-middle">Rekeninguittreksel</th>
+                <th class="align-middle">Opmerkingen</th>
                 <th class="align-middle">Acties</th>
               </tr>
             </thead>
@@ -468,6 +469,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                         : nothing}
                     </td>
                     <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
+                    <td>${show(aanmelding.opmerking, '')}</td>
                     <td>
                       <rock-link
                         btn
