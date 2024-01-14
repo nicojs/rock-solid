@@ -124,19 +124,105 @@ class LocatieMapper {
   }
 
   #malle = 'Provinciaal Vormingscentrum Malle';
-  #scoutshuis = 'Scoutshuis Antwerpen';
+  #scoutshuis = 'Scoutshuis';
   #hanenbos = 'Hanenbos';
+  #laathof = 'Het Laathof';
+  #merkenveld = 'Merkenveld';
+  #destelheide = 'Destelheide';
+  #moerkesheide = 'Moerkensheide';
+  #groeninge = 'Hostel Groeninghe';
+  #hostelH = 'Hostel H.';
+  #muzet = 'Jeugdberg Bed Muzet';
+  #kluis = 'De Kluis';
+  #blauwput = 'Jeugdherberg de Blauwput';
+  #zandpoort = 'Jeugdherberg De Zandpoort';
+  #draecke = 'Jeugdherberg De Draecke';
+  #rielen = 'Hoge Rielen';
+  #pelterke = "'t Pelterke";
+  #fiertel = 'Jeugdherberg De Fiertel';
+  #iep = 'De Iep';
+  #pierlapont = 'Boerderij De Pierlapont';
+  #europe = 'Jeugdherberg Génération Europe';
+  #heibrand = 'Heibrand';
+  #bos = 'Verloren Bos';
+  #waterval = 'De Waterval';
+  #roerdomp = 'Jeugdherberg De Roerdomp';
+  #heidepark = 'Heidepark';
+  #begeinhof = 'Jeugdherberg Begeinhof';
+  #heywijck = 'Heywijck';
+  #kei = 'De Kei';
+  #peerdevisser = 'Jeugdherberg De Peerdevisser';
+  #brink = 'De Brink';
+  #axlandhoeve = 'Axlandhoeve';
 
   #naamOverrides: Record<string, string> = {
     scouthuis: this.#scoutshuis,
     scoutshuis: this.#scoutshuis,
     antwerpen: this.#scoutshuis,
     'het scoutshuis': this.#scoutshuis,
+    'scoutshuis antwerpen': this.#scoutshuis,
     malle: this.#malle,
     pvc: this.#malle,
     'pvc malle': this.#malle,
+    'provinciaal vormingscentrum': this.#malle,
+    pvm: this.#malle,
     'lokalen gezin en handicap': 'Lokalen Gezin en Handicap',
     hanenbo: this.#hanenbos,
     'hanenbos beersel': this.#hanenbos,
+    beersel: this.#hanenbos,
+    ha: this.#hanenbos,
+    hingene: this.#laathof,
+    laathof: this.#laathof,
+    bornem: this.#laathof,
+    loppem: this.#merkenveld,
+    dworp: this.#destelheide,
+    'de pinte': this.#moerkesheide,
+    moerkensheid: this.#moerkesheide,
+    'jeugdherberg kortrijk': this.#groeninge,
+    'jeugdherberg in kortrijk': this.#groeninge,
+    kortrijk: this.#groeninge,
+    'jeugdherberg hostel h.': this.#hostelH,
+    'jeugdherberg hostel': this.#hostelH,
+    'hostel h.': this.#hostelH,
+    hasselt: this.#hostelH,
+    'jeugdherberg hostel h': this.#hostelH,
+    lier: this.#muzet,
+    'jeugdherberg bed muzet': this.#muzet,
+    'jeugdberg bed muzet': this.#muzet,
+    'sint-joris-weert': this.#kluis,
+    'de kluis in sint-joris-weert': this.#kluis,
+    'jeugdherberg de blauwput in leuven': this.#blauwput,
+    leuven: this.#blauwput,
+    'jeugdherberg de blauwput': this.#blauwput,
+    'de blauwput': this.#blauwput,
+    'de zandpoort': this.#zandpoort,
+    mechelen: this.#zandpoort,
+    'de draecke': this.#draecke,
+    gent: this.#draecke,
+    'de hoge rielen': this.#rielen,
+    kasterlee: this.#rielen,
+    'het pelterke': this.#pelterke,
+    overpelt: this.#pelterke,
+    'jeugdherberg de fiertel': this.#fiertel,
+    'de fiertel': this.#fiertel,
+    ieper: this.#iep,
+    'boerderij de pierlapont zedelgem': this.#pierlapont,
+    'boerderije de pierlapont zedelgem': this.#pierlapont,
+    'jeugdherberg génération europa': this.#europe,
+    'jeugdherberg europa': this.#europe,
+    'génération europe': this.#europe,
+    brussel: this.#europe,
+    westmalle: this.#heibrand,
+    lokeren: this.#bos,
+    retie: this.#waterval,
+    bokrijk: this.#roerdomp,
+    waasmunster: this.#heidepark,
+    'jeugdherberg begeinhof tongeren': this.#begeinhof,
+    heywyck: this.#heywijck,
+    'sint-niklaas': this.#heywijck,
+    deurne: this.#kei,
+    'de peerdevisser': this.#peerdevisser,
+    herentals: this.#brink,
+    'de axlandhoeve': this.#axlandhoeve,
   };
 }
