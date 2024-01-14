@@ -3,7 +3,6 @@ import {
   Aanmelding,
   UpsertableDeelname,
   InsertableAanmelding,
-  UpdatableAanmelding,
   PatchableAanmelding,
 } from '@rock-solid/shared';
 import { restClient, RestClient } from '../shared/rest-client';
