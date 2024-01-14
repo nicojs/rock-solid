@@ -642,7 +642,7 @@ describe(ProjectenController.name, () => {
 
     it('should be able to update rekeninguittreksel nummers', async () => {
       // Act
-      const aanmeldingen = await harness.partialUpdateAanmeldingen(project.id, [
+      const aanmeldingen = await harness.patchAanmeldingen(project.id, [
         { id: aanmelding1.id, rekeninguittrekselNummer: '123' },
         { id: aanmelding2.id, rekeninguittrekselNummer: '456' },
       ]);
@@ -657,15 +657,15 @@ describe(ProjectenController.name, () => {
 
     it('should be able to clear the rekeninguittreksel nummers', async () => {
       // Arrange
-      await harness.partialUpdateAanmeldingen(project.id, [
+      await harness.patchAanmeldingen(project.id, [
         { id: aanmelding1.id, rekeninguittrekselNummer: '123' },
         { id: aanmelding2.id, rekeninguittrekselNummer: '456' },
       ]);
 
       // Act
-      const aanmeldingen = await harness.partialUpdateAanmeldingen(project.id, [
-        { id: aanmelding1.id, rekeninguittrekselNummer: '123' },
-        { id: aanmelding2.id, rekeninguittrekselNummer: undefined },
+      const aanmeldingen = await harness.patchAanmeldingen(project.id, [
+        { id: aanmelding1.id, rekeninguittrekselNummer: undefined }, // Should be ignored
+        { id: aanmelding2.id, rekeninguittrekselNummer: null }, // Should clear the rekeninguittreksel nummer
       ]);
 
       // Assert
@@ -719,6 +719,35 @@ describe(ProjectenController.name, () => {
       };
       expect(actualAanmelding).deep.include(expectedAanmelding);
     });
+
+    it('should not delete "status", "werksituatie", "woonsituatie", "geslacht", "plaats" and "opmerking" when not provided', async () => {
+      // Arrange
+      const deelnemer = await harness.createDeelnemer(factory.deelnemer());
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+
+      await harness.updateAanmelding({
+        ...aanmelding,
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+        opmerking: 'Foo',
+      });
+
+      // Act
+      const actualAanmeldingen = await harness.patchAanmeldingen(project.id, [
+        aanmelding,
+      ]);
+
+      // Assert
+      const actualAanmelding = actualAanmeldingen[0]!;
+      expect(actualAanmelding.werksituatie).eq('arbeidstrajectbegeleiding');
+      expect(actualAanmelding.woonsituatie).eq('residentieleWoonondersteuning');
+      expect(actualAanmelding.geslacht).eq('x');
+      expect(actualAanmelding.opmerking).eq('Foo');
+    });
   });
 
   describe('PUT /projecten/:id/aanmeldingen/:id', () => {
@@ -745,7 +774,7 @@ describe(ProjectenController.name, () => {
       ]);
     });
 
-    it('should be able to update "werksituatie", "woonsituatie", "geslacht" and "plaats"', async () => {
+    it('should be able to update "werksituatie", "woonsituatie", "geslacht", "plaats", "status", and "opmerking"', async () => {
       // Arrange
       const aanmelding = await harness.createAanmelding({
         projectId: project.id,
@@ -757,6 +786,8 @@ describe(ProjectenController.name, () => {
       aanmelding.woonsituatie = 'residentieleWoonondersteuning';
       aanmelding.geslacht = 'x';
       aanmelding.plaats = plaats;
+      aanmelding.status = 'Bevestigd';
+      aanmelding.opmerking = 'Foo';
       const actualAanmelding = await harness.updateAanmelding(aanmelding);
 
       // Assert
@@ -765,8 +796,38 @@ describe(ProjectenController.name, () => {
         woonsituatie: 'residentieleWoonondersteuning',
         geslacht: 'x',
         plaats,
+        status: 'Bevestigd',
+        opmerking: 'Foo',
       };
       expect(actualAanmelding).deep.include(expectedAanmelding);
+    });
+
+    it('should be able to delete "werksituatie", "woonsituatie", "geslacht", "plaats", "opmerking" en "rekeningnummer"', async () => {
+      // Arrange
+      const aanmelding = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+      await harness.updateAanmelding({
+        ...aanmelding,
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        geslacht: 'x',
+        plaats: plaats,
+        opmerking: 'Foo',
+        rekeninguittrekselNummer: '123',
+      });
+
+      // Act
+      const actualAanmelding = await harness.updateAanmelding(aanmelding);
+
+      // Assert
+      expect(actualAanmelding.werksituatie).undefined;
+      expect(actualAanmelding.woonsituatie).undefined;
+      expect(actualAanmelding.geslacht).undefined;
+      expect(actualAanmelding.rekeninguittrekselNummer).undefined;
+      expect(actualAanmelding.plaats).undefined;
+      expect(actualAanmelding.opmerking).undefined;
     });
 
     it('should override deelnemer "werksituatie", "woonsituatie" and "geslacht" when "overrideDeelnemerFields": true', async () => {

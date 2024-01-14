@@ -272,7 +272,7 @@ describe(ReportsController.name, () => {
       deelnemerId: deelnemerB.id,
       projectId: projectA.id,
     });
-    await harness.partialUpdateAanmeldingen(projectA.id, [
+    await harness.patchAanmeldingen(projectA.id, [
       { id: aanmelding1.id, status: 'Aangemeld' },
       { id: aanmelding2.id, status: 'Aangemeld' },
       { id: aanmelding3.id, status: 'Bevestigd' },

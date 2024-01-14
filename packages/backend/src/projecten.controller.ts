@@ -8,6 +8,7 @@ import {
   type InsertableAanmelding,
   type UpsertableProject,
   type UpdatableAanmelding,
+  type PatchableAanmelding,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -127,10 +128,10 @@ export class ProjectenController {
   @Privileges('write:aanmeldingen')
   async partialUpdateAanmeldingen(
     @Param('id', ParseIntPipe) projectId: number,
-    @Body() aanmeldingen: UpdatableAanmelding[],
+    @Body() aanmeldingen: PatchableAanmelding[],
   ): Promise<Aanmelding[]> {
     aanmeldingen.forEach((aanmelding) => (aanmelding.projectId = projectId));
-    return this.aanmeldingMapper.updateAll(aanmeldingen);
+    return this.aanmeldingMapper.patchAll(aanmeldingen);
   }
 
   @Put(':id/aanmeldingen/:aanmeldingId')
@@ -149,10 +150,10 @@ export class ProjectenController {
   async partialUpdateAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
     @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
-    @Body() aanmelding: Partial<Aanmelding>,
+    @Body() aanmelding: PatchableAanmelding,
   ): Promise<Aanmelding> {
     aanmelding.projectId = projectId;
-    return this.aanmeldingMapper.update(aanmeldingId, aanmelding);
+    return this.aanmeldingMapper.patch(aanmeldingId, aanmelding);
   }
 
   @Delete(':id/aanmeldingen/:aanmeldingId')

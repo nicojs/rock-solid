@@ -1,7 +1,7 @@
 import { Plaats } from './adres.js';
 import { Options } from './options.js';
 import { Deelnemer, Geslacht, Werksituatie, Woonsituatie } from './persoon.js';
-import { Upsertable } from './upsertable.js';
+import { Patchable, Upsertable } from './upsertable.js';
 import { Labels } from './util.js';
 
 export interface Aanmelding {
@@ -46,6 +46,8 @@ export type InsertableAanmelding = Upsertable<
 export type UpdatableAanmelding = Upsertable<Aanmelding, 'id'> & {
   overrideDeelnemerFields?: boolean;
 };
+
+export type PatchableAanmelding = Patchable<Aanmelding>;
 
 export const aanmeldingLabels: Labels<Aanmelding> = {
   id: 'id',

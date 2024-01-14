@@ -132,6 +132,7 @@ model Aanmelding {
   rekeninguittrekselNummer     String?
   tijdstipVanAanmelden         DateTime   @default(now())
   status                       Int        @default(0)
+  opmerking                    String?
   bevestigingsbriefVerzondenOp DateTime?
   vervoersbriefVerzondenOp     DateTime?
 

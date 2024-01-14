@@ -3,6 +3,7 @@ import {
   Aanmelding,
   InsertableAanmelding,
   UpdatableAanmelding,
+  PatchableAanmelding,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
@@ -139,38 +140,17 @@ export class AanmeldingMapper {
 
   public async update(
     id: number,
-    aanmelding: Partial<UpdatableAanmelding>,
+    aanmelding: UpdatableAanmelding,
   ): Promise<Aanmelding> {
-    const {
-      deelnemer: persoon,
-      deelnemerId,
-      projectId,
-      plaats,
-      id: unused,
-      status,
-      werksituatie,
-      woonsituatie,
-      geslacht,
-      overrideDeelnemerFields,
-      ...aanmeldingData
-    } = aanmelding;
     const dbAanmelding = await this.db.aanmelding.update({
-      data: {
-        ...aanmeldingData,
-        status: aanmeldingsstatusMapper.toDB(status),
-        werksituatie: werksituatieMapper.toDB(werksituatie),
-        woonsituatie: woonsituatieMapper.toDB(woonsituatie),
-        geslacht: geslachtMapper.toDB(geslacht),
-        plaatsId: plaats?.id,
-        rekeninguittrekselNummer:
-          aanmeldingData.rekeninguittrekselNummer ?? null,
-      },
-      where: {
-        id,
-      },
+      data: toUpdateAanmeldingData(aanmelding),
+      where: { id },
       include: includeDeelnemer,
     });
-    if (overrideDeelnemerFields && dbAanmelding.deelnemerId !== null) {
+    if (
+      aanmelding.overrideDeelnemerFields &&
+      dbAanmelding.deelnemerId !== null
+    ) {
       await this.db.persoon.update({
         data: {
           werksituatie: dbAanmelding.werksituatie,
@@ -183,17 +163,81 @@ export class AanmeldingMapper {
     return toAanmelding(dbAanmelding);
   }
 
+  public async patch(
+    id: number,
+    aanmelding: PatchableAanmelding,
+  ): Promise<Aanmelding> {
+    const {
+      plaats,
+      werksituatie,
+      woonsituatie,
+      geslacht,
+      bevestigingsbriefVerzondenOp,
+      rekeninguittrekselNummer,
+      tijdstipVanAanmelden,
+      vervoersbriefVerzondenOp,
+      status,
+      opmerking,
+    } = aanmelding;
+    const dbAanmelding = await this.db.aanmelding.update({
+      data: {
+        bevestigingsbriefVerzondenOp,
+        tijdstipVanAanmelden,
+        vervoersbriefVerzondenOp,
+        opmerking,
+        rekeninguittrekselNummer,
+        status: aanmeldingsstatusMapper.toDB(status),
+        werksituatie: werksituatieMapper.toDB(werksituatie),
+        woonsituatie: woonsituatieMapper.toDB(woonsituatie),
+        geslacht: geslachtMapper.toDB(geslacht),
+        plaatsId: plaats?.id,
+      },
+      where: {
+        id,
+      },
+      include: includeDeelnemer,
+    });
+    return toAanmelding(dbAanmelding);
+  }
+
   async delete(projectId: number, aanmeldingId: number): Promise<void> {
     await handleKnownPrismaErrors(
       this.db.aanmelding.delete({ where: { id: aanmeldingId, projectId } }),
     );
   }
 
-  public updateAll(aanmeldingen: UpdatableAanmelding[]): Promise<Aanmelding[]> {
+  public patchAll(aanmeldingen: PatchableAanmelding[]): Promise<Aanmelding[]> {
+    aanmeldingen[0]?.rekeninguittrekselNummer;
     return Promise.all(
-      aanmeldingen.map((aanmelding) => this.update(aanmelding.id, aanmelding)),
+      aanmeldingen.map((aanmelding) => this.patch(aanmelding.id, aanmelding)),
     );
   }
+}
+
+function toUpdateAanmeldingData(
+  aanmelding: UpdatableAanmelding,
+): db.Prisma.AanmeldingUpdateInput {
+  const {
+    plaats,
+    projectId,
+    id,
+    deelnemer,
+    opmerking,
+    deelnemerId,
+    rekeninguittrekselNummer,
+    overrideDeelnemerFields,
+    ...aanmeldingData
+  } = aanmelding;
+  return {
+    ...aanmeldingData,
+    rekeninguittrekselNummer: rekeninguittrekselNummer ?? null,
+    status: aanmeldingsstatusMapper.toDB(aanmelding.status),
+    werksituatie: werksituatieMapper.toDB(aanmelding.werksituatie) ?? null,
+    woonsituatie: woonsituatieMapper.toDB(aanmelding.woonsituatie) ?? null,
+    geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? null,
+    opmerking: opmerking ?? null,
+    plaats: plaats ? { connect: { id: plaats.id } } : { disconnect: true },
+  };
 }
 
 function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {

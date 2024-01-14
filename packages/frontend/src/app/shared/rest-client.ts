@@ -3,6 +3,7 @@ import {
   FilterFrom,
   PAGE_QUERY_STRING_NAME,
   parse,
+  Patchable,
   Query,
   RestRoutes,
   TOTAL_COUNT_HEADER,
@@ -131,7 +132,7 @@ export class RestClient {
 
   async patchAll<TRoute extends keyof RestRoutes>(
     route: TRoute,
-    patches: (Partial<RestRoutes[TRoute]['entity']> & {
+    patches: (Patchable<RestRoutes[TRoute]['entity']> & {
       id: string | number;
     })[],
   ): Promise<RestRoutes[TRoute]['entity'][]> {
