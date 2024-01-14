@@ -3,6 +3,7 @@ import {
   Aanmelding,
   InsertableAanmelding,
   UpdatableAanmelding,
+  PatchableAanmelding,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
@@ -164,29 +165,32 @@ export class AanmeldingMapper {
 
   public async patch(
     id: number,
-    aanmelding: Partial<Aanmelding>,
+    aanmelding: PatchableAanmelding,
   ): Promise<Aanmelding> {
     const {
-      deelnemer: persoon,
-      deelnemerId,
-      projectId,
       plaats,
-      id: unused,
-      status,
       werksituatie,
       woonsituatie,
       geslacht,
-      ...aanmeldingData
+      bevestigingsbriefVerzondenOp,
+      rekeninguittrekselNummer,
+      tijdstipVanAanmelden,
+      vervoersbriefVerzondenOp,
+      status,
+      opmerking,
     } = aanmelding;
     const dbAanmelding = await this.db.aanmelding.update({
       data: {
-        ...aanmeldingData,
+        bevestigingsbriefVerzondenOp,
+        tijdstipVanAanmelden,
+        vervoersbriefVerzondenOp,
+        opmerking,
+        rekeninguittrekselNummer,
         status: aanmeldingsstatusMapper.toDB(status),
         werksituatie: werksituatieMapper.toDB(werksituatie),
         woonsituatie: woonsituatieMapper.toDB(woonsituatie),
         geslacht: geslachtMapper.toDB(geslacht),
         plaatsId: plaats?.id,
-        rekeninguittrekselNummer: aanmeldingData.rekeninguittrekselNummer,
       },
       where: {
         id,
@@ -202,7 +206,8 @@ export class AanmeldingMapper {
     );
   }
 
-  public patchAll(aanmeldingen: UpdatableAanmelding[]): Promise<Aanmelding[]> {
+  public patchAll(aanmeldingen: PatchableAanmelding[]): Promise<Aanmelding[]> {
+    aanmeldingen[0]?.rekeninguittrekselNummer;
     return Promise.all(
       aanmeldingen.map((aanmelding) => this.patch(aanmelding.id, aanmelding)),
     );
@@ -219,10 +224,13 @@ function toUpdateAanmeldingData(
     deelnemer,
     opmerking,
     deelnemerId,
+    rekeninguittrekselNummer,
+    overrideDeelnemerFields,
     ...aanmeldingData
   } = aanmelding;
   return {
     ...aanmeldingData,
+    rekeninguittrekselNummer: rekeninguittrekselNummer ?? null,
     status: aanmeldingsstatusMapper.toDB(aanmelding.status),
     werksituatie: werksituatieMapper.toDB(aanmelding.werksituatie) ?? null,
     woonsituatie: woonsituatieMapper.toDB(aanmelding.woonsituatie) ?? null,

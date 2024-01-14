@@ -261,6 +261,8 @@ export interface BaseInputControl<TEntity, TValue> {
   postfix?: string;
   /** Run custom validation when one of these fields changes */
   dependsOn?: (keyof TEntity & string)[];
+  /** When updated with empty text, should the underlying field be set to null? */
+  nullable?: boolean;
 }
 
 export type KeysOfType<TEntity, TValue> = keyof {

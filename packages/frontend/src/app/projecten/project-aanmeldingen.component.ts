@@ -3,6 +3,7 @@ import {
   Aanmeldingsstatus,
   Deelnemer,
   FotoToestemming,
+  PatchableAanmelding,
   Persoon,
   Project,
   aanmeldingLabels,
@@ -112,15 +113,9 @@ export class ProjectAanmeldingenComponent extends LitElement {
       });
   }
 
-  private async pathRekeninguittreksels(aanmeldingen: Aanmelding[]) {
+  private async pathRekeninguittreksels(aanmeldingen: PatchableAanmelding[]) {
     projectService
-      .patchAanmeldingen(
-        this.project.id,
-        aanmeldingen.map(({ id, rekeninguittrekselNummer }) => ({
-          id,
-          rekeninguittrekselNummer,
-        })),
-      )
+      .patchAanmeldingen(this.project.id, aanmeldingen)
       .then((aanmeldingen) => {
         this.aanmeldingen$.next(
           this.aanmeldingen!.map(
@@ -245,7 +240,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           ? html`<rock-project-rekeninguittreksels
               .project=${this.project}
               @rekeninguittreksels-updated=${(
-                event: CustomEvent<Aanmelding[]>,
+                event: CustomEvent<PatchableAanmelding[]>,
               ) => this.pathRekeninguittreksels(event.detail)}
               .aanmeldingen=${this.aanmeldingen?.filter(
                 ({ status }) => status === 'Bevestigd',

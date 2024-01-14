@@ -320,6 +320,9 @@ export class ReactiveFormInputControl<
   }
 
   private updateValue(value: unknown) {
+    if (value === undefined && this.control.nullable) {
+      value = null;
+    }
     (this.entity as any)[this.control.name] = value;
     this.validate();
     this.dispatchValueUpdatedEvent();

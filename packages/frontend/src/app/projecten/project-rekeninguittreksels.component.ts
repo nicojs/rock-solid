@@ -1,6 +1,6 @@
-import { Aanmelding, Project } from '@rock-solid/shared';
-import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { Aanmelding, PatchableAanmelding, Project } from '@rock-solid/shared';
+import { LitElement, PropertyValues, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { FormControl, InputType } from '../forms';
 import { fullNameWithAge } from '../personen/persoon.pipe';
 import { printProject } from './project.pipes';
@@ -17,12 +17,26 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
   @property({ attribute: false, type: Array })
   public aanmeldingen!: Aanmelding[];
 
+  @state()
+  private patchableAanmeldingen: PatchableAanmelding[] = [];
+
+  override update(props: PropertyValues<ProjectRekeninguittrekselsComponent>) {
+    if (props.has('aanmeldingen')) {
+      this.patchableAanmeldingen = this.aanmeldingen.map((aanmelding) => ({
+        id: aanmelding.id,
+        rekeninguittrekselNummer: aanmelding.rekeninguittrekselNummer,
+        deelnemer: aanmelding.deelnemer,
+      }));
+    }
+    super.update(props);
+  }
+
   async submit(e: SubmitEvent) {
     e.preventDefault();
     const event = new CustomEvent('rekeninguittreksels-updated', {
       bubbles: true,
       composed: true,
-      detail: this.aanmeldingen,
+      detail: this.patchableAanmeldingen,
     });
     this.dispatchEvent(event);
   }
@@ -33,7 +47,7 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
         ${printProject(this.project)}
       </h2>
       <form @submit=${this.submit}>
-        ${this.aanmeldingen.map(
+        ${this.patchableAanmeldingen.map(
           (aanmelding, index) =>
             html` <rock-reactive-form-control
               .entity=${aanmelding}
@@ -52,13 +66,14 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
 }
 
 function rekeninguittrekselNummerControlFor(
-  { deelnemer }: Aanmelding,
+  { deelnemer }: PatchableAanmelding,
   index: number,
-): FormControl<Aanmelding> {
+): FormControl<PatchableAanmelding> {
   return {
     id: `reknr_${index}`,
     name: 'rekeninguittrekselNummer',
-    label: fullNameWithAge(deelnemer!),
+    label: deelnemer ? fullNameWithAge(deelnemer) : 'Deelnemer is verwijderd',
     type: InputType.text,
+    nullable: true,
   };
 }

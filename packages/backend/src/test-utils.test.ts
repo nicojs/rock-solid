@@ -42,6 +42,7 @@ import {
   Locatie,
   PAGE_QUERY_STRING_NAME,
   TOTAL_COUNT_HEADER,
+  PatchableAanmelding,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -389,9 +390,20 @@ class IntegrationTestingHarness {
     return await this.createPersoon(overigPersoon);
   }
 
-  async partialUpdateAanmeldingen(
+  async patchAanmelding(
     projectId: number,
-    aanmeldingen: UpdatableAanmelding[],
+    aanmelding: PatchableAanmelding,
+  ): Promise<Aanmelding[]> {
+    const response = await this.patch(
+      `/projecten/${projectId}/aanmeldingen/${aanmelding.id}}`,
+      aanmelding,
+    ).expect(200);
+    return response.body;
+  }
+
+  async patchAanmeldingen(
+    projectId: number,
+    aanmeldingen: PatchableAanmelding[],
   ): Promise<Aanmelding[]> {
     const response = await this.patch(
       `/projecten/${projectId}/aanmeldingen`,
