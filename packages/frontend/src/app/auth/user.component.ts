@@ -1,15 +1,14 @@
 import { logoutUrl, User, userRoleNames } from '@rock-solid/shared';
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { Subscription } from 'rxjs';
 import { bootstrap } from '../../styles';
 import { authStore } from './auth.store';
+import { RockElement } from '../rock-element';
 
 @customElement('rock-user')
-export class UserComponent extends LitElement {
+export class UserComponent extends RockElement {
   public static override styles = [bootstrap];
 
-  private sub = new Subscription();
   @state()
   private user?: User;
 
@@ -21,11 +20,13 @@ export class UserComponent extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this.sub.add(authStore.user$.subscribe((user) => (this.user = user)));
+    this.subscription.add(
+      authStore.user$.subscribe((user) => (this.user = user)),
+    );
   }
 
   protected override render() {
-    return html` <nav class="navbar navbar-light bg-light">
+    return html` <nav class="navbar bg-body-tertiary">
       Ingelogd als
       ${this.user
         ? `${this.user.name} (${userRoleNames[this.user.role]})`

@@ -1,5 +1,5 @@
 import { EntityFrom, FilterFrom, RestRoutes } from '@rock-solid/shared';
-import { html } from 'lit';
+import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { downloadCsv } from './string-utils';
 import { PagedStore } from './paged-store.store';
@@ -10,7 +10,14 @@ import { bootstrap } from '../../styles';
 export class ExportComponent<
   TRoute extends keyof RestRoutes,
 > extends RockElement {
-  public static override styles = [bootstrap];
+  public static override styles = [
+    bootstrap,
+    css`
+      :host {
+        display: inline-block;
+      }
+    `,
+  ];
 
   @state()
   private exportIsLoading = false;
