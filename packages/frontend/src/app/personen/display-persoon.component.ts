@@ -83,7 +83,7 @@ export class DisplayPersoonComponent extends RockElement {
         <rock-link
           btn
           sm
-          btnSecondary
+          btnOutlinePrimary
           href="/${pluralize(this.persoon.type)}/edit/${this.persoon.id}"
           ><rock-icon icon="pencil"></rock-icon
         ></rock-link>

@@ -212,7 +212,7 @@ export class ProjectenListComponent extends LitElement {
                     title="${printProject(project)} Verwijderen"
                     type="button"
                     ${privilege('write:projecten')}
-                    class="btn btn-danger btn-sm"
+                    class="btn btn-outline-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>
                   </button>
