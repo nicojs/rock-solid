@@ -363,7 +363,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           </button>
           <rock-link
             btn
-            btnOutlineSecondary
+            btnOutlinePrimary
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/rekeninguittreksels"
             ><rock-icon icon="cashCoin"></rock-icon> Rekeninguittreksels
@@ -371,14 +371,14 @@ export class ProjectAanmeldingenComponent extends LitElement {
           >
           <rock-link
             btn
-            btnOutlineSecondary
+            btnOutlinePrimary
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/brieven-verzenden"
             ><rock-icon icon="mailbox"></rock-icon> Brieven verzenden</rock-link
           >
           <rock-link
             btn
-            btnOutlineSecondary
+            btnOutlinePrimary
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/deelnemerslijst-printen"
             ><rock-icon icon="printer"></rock-icon> Deelnemerslijst
@@ -542,7 +542,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
     return html`<span
       ><button
         title="Verwijderen"
-        class="btn btn-danger btn-sm ${floatEnd ? 'float-end' : ''}"
+        class="btn btn-outline-danger btn-sm ${floatEnd ? 'float-end' : ''}"
         type="button"
         ${privilege('write:aanmeldingen')}
         @click=${() => this.deleteAanmelding(aanmelding)}

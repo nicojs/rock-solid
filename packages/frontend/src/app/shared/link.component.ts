@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -6,7 +6,14 @@ import { router } from '../router';
 
 @customElement('rock-link')
 export class Link extends LitElement {
-  static override styles = [bootstrap];
+  static override styles = [
+    bootstrap,
+    css`
+      :host {
+        display: inline-block;
+      }
+    `,
+  ];
 
   @property({ type: Boolean })
   public btn = false;

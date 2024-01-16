@@ -11,12 +11,24 @@
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
+    <style>
+      body {
+         background-color: #fff;
+      }
+
+      body[data-bs-theme='dark'] {
+         background-color: #212529;
+      }
+    </style>
 
     <title>Rock Solid</title>
+
   </head>
-  <body>
+  <body data-bs-theme="dark">
     <rock-solid-app></rock-solid-app>
+    <script src="/main.js"></script>
     <script src="/app.bundle.js"></script>
     <script src="http://localhost:35729/livereload.js"></script>
+
   </body>
 </html>

@@ -2,7 +2,6 @@
 import { css, LitElement } from 'lit';
 import { html } from 'lit-html';
 import { customElement, property } from 'lit/decorators.js';
-import { bootstrap } from '../../styles';
 import { icons } from './icons';
 @customElement('rock-icon')
 export class IconComponent extends LitElement {
@@ -13,8 +12,10 @@ export class IconComponent extends LitElement {
   public size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
 
   static override styles = [
-    bootstrap,
     css`
+      svg {
+        vertical-align: middle;
+      }
       .icon-sm svg,
       .icon-sm img {
         width: 8px;
@@ -39,6 +40,8 @@ export class IconComponent extends LitElement {
   ];
 
   override render() {
-    return html`<span class="icon-${this.size}">${icons[this.icon]}</span>`;
+    return html`<span class="icon icon-${this.size}"
+      >${icons[this.icon]}</span
+    >`;
   }
 }

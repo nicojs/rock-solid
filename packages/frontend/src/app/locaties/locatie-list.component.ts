@@ -54,14 +54,18 @@ export class LocatieListComponent extends LitElement {
                 <td>${loc.naam}</td>
                 <td>${showAdres(loc.adres)}</td>
                 <td>
-                  <rock-link btn sm btnSecondary href="/locaties/edit/${loc.id}"
+                  <rock-link
+                    btn
+                    sm
+                    btnOutlinePrimary
+                    href="/locaties/edit/${loc.id}"
                     ><rock-icon icon="pencil"></rock-icon
                   ></rock-link>
                   <button
                     @click=${() => this.deleteLocatie(loc)}
                     type="button"
                     ${privilege('write:locaties')}
-                    class="btn btn-danger btn-sm"
+                    class="btn btn-outline-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>
                   </button>
