@@ -48,7 +48,7 @@ interface RawDeelnemer {
   rijksregisternummer: string;
   telefoon: string;
   'telefoon domicilie': string;
-  vakanties: string;
+  vakanties: 'Ja' | 'Nee';
   'volwassen minderjarig': string;
   werksituatie: string;
   woonsituatie: string;
@@ -163,23 +163,35 @@ const post = communicatievoorkeurMapper.toDB('post');
 function foldervoorkeurFromRaw(
   raw: RawDeelnemer,
   geboortedatum: Date | undefined,
-): db.Prisma.FoldervoorkeurCreateWithoutPersoonInput | undefined {
-  if (raw.cursussen === 'Ja') {
+): db.Prisma.FoldervoorkeurCreateWithoutPersoonInput[] {
+  const foldervoorkeuren: db.Prisma.FoldervoorkeurCreateWithoutPersoonInput[] =
+    [];
+  if (raw.vakanties === 'Ja') {
+    foldervoorkeuren.push({
+      communicatie: post,
+      folder: foldersoortMapper.toDB('deKeiWintervakantie'),
+    });
+    foldervoorkeuren.push({
+      communicatie: post,
+      folder: foldersoortMapper.toDB('deKeiZomervakantie'),
+    });
+  } else if (raw.cursussen === 'Ja') {
     if (!geboortedatum || calculateAge(geboortedatum) >= 31) {
-      return {
+      foldervoorkeuren.push({
         communicatie: post,
         folder: foldersoortMapper.toDB('deKeiCursussen'),
-      };
+      });
     } else if (raw['Kei-Jong BUSO'] === 'Ja') {
-      return {
+      foldervoorkeuren.push({
         communicatie: post,
         folder: foldersoortMapper.toDB('keiJongBuso'),
-      };
+      });
     } else {
-      return {
+      foldervoorkeuren.push({
         communicatie: post,
         folder: foldersoortMapper.toDB('keiJongNietBuso'),
-      };
+      });
     }
   }
+  return foldervoorkeuren;
 }
