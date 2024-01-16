@@ -67,7 +67,7 @@ export class Router {
       );
     }
     const route = this.resolve(path);
-    window.history.pushState({}, '', route.pathname);
+    window.history.pushState({}, '', route.href);
     this.navigatorSubject.next(route);
   }
 
