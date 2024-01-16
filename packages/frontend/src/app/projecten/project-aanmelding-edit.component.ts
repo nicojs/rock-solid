@@ -133,10 +133,10 @@ const aanmeldingControls: FormControl<UpdatableAanmelding>[] = [
   {
     name: 'overrideDeelnemerFields',
     type: InputType.checkbox,
-    label: `Update ook de "${
+    label: `Update ook de '${
       'woonsituatie' satisfies keyof UpdatableAanmelding
-    }", "${'werksituatie' satisfies keyof UpdatableAanmelding}" en "${
+    }', '${'werksituatie' satisfies keyof UpdatableAanmelding}' en '${
       'geslacht' satisfies keyof UpdatableAanmelding
-    }" bij de deelnemer`,
+    }' bij de deelnemer`,
   },
 ];
