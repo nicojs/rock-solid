@@ -93,11 +93,10 @@ export class ModalComponent extends RockElement {
               <button
                 @click=${this.cancelled}
                 type="button"
-                class="close"
+                class="btn-close"
+                data-bs-dismiss="modal"
                 aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
+              ></button>
             </div>
             <div class="modal-body">
               <p>${this.modalBody}</p>
