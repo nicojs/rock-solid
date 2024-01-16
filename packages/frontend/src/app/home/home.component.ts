@@ -2,7 +2,11 @@ import { LitElement, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { reportsClient } from '../rapportages/reports-client';
-import { Organisatieonderdeel } from '@rock-solid/shared';
+import {
+  Organisatieonderdeel,
+  ProjectFilter,
+  toQueryString,
+} from '@rock-solid/shared';
 
 const keiJongOrganisatieonderdelen: ReadonlyArray<Organisatieonderdeel> =
   Object.freeze(['keiJongBuSO', 'keiJongNietBuSO']);
@@ -51,8 +55,14 @@ export class HomeComponent extends LitElement {
               <p class="card-text">
                 Deelnemersuren voor Kei-Jong in ${this.year}
               </p>
-              <rock-link href="/cursussen" btn btnPrimary
-                >Naar cursussen</rock-link
+              <rock-link
+                href="/cursussen/${toQueryString({
+                  type: 'cursus',
+                  organisatieonderdelen: ['keiJongBuSO', 'keiJongNietBuSO'],
+                } satisfies ProjectFilter)}"
+                btn
+                btnPrimary
+                >Naar Kei-Jong cursussen</rock-link
               >
             </div>
           </div>
@@ -71,8 +81,14 @@ export class HomeComponent extends LitElement {
                 begeleidingsuren in ${this.year}
               </h5>
               <p class="card-text">Begeleidingsuren De Kei in ${this.year}</p>
-              <rock-link href="/cursussen" btn btnPrimary
-                >Naar cursussen</rock-link
+              <rock-link
+                href="/cursussen/${toQueryString({
+                  type: 'cursus',
+                  organisatieonderdelen: ['deKei'],
+                } satisfies ProjectFilter)}"
+                btn
+                btnPrimary
+                >Naar De Kei cursussen</rock-link
               >
             </div>
           </div>
