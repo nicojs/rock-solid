@@ -17,19 +17,19 @@ export class SearchComponent<
   public advancedControls?: FormControl<TFilter>[];
 
   @property()
-  private filter!: TFilter;
+  public filter!: TFilter;
 
   @state()
   private showAdvancedSearch = false;
 
-  public override firstUpdated(
-    changes: PropertyValueMap<SearchComponent<TFilter>>,
-  ): void {
-    super.firstUpdated(changes);
-    const advancedSearchKeys = this.advancedControls?.map(({ name }) => name);
-    this.showAdvancedSearch = Object.entries(this.filter)
-      .filter(([key]) => advancedSearchKeys?.includes(key))
-      .some(([, value]) => value !== undefined);
+  public override update(props: PropertyValueMap<SearchComponent<TFilter>>) {
+    if (props.has('filter') || props.has('advancedControls')) {
+      const advancedSearchKeys = this.advancedControls?.map(({ name }) => name);
+      this.showAdvancedSearch = Object.entries(this.filter)
+        .filter(([key]) => advancedSearchKeys?.includes(key))
+        .some(([, value]) => value !== undefined);
+    }
+    super.update(props);
   }
 
   private cancelAdvancedSearch() {
