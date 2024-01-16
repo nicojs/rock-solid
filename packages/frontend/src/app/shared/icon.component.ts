@@ -13,7 +13,10 @@ export class IconComponent extends LitElement {
 
   static override styles = [
     css`
-      svg {
+      :host {
+        display: inline-block;
+      }
+      .icon {
         vertical-align: middle;
       }
       .icon-sm svg,

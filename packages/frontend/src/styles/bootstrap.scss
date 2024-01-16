@@ -10,3 +10,8 @@
   // https://web.dev/articles/custom-elements-best-practices#set-a-:host-display-style-e.g.-block,-inline-block,-flex-unless-you-prefer-the-default-of-inline.
   display: block; 
 }
+
+
+.btn-close {
+    filter: var(--btn-close-filter);
+}
