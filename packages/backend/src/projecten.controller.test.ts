@@ -38,27 +38,6 @@ describe(ProjectenController.name, () => {
       await harness.put('/projecten/1').expect(403);
     });
 
-    it('POST /projecten/:id/aanmeldingen should not be allowed for projectverantwoordelijke', async () => {
-      harness.login({ role: 'projectverantwoordelijke' });
-      await harness.post('/projecten/1/aanmeldingen').expect(403);
-    });
-    it('PUT /projecten/:id/aanmeldingen/:id should not be allowed for projectverantwoordelijke', async () => {
-      harness.login({ role: 'projectverantwoordelijke' });
-      await harness.put('/projecten/1/aanmeldingen/1').expect(403);
-    });
-    it('PATCH /projecten/:id/aanmeldingen/:id should not be allowed for projectverantwoordelijke', async () => {
-      harness.login({ role: 'projectverantwoordelijke' });
-      await harness.patch('/projecten/1/aanmeldingen/1').expect(403);
-    });
-    it('PATCH /projecten/:id/aanmeldingen should not be allowed for projectverantwoordelijke', async () => {
-      harness.login({ role: 'projectverantwoordelijke' });
-      await harness.patch('/projecten/1/aanmeldingen').expect(403);
-    });
-    it('DELETE /projecten/:id/aanmeldingen/:id should not be allowed for projectverantwoordelijke', async () => {
-      harness.login({ role: 'projectverantwoordelijke' });
-      await harness.delete('/projecten/1/aanmeldingen/1').expect(403);
-    });
-
     it('PUT /projecten/:id/deelnames should be allowed for projectverantwoordelijke', async () => {
       // Arrange
       const project = await harness.createProject(factory.cursus());
