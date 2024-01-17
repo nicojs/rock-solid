@@ -78,16 +78,12 @@ const blacklist = [
 async function retrievePostcodePage(url) {
   const body = await get(url);
   return {
-    postcodes: body.postInfoObjecten.map((postInfo) => ({
-      postcode: postInfo.identificator.objectId,
-      deelgemeente: postInfo.postnamen.sort((a, b) =>
-        a.geografischeNaam.taal === 'nl'
-          ? 1
-          : b.geografischeNaam.taal === 'nl'
-          ? -1
-          : 0,
-      )[0].geografischeNaam.spelling,
-    })),
+    postcodes: body.postInfoObjecten.flatMap((postInfo) => postInfo.postnamen.map((postnaam) => (
+      {
+        postcode: postInfo.identificator.objectId,
+        deelgemeente: postnaam.geografischeNaam.spelling,
+      }
+    ))),
     volgende: body.volgende,
   };
 }
@@ -193,8 +189,11 @@ async function retrievePlaatsen(gemeente) {
   while (url) {
     const { postcodes, volgende } = await retrievePostcodePage(url);
     plaatsen.push(
-      ...postcodes.map(({postcode, ...info}) => {
-        const deelgemeente = info.deelgemeente === gemeente.toUpperCase() ? gemeente : info.deelgemeente;
+      ...postcodes.map(({ postcode, ...info }) => {
+        const deelgemeente =
+          info.deelgemeente === gemeente.toUpperCase()
+            ? gemeente
+            : info.deelgemeente;
         return {
           postcode: postcode,
           // Whenever the deelgemeente is equal to the gemeente, it will be all uppercase 🤷‍♂️. Let's correct for that
@@ -203,7 +202,7 @@ async function retrievePlaatsen(gemeente) {
           // Keep in sync with plaatsName pipe
           volledigeNaam: `${postcode} ${deelgemeente} (${gemeente})`,
           provincieId: getProvincieId(postcode),
-        }
+        };
       }),
     );
     url = volgende;
@@ -225,9 +224,21 @@ function removeDuplicates(allPlaatsen) {
     let plaatsen = plaatsenPerPostcode.get(plaats.postcode);
     if (plaatsen) {
       plaatsen.push(plaats);
-      plaatsen = plaatsen.filter(plaats => !blacklist.some(({ gemeente, postcode}) => plaats.gemeente === gemeente && plaats.postcode === postcode ))
-      if(plaatsen.length > 1){
-        throw new Error(`Cannot remove duplicates, because they are not blacklisted: ${JSON.stringify(plaatsen, null, 2)}`);
+      plaatsen = plaatsen.filter(
+        (plaats) =>
+          !blacklist.some(
+            ({ gemeente, postcode }) =>
+              plaats.gemeente === gemeente && plaats.postcode === postcode,
+          ),
+      );
+      if (plaatsen.length > 1) {
+        throw new Error(
+          `Cannot remove duplicates, because they are not blacklisted: ${JSON.stringify(
+            plaatsen,
+            null,
+            2,
+          )}`,
+        );
       }
     } else {
       plaatsen = [plaats];
@@ -258,13 +269,12 @@ async function main() {
     console.log(allPlaatsen.length);
   }
 
-  const result = removeDuplicates(allPlaatsen).sort((a, b) => a.postcode < b.postcode ? -1 : 1);
+  const result = allPlaatsen;
+  // const result = removeDuplicates(allPlaatsen).sort((a, b) =>
+  //   a.postcode < b.postcode ? -1 : 1,
+  // );
   console.log('All plaatsen', result.length);
-  await fs.writeFile(
-    'plaatsen.json',
-    JSON.stringify(result, null, 2),
-    'utf-8',
-  );
+  await fs.writeFile('plaatsen.json', JSON.stringify(result, null, 2), 'utf-8');
 }
 
 main().catch((err) => {
