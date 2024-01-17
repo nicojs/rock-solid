@@ -44,6 +44,6 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'write:personen',
     'write:locaties',
   ],
-  projectverantwoordelijke: ['read', 'write:deelnames'],
+  projectverantwoordelijke: ['read', 'write:deelnames', 'write:aanmeldingen'],
   financieelBeheerder: ['read', 'write:aanmeldingen'],
 };
