@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "author": "",
+  "private": true,
   "license": "ISC",
   "dependencies": {
     "decimal.js": "^10.4.3"
