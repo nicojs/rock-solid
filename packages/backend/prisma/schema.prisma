@@ -88,7 +88,7 @@ model Plaats {
   id            Int    @id @default(autoincrement())
   deelgemeente  String
   gemeente      String
-  postcode      String @unique
+  postcode      String
   volledigeNaam String
   provincieId   Int
 
@@ -98,6 +98,7 @@ model Plaats {
   @@index(deelgemeente)
   @@index(gemeente)
   @@index(provincieId)
+  @@unique([postcode, deelgemeente])
 }
 
 model Project {
