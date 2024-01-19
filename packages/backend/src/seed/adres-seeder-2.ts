@@ -1,126 +1,48 @@
-import db from '@prisma/client';
+import db, { Adres, Plaats } from '@prisma/client';
 import { ImportDiagnostics } from './import-errors.js';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
 
 const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
 
-class AdresSeeder<TRaw> {
-  private plaatsenByPostcode = new Map<
-    string,
-    Array<{
-      id: number;
-      deelgemeente: string;
-      gemeente: string;
-    }>
-  >();
+class PlaatsMatcher {
+  private plaatsenByPostcode = new Map<string, Plaats[]>();
 
-  constructor(
-    private client: db.PrismaClient,
-    private importErrors: ImportDiagnostics<TRaw>,
-  ) {}
+  constructor(private client: db.PrismaClient) {}
 
   async init() {
-    const records = await this.client.plaats.findMany({
-      select: { postcode: true, id: true, deelgemeente: true, gemeente: true },
-    });
+    const records = await this.client.plaats.findMany();
     for (const record of records) {
       let existing = this.plaatsenByPostcode.get(record.postcode);
       if (!existing) {
         existing = [];
         this.plaatsenByPostcode.set(record.postcode, existing);
       }
-      existing.push({
-        id: record.id,
-        deelgemeente: record.deelgemeente,
-        gemeente: record.gemeente,
-      });
+      existing.push(record);
     }
   }
 
-  fromRaw(
-    raw: TRaw,
-    adres: string,
-    rawPostcode: string,
-    rawDeelgemeente: string,
-  ) {
-    if (!adres.length) {
+  findPlaatsMatches(rawPostcode: string) {
+    const postCode = postcodeFromRaw(rawPostcode);
+    const plaatsen = this.plaatsenByPostcode.get(postCode);
+    if (plaatsen === undefined) {
       return undefined;
     }
-    const adresMatch = adresRegex.exec(adres);
-
-    if (!adresMatch) {
-      this.importErrors.addWarning('adres_parse_error', {
-        item: raw,
-        detail: `Adres "${adres}" doesn\'t match pattern`,
-      });
-      return;
-    }
-    const [, straatnaam, huisnummer, busnummer] = adresMatch as unknown as [
-      string,
-      string,
-      string,
-      string | undefined,
-    ];
-
-    const postCode = postcodeFromRaw(rawPostcode);
-    const gemeenten = this.plaatsenByPostcode.get(postCode);
-    if (gemeenten === undefined) {
-      this.importErrors.addWarning('postcode_doesnt_exist', {
-        detail: `Cannot find postcode "${postCode}", using onbekend`,
-        item: raw,
-      });
-      return;
-    }
-
-    const deelgemeente = rawDeelgemeente.trim();
-    let gemeente = gemeenten.find(
-      ({ deelgemeente: dg, gemeente: g }) =>
-        dg === deelgemeente ||
-        normalize(dg) === normalize(deelgemeente) ||
-        normalize(`${dg}-${g}`) === normalize(deelgemeente),
-    );
-    if (gemeente === undefined) {
-      const newGemeente = gemeenten.find(
-        ({ deelgemeente, gemeente }) => deelgemeente === gemeente,
-      );
-      if (newGemeente) {
-        this.importErrors.addInfo('deelgemeente_doesnt_exist', {
-          detail: `Cannot find deelgemeente "${deelgemeente}" for postcode "${postCode}" in list: ${gemeenten
-            .map(({ deelgemeente }) => deelgemeente)
-            .join(', ')}. Using ${newGemeente.deelgemeente} instead`,
-          item: raw,
-        });
-        gemeente = newGemeente;
-      } else if (
-        gemeenten.length === 1 &&
-        normalize(gemeenten[0]!.gemeente) === normalize(deelgemeente)
-      ) {
-        gemeente = gemeenten[0]!;
-      } else {
-        this.importErrors.addWarning('deelgemeente_doesnt_exist', {
-          detail: `Cannot find deelgemeente "${deelgemeente}" for postcode "${postCode}" in list: ${gemeenten
-            .map(({ deelgemeente }) => deelgemeente)
-            .join(', ')}. Using onbekend instead`,
-          item: raw,
-        });
-        return;
-      }
-    }
-
-    return {
-      create: {
-        huisnummer,
-        straatnaam,
-        busnummer,
-        plaats: { connect: { id: gemeente.id } },
-      },
-    } satisfies db.Prisma.AdresCreateNestedOneWithoutVerblijfpersonenInput;
+    return plaatsen;
   }
 }
+
+type Matcher = (
+  plaatsen: Plaats[],
+  rawDeelgemeente: string,
+) => Plaats | undefined;
 const [from, to] = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
 
 function normalize(gemeenteNaam: string) {
-  return gemeenteNaam.replaceAll('-', ' ').replaceAll('.', '').toLowerCase();
+  return gemeenteNaam
+    .replaceAll('-', ' ')
+    .replaceAll('.', '')
+    .trim()
+    .toLowerCase();
 }
 
 function postcodeFromRaw(raw: string): string {
@@ -132,11 +54,15 @@ function postcodeFromRaw(raw: string): string {
     .join('');
 }
 
-export async function seedCorrectGemeenteAdres(client: db.PrismaClient) {
-  const importDiagnostics = new ImportDiagnostics<unknown>();
+interface Work {
+  rawGemeente: string;
+  adres: Adres & { plaats: Plaats };
+  plaatsCandidates: Plaats[];
+}
 
-  const adresSeeder = new AdresSeeder(client, importDiagnostics);
-  await adresSeeder.init();
+export async function adresSeeder2(client: db.PrismaClient) {
+  const plaatsMatcher = new PlaatsMatcher(client);
+  await plaatsMatcher.init();
   const deelnemerIdByTitles = new Map(
     Object.entries(
       await readImportJson<Record<string, number>>('deelnemers-lookup.json'),
@@ -146,43 +72,172 @@ export async function seedCorrectGemeenteAdres(client: db.PrismaClient) {
   const personenById = new Map(
     (
       await client.persoon.findMany({
-        include: { verblijfadres: { include: { plaats: true } } },
+        include: {
+          verblijfadres: { include: { plaats: true } },
+          domicilieadres: { include: { plaats: true } },
+        },
       })
     ).map((p) => [p.id, p]),
   );
   const deelnemersRaw = await readImportJson<RawDeelnemer[]>('deelnemers.json');
 
-  let count = 0;
+  const backlog: Set<Work> = new Set();
   for (const deelnemer of deelnemersRaw) {
     const deelnemerId = deelnemerIdByTitles.get(deelnemer[''])!;
     const persoon = personenById.get(deelnemerId);
-    if (persoon && persoon.verblijfadres) {
-      const newAdres = adresSeeder.fromRaw(
-        deelnemer,
-        deelnemer.adres,
-        deelnemer.postcode,
-        deelnemer.gemeente,
-      );
-      if (
-        newAdres &&
-        newAdres.create.plaats.connect.id !== persoon.verblijfadres.plaatsId
-      ) {
-        console.log(
-          `Updating ${persoon.id} with ${JSON.stringify(
-            newAdres.create.plaats,
-          )}`,
+    const matchedPlaatsen = plaatsMatcher.findPlaatsMatches(deelnemer.postcode);
+    if (persoon && persoon.verblijfadres && matchedPlaatsen) {
+      backlog.add({
+        adres: persoon.verblijfadres,
+        plaatsCandidates: matchedPlaatsen,
+        rawGemeente: deelnemer.gemeente,
+      });
+    }
+
+    const matchedPlaatsenDomicilie = plaatsMatcher.findPlaatsMatches(
+      deelnemer['postnummer domicilie'],
+    );
+    if (persoon && persoon.domicilieadres && matchedPlaatsenDomicilie) {
+      backlog.add({
+        adres: persoon.domicilieadres,
+        plaatsCandidates: matchedPlaatsenDomicilie,
+        rawGemeente: deelnemer['gemeente domicilie'],
+      });
+    }
+  }
+  const matchers: Record<string, Matcher> = {
+    exact(plaatsen, rawDeelgemeente) {
+      return plaatsen.find((p) => p.deelgemeente === rawDeelgemeente.trim());
+    },
+    normalize(plaatsen, rawDeelgemeente) {
+      const normalized = normalize(rawDeelgemeente);
+      return plaatsen.find((p) => normalize(p.deelgemeente) === normalized);
+    },
+    splitOnDash(plaatsen, rawDeelgemeente) {
+      const parts = rawDeelgemeente.split('-');
+      if (parts.length === 2) {
+        const [deelgemeente, gemeente] = parts;
+        return plaatsen.find(
+          (p) =>
+            normalize(p.deelgemeente) === normalize(deelgemeente!) &&
+            normalize(p.gemeente) === normalize(gemeente!),
         );
-        count++;
+      }
+    },
+    splitOnDashReverse(plaatsen, rawDeelgemeente) {
+      const parts = rawDeelgemeente.split('-');
+      if (parts.length === 2) {
+        const [gemeente, deelgemeente] = parts;
+        return plaatsen.find(
+          (p) =>
+            normalize(p.deelgemeente) === normalize(deelgemeente!) &&
+            normalize(p.gemeente) === normalize(gemeente!),
+        );
+      }
+    },
+    single(plaatsen) {
+      if (plaatsen.length === 1) {
+        return plaatsen[0];
+      }
+      return;
+    },
+    sint(plaatsen, rawDeelgemeente) {
+      if (rawDeelgemeente.startsWith('St.')) {
+        const normalized = normalize(rawDeelgemeente.replace('St.', 'Sint'));
+        return plaatsen.find(
+          (p) =>
+            normalize(p.deelgemeente) === normalized ||
+            normalize(p.deelgemeente) === normalized.replace('sint', 'sint '),
+        );
+      }
+    },
+    splitOnSpace(plaatsen, rawDeelgemeente) {
+      const parts = rawDeelgemeente.split(' ');
+      if (parts.length === 2) {
+        const [deelgemeente] = parts;
+        return plaatsen.find(
+          (p) => normalize(p.deelgemeente) === normalize(deelgemeente!),
+        );
+      }
+    },
+    splitOnSpaceReverse(plaatsen, rawDeelgemeente) {
+      const parts = rawDeelgemeente.split(' ');
+      if (parts.length === 2) {
+        const [, deelgemeente] = parts;
+        return plaatsen.find(
+          (p) => normalize(p.deelgemeente) === normalize(deelgemeente!),
+        );
+      }
+    },
+    uitzonderingen(plaatsen, rawDeelgemeente) {
+      const map: Record<string, string> = {
+        "St.Job in 't Goor": "Sint-Job-In-'T-Goor",
+        'Sint-Job-Brecht': "Sint-Job-In-'T-Goor",
+        'Sint Michiels Brugge': 'Sint-Michiels',
+        'Korbeek - Lo': 'Korbeek-Lo',
+        'Sint-Andries-Brugge': 'Sint-Andries',
+        Echtegem: 'Ichtegem',
+        'Dilsen-Lanklaar': 'Lanklaar',
+        'Meeuwen-Gruitrode': 'Meeuwen',
+        'S.P. Leeuw': 'Sint-Pieters-Leeuw',
+        'Sint-Antonius-Zoersel': 'Zoersel',
+        'St.-Antonius-Zoersel': 'Zoersel',
+        Laneken: 'Lanaken',
+        'Sint-Leenaarts': 'Sint-Lenaarts',
+        'Kapelle o/d Bos': 'Kapelle-op-den-Bos',
+        'Asse - Terheide': 'Asse',
+        'Dilbeek(St.Ulriks-Kapelle': 'Sint-Ulriks-Kapelle',
+        Veltem: 'Veltem-Beisem',
+        'Hombeek-Leest': 'Hombeek',
+        'St.Lenaerts': 'Sint-Lenaarts',
+        Oelegem: 'Oeselgem',
+        Bonheide: 'Bonheiden',
+        'St.-Gillis (Dendermonde)': 'Sint-Gillis-Dendermonde',
+        Guldenberg: 'Huldenberg',
+        'Landen (Attenhoven)': 'Attenhoven',
+        'Henre-Herfelingen': 'Herfelingen',
+      };
+      if (map[rawDeelgemeente]) {
+        return plaatsen.find((p) => p.deelgemeente === map[rawDeelgemeente]);
+      }
+    },
+  };
+
+  const results: Record<string, Record<string, string>> = {};
+  for (const [name, matcher] of Object.entries(matchers)) {
+    const result: Record<string, string> = (results[name] = {});
+    for (const workItem of backlog) {
+      const match = matcher(workItem.plaatsCandidates, workItem.rawGemeente);
+      if (match) {
+        if (match.id === workItem.adres.plaatsId) {
+          result[workItem.rawGemeente] = '✅';
+        } else {
+          result[workItem.rawGemeente] = `👉 ${match.volledigeNaam}`;
+          await client.adres.update({
+            where: { id: workItem.adres.id },
+            data: { plaatsId: match.id },
+          });
+        }
+        backlog.delete(workItem);
       }
     }
   }
-  // console.log(`Updated ${records.length} verblijfplaatsen`);
-  console.log(`(${importDiagnostics.report}), ${count}`);
-  await writeOutputJson(
-    'seed-correct-gemeenten-diagnostics.json',
-    importDiagnostics,
-    false,
+  console.log(`Remaining: ${backlog.size}`);
+  results['remaining'] = Object.fromEntries(
+    [...backlog].map(
+      ({ rawGemeente, plaatsCandidates }) =>
+        [
+          rawGemeente,
+          `❌ ${plaatsCandidates
+            .map(
+              ({ volledigeNaam, deelgemeente }) =>
+                `'${deelgemeente}' - '${volledigeNaam}'`,
+            )
+            .join(',')}`,
+        ] as const,
+    ),
   );
+  await writeOutputJson('adres-seeder-2.json', results, false);
 }
 
 interface RawDeelnemer {

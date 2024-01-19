@@ -12,7 +12,7 @@ import { seedVakantieVrijwilligers } from './vakantie-vrijwilligers.seed.js';
 import { deleteDeelnemers } from './delete-deelnemers.seed.js';
 import { seedCursuslocaties } from './cursuslocaties.seed.js';
 import { seedPlaatsen2 } from './plaatsen.seed.2.js';
-import { seedCorrectGemeenteAdres } from './adres-seeder-2.js';
+import { adresSeeder2 } from './adres-seeder-2.js';
 
 async function main() {
   const readonly = process.argv.includes('--readonly');
@@ -32,8 +32,8 @@ async function main() {
     // await seedVakantieAanmeldingen(client, deelnemersLookup, readonly);
     // await deleteDeelnemers(client, deelnemersLookup, readonly);
     // await seedCursuslocaties(client, cursussenLookup, readonly);
-    await seedPlaatsen2(client);
-    // await seedCorrectGemeenteAdres(client);
+    // await seedPlaatsen2(client);
+    await adresSeeder2(client);
   } finally {
     // const deelnemersLookup = await seedDeelnemers(client, readonly);
 
