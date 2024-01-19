@@ -75,10 +75,33 @@ export async function seedOrganisaties(
     return org;
   });
 
+  const orgContactIdByTitle = new Map<string, number>();
+
   for (const org of orgs) {
-    await client.organisatie.create({ data: org });
+    const { id, contacten } = await client.organisatie.create({
+      data: org,
+      include: { contacten: true },
+    });
+    for (const contact of contacten) {
+      if (contacten.length === 1) {
+        orgContactIdByTitle.set(`${org.naam}`, contact.id);
+      } else {
+        orgContactIdByTitle.set(
+          `${org.naam}|${contact.terAttentieVan}`,
+          contact.id,
+        );
+      }
+    }
   }
 
+  await writeOutputJson(
+    'organisatie-contact-lookup.json',
+    Object.fromEntries(orgContactIdByTitle.entries()),
+    readonly,
+  );
+  console.log(
+    `✅ organisatie-contact-lookup.json (${orgContactIdByTitle.size})`,
+  );
   console.log(`Seeded ${orgs.length} organisaties`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
