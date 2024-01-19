@@ -53,11 +53,20 @@ export async function seedExtraPersonen(
 
   const extraPersonen = extraPersonenRaw.map(fromRaw);
 
+  const extraPersoonIdByTitle = new Map<string, number>();
+
   for (const extraPersoon of extraPersonen) {
-    await client.persoon.create({
+    const { id } = await client.persoon.create({
       data: extraPersoon,
     });
+    extraPersoonIdByTitle.set(extraPersoon.volledigeNaam, id);
   }
+  await writeOutputJson(
+    'extra-persoon-lookup.json',
+    Object.fromEntries(extraPersoonIdByTitle.entries()),
+    readonly,
+  );
+  console.log(`✅ extra-persoon-lookup.json (${extraPersoonIdByTitle.size})`);
   console.log(`Seeded ${extraPersonen.length} extra-personen`);
   console.log(`(${importErrors.report})`);
   await writeOutputJson(
