@@ -6,7 +6,7 @@ import {
   Project,
   vakantieSeizoenen,
 } from '@rock-solid/shared';
-import { html, LitElement, unsafeCSS } from 'lit';
+import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import {
@@ -19,14 +19,13 @@ import {
   toDeelnemersCsv,
 } from '../shared';
 import { projectService } from './project.service';
-import style from './projecten-list.component.scss';
 import { privilege } from '../auth/privilege.directive';
 import { ModalComponent } from '../shared/modal.component';
 import { printProject } from './project.pipes';
 
 @customElement('rock-projecten-list')
 export class ProjectenListComponent extends LitElement {
-  static override styles = [bootstrap, unsafeCSS(style)];
+  static override styles = [bootstrap];
 
   @property()
   public projecten!: Project[] | AanmeldingOf<Project>[];
@@ -166,7 +165,7 @@ export class ProjectenListComponent extends LitElement {
                       >`
                     : html`<span
                         title="Activiteit vindt plaats in de toekomst"
-                        class="no-button-date"
+                        class="btn btn-sm disabled"
                         ><rock-icon icon="calendar"></rock-icon> ${showDatum(
                           activiteit.van,
                         )}</span
@@ -212,7 +211,7 @@ export class ProjectenListComponent extends LitElement {
                     title="${printProject(project)} Verwijderen"
                     type="button"
                     ${privilege('write:projecten')}
-                    class="btn btn-danger btn-sm"
+                    class="btn btn-outline-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>
                   </button>

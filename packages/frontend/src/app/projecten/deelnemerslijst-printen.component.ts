@@ -46,7 +46,8 @@ export class DeelnemerslijstPrintenComponent extends RockElement {
   }
 
   public override render() {
-    return html`<h1>${printProject(this.project)}</h1>
+    return html`<div data-bs-theme="light">
+      <h1>${printProject(this.project)}</h1>
       <div class="row">
         <table class="table table-striped table-sm table-bordered">
           <thead>
@@ -84,7 +85,8 @@ export class DeelnemerslijstPrintenComponent extends RockElement {
               )}
           </tbody>
         </table>
-      </div> `;
+      </div>
+    </div>`;
   }
 
   private renderContactpersoon(contactpersoon: Contactpersoon) {

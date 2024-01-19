@@ -35,6 +35,7 @@ import {
   downloadCsv,
   toAanmeldingenCsv,
   capitalize,
+  unknown,
 } from '../shared';
 import { router } from '../router';
 import { privilege } from '../auth/privilege.directive';
@@ -133,6 +134,24 @@ export class ProjectAanmeldingenComponent extends LitElement {
         this.aanmeldingen$.next(
           this.aanmeldingen!.map((a) =>
             a.id === aanmelding.id ? aanmelding : a,
+          ),
+        );
+      });
+  }
+
+  private async patchStatussen(
+    aanmeldingen: Aanmelding[],
+    status: Aanmeldingsstatus,
+  ) {
+    projectService
+      .patchAanmeldingen(
+        this.project.id,
+        aanmeldingen.map((aanmelding) => ({ id: aanmelding.id, status })),
+      )
+      .then((aanmeldingen) => {
+        this.aanmeldingen$.next(
+          this.aanmeldingen!.map(
+            (a) => aanmeldingen.find((b) => a.id === b.id) ?? a,
           ),
         );
       });
@@ -336,7 +355,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
 
                   <button
                     title="Naar aangemeld"
-                    class="btn btn-outline-primary float-end me-2"
+                    class="btn btn-outline-primary btn-sm float-end me-2"
                     ${privilege('write:aanmeldingen')}
                     type="button"
                     @click=${() => this.patchStatus(aanmelding, 'Aangemeld')}
@@ -363,7 +382,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           </button>
           <rock-link
             btn
-            btnOutlineSecondary
+            btnOutlinePrimary
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/rekeninguittreksels"
             ><rock-icon icon="cashCoin"></rock-icon> Rekeninguittreksels
@@ -371,14 +390,14 @@ export class ProjectAanmeldingenComponent extends LitElement {
           >
           <rock-link
             btn
-            btnOutlineSecondary
+            btnOutlinePrimary
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/brieven-verzenden"
             ><rock-icon icon="mailbox"></rock-icon> Brieven verzenden</rock-link
           >
           <rock-link
             btn
-            btnOutlineSecondary
+            btnOutlinePrimary
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/deelnemerslijst-printen"
             ><rock-icon icon="printer"></rock-icon> Deelnemerslijst
@@ -388,11 +407,18 @@ export class ProjectAanmeldingenComponent extends LitElement {
             <thead>
               <tr>
                 <th
+                  class="align-middle text-end text-muted"
+                  title="Bevestigd of aangemeld"
+                  width="10px"
+                >
+                  #
+                </th>
+                <th
                   class="align-middle"
                   title="Bevestigd of aangemeld"
                   width="10px"
                 >
-                  <rock-icon icon="personLock"></rock-icon>
+                  <!-- <rock-icon icon="personLock"></rock-icon> -->
                 </th>
                 <th class="align-middle">Naam</th>
                 <th
@@ -427,13 +453,17 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 </th>
                 <th class="align-middle">Rekeninguittreksel</th>
                 <th class="align-middle">Opmerkingen</th>
-                <th class="align-middle">Acties</th>
+                <th class="align-middle">
+                  ${this.renderActiesButton(aanmeldingen)} Status
+                </th>
+                <th class="align-middle text-center">Acties</th>
               </tr>
             </thead>
             <tbody>
               ${aanmeldingen.map(
-                (aanmelding) =>
+                (aanmelding, i) =>
                   html`<tr>
+                    <td class="text-end text-muted">${i + 1}</td>
                     <td>${renderStatusIcon(aanmelding)}</td>
                     <td>
                       ${renderWarning(aanmelding)}
@@ -465,16 +495,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     </td>
                     <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
                     <td>${show(aanmelding.opmerking, '')}</td>
-                    <td>
-                      <rock-link
-                        btn
-                        sm
-                        title="Wijzigen"
-                        btnOutlinePrimary
-                        href="/${pluralize(this.project.type)}/${this.project
-                          .id}/aanmeldingen/edit/${aanmelding.id}"
-                        ><rock-icon icon="pencil"></rock-icon
-                      ></rock-link>
+                    <td class="">
                       ${aanmelding.status === 'Aangemeld'
                         ? html`<button
                             title="Bevestigen"
@@ -484,17 +505,17 @@ export class ProjectAanmeldingenComponent extends LitElement {
                             @click=${() =>
                               this.patchStatus(aanmelding, 'Bevestigd')}
                           >
-                            <rock-icon icon="lock"></rock-icon>
+                            <rock-icon icon="checkCircle"></rock-icon>
                           </button>`
                         : html`<button
-                            title="Aanmelden"
+                            title="Terug naar aangemeld"
                             ${privilege('write:aanmeldingen')}
-                            class="btn btn-outline-success btn-sm"
+                            class="btn btn-success btn-sm"
                             type="button"
                             @click=${() =>
                               this.patchStatus(aanmelding, 'Aangemeld')}
                           >
-                            <rock-icon icon="unlock"></rock-icon>
+                            <rock-icon icon="checkCircle"></rock-icon>
                           </button>`}
                       <button
                         title="Naar wachtlijst"
@@ -507,15 +528,26 @@ export class ProjectAanmeldingenComponent extends LitElement {
                         <rock-icon icon="hourglass"></rock-icon>
                       </button>
                       <button
-                        title="Annuleren"
+                        title="Naar geannuleerd"
                         ${privilege('write:aanmeldingen')}
-                        class="btn btn-outline-danger btn-sm"
+                        class="btn btn-outline-warning btn-sm"
                         type="button"
                         @click=${() =>
                           this.patchStatus(aanmelding, 'Geannuleerd')}
                       >
                         <rock-icon icon="personSlash"></rock-icon>
                       </button>
+                    </td>
+                    <td class="text-center">
+                      <rock-link
+                        btn
+                        sm
+                        title="Wijzigen"
+                        btnOutlinePrimary
+                        href="/${pluralize(this.project.type)}/${this.project
+                          .id}/aanmeldingen/edit/${aanmelding.id}"
+                        ><rock-icon icon="pencil"></rock-icon
+                      ></rock-link>
                       ${this.renderDeleteButton(aanmelding)}
                     </td>
                   </tr>`,
@@ -541,13 +573,33 @@ export class ProjectAanmeldingenComponent extends LitElement {
   private renderDeleteButton(aanmelding: Aanmelding, floatEnd = false) {
     return html`<span
       ><button
-        title="Verwijderen"
-        class="btn btn-danger btn-sm ${floatEnd ? 'float-end' : ''}"
+        title="Aanmelding verwijderen"
+        class="btn btn-outline-danger btn-sm ${floatEnd ? 'float-end' : ''}"
         type="button"
         ${privilege('write:aanmeldingen')}
         @click=${() => this.deleteAanmelding(aanmelding)}
       >
         <rock-icon icon="trash"></rock-icon></button
+    ></span>`;
+  }
+
+  private renderActiesButton(aanmeldingen: Aanmelding[]) {
+    const toState = aanmeldingen.every(({ status }) => status === 'Bevestigd')
+      ? 'Aangemeld'
+      : 'Bevestigd';
+    return html`<span
+      ><button
+        title="Alle aanmeldingen ${toState === 'Aangemeld'
+          ? 'terug naar aangemeld'
+          : 'bevestigen'}"
+        class="btn btn-${toState === 'Bevestigd'
+          ? 'outline-'
+          : ''}success btn-sm"
+        type="button"
+        ${privilege('write:aanmeldingen')}
+        @click=${() => this.patchStatussen(aanmeldingen, toState)}
+      >
+        <rock-icon icon="checkCircle"></rock-icon></button
     ></span>`;
   }
 
@@ -560,10 +612,10 @@ export class ProjectAanmeldingenComponent extends LitElement {
             type="text"
             class="form-control"
             id="searchPersoonInput"
-            placeholder="Naam persoon"
+            placeholder="Persoon aanmelden"
             ${ref(this.searchInput)}
           />
-          <label for="searchPersoonInput">Naam persoon</label>
+          <label for="searchPersoonInput">Persoon aanmelden</label>
         </div>
       </div>
 
@@ -602,16 +654,10 @@ function renderStatusIcon(aanmelding: Aanmelding): unknown {
         title="${aanmelding.deelnemer
           ? fullName(aanmelding.deelnemer)
           : 'Deelnemer'} is bevestigd"
-        icon="lock"
+        icon="checkCircle"
+        class="text-success"
       ></rock-icon>`
-    : aanmelding.status === 'Aangemeld'
-      ? html`<rock-icon
-          title="${aanmelding.deelnemer
-            ? fullName(aanmelding.deelnemer)
-            : 'Deelnemer'} is aangemeld, maar nog niet bevestigd"
-          icon="unlock"
-        ></rock-icon>`
-      : nothing;
+    : nothing;
 }
 
 function renderToestemmingFotos(aanmelding: Aanmelding): unknown {
@@ -675,7 +721,7 @@ function deelnemerLink(deelnemer: Deelnemer) {
 }
 
 function renderGeslacht(aanmelding: Aanmelding) {
-  const title = `Geslacht: ${aanmelding.geslacht}${
+  const title = `Geslacht: ${show(aanmelding.geslacht, unknown)}${
     aanmelding.deelnemer?.geslachtOpmerking
       ? ` (${aanmelding.deelnemer.geslachtOpmerking})`
       : ''

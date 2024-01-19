@@ -1,5 +1,17 @@
 @import 'bootstrap/scss/bootstrap.scss';
 
 // See https://github.com/twbs/bootstrap/issues/36688#issuecomment-1178522306
-:root, :host { @extend :root; }
+// :root, :host { @extend :root; }
 
+
+
+:host {
+  @extend body;
+  // https://web.dev/articles/custom-elements-best-practices#set-a-:host-display-style-e.g.-block,-inline-block,-flex-unless-you-prefer-the-default-of-inline.
+  display: block; 
+}
+
+
+.btn-close {
+    filter: var(--btn-close-filter);
+}

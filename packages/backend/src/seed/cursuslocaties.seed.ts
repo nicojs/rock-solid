@@ -132,7 +132,7 @@ class LocatieMapper {
   #moerkesheide = 'Moerkensheide';
   #groeninge = 'Hostel Groeninghe';
   #hostelH = 'Hostel H.';
-  #muzet = 'Jeugdberg Bed Muzet';
+  #muzet = 'Jeugdherberg Bed Muzet';
   #kluis = 'De Kluis';
   #blauwput = 'Jeugdherberg de Blauwput';
   #zandpoort = 'Jeugdherberg De Zandpoort';
@@ -189,6 +189,7 @@ class LocatieMapper {
     lier: this.#muzet,
     'jeugdherberg bed muzet': this.#muzet,
     'jeugdberg bed muzet': this.#muzet,
+    'bed muzet': this.#muzet,
     'sint-joris-weert': this.#kluis,
     'de kluis in sint-joris-weert': this.#kluis,
     'jeugdherberg de blauwput in leuven': this.#blauwput,

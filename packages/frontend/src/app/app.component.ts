@@ -2,13 +2,13 @@ import { Subscription } from 'rxjs';
 import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { router, RouteParams } from './router';
-import { bootstrap } from '../styles';
 import style from './app.component.scss';
 import { PersoonType, ProjectType } from '@rock-solid/shared';
+import { Theme } from './home/theme-toggle.component';
 
 @customElement('rock-solid-app')
 export class RockSolidApp extends LitElement {
-  public static override styles = [bootstrap, unsafeCSS(style)];
+  public static override styles = [unsafeCSS(style)];
 
   private sub?: Subscription;
 
@@ -25,37 +25,41 @@ export class RockSolidApp extends LitElement {
   @state()
   public route?: RouteParams;
 
+  @state()
+  public theme: Theme = 'light';
+
   public override render() {
-    return html`<div class="container-fluid">
-        <nav
-          class="d-print-none navbar navbar-light bg-light justify-content-between"
-        >
-          <span class="navbar-brand mb-0 h1">
-            <img
-              src="/rock-solid.png"
-              alt="Rock Solid"
-              width="30"
-              height="24"
-            />
-            Rock Solid.
-            <span class="text-muted fs-6"
-              >Steenvast en solide management systeem voor De Kei en
-              Kei-Jong</span
-            >
-          </span>
-          <rock-user></rock-user>
-        </nav>
+    return html`<div data-bs-theme="${this.theme}">
+      <nav class="d-print-none navbar bg-body-tertiary justify-content-between">
+        <span class="navbar-brand mb-0 h1">
+          <img src="/rock-solid.png" alt="Rock Solid" width="30" height="24" />
+          Rock Solid.
+          <span class="text-muted fs-6"
+            >Steenvast en solide management systeem voor De Kei en
+            Kei-Jong</span
+          >
+        </span>
+        <div class="justify-content-between d-flex">
+          <rock-user class="me-3"></rock-user>
+          <rock-theme-toggle
+            @theme-changed=${(ev: CustomEvent<Theme>) =>
+              (this.theme = ev.detail)}
+          ></rock-theme-toggle>
+        </div>
+      </nav>
+
+      <div class="container-fluid">
         <div class="row">
-          <rock-nav
-            class="col-xs-5 col-sm-4 col-md-3 col-lg-2 d-print-none"
-            .active="${this.route?.path[0]}"
-          ></rock-nav>
-          <main class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
-            ${this.renderMain()}
-          </main>
+          <div class="col-xs-5 col-sm-4 col-md-3 col-lg-2 d-print-none">
+            <rock-nav class="" .active="${this.route?.path[0]}"></rock-nav>
+          </div>
+          <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
+            <main class="">${this.renderMain()}</main>
+          </div>
         </div>
       </div>
-      <rock-modal></rock-modal>`;
+      <rock-modal></rock-modal>
+    </div>`;
   }
 
   private renderMain() {
