@@ -1,8 +1,7 @@
 import db, { Adres, Plaats } from '@prisma/client';
-import { ImportDiagnostics } from './import-errors.js';
 import { readImportJson, writeOutputJson } from './seed-utils.js';
-
-const adresRegex = /^(\D+)\s*(\d+)\s?(:?bus)?\s?(.*)?$/;
+import fs from 'fs/promises';
+import { toCsv } from '@rock-solid/shared';
 
 class PlaatsMatcher {
   private plaatsenByPostcode = new Map<string, Plaats[]>();
@@ -34,6 +33,7 @@ class PlaatsMatcher {
 type Matcher = (
   plaatsen: Plaats[],
   rawDeelgemeente: string,
+  currentPlaats: Plaats,
 ) => Plaats | undefined;
 const [from, to] = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
 
@@ -58,6 +58,21 @@ interface Work {
   rawGemeente: string;
   adres: Adres & { plaats: Plaats };
   plaatsCandidates: Plaats[];
+  naam: string;
+  type: EntityType;
+}
+
+type EntityType = 'deelnemer' | 'vrijwilliger' | 'organisatie';
+
+interface CsvResultRow {
+  matchGevonden: boolean;
+  matcher: string;
+  veranderd: boolean;
+  oudePlaats: string | undefined;
+  nieuwePlaats: string | undefined;
+  type: EntityType;
+  naam: string;
+  oorspronkelijkeText: string;
 }
 
 export async function adresSeeder2(client: db.PrismaClient) {
@@ -80,6 +95,8 @@ export async function adresSeeder2(client: db.PrismaClient) {
     ).map((p) => [p.id, p]),
   );
   const deelnemersRaw = await readImportJson<RawDeelnemer[]>('deelnemers.json');
+  const organisatiesRaw =
+    await readImportJson<RawOrganisatie[]>('deelnemers.json');
 
   const backlog: Set<Work> = new Set();
   for (const deelnemer of deelnemersRaw) {
@@ -88,6 +105,8 @@ export async function adresSeeder2(client: db.PrismaClient) {
     const matchedPlaatsen = plaatsMatcher.findPlaatsMatches(deelnemer.postcode);
     if (persoon && persoon.verblijfadres && matchedPlaatsen) {
       backlog.add({
+        naam: persoon.volledigeNaam,
+        type: 'deelnemer',
         adres: persoon.verblijfadres,
         plaatsCandidates: matchedPlaatsen,
         rawGemeente: deelnemer.gemeente,
@@ -99,13 +118,23 @@ export async function adresSeeder2(client: db.PrismaClient) {
     );
     if (persoon && persoon.domicilieadres && matchedPlaatsenDomicilie) {
       backlog.add({
+        naam: persoon.volledigeNaam,
+        type: 'deelnemer',
         adres: persoon.domicilieadres,
         plaatsCandidates: matchedPlaatsenDomicilie,
         rawGemeente: deelnemer['gemeente domicilie'],
       });
     }
   }
+  for (const organisatie of organisatiesRaw) {
+    
+  }
   const matchers: Record<string, Matcher> = {
+    updatedSinceRelease(plaatsen, _, currentPlaats) {
+      return currentPlaats.postcode !== plaatsen[0]!.postcode
+        ? currentPlaats
+        : undefined;
+    },
     exact(plaatsen, rawDeelgemeente) {
       return plaatsen.find((p) => p.deelgemeente === rawDeelgemeente.trim());
     },
@@ -203,16 +232,41 @@ export async function adresSeeder2(client: db.PrismaClient) {
     },
   };
 
-  const results: Record<string, Record<string, string>> = {};
+  const jsonResults: Record<string, Record<string, string>> = {};
+  const csvResults: CsvResultRow[] = [];
   for (const [name, matcher] of Object.entries(matchers)) {
-    const result: Record<string, string> = (results[name] = {});
+    const result: Record<string, string> = (jsonResults[name] = {});
     for (const workItem of backlog) {
-      const match = matcher(workItem.plaatsCandidates, workItem.rawGemeente);
+      const match = matcher(
+        workItem.plaatsCandidates,
+        workItem.rawGemeente,
+        workItem.adres.plaats,
+      );
       if (match) {
         if (match.id === workItem.adres.plaatsId) {
           result[workItem.rawGemeente] = '✅';
+          csvResults.push({
+            matchGevonden: true,
+            veranderd: false,
+            oudePlaats: workItem.adres.plaats.volledigeNaam,
+            nieuwePlaats: workItem.adres.plaats.volledigeNaam,
+            type: 'deelnemer',
+            naam: workItem.naam,
+            oorspronkelijkeText: workItem.rawGemeente,
+            matcher: name,
+          });
         } else {
           result[workItem.rawGemeente] = `👉 ${match.volledigeNaam}`;
+          csvResults.push({
+            matchGevonden: true,
+            veranderd: true,
+            oudePlaats: workItem.adres.plaats.volledigeNaam,
+            nieuwePlaats: match.volledigeNaam,
+            type: 'deelnemer',
+            naam: workItem.naam,
+            oorspronkelijkeText: workItem.rawGemeente,
+            matcher: name,
+          });
           await client.adres.update({
             where: { id: workItem.adres.id },
             data: { plaatsId: match.id },
@@ -223,7 +277,7 @@ export async function adresSeeder2(client: db.PrismaClient) {
     }
   }
   console.log(`Remaining: ${backlog.size}`);
-  results['remaining'] = Object.fromEntries(
+  jsonResults['remaining'] = Object.fromEntries(
     [...backlog].map(
       ({ rawGemeente, plaatsCandidates }) =>
         [
@@ -237,7 +291,52 @@ export async function adresSeeder2(client: db.PrismaClient) {
         ] as const,
     ),
   );
-  await writeOutputJson('adres-seeder-2.json', results, false);
+  for (const { adres, rawGemeente } of backlog) {
+    csvResults.push({
+      matchGevonden: false,
+      veranderd: false,
+      oudePlaats: adres.plaats.volledigeNaam,
+      nieuwePlaats: undefined,
+      type: 'deelnemer',
+      naam: adres.plaats.deelgemeente,
+      oorspronkelijkeText: rawGemeente,
+      matcher: 'none',
+    });
+  }
+  await writeOutputJson('adres-seeder-2.json', jsonResults, false);
+  await fs.writeFile(
+    new URL(`../../import/plaats-correctie-cursisten.csv`, import.meta.url),
+    toCsv(csvResults, [
+      'naam',
+      'type',
+      'matchGevonden',
+      'veranderd',
+      'nieuwePlaats',
+      'oudePlaats',
+      'oorspronkelijkeText',
+      'matcher',
+    ]),
+    'utf-8',
+  );
+}
+
+interface RawOrganisatie {
+  Naam: string;
+  TAV: string;
+  soort: string;
+  adres: string;
+  postcode: string;
+  plaats: string;
+  'e-mail': string;
+  telefoon: string;
+  website: string;
+  'mailing op e-mail': string;
+  opmerkingen: string;
+  'folders Kei-Jong (niet Buso)': 'ja' | 'nee';
+  'folders Kei-Jong Buso': 'ja' | 'nee';
+  'folders cursussen De Kei': 'ja' | 'nee';
+  'folders wintervakanties De Kei': 'ja' | 'nee';
+  'folders zomervakanties De Kei': 'ja' | 'nee';
 }
 
 interface RawDeelnemer {

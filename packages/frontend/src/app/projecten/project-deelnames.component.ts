@@ -3,6 +3,7 @@ import {
   Deelnemer,
   Project,
   UpsertableDeelname,
+  showDatum,
 } from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -10,7 +11,7 @@ import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
 import { fullName } from '../personen/persoon.pipe';
 import { router } from '../router';
-import { pluralize, showDatum } from '../shared';
+import { pluralize } from '../shared';
 import { printProject } from './project.pipes';
 import { projectService } from './project.service';
 import { projectenStore } from './projecten.store';

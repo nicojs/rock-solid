@@ -98,3 +98,35 @@ export type Query = Record<string, string>;
  * Define labels for an entity
  */
 export type Labels<TEntity> = Readonly<Record<keyof TEntity & string, string>>;
+export const notAvailable = 'n/a';
+
+export function showBoolean(val: boolean | undefined) {
+  switch (val) {
+    case true:
+      return 'Ja';
+    case false:
+      return 'Nee';
+    default:
+      return notAvailable;
+  }
+}
+
+export function decimalSeparator(): ',' | '.' {
+  return new Intl.NumberFormat().format(1.2).substring(1, 2) as ',' | '.';
+}
+
+export function capitalize<T extends string>(value: T): Capitalize<T> {
+  const [firstLetter = '', ...rest] = value;
+  return `${firstLetter.toUpperCase()}${rest.join('')}` as Capitalize<T>;
+}
+
+export function showDatum(val: Date | undefined): string {
+  if (val) {
+    return val.toLocaleDateString('nl-NL', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric',
+    });
+  }
+  return notAvailable;
+}

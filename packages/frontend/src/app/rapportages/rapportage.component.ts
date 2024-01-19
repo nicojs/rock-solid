@@ -25,6 +25,7 @@ import {
   isActiviteitReportType,
   woonsituaties,
   Woonsituatie,
+  toCsv,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, nothing, PropertyValues } from 'lit';
@@ -39,7 +40,6 @@ import {
   show,
   showOrganisatieonderdeel,
   showProvincie,
-  toCsv,
   unknown,
 } from '../shared';
 

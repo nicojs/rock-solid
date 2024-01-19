@@ -4,6 +4,7 @@ import {
   notEmpty,
   organisatieonderdelen,
   Project,
+  showDatum,
   vakantieSeizoenen,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
@@ -14,7 +15,6 @@ import {
   entities,
   notAvailable,
   pluralize,
-  showDatum,
   showMoney,
   toDeelnemersCsv,
 } from '../shared';
