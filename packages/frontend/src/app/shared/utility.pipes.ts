@@ -16,7 +16,6 @@ import {
   showDatum,
 } from '@rock-solid/shared';
 import { html } from 'lit';
-import { decimalSeparator } from './string-utils';
 
 export const unknown = 'onbekend';
 export const notAvailable = 'n/a';
