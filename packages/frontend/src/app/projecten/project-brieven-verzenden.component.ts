@@ -1,12 +1,12 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import type { Project, Aanmelding } from '@rock-solid/shared';
+import { type Project, type Aanmelding, showDatum } from '@rock-solid/shared';
 import { privilege } from '../auth/privilege.directive';
 import { deelnemerVerwijderd, printProject } from './project.pipes';
 import { FormControl, InputType } from '../forms';
 import { fullNameWithAge } from '../personen/persoon.pipe';
-import { capitalize, showDatum } from '../shared';
+import { capitalize } from '../shared';
 
 @customElement('rock-project-brieven-verzenden')
 export class ProjectBrievenVerzendenComponent extends LitElement {

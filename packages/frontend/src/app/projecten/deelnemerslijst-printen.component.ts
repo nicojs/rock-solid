@@ -6,6 +6,7 @@ import {
   Contactpersoon,
   Project,
   notEmpty,
+  showDatum,
 } from '@rock-solid/shared';
 import { css, html, nothing } from 'lit';
 import { printProject } from './project.pipes';
@@ -14,7 +15,7 @@ import {
   showFotoToestemming,
   showVoedingswens,
 } from '../personen/persoon.pipe';
-import { show, showDatum, showPlaats } from '../shared';
+import { show, showPlaats } from '../shared';
 
 @customElement('rock-deelnemerslijst-printen')
 export class DeelnemerslijstPrintenComponent extends RockElement {

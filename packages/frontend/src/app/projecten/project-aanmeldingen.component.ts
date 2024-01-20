@@ -9,6 +9,7 @@ import {
   aanmeldingLabels,
   calculateAge,
   fotoToestemmingLabels,
+  showDatum,
   split,
 } from '@rock-solid/shared';
 import { html, LitElement, nothing, PropertyValues } from 'lit';
@@ -28,7 +29,6 @@ import {
 import {
   TypeAheadHint,
   pluralize,
-  showDatum,
   UniquenessFailedError,
   show,
   none,

@@ -13,6 +13,7 @@ import {
   OverigPersoonSelectie,
   overigPersoonSelecties,
   calculateAge,
+  showDatum,
 } from '@rock-solid/shared';
 import { html } from 'lit';
 import { decimalSeparator } from './string-utils';
@@ -34,18 +35,6 @@ export function show<T>(value: T, nullishValue = notAvailable): string {
     return String(value);
   }
 }
-
-export function showBoolean(val: boolean | undefined) {
-  switch (val) {
-    case true:
-      return 'Ja';
-    case false:
-      return 'Nee';
-    default:
-      return notAvailable;
-  }
-}
-
 export function capitalize<T extends string>(value: T): Capitalize<T> {
   const [firstLetter = '', ...rest] = value;
   return `${firstLetter.toUpperCase()}${rest.join('')}` as Capitalize<T>;
@@ -109,17 +98,6 @@ export function toDateTimeString(
     .getHours()
     .toString()
     .padStart(2, '0')}:${val.getMinutes().toString().padStart(2, '0')}`;
-}
-
-export function showDatum(val: Date | undefined): string {
-  if (val) {
-    return val.toLocaleDateString('nl-NL', {
-      month: '2-digit',
-      day: '2-digit',
-      year: 'numeric',
-    });
-  }
-  return notAvailable;
 }
 
 export function showDatumWithAge(val?: Date): string {
