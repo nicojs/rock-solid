@@ -62,7 +62,11 @@ interface Work {
   type: EntityType;
 }
 
-type EntityType = 'deelnemer' | 'vrijwilliger' | 'organisatie';
+type EntityType =
+  | 'deelnemer'
+  | 'vrijwilliger'
+  | 'organisatiecontact'
+  | 'extra-persoon';
 
 interface CsvResultRow {
   matchGevonden: boolean;
@@ -83,6 +87,23 @@ export async function adresSeeder2(client: db.PrismaClient) {
       await readImportJson<Record<string, number>>('deelnemers-lookup.json'),
     ),
   );
+  const orgContactIdByTitles = new Map(
+    Object.entries(
+      await readImportJson<Record<string, number>>(
+        'organisatie-contact-lookup.json',
+      ),
+    ),
+  );
+  const extraPersoonIdByTitles = new Map(
+    Object.entries(
+      await readImportJson<Record<string, number>>('extra-persoon-lookup.json'),
+    ),
+  );
+  const vrijwilligersByTitles = new Map(
+    Object.entries(
+      await readImportJson<Record<string, number>>('vrijwilligers-lookup.json'),
+    ),
+  );
 
   const personenById = new Map(
     (
@@ -94,9 +115,29 @@ export async function adresSeeder2(client: db.PrismaClient) {
       })
     ).map((p) => [p.id, p]),
   );
+  const orgContactById = new Map(
+    (
+      await client.organisatie.findMany({
+        include: {
+          contacten: { include: { adres: { include: { plaats: true } } } },
+        },
+      })
+    ).flatMap((organisatie) =>
+      organisatie.contacten.map((contact) => [
+        contact.id,
+        { contact, organisatie },
+      ]),
+    ),
+  );
+
   const deelnemersRaw = await readImportJson<RawDeelnemer[]>('deelnemers.json');
   const organisatiesRaw =
-    await readImportJson<RawOrganisatie[]>('deelnemers.json');
+    await readImportJson<RawOrganisatie[]>('organisaties.json');
+  const vrijwilligersRaw =
+    await readImportJson<RawVrijwilliger[]>('vrijwilligers.json');
+  const extraPersonenRaw = await readImportJson<RawExtraPersoon[]>(
+    'extra-personen.json',
+  );
 
   const backlog: Set<Work> = new Set();
   for (const deelnemer of deelnemersRaw) {
@@ -126,8 +167,55 @@ export async function adresSeeder2(client: db.PrismaClient) {
       });
     }
   }
+  for (const vrijwilliger of vrijwilligersRaw) {
+    const persoonId = vrijwilligersByTitles.get(vrijwilliger.titel)!;
+    const persoon = personenById.get(persoonId);
+    const matchedPlaatsen = plaatsMatcher.findPlaatsMatches(
+      vrijwilliger.postcode,
+    );
+    if (persoon && persoon.verblijfadres && matchedPlaatsen) {
+      backlog.add({
+        naam: persoon.volledigeNaam,
+        type: 'vrijwilliger',
+        adres: persoon.verblijfadres,
+        plaatsCandidates: matchedPlaatsen,
+        rawGemeente: vrijwilliger.gemeente,
+      });
+    }
+  }
+  for (const extraPersoon of extraPersonenRaw) {
+    const persoonId = extraPersoonIdByTitles.get(extraPersoon[''])!;
+    const persoon = personenById.get(persoonId);
+    const matchedPlaatsen = plaatsMatcher.findPlaatsMatches(
+      extraPersoon.postcode,
+    );
+    if (persoon && persoon.verblijfadres && matchedPlaatsen) {
+      backlog.add({
+        naam: persoon.volledigeNaam,
+        type: 'extra-persoon',
+        adres: persoon.verblijfadres,
+        plaatsCandidates: matchedPlaatsen,
+        rawGemeente: extraPersoon.plaats,
+      });
+    }
+  }
   for (const organisatie of organisatiesRaw) {
-    
+    const orgContactId =
+      orgContactIdByTitles.get(`${organisatie.Naam}${organisatie.TAV}`) ??
+      orgContactIdByTitles.get(organisatie.Naam)!;
+    const orgContact = orgContactById.get(orgContactId);
+    const matchedPlaatsen = plaatsMatcher.findPlaatsMatches(
+      organisatie.postcode,
+    );
+    if (orgContact && orgContact.contact.adres && matchedPlaatsen) {
+      backlog.add({
+        naam: `${orgContact.organisatie.naam} - ${orgContact.contact.terAttentieVan}`,
+        type: 'organisatiecontact',
+        adres: orgContact.contact.adres,
+        plaatsCandidates: matchedPlaatsen,
+        rawGemeente: organisatie.plaats,
+      });
+    }
   }
   const matchers: Record<string, Matcher> = {
     updatedSinceRelease(plaatsen, _, currentPlaats) {
@@ -225,6 +313,16 @@ export async function adresSeeder2(client: db.PrismaClient) {
         Guldenberg: 'Huldenberg',
         'Landen (Attenhoven)': 'Attenhoven',
         'Henre-Herfelingen': 'Herfelingen',
+        Oostuinkerke: 'Oostduinkerke',
+        "St-Job in 't Goor": "Sint-Job-In-'T-Goor",
+        'St.-Job': "Sint-Job-In-'T-Goor",
+        Westerloo: 'Westerlo',
+        'Aarschot - Aurodenberg': 'Aarschot',
+        Steenhuize: 'Steenhuize-Wijnhuize',
+        'Steenhuize-Herzele': 'Steenhuize-Wijnhuize',
+        'Moerzeke - kastel': 'Moerzeke',
+        'Moerzeke - Kastel': 'Moerzeke',
+        'Sint Kruis Brugge': 'Sint-Kruis',
       };
       if (map[rawDeelgemeente]) {
         return plaatsen.find((p) => p.deelgemeente === map[rawDeelgemeente]);
@@ -250,7 +348,7 @@ export async function adresSeeder2(client: db.PrismaClient) {
             veranderd: false,
             oudePlaats: workItem.adres.plaats.volledigeNaam,
             nieuwePlaats: workItem.adres.plaats.volledigeNaam,
-            type: 'deelnemer',
+            type: workItem.type,
             naam: workItem.naam,
             oorspronkelijkeText: workItem.rawGemeente,
             matcher: name,
@@ -262,7 +360,7 @@ export async function adresSeeder2(client: db.PrismaClient) {
             veranderd: true,
             oudePlaats: workItem.adres.plaats.volledigeNaam,
             nieuwePlaats: match.volledigeNaam,
-            type: 'deelnemer',
+            type: workItem.type,
             naam: workItem.naam,
             oorspronkelijkeText: workItem.rawGemeente,
             matcher: name,
@@ -291,21 +389,21 @@ export async function adresSeeder2(client: db.PrismaClient) {
         ] as const,
     ),
   );
-  for (const { adres, rawGemeente } of backlog) {
+  for (const { adres, rawGemeente, naam, type } of backlog) {
     csvResults.push({
       matchGevonden: false,
       veranderd: false,
       oudePlaats: adres.plaats.volledigeNaam,
       nieuwePlaats: undefined,
-      type: 'deelnemer',
-      naam: adres.plaats.deelgemeente,
+      type,
+      naam,
       oorspronkelijkeText: rawGemeente,
       matcher: 'none',
     });
   }
   await writeOutputJson('adres-seeder-2.json', jsonResults, false);
   await fs.writeFile(
-    new URL(`../../import/plaats-correctie-cursisten.csv`, import.meta.url),
+    new URL(`../../import/plaats-correcties.csv`, import.meta.url),
     toCsv(csvResults, [
       'naam',
       'type',
@@ -376,4 +474,48 @@ interface RawDeelnemer {
   'volwassen minderjarig': string;
   werksituatie: string;
   woonsituatie: string;
+}
+
+interface RawVrijwilliger {
+  titel: string;
+  achternaam: string;
+  adres: string;
+  'begeleider cursus': string;
+  'begeleider vakanties': string;
+  'communicatie vakanties':
+    | 'planning via mail'
+    | 'geen communicatie'
+    | 'planning via post';
+  'e-mail': string;
+  geboortedatum: string;
+  gemeente: string;
+  GSM: string;
+  naam: string;
+  opmerkingen: string;
+  postcode: string;
+  telefoon: string;
+}
+type JaNee = 'ja' | 'nee';
+
+interface RawExtraPersoon {
+  '': string;
+  adres: string;
+  'algemene vergadering De Bedding': JaNee;
+  'algemene vergadering De Kei': JaNee;
+  'algemene vergadering Digistap': JaNee;
+  'algemene vergadering Kei-Jong': JaNee;
+  'e-mail': string;
+  'folders cursussen De Kei': JaNee;
+  'folders Digistap': JaNee;
+  'folders Kei-Jong (niet Buso)': JaNee;
+  'folders Kei-Jong Buso': JaNee;
+  'folders zomervakanties De Kei': JaNee;
+  opmerkingen: string;
+  plaats: string;
+  postcode: string;
+  'raad van bestuur De Kei': JaNee;
+  'raad van bestuur De Kei (editable)': JaNee;
+  'raad van bestuur Kei-Jong': JaNee;
+  TAV: string;
+  telefoon: string;
 }
