@@ -16,7 +16,6 @@ import {
   showDatum,
 } from '@rock-solid/shared';
 import { html } from 'lit';
-import { decimalSeparator } from './string-utils';
 
 export const unknown = 'onbekend';
 export const notAvailable = 'n/a';
@@ -136,9 +135,14 @@ export function showAdres(adres?: Adres) {
 
 export function showMoney(decimal?: Decimal) {
   if (decimal) {
-    return `€ ${decimal.toFixed(2).replace('.', decimalSeparator())}`;
+    let currency = decimal.toFixed(2);
+    if (currency.endsWith('.00')) {
+      currency = `${currency.substring(0, currency.length - 2)}-`;
+    }
+    currency = currency.replace('.', ',');
+    return html`€&nbsp;${currency}`;
   }
-  return notAvailable;
+  return '';
 }
 
 export function showOrganisatieonderdeel(
