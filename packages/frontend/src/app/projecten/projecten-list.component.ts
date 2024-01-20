@@ -1,6 +1,7 @@
 import {
   AanmeldingOf,
   aanmeldingsstatussen,
+  Cursus,
   notEmpty,
   organisatieonderdelen,
   Project,
@@ -9,6 +10,7 @@ import {
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { join } from 'lit/directives/join.js';
 import { bootstrap } from '../../styles';
 import {
   downloadCsv,
@@ -79,16 +81,16 @@ export class ProjectenListComponent extends LitElement {
             ? html`<th>Naam</th>`
             : html`<th>Bestemming</th>
                 <th>Land</th>`}
-          <th>Prijs</th>
+          <th class="text-end">Prijs</th>
           ${isCursus
             ? html`
-                <th>Locatie(s)</th>
+                <th class="text-center">Locatie(s)</th>
                 <th>Organisatieonderdeel</th>
                 <th>Deelnemersuren</th>
               `
             : html`
-                <th>Voorschot</th>
-                <th>Seizoen</th>
+                <th class="text-end">Voorschot</th>
+                <th class="text-center">Seizoen</th>
               `}
           <th>Activiteiten</th>
           <th style="width: 230px">Acties</th>
@@ -112,17 +114,9 @@ export class ProjectenListComponent extends LitElement {
                     <td>${project.bestemming}</td>
                     <td>${project.land}</td>
                   `}
-              <td>${showMoney(project.prijs)}</td>
+              <td class="text-end">${showMoney(project.prijs)}</td>
               ${project.type === 'cursus'
-                ? html`<td>
-                      ${project.activiteiten
-                        .map((act) => act.locatie?.naam)
-                        .filter(notEmpty)
-                        .filter(
-                          (item, index, arr) => arr.indexOf(item) === index,
-                        )
-                        .join(', ')}
-                    </td>
+                ? html`<td>${renderLocaties(project)}</td>
                     <td>
                       ${project.type === 'cursus'
                         ? organisatieonderdelen[project.organisatieonderdeel]
@@ -136,8 +130,8 @@ export class ProjectenListComponent extends LitElement {
                         : notAvailable}
                     </td>`
                 : html`
-                    <td>${showMoney(project.voorschot)}</td>
-                    <td>
+                    <td class="text-end">${showMoney(project.voorschot)}</td>
+                    <td class="text-center">
                       ${project.seizoen
                         ? vakantieSeizoenen[project.seizoen]
                         : notAvailable}
@@ -222,4 +216,14 @@ export class ProjectenListComponent extends LitElement {
       </tbody>
     </table> `;
   }
+}
+function renderLocaties(project: Cursus): unknown {
+  return join(
+    project.activiteiten
+      .map((act) => act.locatie?.naam)
+      .filter(notEmpty)
+      .filter((item, index, arr) => arr.indexOf(item) === index)
+      .map((item) => html`<span class="text-nowrap">${item}</span>`),
+    ', ',
+  );
 }
