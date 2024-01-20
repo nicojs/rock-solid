@@ -7,7 +7,7 @@ import {
   ProjectFilter,
   toQueryString,
 } from '@rock-solid/shared';
-import { version } from '../../../package.json';
+import pkg from '../../../package.json';
 
 const keiJongOrganisatieonderdelen: ReadonlyArray<Organisatieonderdeel> =
   Object.freeze(['keiJongBuSO', 'keiJongNietBuSO']);
@@ -37,7 +37,7 @@ export class HomeComponent extends LitElement {
         <h2 class="col display-1">
           Rock Solid
           <small class="text-muted fs-1"
-            >v${version}
+            >v${pkg.version}
             <a
               href="https://github.com/nicojs/rock-solid/blob/main/CHANGELOG.md"
               target="_blank"
