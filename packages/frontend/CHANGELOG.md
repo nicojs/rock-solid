@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/nicojs/rock-solid/compare/v1.2.0...v1.2.1) (2024-01-20)
+
+### Bug Fixes
+
+- **import:** importeer de juiste deelgemeenten ([#189](https://github.com/nicojs/rock-solid/issues/189)) ([936d9ee](https://github.com/nicojs/rock-solid/commit/936d9ee60a937b3af475c9c8da8f2d0ba609abd3))
+
+### Features
+
+- **home:** voer versie nummer toe op het hoofdscherm ([#190](https://github.com/nicojs/rock-solid/issues/190)) ([15e9bcc](https://github.com/nicojs/rock-solid/commit/15e9bcc04935b17937fc548f076a0239403f41bf))
+
 # 1.2.0 (2024-01-17)
 
 ### Bug Fixes
