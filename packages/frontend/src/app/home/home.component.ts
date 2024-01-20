@@ -7,6 +7,7 @@ import {
   ProjectFilter,
   toQueryString,
 } from '@rock-solid/shared';
+import { version } from '../../../package.json';
 
 const keiJongOrganisatieonderdelen: ReadonlyArray<Organisatieonderdeel> =
   Object.freeze(['keiJongBuSO', 'keiJongNietBuSO']);
@@ -34,12 +35,23 @@ export class HomeComponent extends LitElement {
     return html`<div class="container-fluid">
       <div class="row">
         <h2 class="col display-1">
-          Rock Solid.
-          <span class="text-muted fs-4"
-            >Steenvast en solide management systeem voor De Kei en
-            Kei-Jong</span
-          >
+          Rock Solid
+          <small class="text-muted fs-1"
+            >v${version}
+            <a
+              href="https://github.com/nicojs/rock-solid/blob/main/CHANGELOG.md"
+              target="_blank"
+              title="Open de changelog in een nieuw venster"
+              class="fs-4 link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+              >changelog <rock-icon icon="boxArrowUpRight"></rock-icon
+            ></a>
+          </small>
         </h2>
+      </div>
+      <div class="row mb-4">
+        <p class="lead col">
+          Steenvast en solide management systeem voor De Kei en Kei-Jong
+        </p>
       </div>
       <div class="row">
         <div class="${colClass}">
