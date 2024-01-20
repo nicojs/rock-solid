@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/nicojs/rock-solid/compare/v1.2.1...v1.2.2) (2024-01-20)
+
+### Features
+
+- **bedragen:** bedragen niet afkappen naar de volgende regel ([#191](https://github.com/nicojs/rock-solid/issues/191)) ([c112fd0](https://github.com/nicojs/rock-solid/commit/c112fd04c20dc981a322d5c99c877318615b8e4b))
+- **projectenlijst:** locaties tonen ([#192](https://github.com/nicojs/rock-solid/issues/192)) ([33cd163](https://github.com/nicojs/rock-solid/commit/33cd163ee204198026cf522304909d18e251afc9))
+
 ## [1.2.1](https://github.com/nicojs/rock-solid/compare/v1.2.0...v1.2.1) (2024-01-20)
 
 ### Bug Fixes
