@@ -12,6 +12,15 @@ export class RouteParams {
     href = `${window.location.pathname}${window.location.search}`,
     base = `${window.location.protocol}//${window.location.host}`,
   ): RouteParams {
+    if (
+      !href.startsWith('/') &&
+      !href.startsWith('http://') &&
+      !href.startsWith('https://')
+    ) {
+      throw new Error(
+        `Relative paths are not supported by the rock solid router. Tried to resolve: ${href}`,
+      );
+    }
     const { pathname, searchParams } = new URL(href, base);
     const path = pathname.slice(1).split('/').filter(Boolean);
     const query: Query = {};
@@ -19,12 +28,8 @@ export class RouteParams {
     return new RouteParams(path, query);
   }
 
-  resolve(href: string) {
-    return RouteParams.parse(href, this.href);
-  }
-
   get pathname() {
-    return `/${this.path.length ? `${this.path.join('/')}/` : ''}`;
+    return `/${this.path.join('/')}`;
   }
 
   get href() {
@@ -48,25 +53,14 @@ export class Router {
       .subscribe(this.navigatorSubject);
   }
 
-  resolve(path: string) {
-    return this.navigatorSubject.value.resolve(path);
-  }
-
   isActive(path: string) {
-    return this.resolve(path).pathname === this.navigatorSubject.value.pathname;
+    return (
+      RouteParams.parse(path).pathname === this.navigatorSubject.value.pathname
+    );
   }
 
   navigate(path: string) {
-    if (
-      !path.startsWith('/') &&
-      !path.startsWith('http://') &&
-      !path.startsWith('https://')
-    ) {
-      throw new Error(
-        `Relative paths are not supported tried to navigate to: ${path}`,
-      );
-    }
-    const route = this.resolve(path);
+    const route = RouteParams.parse(path);
     window.history.pushState({}, '', route.href);
     this.navigatorSubject.next(route);
   }
