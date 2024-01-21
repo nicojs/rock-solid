@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/nicojs/rock-solid/compare/v1.2.2...v1.2.3) (2024-01-21)
+
+### Bug Fixes
+
+- **routing:** kleine schoonheidsfoutjes opgelost ([#193](https://github.com/nicojs/rock-solid/issues/193)) ([c367c03](https://github.com/nicojs/rock-solid/commit/c367c0313796cc7ccc62f7fb9719a86e6b3d776d))
+
 ## [1.2.2](https://github.com/nicojs/rock-solid/compare/v1.2.1...v1.2.2) (2024-01-20)
 
 ### Features

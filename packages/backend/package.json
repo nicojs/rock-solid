@@ -1,6 +1,6 @@
 {
   "name": "@rock-solid/backend",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "",
   "author": "",
   "private": true,
@@ -28,8 +28,8 @@
     "@nestjs/platform-express": "^10.3.0",
     "@nestjs/serve-static": "^4.0.0",
     "@prisma/client": "^5.7.1",
-    "@rock-solid/frontend": "^1.2.2",
-    "@rock-solid/shared": "^1.2.2",
+    "@rock-solid/frontend": "^1.2.3",
+    "@rock-solid/shared": "^1.2.3",
     "@types/express": "^4.17.21",
     "better-sqlite3": "^9.2.2",
     "body-parser": "^1.20.2",
