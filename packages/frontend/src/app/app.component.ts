@@ -40,7 +40,7 @@ export class RockSolidApp extends LitElement {
           >
         </span>
         <div class="justify-content-between d-flex">
-          <rock-user class="me-3"></rock-user>
+          <rock-user class="bg-body-tertiary me-3"></rock-user>
           <rock-theme-toggle
             @theme-changed=${(ev: CustomEvent<Theme>) =>
               (this.theme = ev.detail)}

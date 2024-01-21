@@ -75,7 +75,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
     });
   }
 
-  public override updated(props: PropertyValues<ProjectAanmeldingenComponent>) {
+  public override update(props: PropertyValues<ProjectAanmeldingenComponent>) {
     if (props.has('project')) {
       this.aanmeldingen = undefined;
       projectService.getAanmeldingen(this.project.id).then((aanmeldingen) => {
@@ -90,6 +90,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
         );
       });
     }
+    super.update(props);
   }
 
   private async pathBrievenVerzonden(aanmeldingen: Aanmelding[]) {

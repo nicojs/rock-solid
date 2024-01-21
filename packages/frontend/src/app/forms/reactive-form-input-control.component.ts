@@ -283,9 +283,6 @@ export class ReactiveFormInputControl<
     const isChecked = (value: string) => {
       const checked =
         (this.entity[control.name] as unknown as string | undefined) === value;
-      if (control.name === 'geslacht') {
-        console.log('isChecked', control.name, value, checked);
-      }
       return checked;
     };
 
