@@ -316,23 +316,20 @@ export class ProjectAanmeldingenComponent extends LitElement {
       : html`<div class="mb-3">Nog geen aanmeldingen 🤷‍♂️</div>`}
     ${this.renderAanmeldingenTable(aanmeldingen)}
     ${wachtlijstAanmeldingen.length
-      ? html` ${this.renderAanmeldingenListGroup(
+      ? html` ${this.renderAanmeldingenList(
           wachtlijstAanmeldingen,
           'wachtlijst',
         )}`
       : ''}
     ${geannuleerdeAanmeldingen.length
-      ? html` ${this.renderAanmeldingenListGroup(
+      ? html` ${this.renderAanmeldingenList(
           geannuleerdeAanmeldingen,
           'annulaties',
         )}`
       : ''}`;
   }
 
-  private renderAanmeldingenListGroup(
-    aanmeldingen: Aanmelding[],
-    heading: string,
-  ) {
+  private renderAanmeldingenList(aanmeldingen: Aanmelding[], heading: string) {
     return html`${aanmeldingen.length
       ? html`<h4>${capitalize(heading)}</h4>
           <button
@@ -345,27 +342,55 @@ export class ProjectAanmeldingenComponent extends LitElement {
           >
             <rock-icon icon="download"></rock-icon> Export
           </button>
-          <ul class="list-group">
-            ${aanmeldingen.map(
-              (aanmelding) =>
-                html` <li class="list-group-item">
-                  ${aanmelding.deelnemer
-                    ? deelnemerLink(aanmelding.deelnemer)
-                    : deelnemerVerwijderd}
-                  ${this.renderDeleteButton(aanmelding, /* floatEnd */ true)}
-
-                  <button
-                    title="Naar aangemeld"
-                    class="btn btn-outline-primary btn-sm float-end me-2"
-                    ${privilege('write:aanmeldingen')}
-                    type="button"
-                    @click=${() => this.patchStatus(aanmelding, 'Aangemeld')}
-                  >
-                    <rock-icon icon="arrowUpSquare"></rock-icon>
-                  </button>
-                </li>`,
-            )}
-          </ul>`
+          <table class="table table-hover table-sm">
+            <thead>
+              <tr>
+                <th>Naam</th>
+                <th class="align-middle">
+                  ${aanmeldingLabels.tijdstipVanAanmelden}
+                </th>
+                <th class="align-middle">Bevestigingsbrief</th>
+                <th class="align-middle">Vervoersbrief</th>
+                <th class="align-middle">
+                  Geboortedatum<br />
+                  <small>(leeftijd op startdatum)</small>
+                </th>
+                <th class="align-middle">Rekeninguittreksel</th>
+                <th class="align-middle">Opmerkingen</th>
+                <th class="align-middle text-center">Statusacties</th>
+                <th class="align-middle text-center">Acties</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${aanmeldingen.map(
+                (aanmelding) =>
+                  html` <tr>
+                    <td>${this.renderDeelnemerTableData(aanmelding)}</td>
+                    <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
+                    <td>
+                      ${showDatum(aanmelding.bevestigingsbriefVerzondenOp)}
+                    </td>
+                    <td>${showDatum(aanmelding.vervoersbriefVerzondenOp)}</td>
+                    <td>${this.renderGeboortedatumWithAge(aanmelding)}</td>
+                    <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
+                    <td>${show(aanmelding.opmerking, '')}</td>
+                    <td>
+                      <button
+                        title="Naar aangemeld"
+                        class="btn btn-outline-primary btn-sm me-2"
+                        ${privilege('write:aanmeldingen')}
+                        type="button"
+                        @click=${() =>
+                          this.patchStatus(aanmelding, 'Aangemeld')}
+                      >
+                        <rock-icon icon="arrowUpSquare"></rock-icon>
+                      </button>
+                    </td>
+                    <td>${this.renderEditButton(aanmelding)}</td>
+                  </tr>`,
+              )}
+            </tbody>
+          </table>`
       : nothing}`;
   }
 
@@ -409,18 +434,12 @@ export class ProjectAanmeldingenComponent extends LitElement {
               <tr>
                 <th
                   class="align-middle text-end text-muted"
-                  title="Bevestigd of aangemeld"
+                  title="Nr"
                   width="10px"
                 >
                   #
                 </th>
-                <th
-                  class="align-middle"
-                  title="Bevestigd of aangemeld"
-                  width="10px"
-                >
-                  <!-- <rock-icon icon="personLock"></rock-icon> -->
-                </th>
+                <th class="align-middle" title="Status" width="10px"></th>
                 <th class="align-middle">Naam</th>
                 <th
                   class="text-center align-middle"
@@ -466,13 +485,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                   html`<tr>
                     <td class="text-end text-muted">${i + 1}</td>
                     <td>${renderStatusIcon(aanmelding)}</td>
-                    <td>
-                      ${renderWarning(aanmelding)}
-                      ${aanmelding.deelnemer
-                        ? html`${deelnemerLink(aanmelding.deelnemer)} `
-                        : deelnemerVerwijderd}
-                      ${this.renderEersteAanmelding(aanmelding)}
-                    </td>
+                    <td>${this.renderDeelnemerTableData(aanmelding)}</td>
                     <td class="text-center">
                       ${renderToestemmingFotos(aanmelding)}
                     </td>
@@ -485,15 +498,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       ${showDatum(aanmelding.bevestigingsbriefVerzondenOp)}
                     </td>
                     <td>${showDatum(aanmelding.vervoersbriefVerzondenOp)}</td>
-                    <td>
-                      ${showDatum(aanmelding.deelnemer?.geboortedatum)}
-                      ${aanmelding.deelnemer?.geboortedatum
-                        ? html`(${calculateAge(
-                            aanmelding.deelnemer.geboortedatum,
-                            this.project.activiteiten[0]?.van,
-                          )})`
-                        : nothing}
-                    </td>
+                    <td>${this.renderGeboortedatumWithAge(aanmelding)}</td>
                     <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
                     <td>${show(aanmelding.opmerking, '')}</td>
                     <td class="">
@@ -540,15 +545,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       </button>
                     </td>
                     <td class="text-center">
-                      <rock-link
-                        btn
-                        sm
-                        title="Wijzigen"
-                        btnOutlinePrimary
-                        href="/${pluralize(this.project.type)}/${this.project
-                          .id}/aanmeldingen/edit/${aanmelding.id}"
-                        ><rock-icon icon="pencil"></rock-icon
-                      ></rock-link>
+                      ${this.renderEditButton(aanmelding)}
                       ${this.renderDeleteButton(aanmelding)}
                     </td>
                   </tr>`,
@@ -556,6 +553,14 @@ export class ProjectAanmeldingenComponent extends LitElement {
             </tbody>
           </table>`
       : nothing}`;
+  }
+
+  private renderDeelnemerTableData(aanmelding: Aanmelding) {
+    return html` ${renderWarning(aanmelding)}
+    ${aanmelding.deelnemer
+      ? html`${deelnemerLink(aanmelding.deelnemer)} `
+      : deelnemerVerwijderd}
+    ${this.renderEersteAanmelding(aanmelding)}`;
   }
 
   private renderEersteAanmelding(aanmelding: Aanmelding): unknown {
@@ -583,6 +588,17 @@ export class ProjectAanmeldingenComponent extends LitElement {
         <rock-icon icon="trash"></rock-icon></button
     ></span>`;
   }
+  private renderEditButton(aanmelding: Aanmelding) {
+    return html`<rock-link
+      btn
+      sm
+      title="Wijzigen"
+      btnOutlinePrimary
+      href="/${pluralize(this.project.type)}/${this.project
+        .id}/aanmeldingen/edit/${aanmelding.id}"
+      ><rock-icon icon="pencil"></rock-icon
+    ></rock-link>`;
+  }
 
   private renderActiesButton(aanmeldingen: Aanmelding[]) {
     const toState = aanmeldingen.every(({ status }) => status === 'Bevestigd')
@@ -602,6 +618,16 @@ export class ProjectAanmeldingenComponent extends LitElement {
       >
         <rock-icon icon="checkCircle"></rock-icon></button
     ></span>`;
+  }
+
+  private renderGeboortedatumWithAge(aanmelding: Aanmelding) {
+    return html`${showDatum(aanmelding.deelnemer?.geboortedatum)}
+    ${aanmelding.deelnemer?.geboortedatum
+      ? html`(${calculateAge(
+          aanmelding.deelnemer.geboortedatum,
+          this.project.activiteiten[0]?.van,
+        )})`
+      : nothing}`;
   }
 
   private renderCreateAanmeldingForm() {
