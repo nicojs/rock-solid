@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.4](https://github.com/nicojs/rock-solid/compare/v1.2.3...v1.2.4) (2024-01-24)
+
+### Features
+
+- **wachtlijst:** laat ook aanmeldingsdetails zien in de wachtlijst en annulatielijst ([#195](https://github.com/nicojs/rock-solid/issues/195)) ([9196da3](https://github.com/nicojs/rock-solid/commit/9196da31e1e30cc4a5315fbd175fff3aa9478160))
+
 ## [1.2.3](https://github.com/nicojs/rock-solid/compare/v1.2.2...v1.2.3) (2024-01-21)
 
 ### Bug Fixes
