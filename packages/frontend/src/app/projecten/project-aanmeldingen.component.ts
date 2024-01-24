@@ -357,7 +357,6 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 </th>
                 <th class="align-middle">Rekeninguittreksel</th>
                 <th class="align-middle">Opmerkingen</th>
-                <th class="align-middle text-center">Statusacties</th>
                 <th class="align-middle text-center">Acties</th>
               </tr>
             </thead>
@@ -374,10 +373,10 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     <td>${this.renderGeboortedatumWithAge(aanmelding)}</td>
                     <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
                     <td>${show(aanmelding.opmerking, '')}</td>
-                    <td>
+                    <td class="text-center">
                       <button
                         title="Naar aangemeld"
-                        class="btn btn-outline-primary btn-sm me-2"
+                        class="btn btn-outline-warning btn-sm me-2"
                         ${privilege('write:aanmeldingen')}
                         type="button"
                         @click=${() =>
@@ -385,8 +384,8 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       >
                         <rock-icon icon="arrowUpSquare"></rock-icon>
                       </button>
+                      ${this.renderEditButton(aanmelding)}
                     </td>
-                    <td>${this.renderEditButton(aanmelding)}</td>
                   </tr>`,
               )}
             </tbody>
