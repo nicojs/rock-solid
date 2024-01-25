@@ -5,6 +5,7 @@ import {
   Queryfied,
   UpsertableOrganisatie,
   foldersoorten,
+  groupedOrganisatieSoorten,
   organisatieLabels,
   provincies,
   toOrganisatieFilter,
@@ -21,6 +22,7 @@ import {
   FormControl,
   InputControl,
   InputType,
+  checkboxesGroupedItemsControl,
   checkboxesItemsControl,
   selectControl,
 } from '../forms';
@@ -219,6 +221,9 @@ const mainSearchControl: InputControl<OrganisatieFilter> = {
 };
 
 const advancedSearchControls: FormControl<OrganisatieFilter>[] = [
+  checkboxesGroupedItemsControl('soorten', groupedOrganisatieSoorten, {
+    label: 'Soorten',
+  }),
   checkboxesItemsControl('folders', foldersoorten, { label: 'Folders' }),
   {
     name: 'metAdres',

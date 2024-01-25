@@ -114,6 +114,11 @@ describe(OrganisatiesController.name, () => {
       [acme, disney, nintendo] = await Promise.all([
         harness.createOrganisatie({
           naam: 'Acme',
+          soorten: [
+            'AmbulanteWoonondersteuning',
+            'BegeleidWerkOfVrijwilligerswerk',
+            'CAW',
+          ],
           contacten: [
             factory.organisatieContact({
               terAttentieVan: 'Hans',
@@ -136,6 +141,7 @@ describe(OrganisatiesController.name, () => {
         }),
         harness.createOrganisatie({
           naam: 'Disney',
+          soorten: ['AmbulanteWoonondersteuning'],
           contacten: [
             factory.organisatieContact({
               terAttentieVan: 'Mickey',
@@ -252,6 +258,44 @@ describe(OrganisatiesController.name, () => {
         expect(gentOrgs.map(({ id }) => id)).deep.eq([nintendo.id]);
         expect(gentOrgs[0]?.contacten).lengthOf(1);
         expect(gentOrgs[0]?.contacten[0]?.terAttentieVan).eq('Miyamoto');
+        expect(noFilter.map(({ id }) => id)).deep.eq([
+          acme.id,
+          disney.id,
+          nintendo.id,
+        ]);
+      });
+
+      it('by soorten', async () => {
+        // Act
+        const [
+          ambulanteWoonondersteuningOrgs,
+          cawOrgs,
+          cawClb,
+          geenSoorten,
+          noFilter,
+        ] = await Promise.all([
+          harness.getAllOrganisaties({
+            soorten: ['AmbulanteWoonondersteuning'],
+          }),
+          harness.getAllOrganisaties({ soorten: ['CAW'] }),
+          harness.getAllOrganisaties({ soorten: ['CAW', 'CLB'] }),
+          harness.getAllOrganisaties({ soorten: [] }),
+          harness.getAllOrganisaties({ soorten: undefined }),
+        ]);
+
+        // Assert
+        expect(ambulanteWoonondersteuningOrgs.map(({ id }) => id)).deep.eq([
+          acme.id,
+          disney.id,
+        ]);
+        expect(ambulanteWoonondersteuningOrgs[0]?.contacten).lengthOf(2);
+        expect(cawOrgs.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(cawClb.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(geenSoorten.map(({ id }) => id)).deep.eq([
+          acme.id, // same as noFilter
+          disney.id,
+          nintendo.id,
+        ]);
         expect(noFilter.map(({ id }) => id)).deep.eq([
           acme.id,
           disney.id,

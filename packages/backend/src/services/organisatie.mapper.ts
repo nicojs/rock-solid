@@ -189,6 +189,7 @@ function where({
   metAdres,
   naam,
   provincie,
+  soorten,
 }: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
   const where: db.Prisma.OrganisatieWhereInput = {
     contacten: {
@@ -202,6 +203,15 @@ function where({
     where.naam = {
       contains: naam,
       // mode: 'insensitive',
+    };
+  }
+  if (soorten) {
+    where.soorten = {
+      some: {
+        soort: {
+          in: soorten.map(organisatiesoortMapper.toDB),
+        },
+      },
     };
   }
   return where;
