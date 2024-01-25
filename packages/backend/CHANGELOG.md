@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/nicojs/rock-solid/compare/v1.2.4...v1.3.0) (2024-01-25)
+
+### Features
+
+- **organisatie:** zoeken op provincie mogelijk maken ([#198](https://github.com/nicojs/rock-solid/issues/198)) ([ddf9c16](https://github.com/nicojs/rock-solid/commit/ddf9c164e2a4a153af1ffdbfea5b50a12ba11040))
+
 ## [1.2.4](https://github.com/nicojs/rock-solid/compare/v1.2.3...v1.2.4) (2024-01-24)
 
 **Note:** Version bump only for package @rock-solid/backend
