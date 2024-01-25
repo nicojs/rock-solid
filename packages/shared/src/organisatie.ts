@@ -59,6 +59,7 @@ export type OrganisatieFilter = {
   folders?: Foldersoort[];
   metAdres?: boolean;
   provincie?: Provincie;
+  soorten?: Organisatiesoort[];
 };
 
 export type UpsertableOrganisatie = Upsertable<
@@ -202,5 +203,6 @@ export function toOrganisatieFilter(
     ...filterMetaQuery(query),
     folders: query.folders?.split(',') as Foldersoort[],
     metAdres: tryParseBoolean(query.metAdres),
+    soorten: query.soorten?.split(',') as Organisatiesoort[],
   };
 }
