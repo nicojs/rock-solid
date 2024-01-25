@@ -9,7 +9,6 @@ import {
   Cursus,
   CursusActiviteit,
   Plaats,
-  Provincie,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory, byId } from './test-utils.test.js';

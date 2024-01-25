@@ -1,5 +1,4 @@
 import { Upsertable } from './upsertable.js';
-import { Labels } from './util.js';
 
 export type Provincie =
   | 'Onbekend'
