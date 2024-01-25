@@ -1,19 +1,34 @@
 import { Upsertable } from './upsertable.js';
+import { Labels } from './util.js';
 
-export enum Provincie {
-  'Onbekend' = 0,
-  'Brussels Hoofdstedelijk Gewest' = 1,
-  'Waals-Brabant' = 2,
-  'Vlaams-Brabant' = 3,
-  Antwerpen = 4,
-  Limburg = 5,
-  Luik = 6,
-  Namen = 7,
-  Henegouwen = 8,
-  Luxemburg = 9,
-  'West-Vlaanderen' = 10,
-  'Oost-Vlaanderen' = 11,
-}
+export type Provincie =
+  | 'Onbekend'
+  | 'Brussels Hoofdstedelijk Gewest'
+  | 'Waals-Brabant'
+  | 'Vlaams-Brabant'
+  | 'Antwerpen'
+  | 'Limburg'
+  | 'Luik'
+  | 'Namen'
+  | 'Henegouwen'
+  | 'Luxemburg'
+  | 'West-Vlaanderen'
+  | 'Oost-Vlaanderen';
+
+export const provincies: Record<Provincie, string> = {
+  Onbekend: 'Onbekend',
+  'Brussels Hoofdstedelijk Gewest': 'Brussels Hoofdstedelijk Gewest',
+  'Waals-Brabant': 'Waals-Brabant',
+  'Vlaams-Brabant': 'Vlaams-Brabant',
+  Antwerpen: 'Antwerpen',
+  Limburg: 'Limburg',
+  Luik: 'Luik',
+  Namen: 'Namen',
+  Henegouwen: 'Henegouwen',
+  Luxemburg: 'Luxemburg',
+  'West-Vlaanderen': 'West-Vlaanderen',
+  'Oost-Vlaanderen': 'Oost-Vlaanderen',
+};
 
 export interface Plaats {
   id: number;

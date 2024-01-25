@@ -662,7 +662,7 @@ describe(ProjectenController.name, () => {
         factory.plaats({
           gemeente: 'Luik',
           postcode: '4000',
-          provincie: Provincie.Luik,
+          provincie: 'Luik',
         }),
       );
       const deelnemer = await harness.createDeelnemer(
@@ -747,7 +747,7 @@ describe(ProjectenController.name, () => {
           factory.plaats({
             gemeente: 'Luik',
             postcode: '4000',
-            provincie: Provincie.Luik,
+            provincie: 'Luik',
           }),
         ),
       ]);

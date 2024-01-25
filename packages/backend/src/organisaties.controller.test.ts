@@ -95,8 +95,23 @@ describe(OrganisatiesController.name, () => {
   describe('GET /organisaties', () => {
     let acme: Organisatie;
     let disney: Organisatie;
+    let nintendo: Organisatie;
     beforeEach(async () => {
-      [acme, disney] = await Promise.all([
+      const antwerpen = await harness.db.insertPlaats(
+        factory.plaats({
+          postcode: '2000',
+          deelgemeente: 'Antwerpen',
+          provincie: 'Antwerpen',
+        }),
+      );
+      const gent = await harness.db.insertPlaats(
+        factory.plaats({
+          postcode: '9000',
+          deelgemeente: 'Gent',
+          provincie: 'West-Vlaanderen',
+        }),
+      );
+      [acme, disney, nintendo] = await Promise.all([
         harness.createOrganisatie({
           naam: 'Acme',
           contacten: [
@@ -105,7 +120,7 @@ describe(OrganisatiesController.name, () => {
               adres: {
                 straatnaam: 'AcmeStreet',
                 huisnummer: '1',
-                plaats: harness.db.seedPlaats,
+                plaats: antwerpen,
               },
               foldervoorkeuren: [
                 { folder: 'deKeiCursussen', communicatie: 'post' },
@@ -134,6 +149,19 @@ describe(OrganisatiesController.name, () => {
                   communicatie: 'postEnEmail',
                 },
               ],
+            }),
+          ],
+        }),
+        harness.createOrganisatie({
+          naam: 'Nintendo',
+          contacten: [
+            factory.organisatieContact({
+              terAttentieVan: 'Miyamoto',
+              adres: {
+                straatnaam: 'NintendoStreet',
+                huisnummer: '1',
+                plaats: gent,
+              },
             }),
           ],
         }),
@@ -186,16 +214,49 @@ describe(OrganisatiesController.name, () => {
         ]);
 
         // Assert
-        expect(metAdresOrgs.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(metAdresOrgs.map(({ id }) => id)).deep.eq([
+          acme.id,
+          nintendo.id,
+        ]);
         expect(metAdresOrgs[0]?.contacten).lengthOf(1);
         expect(metAdresOrgs[0]?.contacten[0]?.terAttentieVan).eq('Hans');
+        expect(metAdresOrgs[1]?.contacten[0]?.terAttentieVan).eq('Miyamoto');
         expect(zonderAdresOrgs.map(({ id }) => id)).deep.eq([
           acme.id,
           disney.id,
+          nintendo.id,
         ]);
-        expect(noFilter.map(({ id }) => id)).deep.eq([acme.id, disney.id]);
+        expect(noFilter.map(({ id }) => id)).deep.eq([
+          acme.id,
+          disney.id,
+          nintendo.id,
+        ]);
         expect(zonderAdresOrgs[0]?.contacten).lengthOf(2);
         expect(zonderAdresOrgs[1]?.contacten).lengthOf(1);
+      });
+
+      it('by provincie', async () => {
+        // Act
+        const [antwerpenOrgs, gentOrgs, noFilter] = await Promise.all([
+          harness.getAllOrganisaties({ provincie: 'Antwerpen' }),
+          harness.getAllOrganisaties({
+            provincie: 'West-Vlaanderen',
+          }),
+          harness.getAllOrganisaties({}),
+        ]);
+
+        // Assert
+        expect(antwerpenOrgs.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(antwerpenOrgs[0]?.contacten).lengthOf(1);
+        expect(antwerpenOrgs[0]?.contacten[0]?.terAttentieVan).eq('Hans');
+        expect(gentOrgs.map(({ id }) => id)).deep.eq([nintendo.id]);
+        expect(gentOrgs[0]?.contacten).lengthOf(1);
+        expect(gentOrgs[0]?.contacten[0]?.terAttentieVan).eq('Miyamoto');
+        expect(noFilter.map(({ id }) => id)).deep.eq([
+          acme.id,
+          disney.id,
+          nintendo.id,
+        ]);
       });
     });
   });

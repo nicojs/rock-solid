@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import { PlaatsFilter, Plaats } from '@rock-solid/shared';
 import * as db from '@prisma/client';
+import { provincieMapper } from './enum.mapper.js';
 
 /**
  * A data mapper for plaats
@@ -25,5 +26,5 @@ export class PlaatsMapper {
 
 export function toPlaats(p: db.Plaats): Plaats {
   const { provincieId, volledigeNaam, ...props } = p;
-  return { ...props, provincie: provincieId };
+  return { ...props, provincie: provincieMapper.toSchema(provincieId) };
 }

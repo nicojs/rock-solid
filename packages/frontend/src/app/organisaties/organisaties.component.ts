@@ -6,6 +6,7 @@ import {
   UpsertableOrganisatie,
   foldersoorten,
   organisatieLabels,
+  provincies,
   toOrganisatieFilter,
   tryParseInt,
 } from '@rock-solid/shared';
@@ -21,6 +22,7 @@ import {
   InputControl,
   InputType,
   checkboxesItemsControl,
+  selectControl,
 } from '../forms';
 
 @customElement('rock-organisaties')
@@ -223,4 +225,5 @@ const advancedSearchControls: FormControl<OrganisatieFilter>[] = [
     label: 'Met adres',
     type: InputType.checkbox,
   },
+  selectControl('provincie', provincies, { placeholder: '' }),
 ];

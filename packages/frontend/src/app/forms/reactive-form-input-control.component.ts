@@ -214,22 +214,6 @@ export class ReactiveFormInputControl<
         );
       }
     };
-
-    if (
-      this.entity[control.name] === undefined &&
-      !control.placeholder &&
-      !control.multiple
-    ) {
-      if (control.grouped) {
-        const firstGroup = Object.values(control.items)[0];
-        if (firstGroup) {
-          this.updateValue(Object.keys(firstGroup)[0]);
-        }
-      } else {
-        this.updateValue(Object.keys(control.items)[0]);
-      }
-    }
-
     return html`<select
       class="form-select"
       name="${control.name}"
@@ -248,7 +232,7 @@ export class ReactiveFormInputControl<
         }
       }}"
     >
-      ${control.placeholder
+      ${control.placeholder !== undefined
         ? html`<option ?selected=${isSelected(undefined)} value="">
             ${control.placeholder}
           </option>`

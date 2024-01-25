@@ -25,6 +25,7 @@ import {
   communicatievoorkeurMapper,
   foldersoortMapper,
   organisatiesoortMapper,
+  provincieMapper,
 } from './enum.mapper.js';
 
 type DBOrganisatieContactAggregate = db.OrganisatieContact & {
@@ -187,10 +188,13 @@ function where({
   folders,
   metAdres,
   naam,
+  provincie,
 }: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
   const where: db.Prisma.OrganisatieWhereInput = {
     contacten: {
-      some: { AND: whereOrganisatieContacten({ folders, metAdres }) },
+      some: {
+        AND: whereOrganisatieContacten({ folders, metAdres, provincie }),
+      },
     },
   };
 
@@ -206,9 +210,10 @@ function where({
 function whereOrganisatieContacten({
   folders,
   metAdres,
+  provincie,
 }: Pick<
   OrganisatieFilter,
-  'folders' | 'metAdres'
+  'folders' | 'metAdres' | 'provincie'
 >): db.Prisma.OrganisatieContactWhereInput[] {
   const whereContacten: db.Prisma.OrganisatieContactWhereInput[] = [];
 
@@ -228,6 +233,15 @@ function whereOrganisatieContacten({
   if (metAdres) {
     whereContacten.push({
       adres: { isNot: null },
+    });
+  }
+  if (provincie !== undefined) {
+    whereContacten.push({
+      adres: {
+        plaats: {
+          provincieId: provincieMapper.toDB(provincie),
+        },
+      },
     });
   }
 
