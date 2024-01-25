@@ -26,6 +26,7 @@ import {
   woonsituaties,
   Woonsituatie,
   toCsv,
+  Provincie,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, nothing, PropertyValues } from 'lit';
@@ -370,7 +371,7 @@ function showGroupKey(
       return show(key, unknown);
     case 'provincie':
       return showProvincie(
-        (typeof key === 'string' && parseInt(key)) || undefined,
+        (typeof key === 'string' && (key as Provincie)) || undefined,
       );
     case 'organisatieonderdeel':
       return showOrganisatieonderdeel(key as Organisatieonderdeel | undefined);

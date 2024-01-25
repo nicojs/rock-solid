@@ -48,6 +48,7 @@ import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
 import { PrismaClient } from '@prisma/client';
 import { toPlaats } from './services/plaats.mapper.js';
+import { provincieMapper } from './services/enum.mapper.js';
 
 /**
  * @see https://stackoverflow.com/questions/45881829/how-to-have-mocha-show-entire-object-in-diff-on-assertion-error
@@ -118,7 +119,7 @@ export class RockSolidDBContainer {
     const dbPlaats = await this.client.plaats.create({
       data: {
         ...plaatsData,
-        provincieId: provincie,
+        provincieId: provincieMapper.toDB(provincie),
         volledigeNaam: `${plaats.gemeente} (${plaats.postcode})`,
       },
     });
@@ -487,7 +488,7 @@ export const factory = {
       deelgemeente: 'Onbekend',
       gemeente: 'Onbekend',
       postcode: '0',
-      provincie: 1,
+      provincie: provincieMapper.toSchema(1),
       ...overrides,
     };
   },

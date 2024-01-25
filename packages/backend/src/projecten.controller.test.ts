@@ -9,7 +9,6 @@ import {
   Cursus,
   CursusActiviteit,
   Plaats,
-  Provincie,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory, byId } from './test-utils.test.js';
@@ -662,7 +661,7 @@ describe(ProjectenController.name, () => {
         factory.plaats({
           gemeente: 'Luik',
           postcode: '4000',
-          provincie: Provincie.Luik,
+          provincie: 'Luik',
         }),
       );
       const deelnemer = await harness.createDeelnemer(
@@ -747,7 +746,7 @@ describe(ProjectenController.name, () => {
           factory.plaats({
             gemeente: 'Luik',
             postcode: '4000',
-            provincie: Provincie.Luik,
+            provincie: 'Luik',
           }),
         ),
       ]);

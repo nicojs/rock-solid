@@ -15,6 +15,7 @@ import {
   geslachtMapper,
   organisatieonderdeelMapper,
   projectTypeMapper,
+  provincieMapper,
   werksituatieMapper,
   woonsituatieMapper,
 } from './enum.mapper.js';
@@ -251,6 +252,8 @@ function keyFromGroupField(
       return geslachtMapper.toSchema(keyAsNumberIfString());
     case 'organisatieonderdeel':
       return organisatieonderdeelMapper.toSchema(keyAsNumberIfString());
+    case 'provincie':
+      return provincieMapper.toSchema(keyAsNumberIfString());
     default:
       if (key === null || key === undefined) {
         return undefined;

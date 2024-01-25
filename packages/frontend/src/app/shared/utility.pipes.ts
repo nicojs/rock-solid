@@ -14,6 +14,7 @@ import {
   overigPersoonSelecties,
   calculateAge,
   showDatum,
+  provincies,
 } from '@rock-solid/shared';
 import { html } from 'lit';
 
@@ -115,7 +116,7 @@ export function showPlaats(plaats?: Plaats): string {
 }
 
 export function showProvincie(provincie?: Provincie): string {
-  return (typeof provincie === 'number' && Provincie[provincie]) || unknown;
+  return (typeof provincie === 'string' && provincies[provincie]) || unknown;
 }
 
 export function showAdres(adres?: Adres) {
