@@ -24,9 +24,13 @@ export function decimalSeparator(): ',' | '.' {
 }
 
 export function downloadCsv(csv: string, fileName = 'download') {
+  // Adding BOM to the CSV string, see https://hilton.org.uk/blog/csv-excel#unicode-misidentification
+  const bom = '\uFEFF';
+  const csvWithBom = bom + csv;
+
   // Creating a Blob for having a csv file format
   // and passing the data with type
-  const blob = new Blob([csv], { type: 'text/csv' });
+  const blob = new Blob([csvWithBom], { type: 'text/csv' });
   download(blob, fileName);
 }
 
