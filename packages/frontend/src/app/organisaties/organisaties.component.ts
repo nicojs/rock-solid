@@ -7,7 +7,6 @@ import {
   foldersoorten,
   groupedOrganisatieSoorten,
   organisatieLabels,
-  organisatieSoorten,
   provincies,
   toOrganisatieFilter,
   tryParseInt,
