@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/nicojs/rock-solid/compare/v1.3.0...v1.3.1) (2024-01-25)
+
+### Features
+
+- **organisaties:** zoeken op soorten mogelijk maken ([#212](https://github.com/nicojs/rock-solid/issues/212)) ([f00fd7d](https://github.com/nicojs/rock-solid/commit/f00fd7d696107ef88dff7d677c1869c5dfd3f72d))
+
 # [1.3.0](https://github.com/nicojs/rock-solid/compare/v1.2.4...v1.3.0) (2024-01-25)
 
 ### Features
