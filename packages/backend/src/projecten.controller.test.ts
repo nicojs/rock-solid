@@ -235,6 +235,61 @@ describe(ProjectenController.name, () => {
       expect(actual).deep.eq(expectedCursus);
     });
 
+    it('should count aantal aanmeldingen with status "bevestigd" or "aangemeld"', async () => {
+      // Arrange
+      const [
+        cursus,
+        deelnemerAangemeld,
+        deelnemerBevestigd,
+        deelnemerGeannuleerd,
+        deelnemerWachtrij,
+      ] = await Promise.all([
+        harness.createProject(factory.cursus()),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      const [, bevestigd, wachtrij, geannuleerd] = await Promise.all([
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemerAangemeld.id,
+        }),
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemerBevestigd.id,
+        }),
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemerWachtrij.id,
+        }),
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemerGeannuleerd.id,
+        }),
+      ]);
+      await Promise.all([
+        harness.patchAanmelding(cursus.id, {
+          id: bevestigd.id,
+          status: 'Bevestigd',
+        }),
+        harness.patchAanmelding(cursus.id, {
+          id: wachtrij.id,
+          status: 'OpWachtlijst',
+        }),
+        harness.patchAanmelding(cursus.id, {
+          id: geannuleerd.id,
+          status: 'Geannuleerd',
+        }),
+      ]);
+
+      // Act
+      const actual = await harness.getProject(cursus.id);
+
+      // Assert
+      expect(actual.aantalAanmeldingen).eq(2);
+    });
+
     it('should correctly handle timezones', async () => {
       const project = await harness.createProject(
         factory.cursus({

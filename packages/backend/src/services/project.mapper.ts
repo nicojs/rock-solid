@@ -60,7 +60,16 @@ const includeAggregate = {
   },
   _count: {
     select: {
-      aanmeldingen: true,
+      aanmeldingen: {
+        where: {
+          status: {
+            in: [
+              aanmeldingsstatusMapper.toDB('Aangemeld'),
+              aanmeldingsstatusMapper.toDB('Bevestigd'),
+            ],
+          },
+        },
+      },
     },
   },
 } as const satisfies Prisma.ProjectInclude;

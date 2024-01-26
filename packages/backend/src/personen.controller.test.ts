@@ -101,7 +101,7 @@ describe(PersonenController.name, () => {
         { ...cursus2, aantalAanmeldingen: 2, status: 'Aangemeld' },
       ];
       const expectedVakantieAanmeldingen: AanmeldingOf<Vakantie>[] = [
-        { ...vakantie1, aantalAanmeldingen: 1, status: 'Geannuleerd' },
+        { ...vakantie1, aantalAanmeldingen: 0, status: 'Geannuleerd' },
       ];
       expect(actualCursussen.sort(byId)).deep.eq(
         expectedCursusAanmeldingen.sort(byId),
