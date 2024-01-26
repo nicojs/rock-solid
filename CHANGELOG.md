@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.2](https://github.com/nicojs/rock-solid/compare/v1.3.1...v1.3.2) (2024-01-26)
+
+### Bug Fixes
+
+- **aanmelding:** eerste cursus voor cursussen zonder activiteiten ([#213](https://github.com/nicojs/rock-solid/issues/213)) ([a3ce66a](https://github.com/nicojs/rock-solid/commit/a3ce66af982f834ad36be8464153d1d3115250b0))
+
 ## [1.3.1](https://github.com/nicojs/rock-solid/compare/v1.3.0...v1.3.1) (2024-01-25)
 
 ### Features
