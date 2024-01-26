@@ -221,7 +221,7 @@ export class ProjectMapper {
 }
 
 function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
-  const jaar = determineYear(project.activiteiten);
+  const jaar = determineYear(project);
   const {
     activiteiten,
     begeleiders,
@@ -309,8 +309,18 @@ function toUpdateManyDBActiviteit({
   };
 }
 
-function determineYear(activiteiten: UpsertableActiviteit[]) {
-  return activiteiten[0]?.van.getFullYear() ?? new Date().getFullYear(); // current year as default 🤷‍♂️
+function determineYear(project: UpsertableProject) {
+  // 1. Try to pick the year from the first activity
+  if (project.activiteiten[0]?.van) {
+    return project.activiteiten[0].van.getFullYear();
+  }
+  // 2. Try to pick the year from the projectnummer
+  const [, year] = project.projectnummer.split('/');
+  if (year && /^\d\d$/.test(year)) {
+    return parseInt(year) + 2000;
+  }
+  // 3. Fallback to today's year
+  return new Date().getFullYear();
 }
 
 type DBActiviteitAggregate = db.Activiteit & {

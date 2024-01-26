@@ -60,7 +60,7 @@ const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
 
 export class RockSolidDBContainer {
-  private client;
+  public client;
   #seedPlaats?: Plaats;
 
   get seedPlaats() {

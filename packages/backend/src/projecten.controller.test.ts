@@ -149,7 +149,7 @@ describe(ProjectenController.name, () => {
       expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
     });
 
-    it('should be true when there is an earlier aanmelding, but from a different type', async () => {
+    it('should be the first cursus when there is an earlier aanmelding, but from a different type', async () => {
       await harness.createAanmelding({
         projectId: vakantie.id,
         deelnemerId: deelnemer1.id,
@@ -158,6 +158,26 @@ describe(ProjectenController.name, () => {
         projectId: cursus1.id,
         deelnemerId: deelnemer1.id,
       });
+      expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
+    });
+
+    it('should not be the first cursus when there is an early cursus aanmelding for a cursus without activiteiten (#201)', async () => {
+      // Arrange
+      await harness.createAanmelding({
+        projectId: cursus1.id,
+        deelnemerId: deelnemer1.id,
+      });
+      await harness.db.client.activiteit.deleteMany({
+        where: { projectId: cursus1.id },
+      });
+
+      // Act
+      const aanmelding = await harness.createAanmelding({
+        projectId: cursus2.id,
+        deelnemerId: deelnemer1.id,
+      });
+
+      // Assert
       expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
     });
   });
@@ -449,6 +469,37 @@ describe(ProjectenController.name, () => {
       });
       const project = await harness.createProject(vakantie);
       assert.equal(project.naam, 'Mijn cursus');
+    });
+
+    it('should determine the jaar based on the first activiteit', async () => {
+      const vakantie = factory.vakantie({
+        activiteiten: [
+          factory.activiteit({
+            van: new Date(2011, 2, 2, 20, 0, 0),
+            totEnMet: new Date(2011, 2, 4, 16, 0, 0),
+          }),
+        ],
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.jaar, 2011);
+    });
+
+    it('should determine the jaar based on the projectnummer if there are no activiteiten', async () => {
+      const vakantie = factory.vakantie({
+        projectnummer: 'KJ/11/123',
+        activiteiten: [],
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.jaar, 2011);
+    });
+
+    it('should fallback the jaar to this year if there are no activiteiten and no (valid) projectnummer', async () => {
+      const vakantie = factory.vakantie({
+        projectnummer: 'KJ/not-valid/1234',
+        activiteiten: [],
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.jaar, new Date().getFullYear());
     });
 
     it("should connect the cursuslocatie to it's activiteiten", async () => {
