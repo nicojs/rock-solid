@@ -149,7 +149,7 @@ describe(ProjectenController.name, () => {
       expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
     });
 
-    it('should be true when there is an earlier aanmelding, but from a different type', async () => {
+    it('should be the first cursus when there is an earlier aanmelding, but from a different type', async () => {
       await harness.createAanmelding({
         projectId: vakantie.id,
         deelnemerId: deelnemer1.id,
@@ -158,6 +158,26 @@ describe(ProjectenController.name, () => {
         projectId: cursus1.id,
         deelnemerId: deelnemer1.id,
       });
+      expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
+    });
+
+    it('should not be the first cursus when there is an early cursus aanmelding for a cursus without activiteiten (#201)', async () => {
+      // Arrange
+      await harness.createAanmelding({
+        projectId: cursus1.id,
+        deelnemerId: deelnemer1.id,
+      });
+      await harness.db.client.activiteit.deleteMany({
+        where: { projectId: cursus1.id },
+      });
+
+      // Act
+      const aanmelding = await harness.createAanmelding({
+        projectId: cursus2.id,
+        deelnemerId: deelnemer1.id,
+      });
+
+      // Assert
       expect(aanmelding.deelnemer?.eersteCursus).eq(cursus1.projectnummer);
     });
   });

@@ -93,22 +93,10 @@ export class AanmeldingMapper {
       project.type === projectTypeMapper.toDB('cursus')
         ? eersteCursusAanmeldingId
         : eersteVakantieAanmeldingId;
-    const dbEersteAanmelding = dbEersteAanmeldingProjectId
-      ? await this.db.aanmelding.findUnique({
-          where: { id: dbEersteAanmeldingProjectId },
-          include: {
-            project: {
-              include: { activiteiten: { orderBy: { van: 'asc' } } },
-            },
-          },
-        })
-      : undefined;
 
-    const firstActiviteit = project.activiteiten[0];
-    const dbFirstActiviteit = dbEersteAanmelding?.project.activiteiten[0];
-    const isEersteAanmelding = Boolean(
-      !dbFirstActiviteit ||
-        (firstActiviteit && dbFirstActiviteit.van > firstActiviteit.van),
+    const isEersteAanmelding = await this.determineIsEersteAanmelding(
+      project,
+      dbEersteAanmeldingProjectId,
     );
 
     if (isEersteAanmelding) {
@@ -136,6 +124,40 @@ export class AanmeldingMapper {
         include: includeDeelnemer,
       });
     return toAanmelding(dbAanmeldingWithDeelnemer);
+  }
+
+  private async determineIsEersteAanmelding(
+    project: db.Project & { activiteiten: db.Activiteit[] },
+    currentEersteAanmeldingProjectId: number | null,
+  ) {
+    const firstActiviteit = project.activiteiten[0];
+    const dbEersteAanmelding =
+      (currentEersteAanmeldingProjectId
+        ? await this.db.aanmelding.findUnique({
+            where: { id: currentEersteAanmeldingProjectId },
+            include: {
+              project: {
+                include: { activiteiten: { orderBy: { van: 'asc' } } },
+              },
+            },
+          })
+        : undefined) ?? undefined;
+    const dbFirstActiviteit = dbEersteAanmelding?.project.activiteiten[0];
+    if (!dbFirstActiviteit) {
+      // Either an old project without activiteiten or the first aanmelding
+      if (dbEersteAanmelding) {
+        if (dbEersteAanmelding.project.jaar <= project.jaar) {
+          // This is an older project, older projects don't have activiteiten
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    return Boolean(
+      firstActiviteit && dbFirstActiviteit.van > firstActiviteit.van,
+    );
   }
 
   public async update(
