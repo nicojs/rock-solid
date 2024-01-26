@@ -28,6 +28,7 @@ import {
   showPhoneNumber,
   showVoedingswens,
 } from './persoon.pipe';
+import { routesByPersoonType } from './routing-helper';
 
 @customElement('rock-display-persoon')
 export class DisplayPersoonComponent extends RockElement {
@@ -84,7 +85,8 @@ export class DisplayPersoonComponent extends RockElement {
           btn
           sm
           btnOutlinePrimary
-          href="/${pluralize(this.persoon.type)}/edit/${this.persoon.id}"
+          href="/${routesByPersoonType[this.persoon.type]}/edit/${this.persoon
+            .id}"
           ><rock-icon icon="pencil"></rock-icon
         ></rock-link>
       </h3>

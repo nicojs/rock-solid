@@ -488,7 +488,7 @@ export const factory = {
       deelgemeente: 'Onbekend',
       gemeente: 'Onbekend',
       postcode: '0',
-      provincie: provincieMapper.toSchema(1),
+      provincie: 'Onbekend',
       ...overrides,
     };
   },

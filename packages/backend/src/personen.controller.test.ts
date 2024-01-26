@@ -498,6 +498,52 @@ describe(PersonenController.name, () => {
       );
     });
 
+    it('by provincie', async () => {
+      // Arrange
+      const [antwerpen, gent] = await Promise.all([
+        harness.db.insertPlaats(
+          factory.plaats({
+            postcode: '2000',
+            deelgemeente: 'Antwerpen',
+            provincie: 'Antwerpen',
+          }),
+        ),
+        harness.db.insertPlaats(
+          factory.plaats({
+            postcode: '9000',
+            deelgemeente: 'Gent',
+            provincie: 'West-Vlaanderen',
+          }),
+        ),
+      ]);
+      const [deelnemerAntwerpen, deelnemerGent] = await Promise.all([
+        harness.createDeelnemer(
+          factory.deelnemer({
+            verblijfadres: factory.adres({ plaats: antwerpen }),
+          }),
+        ),
+        harness.createDeelnemer(
+          factory.deelnemer({
+            domicilieadres: factory.adres({ plaats: gent }),
+          }),
+        ),
+      ]);
+
+      // Act
+      const [antwerpenResult, gentResult, noFilter] = await Promise.all([
+        harness.getAllPersonen({ provincie: 'Antwerpen' }),
+        harness.getAllPersonen({ provincie: 'West-Vlaanderen' }),
+        harness.getAllPersonen({ provincie: undefined }),
+      ]);
+
+      // Assert
+      expect(antwerpenResult).deep.eq([deelnemerAntwerpen]);
+      expect(gentResult).deep.eq([deelnemerGent]);
+      expect(noFilter.sort(byId)).deep.eq(
+        [deelnemerAntwerpen, deelnemerGent].sort(byId),
+      );
+    });
+
     async function arrangeJaarGeledenDeelnemers() {
       const { y, m, d } = today();
       const lastYear = new Date(y - 1, m, d);

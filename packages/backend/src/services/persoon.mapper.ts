@@ -28,6 +28,7 @@ import {
   geslachtMapper,
   overigPersoonSelectieMapper,
   persoonTypeMapper,
+  provincieMapper,
   voedingswensMapper,
   werksituatieMapper,
   woonsituatieMapper,
@@ -353,6 +354,7 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
     werksituatie,
     voedingswens,
     metVerblijfadres,
+    provincie,
     ...where
   } = filter;
   return {
@@ -383,6 +385,22 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
     woonsituatie: woonsituatieMapper.toDB(woonsituatie),
     werksituatie: werksituatieMapper.toDB(werksituatie),
     verblijfadresId: metVerblijfadres ? { not: null } : undefined,
+    ...(provincie
+      ? {
+          OR: [
+            {
+              verblijfadres: {
+                plaats: { provincieId: provincieMapper.toDB(provincie) },
+              },
+            },
+            {
+              domicilieadres: {
+                plaats: { provincieId: provincieMapper.toDB(provincie) },
+              },
+            },
+          ],
+        }
+      : {}),
     geslacht: geslachtMapper.toDB(geslacht),
     voedingswens: voedingswensMapper.toDB(voedingswens),
     ...(volledigeNaamLike

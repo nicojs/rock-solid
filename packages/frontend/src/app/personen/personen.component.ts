@@ -13,6 +13,7 @@ import {
   PersoonFilter,
   PersoonType,
   persoonTypes,
+  provincies,
   Queryfied,
   toPersoonFilter,
   tryParseInt,
@@ -238,6 +239,7 @@ const basePersoonFilers: FormControl<PersoonFilter>[] = [
     label: 'Met adres',
     name: 'metVerblijfadres',
   },
+  selectControl('provincie', provincies, { placeholder: '' }),
 ];
 
 const overigPersoonSearchControls: FormControl<PersoonFilter>[] = [
