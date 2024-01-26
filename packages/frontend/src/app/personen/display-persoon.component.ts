@@ -18,7 +18,6 @@ import {
   show,
   showAdres,
   showOverigPersoonSelectie,
-  pluralize,
   showDatumWithAge,
 } from '../shared';
 import {
