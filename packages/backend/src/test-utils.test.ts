@@ -394,9 +394,9 @@ class IntegrationTestingHarness {
   async patchAanmelding(
     projectId: number,
     aanmelding: PatchableAanmelding,
-  ): Promise<Aanmelding[]> {
+  ): Promise<Aanmelding> {
     const response = await this.patch(
-      `/projecten/${projectId}/aanmeldingen/${aanmelding.id}}`,
+      `/projecten/${projectId}/aanmeldingen/${aanmelding.id}`,
       aanmelding,
     ).expect(200);
     return response.body;
