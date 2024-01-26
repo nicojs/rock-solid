@@ -471,6 +471,37 @@ describe(ProjectenController.name, () => {
       assert.equal(project.naam, 'Mijn cursus');
     });
 
+    it('should determine the jaar based on the first activiteit', async () => {
+      const vakantie = factory.vakantie({
+        activiteiten: [
+          factory.activiteit({
+            van: new Date(2011, 2, 2, 20, 0, 0),
+            totEnMet: new Date(2011, 2, 4, 16, 0, 0),
+          }),
+        ],
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.jaar, 2011);
+    });
+
+    it('should determine the jaar based on the projectnummer if there are no activiteiten', async () => {
+      const vakantie = factory.vakantie({
+        projectnummer: 'KJ/11/123',
+        activiteiten: [],
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.jaar, 2011);
+    });
+
+    it('should fallback the jaar to this year if there are no activiteiten and no (valid) projectnummer', async () => {
+      const vakantie = factory.vakantie({
+        projectnummer: 'KJ/not-valid/1234',
+        activiteiten: [],
+      });
+      const project = await harness.createProject(vakantie);
+      assert.equal(project.jaar, new Date().getFullYear());
+    });
+
     it("should connect the cursuslocatie to it's activiteiten", async () => {
       // Arrange
       const [loc, loc2] = await Promise.all([
