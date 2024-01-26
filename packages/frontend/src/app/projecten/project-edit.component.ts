@@ -214,7 +214,7 @@ export function newActiviteit(): DeepPartial<CursusActiviteit> {
   const offsetTillNextFriday = (van.getDay() + 5) % 7 || 7;
   van.setDate(van.getDate() + offsetTillNextFriday);
   totEnMet.setDate(van.getDate() + 3);
-  van.setHours(18);
+  van.setHours(19);
   van.setMinutes(30);
   totEnMet.setHours(16);
   totEnMet.setMinutes(0);
