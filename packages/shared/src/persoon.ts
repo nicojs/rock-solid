@@ -1,4 +1,4 @@
-import { Adres, UpsertableAdres } from './adres.js';
+import { Adres, Provincie, UpsertableAdres } from './adres.js';
 import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
 import { Upsertable } from './upsertable.js';
@@ -49,22 +49,6 @@ export type UpsertableOverigPersoon = Upsertable<
 };
 export type Persoon = Deelnemer | OverigPersoon;
 
-export type PersoonTextFilter = DeelnemerTextFilter | OverigPersoonTextFilter;
-
-export interface BasePersoonTextFilter {
-  searchType: 'text';
-  search: string;
-}
-
-export interface DeelnemerTextFilter extends BasePersoonTextFilter {
-  type: 'deelnemer';
-}
-
-export interface OverigPersoonTextFilter extends BasePersoonTextFilter {
-  type: 'overigPersoon';
-  overigePersoonSelectie?: OverigPersoonSelectie;
-}
-
 export type PersoonFilter = Partial<
   Omit<OverigPersoon, 'type' | 'foldervoorkeuren'> &
     Omit<
@@ -82,6 +66,7 @@ export type PersoonFilter = Partial<
   maxLeeftijd?: number;
   volledigeNaamLike?: string;
   metVerblijfadres?: boolean;
+  provincie?: Provincie;
 };
 
 export interface Contactpersoon {

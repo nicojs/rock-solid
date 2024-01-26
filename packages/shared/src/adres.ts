@@ -16,17 +16,17 @@ export type Provincie =
 
 export const provincies: Record<Provincie, string> = {
   Onbekend: 'Onbekend',
-  'Brussels Hoofdstedelijk Gewest': 'Brussels Hoofdstedelijk Gewest',
-  'Waals-Brabant': 'Waals-Brabant',
-  'Vlaams-Brabant': 'Vlaams-Brabant',
   Antwerpen: 'Antwerpen',
+  'Brussels Hoofdstedelijk Gewest': 'Brussels Hoofdstedelijk Gewest',
+  Henegouwen: 'Henegouwen',
   Limburg: 'Limburg',
   Luik: 'Luik',
-  Namen: 'Namen',
-  Henegouwen: 'Henegouwen',
   Luxemburg: 'Luxemburg',
-  'West-Vlaanderen': 'West-Vlaanderen',
+  Namen: 'Namen',
   'Oost-Vlaanderen': 'Oost-Vlaanderen',
+  'Vlaams-Brabant': 'Vlaams-Brabant',
+  'West-Vlaanderen': 'West-Vlaanderen',
+  'Waals-Brabant': 'Waals-Brabant',
 };
 
 export interface Plaats {
