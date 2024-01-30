@@ -106,6 +106,7 @@ describe(LocatiesController.name, () => {
       const cursusLocatie = factory.locatie({
         naam: 'locatie 1',
         adres: factory.adres({ straatnaam: 'straat 1' }),
+        opmerking: 'Modder op de oprit',
       });
 
       // Act
@@ -181,6 +182,22 @@ describe(LocatiesController.name, () => {
       const expected: Locatie = { id, naam: 'locatie 2' };
       expect(updated).deep.equal(expected);
       expect(actual).deep.equal(updated);
+    });
+
+    it('should be able to delete opmerking', async () => {
+      // Arrange
+      const locatie = await harness.createLocatie(
+        factory.locatie({ opmerking: 'Modder op de oprit' }),
+      );
+
+      // Act
+      const updated = await harness.updateLocatie(locatie.id, {
+        ...locatie,
+        opmerking: undefined,
+      });
+
+      // Assert
+      expect(updated.opmerking).undefined;
     });
 
     it('should return a 422 "Unprocessable Entity" when the name already exists', async () => {

@@ -6,6 +6,7 @@ export interface Locatie {
   id: number;
   naam: string;
   adres?: Adres;
+  opmerking?: string;
 }
 
 export type UpsertableLocatie = Upsertable<Omit<Locatie, 'adres'>, 'naam'> & {
@@ -18,6 +19,7 @@ export const locatieLabels: Labels<Locatie> = {
   id: 'id',
   naam: 'Naam',
   adres: 'Adres',
+  opmerking: 'Opmerking',
 };
 
 export function toLocatieFilter(query: Queryfied<LocatieFilter>) {

@@ -171,10 +171,11 @@ model Activiteit {
 }
 
 model Locatie {
-  id      Int    @id @default(autoincrement())
-  naam    String @unique
-  adresId Int?
-  adres   Adres? @relation(fields: [adresId], references: [id])
+  id        Int     @id @default(autoincrement())
+  naam      String  @unique
+  adresId   Int?
+  adres     Adres?  @relation(fields: [adresId], references: [id])
+  opmerking String?
 
   Activiteit Activiteit[]
 }

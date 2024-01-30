@@ -339,6 +339,7 @@ type DBActiviteitAggregate = db.Activiteit & {
   locatie: {
     id: number;
     naam: string;
+    opmerking: string | null;
     adres: DBAdresWithPlaats | null;
   } | null;
 };
@@ -433,14 +434,14 @@ function calculatePrijs(
 }
 
 function toCursusActiviteit({
-  locatie: cursusLocatie,
+  locatie,
   ...val
 }: DBActiviteitAggregate): CursusActiviteit {
   const { locatieId, projectId, verblijf, vervoer, _count, ...activiteitData } =
     purgeNulls(val);
   return {
     ...activiteitData,
-    locatie: toCursuslocatie(cursusLocatie),
+    locatie: toCursuslocatie(locatie),
     aantalDeelnames: _count.deelnames,
     aantalDeelnemersuren: -1,
   };
