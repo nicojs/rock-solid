@@ -276,6 +276,7 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     toestemmingFotosNieuwsbrief,
     toestemmingFotosSocialeMedia,
     toestemmingFotosWebsite,
+    selectie,
     type: dbType,
     woonsituatie,
     werksituatie,
@@ -319,7 +320,7 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
       return {
         ...common,
         type,
-        selectie: person.selectie.map((s) =>
+        selectie: selectie.map((s) =>
           overigPersoonSelectieMapper.toSchema(s.selectie),
         ),
       };
@@ -580,6 +581,7 @@ function toUpdatePersonFields(persoon: Persoon): PersoonUpdateFields {
     verblijfadres: null,
     werksituatieOpmerking: null,
     emailadres: null,
+    emailadres2: null,
     rekeningnummer: null,
     rijksregisternummer: null,
     geboortedatum: null,

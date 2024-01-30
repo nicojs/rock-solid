@@ -19,6 +19,7 @@ import {
   showAdres,
   showOverigPersoonSelectie,
   showDatumWithAge,
+  pluralize,
 } from '../shared';
 import {
   fullName,
@@ -93,7 +94,13 @@ export class DisplayPersoonComponent extends RockElement {
         <dl class="col-sm-6">
           <dt>Naam</dt>
           <dd>${fullName(this.persoon)}</dd>
-          ${this.renderDefinition('emailadres', showEmail)}
+          <dt>${pluralize(persoonLabels.emailadres)}</dt>
+          <dd>
+            ${showEmail(this.persoon.emailadres)}
+            ${this.persoon.type === 'deelnemer'
+              ? showEmail(this.persoon.emailadres2, { empty: '' })
+              : nothing}
+          </dd>
           ${this.renderDefinition('geboortedatum', showDatumWithAge)}
           <dt>${persoonLabels.geslacht}</dt>
           <dd>

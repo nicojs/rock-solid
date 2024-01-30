@@ -5,6 +5,7 @@ import {
   Deelnemer,
   Foldervoorkeur,
   FotoToestemming,
+  UpsertableDeelnemer,
   Vakantie,
 } from '@rock-solid/shared';
 import { PersonenController } from './personen.controller.js';
@@ -651,6 +652,73 @@ describe(PersonenController.name, () => {
     }
   });
 
+  describe('POST /personen', () => {
+    it('should create a deelnemer with all fields', async () => {
+      // Act
+      const expectedDeelnemer: UpsertableDeelnemer = {
+        achternaam: 'achternaam',
+        voornaam: 'voornaam',
+        geboortedatum: new Date(2010, 1, 1),
+        geboorteplaats: 'geboorteplaats',
+        begeleidendeDienst: 'begeleidendeDienst',
+        gsmNummer: 'gsm',
+        telefoonnummer: 'tel',
+        emailadres: 'email',
+        contactpersoon: {
+          email: 'email',
+          gsm: 'gsm',
+          naam: 'naam',
+          telefoon: 'tel',
+        },
+        emailadres2: 'email2',
+        domicilieadres: {
+          straatnaam: 'Kerkstraat',
+          huisnummer: '123',
+          plaats: harness.db.seedPlaats,
+        },
+        opmerking: 'opmerking',
+        rekeningnummer: '123',
+        rijksregisternummer: '123',
+        foldervoorkeuren: [{ communicatie: 'email', folder: 'deKeiCursussen' }],
+        voedingswens: 'vegetarisch',
+        voedingswensOpmerking: 'opmerking',
+        fotoToestemming: {
+          folder: true,
+          infoboekje: true,
+          nieuwsbrief: true,
+          socialeMedia: true,
+          website: true,
+        },
+        type: 'deelnemer',
+        verblijfadres: {
+          straatnaam: 'Plein',
+          huisnummer: '1',
+          plaats: harness.db.seedPlaats,
+        },
+        werksituatie: 'werkzoekend',
+        werksituatieOpmerking: 'opmerking',
+        woonsituatie: 'oudersMetProfessioneleBegeleiding',
+        woonsituatieOpmerking: 'opmerking',
+        geslacht: 'x',
+        geslachtOpmerking: 'opmerking geslacht',
+      };
+
+      // Act
+      const deelnemer = await harness.createDeelnemer(expectedDeelnemer);
+
+      // Assert
+      const { id, domicilieadres, verblijfadres, ...actualDeelnemerFields } =
+        deelnemer;
+      const { id: _unused, ...domicilieadresFields } = domicilieadres!;
+      const { id: _unused2, ...verblijfadresFields } = verblijfadres!;
+      expect({
+        ...actualDeelnemerFields,
+        verblijfadres: verblijfadresFields,
+        domicilieadres: domicilieadresFields,
+      }).deep.eq(expectedDeelnemer);
+    });
+  });
+
   describe('PUT /personen/:id', () => {
     let deelnemer: Deelnemer;
     beforeEach(async () => {
@@ -755,6 +823,7 @@ describe(PersonenController.name, () => {
         gsmNummer: 'gsm',
         telefoonnummer: 'tel',
         emailadres: 'email',
+        emailadres2: 'email2',
         geboortedatum: new Date(2010, 1, 1),
         opmerking: 'opmerking',
         rekeningnummer: '123',
@@ -782,6 +851,7 @@ describe(PersonenController.name, () => {
       expect(actualDeelnemer.gsmNummer).undefined;
       expect(actualDeelnemer.telefoonnummer).undefined;
       expect(actualDeelnemer.emailadres).undefined;
+      expect(actualDeelnemer.emailadres2).undefined;
       expect(actualDeelnemer.geboortedatum).undefined;
       expect(actualDeelnemer.opmerking).undefined;
       expect(actualDeelnemer.rekeningnummer).undefined;
