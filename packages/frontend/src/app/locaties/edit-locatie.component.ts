@@ -52,6 +52,11 @@ const locatieControls: FormControl<Locatie>[] = [
     label: locatieLabels.naam,
     type: InputType.text,
   },
+  {
+    name: 'opmerking',
+    label: locatieLabels.opmerking,
+    type: InputType.text,
+  },
   formGroup('adres', adresControls, {
     required: false,
     requiredLabel: 'Met adres',

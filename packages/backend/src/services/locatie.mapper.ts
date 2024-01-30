@@ -110,6 +110,7 @@ export function toCursuslocatie<
     id: dbLocatie.id,
     naam: dbLocatie.naam,
     adres: toNullableAdres(dbLocatie.adres),
+    opmerking: dbLocatie.opmerking ?? undefined,
   } as T extends undefined | null ? undefined : Locatie;
 }
 function where(
@@ -131,6 +132,7 @@ type LocatieFields = ExplicitNulls<UpsertableLocatie>;
 function toUpdateLocatieFields(locatie: UpsertableLocatie): LocatieFields {
   return {
     ...locatie,
+    opmerking: locatie.opmerking ? locatie.opmerking : null,
     adres: locatie.adres ? locatie.adres : null,
     id: locatie.id ? locatie.id : null,
   };

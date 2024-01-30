@@ -3,7 +3,7 @@ import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { ModalComponent } from '../shared/modal.component';
-import { showAdres } from '../shared';
+import { show, showAdres } from '../shared';
 import { privilege } from '../auth/privilege.directive';
 
 @customElement('rock-locatie-list')
@@ -44,6 +44,7 @@ export class LocatieListComponent extends LitElement {
           <tr>
             <th>Naam</th>
             <th>Adres</th>
+            <th>Opmerking</th>
             <th style="width: 190px">Acties</th>
           </tr>
         </thead>
@@ -53,6 +54,7 @@ export class LocatieListComponent extends LitElement {
               html`<tr>
                 <td>${loc.naam}</td>
                 <td>${showAdres(loc.adres)}</td>
+                <td>${show(loc.opmerking)}</td>
                 <td>
                   <rock-link
                     btn
