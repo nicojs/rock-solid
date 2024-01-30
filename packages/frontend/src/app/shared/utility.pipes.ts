@@ -71,6 +71,8 @@ export function pluralize(val: string) {
     case 'activiteit':
     case 'aanmelding':
       return `${val}en`;
+    case 'Emailadres':
+      return `${val}sen`;
     default:
       return `${val}s`;
   }

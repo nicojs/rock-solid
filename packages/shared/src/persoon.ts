@@ -86,6 +86,7 @@ export interface FotoToestemming {
 
 export interface Deelnemer extends BasePersoon {
   type: 'deelnemer';
+  emailadres2?: string;
   begeleidendeDienst?: string;
   contactpersoon: Contactpersoon;
   woonsituatie?: Woonsituatie;
@@ -142,6 +143,7 @@ export const persoonLabels: Labels<Persoon> = {
 
 export const deelnemerLabels: Labels<Deelnemer> = {
   ...persoonLabels,
+  emailadres2: '2de emailadres',
   contactpersoon: 'Contactpersoon',
   begeleidendeDienst: 'Begeleidende dienst',
   eersteCursus: 'Eerste cursus',

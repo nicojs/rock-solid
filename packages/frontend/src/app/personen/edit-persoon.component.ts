@@ -125,15 +125,22 @@ function controlsFor<TType extends PersoonType>(
       type: InputType.tel,
     },
     { name: 'emailadres', type: InputType.email },
-    {
-      name: 'geboortedatum',
-      type: InputType.date,
-      validators: {
-        min: new Date(1910, 1, 1),
-        max: new Date(new Date().getFullYear() - 5, 1, 1),
-      },
-    },
   );
+  if (type === 'deelnemer') {
+    (controls as FormControl<Deelnemer>[]).push({
+      name: 'emailadres2',
+      type: InputType.email,
+      label: deelnemerLabels.emailadres2,
+    });
+  }
+  controls.push({
+    name: 'geboortedatum',
+    type: InputType.date,
+    validators: {
+      min: new Date(1910, 1, 1),
+      max: new Date(new Date().getFullYear() - 5, 1, 1),
+    },
+  });
 
   if (type === 'deelnemer') {
     controls.push({

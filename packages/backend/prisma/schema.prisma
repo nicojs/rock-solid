@@ -41,6 +41,7 @@ model Persoon {
   werksituatieOpmerking        String?
   voedingswens                 Int?
   voedingswensOpmerking        String?
+  emailadres2                  String?
   begeleidendeDienst           String?
   contactpersoon               String?
   contactpersoonTelefoon       String?
@@ -95,10 +96,10 @@ model Plaats {
   Adressen     Adres[]
   Aanmeldingen Aanmelding[]
 
+  @@unique([postcode, deelgemeente])
   @@index(deelgemeente)
   @@index(gemeente)
   @@index(provincieId)
-  @@unique([postcode, deelgemeente])
 }
 
 model Project {

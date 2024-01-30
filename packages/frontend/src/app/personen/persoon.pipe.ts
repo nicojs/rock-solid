@@ -48,9 +48,15 @@ export function showPhoneNumber(
   >`;
 }
 
-export function showEmail(email?: string, additionalCssClass?: string) {
+export function showEmail(
+  email: string | undefined,
+  {
+    additionalCssClass = undefined,
+    empty = notAvailable,
+  }: { additionalCssClass?: string; empty?: string } = {},
+) {
   if (!email) {
-    return html`<span class=${additionalCssClass}>${notAvailable}</span>`;
+    return html`<span class=${additionalCssClass}>${empty}</span>`;
   }
   return html`<a class=${additionalCssClass} href="mailto:${email}"
     >${email}</a
@@ -62,7 +68,7 @@ export function showContactpersoon(contactpersoon: Contactpersoon) {
   }
   return html`<rock-icon icon="person"></rock-icon
     ><span class="me-2">${show(contactpersoon.naam)}</span> 📧
-    ${showEmail(contactpersoon.email, 'me-2')}
+    ${showEmail(contactpersoon.email, { additionalCssClass: 'me-2' })}
     <rock-icon icon="telephone"></rock-icon>
     ${showPhoneNumber(contactpersoon.telefoon, 'me-2')}</span>
     <rock-icon icon="phone"></rock-icon>
@@ -73,7 +79,8 @@ export function showVoedingswens({
   voedingswens,
   voedingswensOpmerking,
 }: Pick<Persoon, 'voedingswens' | 'voedingswensOpmerking'>) {
-  return [voedingswens, voedingswensOpmerking].filter(notEmpty).join(': ');
+  const val = [voedingswens, voedingswensOpmerking].filter(notEmpty).join(': ');
+  return val || notAvailable;
 }
 
 export function showFotoToestemming(toestemming: FotoToestemming): string {
