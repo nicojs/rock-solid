@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/nicojs/rock-solid/compare/v1.3.2...v1.4.0) (2024-01-30)
+
+### Features
+
+- **activiteit:** zet standaard starttijd op 18:30 ([#214](https://github.com/nicojs/rock-solid/issues/214)) ([28e2e48](https://github.com/nicojs/rock-solid/commit/28e2e48983eba6e0fac85792e4bd291d2bdb50c6))
+- **deelnemer:** een tweede email veld ([#217](https://github.com/nicojs/rock-solid/issues/217)) ([aba4259](https://github.com/nicojs/rock-solid/commit/aba42597a34d3e8600a740ad541a45d0496371e7))
+- **locatie:** voeg 'opmerking' veld toe ([#218](https://github.com/nicojs/rock-solid/issues/218)) ([662e5b2](https://github.com/nicojs/rock-solid/commit/662e5b24fb0f5a78a5c2f8b2e6b1aea52ea6b898))
+- **persoon:** zoeken op provincie ([#215](https://github.com/nicojs/rock-solid/issues/215)) ([14a8a01](https://github.com/nicojs/rock-solid/commit/14a8a0125e2ca9c6c96bd879e82a5b98bf0a76a4))
+
 ## [1.3.2](https://github.com/nicojs/rock-solid/compare/v1.3.1...v1.3.2) (2024-01-26)
 
 **Note:** Version bump only for package @rock-solid/frontend
