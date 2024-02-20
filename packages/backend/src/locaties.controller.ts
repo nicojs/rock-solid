@@ -57,14 +57,14 @@ export class LocatiesController {
   }
 
   @Post()
-  @Privileges('write:locaties')
+  @Privileges('create:locaties')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() locatie: UpsertableLocatie) {
     return this.locatieMapper.create(locatie);
   }
 
   @Put(':id')
-  @Privileges('write:locaties')
+  @Privileges('update:locaties')
   async update(
     @Param('id', NumberPipe) id: number,
     @Body() locatie: UpsertableLocatie,
@@ -73,7 +73,7 @@ export class LocatiesController {
   }
 
   @Delete(':id')
-  @Privileges('write:locaties')
+  @Privileges('delete:locaties')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', NumberPipe) id: number): Promise<void> {
     return this.locatieMapper.delete(id);

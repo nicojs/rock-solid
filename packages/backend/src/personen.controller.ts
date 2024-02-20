@@ -92,7 +92,7 @@ export class PersonenController {
   }
 
   @Delete(`:id`)
-  @Privileges('write:personen')
+  @Privileges('delete:personen')
   async delete(
     @Param('id', NumberPipe) id: number,
     @Res({ passthrough: true }) resp: Response,
@@ -102,14 +102,14 @@ export class PersonenController {
   }
 
   @Post()
-  @Privileges('write:personen')
+  @Privileges('create:personen')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() persoon: UpsertablePersoon) {
     return this.persoonMapper.createPersoon(persoon);
   }
 
   @Put(':id')
-  @Privileges('write:personen')
+  @Privileges('update:personen')
   async update(
     @Param('id') id: string,
     @Body() persoon: Persoon,

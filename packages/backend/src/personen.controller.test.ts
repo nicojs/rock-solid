@@ -33,9 +33,10 @@ describe(PersonenController.name, () => {
       harness.login({ role: 'projectverantwoordelijke' });
       await harness.post('/personen').expect(403);
     });
-    it('PUT /personen/1 should not be allowed for projectverantwoordelijke', async () => {
+    it('PUT /personen/1 should be allowed for projectverantwoordelijke', async () => {
+      const deelnemer = await harness.createDeelnemer(factory.deelnemer());
       harness.login({ role: 'projectverantwoordelijke' });
-      await harness.put('/personen/1').expect(403);
+      await harness.put(`/personen/${deelnemer.id}`, deelnemer).expect(200);
     });
   });
 

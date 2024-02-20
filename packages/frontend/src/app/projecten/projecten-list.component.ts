@@ -204,7 +204,7 @@ export class ProjectenListComponent extends LitElement {
                     @click=${() => this.deleteProject(project)}
                     title="${printProject(project)} Verwijderen"
                     type="button"
-                    ${privilege('write:projecten')}
+                    ${privilege('delete:projecten')}
                     class="btn btn-outline-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>

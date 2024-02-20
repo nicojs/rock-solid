@@ -20,6 +20,9 @@ export class EditLocatieComponent extends LitElement {
   @property()
   public errorMessage?: string;
 
+  @property()
+  public privilege?: Privilege;
+
   public override render() {
     return html`<h2>
         ${this.locatie.id
@@ -30,7 +33,7 @@ export class EditLocatieComponent extends LitElement {
 
       <rock-reactive-form
         @rock-submit="${this.save}"
-        privilege="${'write:locaties' satisfies Privilege}"
+        privilege="${this.privilege}"
         .controls=${locatieControls}
         .entity="${this.locatie}"
       ></rock-reactive-form>`;
