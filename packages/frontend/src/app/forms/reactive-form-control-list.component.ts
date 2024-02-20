@@ -17,11 +17,10 @@ export class ReactiveFormControlList<TEntity> extends FormElement<TEntity> {
     this.addEventListener('input-updated', (e: Event) => {
       const event = e as CustomEvent<string>;
       event.stopPropagation();
-      const formElementsToUpdate = this.formControls.filter(
-        ({ control }) =>
-          (control as BaseInputControl<TEntity, unknown>).dependsOn?.includes(
-            event.detail as keyof TEntity & string,
-          ),
+      const formElementsToUpdate = this.formControls.filter(({ control }) =>
+        (control as BaseInputControl<TEntity, unknown>).dependsOn?.includes(
+          event.detail as keyof TEntity & string,
+        ),
       );
       formElementsToUpdate.forEach((formElement) => {
         formElement.validate();

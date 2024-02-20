@@ -1,15 +1,16 @@
 import { Decimal } from '@prisma/client/runtime/library.js';
 import { Decimal as OtherDecimal } from '@rock-solid/shared';
 
-export type NullsPurged<T> = T extends Array<infer U>
-  ? Array<NullsPurged<U>>
-  : T extends string | symbol | number | boolean | Date | Decimal
-    ? T
-    : {
-        [K in keyof T]: null extends T[K]
-          ? Exclude<NullsPurged<T[K]>, null> | undefined
-          : NullsPurged<T[K]>;
-      };
+export type NullsPurged<T> =
+  T extends Array<infer U>
+    ? Array<NullsPurged<U>>
+    : T extends string | symbol | number | boolean | Date | Decimal
+      ? T
+      : {
+          [K in keyof T]: null extends T[K]
+            ? Exclude<NullsPurged<T[K]>, null> | undefined
+            : NullsPurged<T[K]>;
+        };
 
 export type ExplicitNulls<T> = {
   [K in keyof T]-?: undefined extends T[K]
