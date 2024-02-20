@@ -115,6 +115,7 @@ export class DisplayPersoonComponent extends RockElement {
         <dl class="col-sm-6">
           ${this.renderDefinition('rijksregisternummer')}
           ${this.renderDefinition('telefoonnummer', showPhoneNumber)}
+          ${this.renderDefinition('gsmNummer', showPhoneNumber)}
           ${this.renderDefinition(
             'voedingswens',
             showVoedingswens(this.persoon),
