@@ -32,11 +32,16 @@ describe(ProjectenController.name, () => {
       harness.login({ role: 'projectverantwoordelijke' });
       await harness.post('/projecten').expect(403);
     });
-    it('PUT /projecten/:id should not be allowed for projectverantwoordelijke', async () => {
+    it('PUT /projecten/:id should be allowed for projectverantwoordelijke', async () => {
+      const cursus = await harness.createProject(factory.cursus());
       harness.login({ role: 'projectverantwoordelijke' });
-      await harness.put('/projecten/1').expect(403);
+      await harness.put(`/projecten/${cursus.id}`, cursus).expect(200);
     });
-
+    it('DELETE /projecten/:id should not be allowed for projectverantwoordelijke', async () => {
+      const cursus = await harness.createProject(factory.cursus());
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.delete(`/projecten/${cursus.id}`).expect(403);
+    });
     it('PUT /projecten/:id/deelnames should be allowed for projectverantwoordelijke', async () => {
       // Arrange
       const project = await harness.createProject(factory.cursus());

@@ -23,8 +23,9 @@ describe(LocatiesController.name, () => {
     });
 
     it('PUT /locaties/:id should be allowed for projectverantwoordelijke', async () => {
+      const locatie = await harness.createLocatie(factory.locatie());
       harness.login({ role: 'projectverantwoordelijke' });
-      await harness.put('/locaties/1').expect(403);
+      await harness.put(`/locaties/${locatie.id}`, locatie).expect(200);
     });
 
     it('DELETE /locaties/:id should be allowed for projectverantwoordelijke', async () => {

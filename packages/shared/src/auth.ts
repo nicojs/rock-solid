@@ -13,12 +13,18 @@ export type UserRole =
 export type Privilege =
   | 'read'
   | 'read:backup'
-  | 'write:projecten'
+  | 'create:projecten'
+  | 'update:projecten'
+  | 'delete:projecten'
   | 'write:organisaties'
   | 'write:aanmeldingen'
   | 'write:deelnames'
-  | 'write:personen'
-  | 'write:locaties';
+  | 'create:personen'
+  | 'update:personen'
+  | 'delete:personen'
+  | 'create:locaties'
+  | 'update:locaties'
+  | 'delete:locaties';
 
 export const userRoleNames: Options<UserRole> = {
   admin: 'Admin',
@@ -37,13 +43,26 @@ export const privileges: Record<UserRole, Privilege[]> = {
   admin: [
     'read',
     'read:backup',
-    'write:projecten',
+    'create:projecten',
+    'update:projecten',
+    'delete:projecten',
     'write:organisaties',
     'write:aanmeldingen',
     'write:deelnames',
-    'write:personen',
-    'write:locaties',
+    'create:personen',
+    'update:personen',
+    'delete:personen',
+    'create:locaties',
+    'update:locaties',
+    'delete:locaties',
   ],
-  projectverantwoordelijke: ['read', 'write:deelnames', 'write:aanmeldingen'],
+  projectverantwoordelijke: [
+    'read',
+    'update:projecten',
+    'update:locaties',
+    'update:personen',
+    'write:deelnames',
+    'write:aanmeldingen',
+  ],
   financieelBeheerder: ['read', 'write:aanmeldingen'],
 };

@@ -37,6 +37,9 @@ export class EditPersoonComponent extends LitElement {
 
   static override styles = [bootstrap];
 
+  @property()
+  public privilege?: Privilege;
+
   private async submit() {
     const event = new CustomEvent('persoon-submitted', {
       bubbles: true,
@@ -49,7 +52,7 @@ export class EditPersoonComponent extends LitElement {
   override render() {
     return html`<rock-reactive-form
       @rock-submit="${this.submit}"
-      privilege="${'write:personen' satisfies Privilege}"
+      privilege="${this.privilege}"
       .controls="${controlsByType[this.persoon.type]}"
       .entity="${this.persoon}"
     ></rock-reactive-form>`;

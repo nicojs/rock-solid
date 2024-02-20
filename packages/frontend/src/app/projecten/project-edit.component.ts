@@ -49,6 +49,9 @@ export class ProjectEditComponent extends LitElement {
   @property()
   public errorMessage: string | undefined;
 
+  @property()
+  public privilege?: Privilege;
+
   public override render() {
     return html`<h2>
         ${this.project.id
@@ -58,7 +61,7 @@ export class ProjectEditComponent extends LitElement {
       <rock-alert .message=${this.errorMessage}></rock-alert>
       <rock-reactive-form
         @rock-submit="${this.save}"
-        privilege="${'write:personen' satisfies Privilege}"
+        privilege="${this.privilege}"
         .controls="${this.type === 'cursus'
           ? cursusProjectControls
           : vakantieProjectControls}"

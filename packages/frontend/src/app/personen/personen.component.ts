@@ -13,6 +13,7 @@ import {
   PersoonFilter,
   PersoonType,
   persoonTypes,
+  Privilege,
   provincies,
   Queryfied,
   toPersoonFilter,
@@ -192,6 +193,7 @@ export class PersonenComponent extends RockElement {
             ? html`<rock-loading></rock-loading>`
             : html`<rock-edit-persoon
                 .persoon="${persoon}"
+                privilege="${'create:personen' satisfies Privilege}"
                 @persoon-submitted=${this.createNewPersoon}
               ></rock-edit-persoon>`}`;
       case 'edit':
@@ -202,6 +204,7 @@ export class PersonenComponent extends RockElement {
               </h2>
               <rock-edit-persoon
                 .persoon="${this.focussedPersoon}"
+                privilege="${'update:personen' satisfies Privilege}"
                 @persoon-submitted=${this.updatePersoon}
               ></rock-edit-persoon>`
           : html`<rock-loading></rock-loading>`}`;

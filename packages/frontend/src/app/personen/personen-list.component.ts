@@ -100,7 +100,7 @@ export class PersonenComponent extends LitElement {
                   <button
                     @click=${() => this.deletePersoon(persoon)}
                     type="button"
-                    ${privilege('write:personen')}
+                    ${privilege('delete:personen')}
                     class="btn btn-outline-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>

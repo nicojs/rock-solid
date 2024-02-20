@@ -98,14 +98,14 @@ export class ProjectenController {
   }
 
   @Post()
-  @Privileges('write:projecten')
+  @Privileges('create:projecten')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() project: UpsertableProject) {
     return this.projectMapper.createProject(project);
   }
 
   @Put(':id')
-  @Privileges('write:projecten')
+  @Privileges('update:projecten')
   async update(
     @Param('id') id: string,
     @Body() project: UpsertableProject,
@@ -167,7 +167,7 @@ export class ProjectenController {
   }
 
   @Delete(':id')
-  @Privileges('write:projecten')
+  @Privileges('delete:projecten')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.projectMapper.delete(id);

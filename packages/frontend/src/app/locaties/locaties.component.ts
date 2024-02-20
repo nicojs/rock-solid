@@ -10,6 +10,7 @@ import {
   locatieLabels,
   toLocatieFilter,
   tryParseInt,
+  Privilege,
 } from '@rock-solid/shared';
 import { locatieStore } from './locatie.store';
 import { PropertyValues, html } from 'lit';
@@ -163,6 +164,7 @@ export class LocatiesComponent extends RockElement {
           : html`<rock-edit-locatie
               .locatie="${this.newLocatie}"
               .errorMessage=${this.errorMessage}
+              privilege=${'create:locaties' satisfies Privilege}
               @locatie-submitted="${(event: CustomEvent<Locatie>) =>
                 this.createLocatie(event.detail)}"
             ></rock-edit-locatie>`;
@@ -171,6 +173,7 @@ export class LocatiesComponent extends RockElement {
           ? html`<rock-edit-locatie
               .locatie="${this.locatieToEdit}"
               .errorMessage=${this.errorMessage}
+              privilege=${'update:locaties' satisfies Privilege}
               @locatie-submitted=${() => this.updateLocatie()}
             ></rock-edit-locatie>`
           : html`<rock-loading></rock-loading>`}`;

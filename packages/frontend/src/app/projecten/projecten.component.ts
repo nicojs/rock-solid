@@ -8,6 +8,7 @@ import {
   tryParseInt,
   organisatieonderdelen,
   allProjectLabels,
+  Privilege,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -203,6 +204,7 @@ export class ProjectenComponent extends RockElement {
               .type=${this.type}
               .project="${this.newProject}"
               .errorMessage=${this.errorMessage}
+              privilege="${'create:projecten' satisfies Privilege}"
               @project-submitted="${(event: CustomEvent<Project>) =>
                 this.addProject(event.detail)}"
             ></rock-project-edit>`;
@@ -216,6 +218,7 @@ export class ProjectenComponent extends RockElement {
                   .project=${this.focussedProject}
                   .errorMessage=${this.errorMessage}
                   .type=${this.type}
+                  privilege="${'update:projecten' satisfies Privilege}"
                   @project-submitted="${(event: CustomEvent<Project>) =>
                     this.editProject(event.detail)}"
                 ></rock-project-edit>`;

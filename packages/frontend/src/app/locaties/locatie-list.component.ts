@@ -66,7 +66,7 @@ export class LocatieListComponent extends LitElement {
                   <button
                     @click=${() => this.deleteLocatie(loc)}
                     type="button"
-                    ${privilege('write:locaties')}
+                    ${privilege('delete:locaties')}
                     class="btn btn-outline-danger btn-sm"
                   >
                     <rock-icon icon="trash"></rock-icon>
