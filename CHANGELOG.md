@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/nicojs/rock-solid/compare/v1.4.0...v1.5.0) (2024-02-21)
+
+### Bug Fixes
+
+- **gsm:** laat ook gsm nr zijn bij persoon bekijken ([#220](https://github.com/nicojs/rock-solid/issues/220)) ([9a957a3](https://github.com/nicojs/rock-solid/commit/9a957a3a2a0d40c046fd3e6280c17b272dd5495e))
+
+### Features
+
+- **authorisatie:** wijzigen mogelijk maken voor projectverantwoordelijken ([#221](https://github.com/nicojs/rock-solid/issues/221)) ([425eec8](https://github.com/nicojs/rock-solid/commit/425eec8d06715ecc77dfeb5b977a6f637e7f20aa))
+
 # [1.4.0](https://github.com/nicojs/rock-solid/compare/v1.3.2...v1.4.0) (2024-01-30)
 
 ### Features
