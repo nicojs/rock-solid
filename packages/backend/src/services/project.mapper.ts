@@ -45,7 +45,11 @@ const includeAggregate = {
     include: {
       _count: {
         select: {
-          deelnames: true,
+          deelnames: {
+            where: {
+              effectieveDeelnamePerunage: { gt: 0 },
+            },
+          },
         },
       },
       locatie: {

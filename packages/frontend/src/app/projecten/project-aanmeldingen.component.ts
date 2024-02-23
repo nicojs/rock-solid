@@ -246,6 +246,9 @@ export class ProjectAanmeldingenComponent extends LitElement {
   }
 
   override render() {
+    const bevestigdeAanmeldingen = this.aanmeldingen?.filter(
+      ({ status }) => status === 'Bevestigd',
+    );
     switch (this.path[0]) {
       case 'edit':
         return html`${this.aanmeldingInScope
@@ -262,9 +265,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
               @rekeninguittreksels-updated=${(
                 event: CustomEvent<PatchableAanmelding[]>,
               ) => this.pathRekeninguittreksels(event.detail)}
-              .aanmeldingen=${this.aanmeldingen?.filter(
-                ({ status }) => status === 'Bevestigd',
-              )}
+              .aanmeldingen=${bevestigdeAanmeldingen}
             ></rock-project-rekeninguittreksels>`
           : html`<rock-loading></rock-loading>`;
       case 'brieven-verzenden':
@@ -273,19 +274,22 @@ export class ProjectAanmeldingenComponent extends LitElement {
               .project=${this.project}
               @brieven-verzonden=${(event: CustomEvent<Aanmelding[]>) =>
                 this.pathBrievenVerzonden(event.detail)}
-              .aanmeldingen=${this.aanmeldingen?.filter(
-                ({ status }) => status === 'Bevestigd',
-              )}
+              .aanmeldingen=${bevestigdeAanmeldingen}
             ></rock-project-brieven-verzenden>`
           : html`<rock-loading></rock-loading>`;
       case 'deelnemerslijst-printen':
         return this.aanmeldingen
           ? html`<rock-deelnemerslijst-printen
               .project=${this.project}
-              .aanmeldingen=${this.aanmeldingen?.filter(
-                ({ status }) => status === 'Bevestigd',
-              )}
-            ></rock-project-brieven-verzenden>`
+              .aanmeldingen=${bevestigdeAanmeldingen}
+            ></rock-deelnemerslijst-printen>`
+          : html`<rock-loading></rock-loading>`;
+      case 'projectrapport':
+        return this.aanmeldingen
+          ? html`<rock-projectrapport
+              .project=${this.project}
+              .aanmeldingen=${bevestigdeAanmeldingen}
+            ></rock-projectrapport>`
           : html`<rock-loading></rock-loading>`;
       case undefined:
         return this.renderProjectAanmeldingen();
@@ -427,6 +431,13 @@ export class ProjectAanmeldingenComponent extends LitElement {
               .id}/aanmeldingen/deelnemerslijst-printen"
             ><rock-icon icon="printer"></rock-icon> Deelnemerslijst
             printen</rock-link
+          >
+          <rock-link
+            btn
+            btnOutlinePrimary
+            href="/${pluralize(this.project.type)}/${this.project
+              .id}/aanmeldingen/projectrapport"
+            ><rock-icon icon="graphUp"></rock-icon> Projectrapport</rock-link
           >
           <table class="table table-hover table-sm">
             <thead>

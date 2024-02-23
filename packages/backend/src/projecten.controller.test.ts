@@ -295,6 +295,62 @@ describe(ProjectenController.name, () => {
       expect(actual.aantalAanmeldingen).eq(2);
     });
 
+    it('should only count the deelnames with effectieve deelname', async () => {
+      // Arrange
+      const [cursus, deelnemer1, deelnemer2] = await Promise.all([
+        harness.createProject(
+          factory.cursus({
+            activiteiten: [factory.activiteit(), factory.activiteit()],
+          }),
+        ),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      const [aanmelding1, aanmelding2] = await Promise.all([
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemer1.id,
+        }),
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemer2.id,
+        }),
+      ]);
+      await Promise.all([
+        harness.patchAanmelding(cursus.id, {
+          id: aanmelding1.id,
+          status: 'Bevestigd',
+        }),
+        harness.patchAanmelding(cursus.id, {
+          id: aanmelding2.id,
+          status: 'OpWachtlijst',
+        }),
+      ]);
+      await Promise.all([
+        harness.updateDeelnames(cursus.id, cursus.activiteiten[0]!.id, [
+          { aanmeldingId: aanmelding1.id, effectieveDeelnamePerunage: 1 },
+          { aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 1 },
+        ]),
+        harness.updateDeelnames(cursus.id, cursus.activiteiten[1]!.id, [
+          { aanmeldingId: aanmelding1.id, effectieveDeelnamePerunage: 0.1 },
+          { aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 0 }, // no deelname
+        ]),
+      ]);
+
+      // Act
+      const actual = await harness.getProject(cursus.id);
+
+      // Assert
+      const actualAantalDeelnames1 = actual.activiteiten.find(
+        ({ id }) => id === cursus.activiteiten[0]?.id,
+      )?.aantalDeelnames;
+      const actualAantalDeelnames2 = actual.activiteiten.find(
+        ({ id }) => id === cursus.activiteiten[1]?.id,
+      )?.aantalDeelnames;
+      expect(actualAantalDeelnames1).eq(2);
+      expect(actualAantalDeelnames2).eq(1);
+    });
+
     it('should correctly handle timezones', async () => {
       const project = await harness.createProject(
         factory.cursus({

@@ -12,5 +12,5 @@ export interface Deelname {
 
 export type UpsertableDeelname = Upsertable<
   Deelname,
-  'activiteitId' | 'aanmeldingId' | 'effectieveDeelnamePerunage'
+  'aanmeldingId' | 'effectieveDeelnamePerunage'
 >;
