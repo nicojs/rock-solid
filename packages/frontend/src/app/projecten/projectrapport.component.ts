@@ -2,9 +2,9 @@ import {
   Aanmelding,
   Cursus,
   OverigPersoon,
+  Werksituatie,
   Woonsituatie,
   calculateAge,
-  notEmpty,
   showDatum,
   showTijd,
   split,
@@ -15,7 +15,7 @@ import { LitElement, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { fullName } from '../personen/persoon.pipe';
-import { pluralize } from '../shared';
+import { pluralize, unknown } from '../shared';
 import { createRef, ref } from 'lit/directives/ref.js';
 
 @customElement('rock-projectrapport')
@@ -196,9 +196,7 @@ export class ProjectRapportComponent extends LitElement {
   private renderProvincies() {
     const provincies = [
       ...new Set(
-        this.aanmeldingen
-          .map((aanmelding) => aanmelding.plaats?.provincie)
-          .filter(notEmpty),
+        this.aanmeldingen.map((aanmelding) => aanmelding.plaats?.provincie),
       ),
     ].sort();
 
@@ -207,7 +205,9 @@ export class ProjectRapportComponent extends LitElement {
         <thead>
           <tr>
             <th>Activiteit</th>
-            ${provincies.map((provincie) => html`<th>${provincie}</th>`)}
+            ${provincies.map(
+              (provincie) => html`<th>${renderProvincie(provincie)}</th>`,
+            )}
           </tr>
         </thead>
         <tbody>
@@ -233,9 +233,7 @@ export class ProjectRapportComponent extends LitElement {
   private renderWoonsituaties() {
     const situaties = [
       ...new Set(
-        this.aanmeldingen
-          .map((aanmelding) => aanmelding.woonsituatie)
-          .filter(notEmpty),
+        this.aanmeldingen.map((aanmelding) => aanmelding.woonsituatie),
       ),
     ].sort();
     return html`<h2>Woonsituatie</h2>
@@ -243,7 +241,8 @@ export class ProjectRapportComponent extends LitElement {
         <thead>
           <tr>
             ${situaties.map(
-              (woonsituatie) => html`<th>${woonsituaties[woonsituatie]}</th>`,
+              (woonsituatie) =>
+                html`<th>${renderWoonsituatie(woonsituatie)}</th>`,
             )}
           </tr>
         </thead>
@@ -265,9 +264,7 @@ export class ProjectRapportComponent extends LitElement {
   private renderWerksituaties() {
     const situaties = [
       ...new Set(
-        this.aanmeldingen
-          .map((aanmelding) => aanmelding.werksituatie)
-          .filter(notEmpty),
+        this.aanmeldingen.map((aanmelding) => aanmelding.werksituatie),
       ),
     ].sort();
     return html`<h2>Werksituatie</h2>
@@ -275,7 +272,8 @@ export class ProjectRapportComponent extends LitElement {
         <thead>
           <tr>
             ${situaties.map(
-              (werksituatie) => html`<th>${werksituaties[werksituatie]}</th>`,
+              (werksituatie) =>
+                html`<th>${renderWerksituatie(werksituatie)}</th>`,
             )}
           </tr>
         </thead>
@@ -297,13 +295,14 @@ export class ProjectRapportComponent extends LitElement {
   private renderRekrutering() {
     const situaties = [
       ...new Set(
-        this.aanmeldingen
-          .map((aanmelding) => aanmelding.woonsituatie)
-          .filter(notEmpty),
+        this.aanmeldingen.map((aanmelding) => aanmelding.woonsituatie),
       ),
     ].sort();
 
-    const recruteringPerSituatie = Object.fromEntries(
+    const recruteringPerSituatie = new Map<
+      Woonsituatie | undefined,
+      RekruteringAantallen
+    >(
       situaties.map((sit) => {
         const aanmeldingen = this.aanmeldingen.filter(
           (aanmelding) => aanmelding.woonsituatie === sit,
@@ -314,7 +313,7 @@ export class ProjectRapportComponent extends LitElement {
         );
         return [sit, { nieuw: nieuw.length, gekend: gekend.length }];
       }),
-    ) as Record<Woonsituatie, RekruteringAantallen>;
+    );
 
     return html`<h2>Rekrutering</h2>
       <table class="table table-bordered">
@@ -322,7 +321,8 @@ export class ProjectRapportComponent extends LitElement {
           <tr>
             <th></th>
             ${situaties.map(
-              (woonsituatie) => html`<th>${woonsituaties[woonsituatie]}</th>`,
+              (woonsituatie) =>
+                html`<th>${renderWoonsituatie(woonsituatie)}</th>`,
             )}
           </tr>
         </thead>
@@ -331,14 +331,18 @@ export class ProjectRapportComponent extends LitElement {
             <th>Nieuw</th>
             ${situaties.map(
               (woonsituatie) =>
-                html`<td>${recruteringPerSituatie[woonsituatie].nieuw}</td>`,
+                html`<td>
+                  ${recruteringPerSituatie.get(woonsituatie)?.nieuw}
+                </td>`,
             )}
           </tr>
           <tr>
             <th>Gekend</th>
             ${situaties.map(
               (woonsituatie) =>
-                html`<td>${recruteringPerSituatie[woonsituatie].gekend}</td>`,
+                html`<td>
+                  ${recruteringPerSituatie.get(woonsituatie)?.gekend}
+                </td>`,
             )}
           </tr>
         </tbody>
@@ -363,6 +367,18 @@ function renderRangtelwoord(index: number) {
     default:
       return `${index + 1}e`;
   }
+}
+
+function renderWoonsituatie(woonsituatie: Woonsituatie | undefined) {
+  return woonsituatie ? woonsituaties[woonsituatie] : unknown;
+}
+
+function renderWerksituatie(werksituatie: Werksituatie | undefined) {
+  return werksituatie ? werksituaties[werksituatie] : unknown;
+}
+
+function renderProvincie(provincie: string | undefined) {
+  return provincie ?? unknown;
 }
 
 interface RekruteringAantallen {
