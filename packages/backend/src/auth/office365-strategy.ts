@@ -23,6 +23,7 @@ export class Office365Strategy extends PassportStrategy(
   authConstants.office365Strategy,
 ) {
   constructor() {
+    // Stryker disable StringLiteral: Static mutants we're not interested in
     super({
       authorizationURL: `https://login.microsoftonline.com/${authConstants.tenantId}/oauth2/v2.0/authorize`,
       tokenURL: `https://login.microsoftonline.com/${authConstants.tenantId}/oauth2/v2.0/token`,
@@ -31,6 +32,7 @@ export class Office365Strategy extends PassportStrategy(
       callbackURL: `${process.env['BASE_URL']}/login`,
       scope: 'User.Read',
     });
+    // Stryker restore
   }
 
   async validate(accessToken: string): Promise<User> {

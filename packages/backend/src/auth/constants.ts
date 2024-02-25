@@ -1,5 +1,6 @@
 import type { UserRole } from '@rock-solid/shared';
 
+// Stryker disable StringLiteral: Static mutants we're not interested in
 export const authConstants = Object.freeze({
   jwtSecret: process.env['JWT_SECRET']!,
   jwtStrategy: 'jwt',

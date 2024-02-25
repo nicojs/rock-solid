@@ -13,4 +13,11 @@ jobs:
     - run: npm ci
     - run: cp .env.template .env
     - run: npm run all
+    - run: npm run test:mutation:download-incremental-report
+    - name: '👽 Run Stryker incrementally'
+      run: npm run test:mutation:incremental
+      env:
+        STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+
+
 

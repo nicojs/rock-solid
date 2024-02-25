@@ -1,2 +1,6 @@
 /import
 /import-v1
+
+# stryker temp files
+/.stryker-tmp
+/reports
