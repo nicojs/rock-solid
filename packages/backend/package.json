@@ -16,6 +16,7 @@
     "dev": "node --inspect -r dotenv/config --enable-source-maps --watch dist/main.js",
     "start": "node dist/main.js",
     "test": "mocha --node-option enable-source-maps",
+    "test:mutation": "stryker run",
     "prebuild-stryker": "node ../../../../node_modules/prisma/build/index.js generate",
     "build-stryker": "tsc -b"
   },

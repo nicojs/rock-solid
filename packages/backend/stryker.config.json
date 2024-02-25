@@ -8,6 +8,7 @@
   "testRunner": "mocha",
   "testRunnerNodeArgs": ["-r", "dotenv/config"],
   "buildCommand": "npm run build-stryker",
+  "ignoreStatic": true,
   "dashboard": {
     "module": "backend"
   }
