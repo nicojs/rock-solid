@@ -7,7 +7,12 @@
     "clear-text",
     "progress"
   ],
+  "mutate": [
+    "src/**/!(*.spec|*.test).+(ts|mts|cts)",
+    "!src/seed/**/*.ts"
+  ],
+  "timeoutMS": 60000,
   "testRunner": "mocha",
   "testRunnerNodeArgs": ["-r", "dotenv/config"],
-  "buildCommand": "tsc -b"
+  "buildCommand": "npm run build-stryker"
 }
