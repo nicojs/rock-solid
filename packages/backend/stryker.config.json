@@ -2,17 +2,13 @@
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "_comment": "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information.",
   "packageManager": "npm",
-  "reporters": [
-    "html",
-    "clear-text",
-    "progress"
-  ],
-  "mutate": [
-    "src/**/!(*.spec|*.test).+(ts|mts|cts)",
-    "!src/seed/**/*.ts"
-  ],
+  "reporters": ["html", "clear-text", "progress", "dashboard"],
+  "mutate": ["src/**/!(*.spec|*.test).+(ts|mts|cts)", "!src/seed/**/*.ts"],
   "timeoutMS": 60000,
   "testRunner": "mocha",
   "testRunnerNodeArgs": ["-r", "dotenv/config"],
-  "buildCommand": "npm run build-stryker"
+  "buildCommand": "npm run build-stryker",
+  "dashboard": {
+    "module": "backend"
+  }
 }
