@@ -15,7 +15,10 @@
     "prisma:seed:readonly": "npm run prisma:seed -- --readonly",
     "dev": "node --inspect -r dotenv/config --enable-source-maps --watch dist/main.js",
     "start": "node dist/main.js",
-    "test": "mocha --node-option enable-source-maps"
+    "test": "mocha --node-option enable-source-maps",
+    "test:mutation": "stryker run",
+    "prebuild-stryker": "node ../../../../node_modules/prisma/build/index.js generate",
+    "build-stryker": "tsc -b"
   },
   "prisma": {
     "seed": "node dist/seed/all.seed.js"
@@ -45,6 +48,7 @@
     "@nestjs/cli": "^10.3.2",
     "@nestjs/schematics": "^10.1.1",
     "@nestjs/testing": "^10.3.3",
+    "@stryker-mutator/mocha-runner": "^8.2.6",
     "@types/better-sqlite3": "^7.6.9",
     "@types/body-parser": "^1.19.5",
     "@types/passport-jwt": "^4.0.1",

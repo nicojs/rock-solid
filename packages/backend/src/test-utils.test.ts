@@ -91,7 +91,8 @@ export class RockSolidDBContainer {
 
   static async start() {
     // const postgres = await new PostgreSqlContainer().start();
-    const connectionUri = 'file:./test.db?connection_limit=1';
+    const dbName = `test${process.env['STRYKER_MUTATOR_WORKER'] ?? ''}`;
+    const connectionUri = `file:./${dbName}.db?connection_limit=1`;
     console.log(`Started db@${connectionUri}`);
     await execAsync('npm run prisma:push:force', {
       env: {
@@ -105,7 +106,7 @@ export class RockSolidDBContainer {
     return db;
   }
 
-  private async init() {
+  public async init() {
     await this.client.$connect();
     await this.seed();
   }
@@ -564,7 +565,11 @@ let rockSolidDBContainer: RockSolidDBContainer;
 export let harness: IntegrationTestingHarness;
 
 before(async () => {
-  rockSolidDBContainer = await RockSolidDBContainer.start();
+  if (rockSolidDBContainer) {
+    await rockSolidDBContainer.clear();
+  } else {
+    rockSolidDBContainer = await RockSolidDBContainer.start();
+  }
   harness = await IntegrationTestingHarness.init();
 });
 after(async () => {
