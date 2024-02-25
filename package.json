@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",
-    "clean": "rimraf packages/*/dist packages/*/*.tsbuildinfo packages/backend/package.release.json packages/backend/import",
+    "clean": "rimraf packages/*/dist packages/*/.stryker-tmp packages/*/*.tsbuildinfo packages/backend/package.release.json packages/backend/import",
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts --ignore-path .gitignore",
     "build": "npm run build:db && npm run build:tsc && npm run build:fe",
     "build:src": "npm run build:db && npm run build:tsc:src && npm run build:fe",
@@ -23,6 +23,7 @@
     "dev:frontend": "cd packages/frontend && npm start",
     "dev:tsc": "tsc -b -w",
     "test": "lerna run test --stream --concurrency 2",
+    "test:mutation": "lerna run test:mutation --stream --concurrency 2",
     "docs:mermaid": "mmdc -i docs/erd.mmd -o docs/erd.svg",
     "docs:mermaid:watch": "node tasks/watch-mermaid.mjs",
     "import:az2csv": "tasks/import-az2csv.sh",
