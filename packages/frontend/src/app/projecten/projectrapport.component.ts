@@ -236,7 +236,7 @@ export class ProjectRapportComponent extends LitElement {
         this.aanmeldingen.map((aanmelding) => aanmelding.woonsituatie),
       ),
     ].sort();
-    return html`<h2>Woonsituatie</h2>
+    return html`<h3>Woonsituatie</h3>
       <table class="table table-bordered">
         <thead>
           <tr>
@@ -267,7 +267,7 @@ export class ProjectRapportComponent extends LitElement {
         this.aanmeldingen.map((aanmelding) => aanmelding.werksituatie),
       ),
     ].sort();
-    return html`<h2>Werksituatie</h2>
+    return html`<h3>Werksituatie</h3>
       <table class="table table-bordered">
         <thead>
           <tr>
@@ -315,7 +315,7 @@ export class ProjectRapportComponent extends LitElement {
       }),
     );
 
-    return html`<h2>Rekrutering</h2>
+    return html`<h3>Rekrutering</h3>
       <table class="table table-bordered">
         <thead>
           <tr>
