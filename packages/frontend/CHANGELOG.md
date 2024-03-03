@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/nicojs/rock-solid/compare/v1.5.0...v1.6.0) (2024-03-03)
+
+### Features
+
+- **projectrapport:** ondersteun export naar projectrapport ([#226](https://github.com/nicojs/rock-solid/issues/226)) ([1b98220](https://github.com/nicojs/rock-solid/commit/1b982209c6d0f0ad8b3826953db52903d6cad1a2))
+
 # [1.5.0](https://github.com/nicojs/rock-solid/compare/v1.4.0...v1.5.0) (2024-02-21)
 
 ### Bug Fixes
