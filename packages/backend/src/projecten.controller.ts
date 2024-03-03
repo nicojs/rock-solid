@@ -1,5 +1,4 @@
 import {
-  type Deelname,
   type Aanmelding,
   type Project,
   type ProjectFilter,
@@ -27,7 +26,6 @@ import {
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { DeelnameMapper } from './services/deelname.mapper.js';
 import { AanmeldingMapper } from './services/aanmelding.mapper.js';
 import { ProjectMapper } from './services/project.mapper.js';
 import { PagePipe } from './pipes/page.pipe.js';
@@ -39,7 +37,6 @@ export class ProjectenController {
   constructor(
     private readonly projectMapper: ProjectMapper,
     private readonly aanmeldingMapper: AanmeldingMapper,
-    private readonly deelnameMapper: DeelnameMapper,
   ) {}
 
   @Get(':id')
@@ -74,14 +71,6 @@ export class ProjectenController {
     return this.aanmeldingMapper.getAll({ projectId });
   }
 
-  @Get(':projectId/activiteiten/:activiteitId/deelnames')
-  getDeelnames(
-    @Param('projectId', ParseIntPipe) projectId: number,
-    @Param('activiteitId', ParseIntPipe) activiteitId: number,
-  ): Promise<Deelname[]> {
-    return this.deelnameMapper.getAll({ projectId, activiteitId });
-  }
-
   @Put(':projectId/activiteiten/:activiteitId/deelnames')
   @Privileges('write:deelnames')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -90,7 +79,7 @@ export class ProjectenController {
     @Param('activiteitId', ParseIntPipe) activiteitId: number,
     @Body() deelnames: UpsertableDeelname[],
   ): Promise<void> {
-    return this.deelnameMapper.updateAll({
+    return this.aanmeldingMapper.updateActiviteitDeelnames({
       projectId,
       activiteitId,
       deelnames,

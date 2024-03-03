@@ -19,11 +19,7 @@ async function bootstrap() {
       },
     }),
   );
-  app.use(
-    bodyParser.json({
-      reviver: rockReviver,
-    }),
-  );
+  app.use(bodyParser.json({ reviver: rockReviver }));
   app.setGlobalPrefix('api', {
     exclude: [loginUrl, '/auth/callback', logoutUrl],
   });

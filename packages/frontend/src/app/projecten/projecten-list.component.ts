@@ -56,7 +56,9 @@ export class ProjectenListComponent extends LitElement {
       html`Weet je zeker dat je <strong>${printProject(project)}</strong> met
         <strong>${entities(project.activiteiten.length, 'activiteit')}</strong>
         en
-        <strong>${entities(project.aantalAanmeldingen, 'aanmelding')}</strong>
+        <strong
+          >${entities(project.aantalInschrijvingen, 'inschrijving')}</strong
+        >
         verwijderen?`,
     );
     if (confirmed) {
@@ -141,18 +143,16 @@ export class ProjectenListComponent extends LitElement {
               <td>
                 ${project.activiteiten.map((activiteit) => {
                   const inPast = activiteit.totEnMet < new Date();
-                  const isComplete =
-                    activiteit.aantalDeelnames! >= project.aantalAanmeldingen!;
                   return html` ${inPast
                     ? html`<rock-link
                         title="Open activiteit"
                         btn
                         sm
-                        ?btnWarning=${!isComplete}
-                        ?btnOutlinePrimary=${isComplete}
+                        ?btnWarning=${!activiteit.isCompleted}
+                        ?btnOutlinePrimary=${activiteit.isCompleted}
                         href="/${pluralize(
                           project.type,
-                        )}/${project.id}/deelnames/${activiteit.id}"
+                        )}/${project.id}/aanmeldingen/deelnames/${activiteit.id}"
                         ><rock-icon icon="calendar"></rock-icon> ${showDatum(
                           activiteit.van,
                         )}</rock-link
@@ -193,10 +193,10 @@ export class ProjectenListComponent extends LitElement {
                 >
                   <rock-icon icon="pencilSquare"></rock-icon>
                   <span
-                    class="badge ${(project.aantalAanmeldingen ?? 0) > 0
+                    class="badge ${(project.aantalInschrijvingen ?? 0) > 0
                       ? 'bg-success'
                       : 'bg-secondary'}"
-                    >${project.aantalAanmeldingen}</span
+                    >${project.aantalInschrijvingen}</span
                   >
                 </rock-link>
                 <span>

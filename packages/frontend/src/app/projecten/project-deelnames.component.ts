@@ -1,4 +1,5 @@
 import {
+  Aanmelding,
   Activiteit,
   Deelnemer,
   Project,
@@ -10,15 +11,12 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { InputControl, InputType } from '../forms';
 import { fullName } from '../personen/persoon.pipe';
-import { router } from '../router';
-import { pluralize } from '../shared';
 import { printProject } from './project.pipes';
-import { projectService } from './project.service';
-import { projectenStore } from './projecten.store';
 import { privilege } from '../auth/privilege.directive';
 
-interface DeelnameRow extends UpsertableDeelname {
+interface DeelnameRow {
   deelnemer?: Deelnemer;
+  deelname: UpsertableDeelname;
 }
 
 @customElement('rock-project-deelnames')
@@ -26,48 +24,35 @@ export class ProjectDeelnamesComponent extends LitElement {
   static override styles = [bootstrap];
 
   @property({ attribute: false })
-  public path!: string[];
-
-  @property({ attribute: false })
   public project!: Project;
 
-  @state()
-  public activiteit?: Activiteit;
+  @property({ attribute: false })
+  public activiteit!: Activiteit;
+
+  @property({ attribute: false })
+  public aanmeldingen!: Aanmelding[];
 
   @state()
-  public deelnames?: DeelnameRow[];
+  public deelnameRows?: DeelnameRow[];
 
-  override updated(props: PropertyValues<ProjectDeelnamesComponent>) {
-    if (props.has('path') && this.path[0]) {
-      const activiteitId = +this.path[0];
-      this.activiteit = this.project.activiteiten.find(
-        (act: Activiteit) => act.id === activiteitId,
-      );
-
-      Promise.all([
-        projectService.getAanmeldingen(this.project.id),
-        projectService.getDeelnames(this.project.id, activiteitId),
-      ]).then(([aanmeldingen, deelnames]) => {
-        this.deelnames = [
-          ...deelnames,
-          ...aanmeldingen
-            .filter(
-              (aanmelding) =>
-                !deelnames.find(
-                  ({ aanmeldingId }) => aanmeldingId === aanmelding.id,
-                ),
-            )
-            .map(
-              (aanmelding): DeelnameRow => ({
-                activiteitId,
-                aanmeldingId: aanmelding.id,
-                effectieveDeelnamePerunage: 1,
-                deelnemer: aanmelding.deelnemer!,
-              }),
-            ),
-        ];
+  override update(props: PropertyValues<ProjectDeelnamesComponent>) {
+    if (props.has('aanmeldingen')) {
+      const activiteitId = this.activiteit.id;
+      this.deelnameRows = this.aanmeldingen.map((aanmelding) => {
+        const deelname = aanmelding.deelnames.find(
+          (deelname) => deelname.activiteitId === this.activiteit.id,
+        ) ?? {
+          aanmeldingId: aanmelding.id,
+          activiteitId,
+          effectieveDeelnamePerunage: 1,
+        };
+        return {
+          deelname,
+          deelnemer: aanmelding.deelnemer,
+        };
       });
     }
+    super.update(props);
   }
 
   @state()
@@ -78,14 +63,14 @@ export class ProjectDeelnamesComponent extends LitElement {
 
   async submit(e: SubmitEvent) {
     e.preventDefault();
-    if ((e.target as HTMLFormElement).checkValidity() && this.activiteit) {
+    if ((e.target as HTMLFormElement).checkValidity()) {
       this.isLoading = true;
       this.wasValidated = false;
-      projectenStore
-        .updateDeelnames(this.project.id, this.activiteit.id, this.deelnames!)
-        .subscribe(() => {
-          router.navigate(`/${pluralize(this.project.type)}/list`);
-        });
+      this.dispatchEvent(
+        new CustomEvent('deelnames-submitted', {
+          detail: this.deelnameRows?.map((d) => d.deelname),
+        }),
+      );
     } else {
       this.wasValidated = true;
     }
@@ -103,12 +88,10 @@ export class ProjectDeelnamesComponent extends LitElement {
             class="${this.wasValidated ? 'was-validated' : ''}"
             @submit="${this.submit}"
           >
-            ${this.deelnames?.map((deelname) => {
+            ${this.deelnameRows?.map(({ deelname, deelnemer }, index) => {
               const deelnameControl: InputControl<UpsertableDeelname> = {
                 name: 'effectieveDeelnamePerunage',
-                label: deelname.deelnemer
-                  ? fullName(deelname.deelnemer)
-                  : 'Deelnemer verwijderd',
+                label: deelnemer ? fullName(deelnemer) : 'Deelnemer verwijderd',
                 type: InputType.number,
                 step: 0.01,
                 validators: {
@@ -123,16 +106,20 @@ export class ProjectDeelnamesComponent extends LitElement {
                 placeholder: 'Opmerking',
               };
               return html`<div class="mb-3 row">
-                <label class="col-lg-2 col-md-4" for="${deelnameControl.name}"
+                <label
+                  class="col-lg-2 col-md-4 col-sm-8"
+                  for="${index}_${deelnameControl.name}"
                   >${deelnameControl.label}</label
                 >
                 <rock-reactive-form-input-control
-                  class="col-lg-1 col-md-1"
+                  class="col-lg-2 col-md-3 col-sm-4"
+                  path="${index}"
                   .entity=${deelname}
                   .control=${deelnameControl}
                 ></rock-reactive-form-input-control>
                 <rock-reactive-form-input-control
-                  class="col-lg-9 col-md-9"
+                  class="col-lg-8 col-md-5 col-sm-12"
+                  path="${index}"
                   .entity=${deelname}
                   .control=${opmerkingControl}
                 ></rock-reactive-form-input-control>

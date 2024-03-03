@@ -130,3 +130,13 @@ export function showDatum(val: Date | undefined): string {
   }
   return notAvailable;
 }
+
+export function showTijd(val: Date | undefined): string {
+  if (val) {
+    return val.toLocaleTimeString('nl-NL', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+  return notAvailable;
+}

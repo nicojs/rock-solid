@@ -227,11 +227,6 @@ export class ProjectenComponent extends RockElement {
                   .project="${this.focussedProject}"
                   .path="${rest}"
                 ></rock-project-aanmeldingen>`;
-              case 'deelnames':
-                return html`<rock-project-deelnames
-                  .project="${this.focussedProject}"
-                  .path="${rest}"
-                ></rock-project-deelnames>`;
             }
           } else {
             return html`<rock-loading></rock-loading>`;

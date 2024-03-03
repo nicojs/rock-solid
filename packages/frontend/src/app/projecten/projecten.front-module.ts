@@ -7,3 +7,4 @@ import './project-rekeninguittreksels.component';
 import './project-deelnames.component';
 import './project-brieven-verzenden.component';
 import './deelnemerslijst-printen.component';
+import './projectrapport.component';
