@@ -1,5 +1,4 @@
 import {
-  type Deelname,
   type Aanmelding,
   type Project,
   type ProjectFilter,

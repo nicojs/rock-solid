@@ -7,7 +7,6 @@ import {
   calculateAge,
   showDatum,
   showTijd,
-  split,
   werksituaties,
   woonsituaties,
 } from '@rock-solid/shared';
@@ -367,9 +366,4 @@ function renderWerksituatie(werksituatie: Werksituatie | undefined) {
 
 function renderProvincie(provincie: string | undefined) {
   return provincie ?? unknown;
-}
-
-interface RekruteringAantallen {
-  nieuw: number;
-  gekend: number;
 }
