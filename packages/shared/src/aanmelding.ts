@@ -19,6 +19,7 @@ export interface Aanmelding {
   bevestigingsbriefVerzondenOp?: Date;
   vervoersbriefVerzondenOp?: Date;
   status: Aanmeldingsstatus;
+  deelnames: Deelname[];
 }
 
 export type Aanmeldingsstatus =
@@ -64,4 +65,18 @@ export const aanmeldingLabels: Labels<Aanmelding> = {
   status: 'Status',
   bevestigingsbriefVerzondenOp: 'Bevestigingsbrief verzonden op',
   vervoersbriefVerzondenOp: 'Vervoersbrief verzonden op',
+  deelnames: 'Deelnames',
 };
+
+export interface Deelname {
+  id: number;
+  activiteitId: number;
+  aanmeldingId: number;
+  effectieveDeelnamePerunage: number;
+  opmerking?: string;
+}
+
+export type UpsertableDeelname = Upsertable<
+  Deelname,
+  'aanmeldingId' | 'effectieveDeelnamePerunage'
+>;

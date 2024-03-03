@@ -11,7 +11,7 @@ export interface BaseProject {
   projectnummer: string;
   type: ProjectType;
   naam: string;
-  aantalAanmeldingen: number;
+  aantalInschrijvingen: number;
   begeleiders: OverigPersoon[];
   jaar: number;
   saldo?: Decimal;
@@ -49,7 +49,7 @@ export type AanmeldingOf<T extends Project> = {
 } & T;
 
 export const projectLabels: Labels<BaseProject> = {
-  aantalAanmeldingen: 'Aantal aanmeldingen',
+  aantalInschrijvingen: 'Aantal inschrijvingen',
   begeleiders: 'Begeleiders',
   id: 'id',
   naam: 'Naam',
@@ -92,6 +92,7 @@ export const activiteitLabels: Labels<VakantieActiviteit & CursusActiviteit> = {
   verblijf: 'Verblijf',
   vervoer: 'Vervoer',
   locatie: 'Locatie',
+  isCompleted: 'Is afgerond',
 };
 
 export type Activiteit = CursusActiviteit | VakantieActiviteit;
@@ -105,6 +106,7 @@ export interface BaseActiviteit {
   vormingsuren?: number;
   begeleidingsuren?: number;
   aantalDeelnemersuren: number;
+  isCompleted: boolean;
 }
 
 export interface CursusActiviteit extends BaseActiviteit {

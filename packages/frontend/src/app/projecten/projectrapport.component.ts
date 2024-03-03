@@ -212,7 +212,7 @@ export class ProjectRapportComponent extends LitElement {
         </thead>
         <tbody>
           ${this.project.activiteiten.map(
-            (_, i) =>
+            (activiteit, i) =>
               html`<tr>
                 <th>${renderRangtelwoord(i)}</th>
                 ${provincies.map(
@@ -220,7 +220,11 @@ export class ProjectRapportComponent extends LitElement {
                     html`<td>
                       ${this.aanmeldingen.filter(
                         (aanmelding) =>
-                          aanmelding.plaats?.provincie === provincie,
+                          aanmelding.deelnames.find(
+                            (deelname) =>
+                              deelname.activiteitId === activiteit.id &&
+                              deelname.effectieveDeelnamePerunage > 0,
+                          ) && aanmelding.plaats?.provincie === provincie,
                       ).length}
                     </td>`,
                 )}
@@ -293,57 +297,41 @@ export class ProjectRapportComponent extends LitElement {
   }
 
   private renderRekrutering() {
-    const situaties = [
-      ...new Set(
-        this.aanmeldingen.map((aanmelding) => aanmelding.woonsituatie),
-      ),
-    ].sort();
-
-    const recruteringPerSituatie = new Map<
-      Woonsituatie | undefined,
-      RekruteringAantallen
-    >(
-      situaties.map((sit) => {
-        const aanmeldingen = this.aanmeldingen.filter(
-          (aanmelding) => aanmelding.woonsituatie === sit,
-        );
-        const [nieuw, gekend] = split(
-          aanmeldingen,
-          (aan) => aan.deelnemer?.eersteCursus === this.project.projectnummer,
-        );
-        return [sit, { nieuw: nieuw.length, gekend: gekend.length }];
-      }),
-    );
-
     return html`<h3>Rekrutering</h3>
+      <p>
+        <em>ZELF INVULLEN!</em> verdeel de ${this.aanmeldingen.length}
+        inschrijvingen over deze tabel
+      </p>
       <table class="table table-bordered">
         <thead>
           <tr>
             <th></th>
-            ${situaties.map(
-              (woonsituatie) =>
-                html`<th>${renderWoonsituatie(woonsituatie)}</th>`,
-            )}
+            <th>Begeleiding woonsituatie</th>
+            <th>Begeleiding werksituatie</th>
+            <th>School</th>
+            <th>Individueel</th>
+            <th>Vakantiewerking</th>
+            <th>Andere (specificiëren)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <th>Nieuw</th>
-            ${situaties.map(
-              (woonsituatie) =>
-                html`<td>
-                  ${recruteringPerSituatie.get(woonsituatie)?.nieuw}
-                </td>`,
-            )}
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
           </tr>
           <tr>
             <th>Gekend</th>
-            ${situaties.map(
-              (woonsituatie) =>
-                html`<td>
-                  ${recruteringPerSituatie.get(woonsituatie)?.gekend}
-                </td>`,
-            )}
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
           </tr>
         </tbody>
       </table> `;

@@ -14,15 +14,14 @@
     },
     {
       "name": "🧪 Run Backend Tests",
-      "program": "./node_modules/mocha/bin/mocha",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "args": [
-        "--node-option",
-        "enable-source-maps",
         "--timeout",
         "0",
         "--colors",
         "${workspaceFolder}/packages/backend/dist/**/*.test.js"
       ],
+      "runtimeArgs": ["--enable-source-maps"],
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],
       "type": "node",

@@ -1,6 +1,7 @@
 import {
   Aanmelding,
   Aanmeldingsstatus,
+  Deelname,
   Deelnemer,
   FotoToestemming,
   PatchableAanmelding,
@@ -93,6 +94,12 @@ export class ProjectAanmeldingenComponent extends LitElement {
     super.update(props);
   }
 
+  private async updateDeelnames(deelnames: Deelname[]) {
+    projectService
+      .updateDeelnames(this.project.id, parseInt(this.path[1]!), deelnames)
+      .then(() => this.navigateToProjecten());
+  }
+
   private async pathBrievenVerzonden(aanmeldingen: Aanmelding[]) {
     projectService
       .patchAanmeldingen(
@@ -111,7 +118,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
             (a) => aanmeldingen.find((b) => a.id === b.id) ?? a,
           ),
         );
-        this.navigateToAanmeldingenList();
+        this.navigateToAanmeldingen();
       });
   }
 
@@ -124,7 +131,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
             (a) => aanmeldingen.find((b) => a.id === b.id) ?? a,
           ),
         );
-        this.navigateToAanmeldingenList();
+        this.navigateToAanmeldingen();
       });
   }
 
@@ -162,7 +169,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
     projectService
       .updateAanmelding(this.project.id, this.aanmeldingInScope!)
       .then(() => {
-        this.navigateToAanmeldingenList();
+        this.navigateToAanmeldingen();
       });
   };
 
@@ -218,12 +225,19 @@ export class ProjectAanmeldingenComponent extends LitElement {
   }
 
   private deleteAanmelding = async (aanmelding: Aanmelding) => {
+    const aantalDeelnames = aanmelding.deelnames.filter(
+      (deelname) => deelname.effectieveDeelnamePerunage > 0,
+    ).length;
     const confirm = await ModalComponent.instance.confirm(
       html`Weet je zeker dat je de
         aanmelding${aanmelding.deelnemer
           ? html` van <strong>${fullName(aanmelding.deelnemer)}</strong>`
           : nothing}
-        aan <strong>${printProject(this.project)}</strong> wilt verwijderen?`,
+        aan <strong>${printProject(this.project)}</strong> (met
+        <strong
+          >${aantalDeelnames}
+          deelname${aantalDeelnames === 0 ? 's' : ''}</strong
+        >) wilt verwijderen?`,
     );
     if (confirm) {
       await projectService
@@ -239,17 +253,12 @@ export class ProjectAanmeldingenComponent extends LitElement {
     }
   };
 
-  private navigateToAanmeldingenList() {
-    router.navigate(
-      `/${pluralize(this.project.type)}/${this.project.id}/aanmeldingen/`,
-    );
-  }
-
   override render() {
     const bevestigdeAanmeldingen = this.aanmeldingen?.filter(
       ({ status }) => status === 'Bevestigd',
     );
-    switch (this.path[0]) {
+    const [page, ...rest] = this.path;
+    switch (page) {
       case 'edit':
         return html`${this.aanmeldingInScope
           ? html`<rock-project-aanmelding-edit
@@ -291,11 +300,36 @@ export class ProjectAanmeldingenComponent extends LitElement {
               .aanmeldingen=${bevestigdeAanmeldingen}
             ></rock-projectrapport>`
           : html`<rock-loading></rock-loading>`;
+      case 'deelnames':
+        const activiteitId = rest[0] ? parseInt(rest[0]) : undefined;
+        const activiteit = this.project.activiteiten.find(
+          (act) => act.id === activiteitId,
+        );
+        if (!activiteit) {
+          return this.navigateToAanmeldingen();
+        }
+        return html`<rock-project-deelnames
+          .project=${this.project}
+          .activiteit=${activiteit}
+          .aanmeldingen=${bevestigdeAanmeldingen}
+          @deelnames-submitted=${(event: CustomEvent<Deelname[]>) =>
+            this.updateDeelnames(event.detail)}
+        ></rock-project-deelnames>`;
       case undefined:
         return this.renderProjectAanmeldingen();
       default:
         router.navigate(`/${pluralize(this.project.type)}/aanmeldingen`);
     }
+  }
+
+  private navigateToProjecten() {
+    router.navigate(`/${pluralize(this.project.type)}`);
+  }
+
+  private navigateToAanmeldingen() {
+    router.navigate(
+      `/${pluralize(this.project.type)}/${this.project.id}/aanmeldingen/`,
+    );
   }
 
   private renderProjectAanmeldingen() {

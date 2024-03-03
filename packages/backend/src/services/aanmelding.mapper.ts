@@ -4,6 +4,8 @@ import {
   InsertableAanmelding,
   UpdatableAanmelding,
   PatchableAanmelding,
+  Deelname,
+  UpsertableDeelname,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
@@ -27,14 +29,16 @@ import {
 type DBAanmeldingAggregate = db.Aanmelding & {
   deelnemer: DBPersonAggregate | null;
   plaats: db.Plaats | null;
+  deelnames: db.Deelname[];
 };
 
-const includeDeelnemer = Object.freeze({
+const includeAanmeldingFields = Object.freeze({
   deelnemer: Object.freeze({
     include: includePersoonAggregate,
   }),
+  deelnames: true,
   plaats: true,
-});
+} satisfies db.Prisma.AanmeldingInclude);
 
 @Injectable()
 export class AanmeldingMapper {
@@ -43,14 +47,15 @@ export class AanmeldingMapper {
   public async getAll(filter: { projectId: number }): Promise<Aanmelding[]> {
     const aanmeldingen = await this.db.aanmelding.findMany({
       where: filter,
-      include: includeDeelnemer,
+      include: includeAanmeldingFields,
       orderBy: { deelnemer: { volledigeNaam: 'asc' } },
     });
     return aanmeldingen.map(toAanmelding);
   }
 
   public async create(aanmelding: InsertableAanmelding): Promise<Aanmelding> {
-    const { deelnemer, plaats, status, ...aanmeldingData } = aanmelding;
+    const { deelnemer, plaats, status, deelnames, ...aanmeldingData } =
+      aanmelding;
     const {
       verblijfadres,
       domicilieadres,
@@ -121,7 +126,7 @@ export class AanmeldingMapper {
     const dbAanmeldingWithDeelnemer =
       await this.db.aanmelding.findUniqueOrThrow({
         where: { id: dbAanmelding.id },
-        include: includeDeelnemer,
+        include: includeAanmeldingFields,
       });
     return toAanmelding(dbAanmeldingWithDeelnemer);
   }
@@ -167,7 +172,7 @@ export class AanmeldingMapper {
     const dbAanmelding = await this.db.aanmelding.update({
       data: toUpdateAanmeldingData(aanmelding),
       where: { id },
-      include: includeDeelnemer,
+      include: includeAanmeldingFields,
     });
     if (
       aanmelding.overrideDeelnemerFields &&
@@ -185,6 +190,29 @@ export class AanmeldingMapper {
     return toAanmelding(dbAanmelding);
   }
 
+  async updateActiviteitDeelnames({
+    activiteitId,
+    deelnames,
+  }: {
+    projectId: number;
+    activiteitId: number;
+    deelnames: UpsertableDeelname[];
+  }): Promise<void> {
+    await this.db.$transaction(
+      deelnames.map((deelname) => {
+        if (deelname.id) {
+          return this.db.deelname.update({
+            where: { id: deelname.id },
+            data: toDBDeelname(activiteitId, deelname),
+          });
+        } else {
+          return this.db.deelname.create({
+            data: toDBDeelname(activiteitId, deelname),
+          });
+        }
+      }),
+    );
+  }
   public async patch(
     id: number,
     aanmelding: PatchableAanmelding,
@@ -217,7 +245,7 @@ export class AanmeldingMapper {
       where: {
         id,
       },
-      include: includeDeelnemer,
+      include: includeAanmeldingFields,
     });
     return toAanmelding(dbAanmelding);
   }
@@ -248,6 +276,7 @@ function toUpdateAanmeldingData(
     deelnemerId,
     rekeninguittrekselNummer,
     overrideDeelnemerFields,
+    deelnames,
     ...aanmeldingData
   } = aanmelding;
   return {
@@ -259,6 +288,32 @@ function toUpdateAanmeldingData(
     geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? null,
     opmerking: opmerking ?? null,
     plaats: plaats ? { connect: { id: plaats.id } } : { disconnect: true },
+    deelnames: {
+      update: deelnames?.map((deelname) => ({
+        where: { id: deelname.id },
+        data: toDBDeelnameWithoutAanmelding(deelname.activiteitId, deelname),
+      })),
+    },
+  };
+}
+
+function toDBDeelnameWithoutAanmelding(
+  activiteitId: number,
+  deelname: UpsertableDeelname,
+): db.Prisma.DeelnameCreateWithoutAanmeldingInput {
+  return {
+    activiteit: { connect: { id: activiteitId } },
+    effectieveDeelnamePerunage: deelname.effectieveDeelnamePerunage,
+    opmerking: deelname.opmerking,
+  };
+}
+function toDBDeelname(
+  activiteitId: number,
+  deelname: UpsertableDeelname,
+): db.Prisma.DeelnameCreateInput {
+  return {
+    ...toDBDeelnameWithoutAanmelding(activiteitId, deelname),
+    aanmelding: { connect: { id: deelname.aanmeldingId } },
   };
 }
 
@@ -271,6 +326,7 @@ function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
     woonsituatie,
     geslacht,
     status,
+    deelnames,
     ...aanmelding
   } = raw;
   return {
@@ -280,6 +336,17 @@ function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
     woonsituatie: woonsituatieMapper.toSchema(woonsituatie),
     geslacht: geslachtMapper.toSchema(geslacht),
     plaats: plaats ? toPlaats(plaats) : undefined,
+    deelnames: deelnames.map(toDeelname),
     deelnemer: deelnemer ? (toPersoon(deelnemer) as Deelnemer) : undefined,
+  };
+}
+
+function toDeelname(val: db.Deelname): Deelname {
+  return {
+    id: val.id,
+    activiteitId: val.activiteitId,
+    aanmeldingId: val.aanmeldingId,
+    effectieveDeelnamePerunage: val.effectieveDeelnamePerunage,
+    opmerking: val.opmerking ?? undefined,
   };
 }

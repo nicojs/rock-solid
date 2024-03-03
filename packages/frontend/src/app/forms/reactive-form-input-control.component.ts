@@ -36,7 +36,7 @@ export class ReactiveFormInputControl<
 
   override render() {
     return html`
-      <div class="input-group">
+      <div class="input-group has-validation">
         ${this.renderInput(this.control)}${this.control.postfix
           ? html`<span class="input-group-text">${this.control.postfix}</span>`
           : ''}

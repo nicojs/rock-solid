@@ -9,7 +9,6 @@ import { DBService } from './services/db.service.js';
 import { ProjectenController } from './projecten.controller.js';
 import { ProjectMapper } from './services/project.mapper.js';
 import { AanmeldingMapper } from './services/aanmelding.mapper.js';
-import { DeelnameMapper } from './services/deelname.mapper.js';
 import { OrganisatieMapper } from './services/organisatie.mapper.js';
 import { OrganisatiesController } from './organisaties.controller.js';
 import { PlaatsMapper } from './services/plaats.mapper.js';
@@ -31,7 +30,7 @@ const rootPath = fileURLToPath(
   imports: [
     ServeStaticModule.forRoot({
       rootPath,
-      exclude: ['/api*', '/auth*'],
+      exclude: ['/api/(.*)', '/auth/(.*)'],
     }),
     AuthModule,
   ],
@@ -52,7 +51,6 @@ const rootPath = fileURLToPath(
     PlaatsMapper,
     OrganisatieMapper,
     LocatieMapper,
-    DeelnameMapper,
     ReportMapper,
     BackupService,
     { provide: 'DatabaseUrl', useValue: process.env['DATABASE_URL'] },

@@ -99,11 +99,11 @@ describe(PersonenController.name, () => {
 
       // Assert
       const expectedCursusAanmeldingen: AanmeldingOf<Cursus>[] = [
-        { ...cursus1, aantalAanmeldingen: 1, status: 'Bevestigd' },
-        { ...cursus2, aantalAanmeldingen: 2, status: 'Aangemeld' },
+        { ...cursus1, aantalInschrijvingen: 1, status: 'Bevestigd' },
+        { ...cursus2, aantalInschrijvingen: 2, status: 'Aangemeld' },
       ];
       const expectedVakantieAanmeldingen: AanmeldingOf<Vakantie>[] = [
-        { ...vakantie1, aantalAanmeldingen: 0, status: 'Geannuleerd' },
+        { ...vakantie1, aantalInschrijvingen: 0, status: 'Geannuleerd' },
       ];
       expect(actualCursussen.sort(byId)).deep.eq(
         expectedCursusAanmeldingen.sort(byId),

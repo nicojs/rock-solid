@@ -9,6 +9,7 @@ import {
   Cursus,
   CursusActiviteit,
   Plaats,
+  Deelname,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory, byId } from './test-utils.test.js';
@@ -231,16 +232,17 @@ describe(ProjectenController.name, () => {
             metOvernachting: true,
             aantalDeelnames: 0,
             aantalDeelnemersuren: 0,
+            isCompleted: false,
           },
         ],
-        aantalAanmeldingen: 0,
+        aantalInschrijvingen: 0,
         saldo: new Decimal(2000),
         prijs: new Decimal(2000),
       };
       expect(actual).deep.eq(expectedCursus);
     });
 
-    it('should count aantal aanmeldingen with status "bevestigd" or "aangemeld"', async () => {
+    it('should count aantal aanmeldingen with status "bevestigd" or "aangemeld" as inschrijvingen', async () => {
       // Arrange
       const [
         cursus,
@@ -292,7 +294,7 @@ describe(ProjectenController.name, () => {
       const actual = await harness.getProject(cursus.id);
 
       // Assert
-      expect(actual.aantalAanmeldingen).eq(2);
+      expect(actual.aantalInschrijvingen).eq(2);
     });
 
     it('should only count the deelnames with effectieve deelname', async () => {
@@ -373,6 +375,73 @@ describe(ProjectenController.name, () => {
       expect(actual.activiteiten[0]!.totEnMet).deep.eq(
         new Date(Date.UTC(2011, 9, 7, 15, 0, 0)),
       );
+    });
+
+    it('should mark an activiteit as "completed" if all aanmeldingen have deelnames', async () => {
+      // Arrange
+      const [cursus, deelnemer1, deelnemer2, deelnemer3] = await Promise.all([
+        harness.createProject(
+          factory.cursus({
+            activiteiten: [factory.activiteit(), factory.activiteit()],
+          }),
+        ),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      const [aanmelding1, aanmelding2, aanmelding3] = await Promise.all([
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemer1.id,
+        }),
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemer2.id,
+        }),
+        harness.createAanmelding({
+          projectId: cursus.id,
+          deelnemerId: deelnemer3.id,
+        }),
+      ]);
+      await Promise.all([
+        harness.patchAanmelding(cursus.id, {
+          id: aanmelding1.id,
+          status: 'Aangemeld',
+        }),
+        harness.patchAanmelding(cursus.id, {
+          id: aanmelding2.id,
+          status: 'Bevestigd',
+        }),
+        harness.patchAanmelding(cursus.id, {
+          id: aanmelding3.id,
+          status: 'Bevestigd',
+        }),
+      ]);
+      await Promise.all([
+        harness.updateDeelnames(cursus.id, cursus.activiteiten[0]!.id, [
+          { aanmeldingId: aanmelding1.id, effectieveDeelnamePerunage: 1 },
+          { aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 0.1 }, // went home sick
+          { aanmeldingId: aanmelding3.id, effectieveDeelnamePerunage: 0 }, // no-show
+        ]),
+        harness.updateDeelnames(cursus.id, cursus.activiteiten[1]!.id, [
+          { aanmeldingId: aanmelding1.id, effectieveDeelnamePerunage: 0.1 },
+          { aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 0 }, // no deelname
+          // missing deelname 3
+        ]),
+      ]);
+
+      // Act
+      const actual = await harness.getProject(cursus.id);
+
+      // Assert
+      const actualActiviteit1 = actual.activiteiten.find(
+        (ac) => ac.id === cursus.activiteiten[0]!.id,
+      );
+      const actualActiviteit2 = actual.activiteiten.find(
+        (ac) => ac.id === cursus.activiteiten[1]!.id,
+      );
+      expect(actualActiviteit1?.isCompleted).true;
+      expect(actualActiviteit2?.isCompleted).false;
     });
 
     describe('filter', () => {
@@ -545,7 +614,7 @@ describe(ProjectenController.name, () => {
       expect(createdProject).deep.eq({
         id: createdProject.id,
         ...projectData,
-        aantalAanmeldingen: 0,
+        aantalInschrijvingen: 0,
         begeleiders: [],
         jaar: 2011,
         seizoen: 'winter',
@@ -555,6 +624,7 @@ describe(ProjectenController.name, () => {
             id: createdProject.activiteiten[0]!.id,
             aantalDeelnames: 0,
             aantalDeelnemersuren: 0,
+            isCompleted: false,
           },
         ],
       } satisfies Vakantie);
@@ -756,6 +826,134 @@ describe(ProjectenController.name, () => {
       // Assert
       expect(actualProject.activiteiten.sort(byId).at(-1)!.locatie).deep.eq(
         loc,
+      );
+    });
+  });
+
+  describe('GET /projecten/:id/aanmeldingen', () => {
+    let project: Project;
+    let deelnemer1: Deelnemer;
+    let deelnemer2: Deelnemer;
+    let deelnemer3: Deelnemer;
+    let aanmelding1: Aanmelding;
+    let aanmelding2: Aanmelding;
+    let aanmelding3: Aanmelding;
+    let activiteit1: Activiteit;
+    let activiteit2: Activiteit;
+    beforeEach(async () => {
+      // Arrange
+      [project, deelnemer1, deelnemer2, deelnemer3] = await Promise.all([
+        harness.createProject(
+          factory.cursus({
+            activiteiten: [factory.activiteit(), factory.activiteit()],
+          }),
+        ),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      [activiteit1, activiteit2] = project.activiteiten as [
+        Activiteit,
+        Activiteit,
+      ];
+      [aanmelding1, aanmelding2, aanmelding3] = await Promise.all([
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer1.id,
+        }),
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer2.id,
+        }),
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer3.id,
+        }),
+      ]);
+    });
+
+    it('should get all deelnames', async () => {
+      // Arrange
+      await Promise.all([
+        harness.updateDeelnames(project.id, project.activiteiten[0]!.id, [
+          { aanmeldingId: aanmelding1.id, effectieveDeelnamePerunage: 1 },
+          { aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 0.1 },
+          { aanmeldingId: aanmelding3.id, effectieveDeelnamePerunage: 0 },
+        ]),
+        harness.updateDeelnames(project.id, project.activiteiten[1]!.id, [
+          { aanmeldingId: aanmelding1.id, effectieveDeelnamePerunage: 0.2 },
+          { aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 0.1 },
+        ]),
+      ]);
+
+      // Act
+      const actualAanmeldingen = await harness.getAanmeldingen(project.id);
+
+      // Assert
+      expect(actualAanmeldingen).lengthOf(3);
+      const actualAanmelding1 = actualAanmeldingen.find(
+        ({ id }) => id === aanmelding1.id,
+      )!;
+      const actualAanmelding2 = actualAanmeldingen.find(
+        ({ id }) => id === aanmelding2.id,
+      )!;
+      const actualAanmelding3 = actualAanmeldingen.find(
+        ({ id }) => id === aanmelding3.id,
+      )!;
+      const expectedDeelnames1: Deelname[] = [
+        {
+          aanmeldingId: aanmelding1.id,
+          activiteitId: activiteit1.id,
+          effectieveDeelnamePerunage: 1,
+          id: actualAanmelding1.deelnames.find(
+            (deelname) => deelname.activiteitId === activiteit1.id,
+          )!.id,
+        },
+        {
+          aanmeldingId: aanmelding1.id,
+          activiteitId: activiteit2.id,
+          effectieveDeelnamePerunage: 0.2,
+          id: actualAanmelding1.deelnames.find(
+            (deelname) => deelname.activiteitId === activiteit2.id,
+          )!.id,
+        },
+      ];
+      const expectedDeelnames2: Deelname[] = [
+        {
+          aanmeldingId: aanmelding2.id,
+          activiteitId: activiteit1.id,
+          effectieveDeelnamePerunage: 0.1,
+          id: actualAanmelding2.deelnames.find(
+            (deelname) => deelname.activiteitId === activiteit1.id,
+          )!.id,
+        },
+        {
+          aanmeldingId: aanmelding2.id,
+          activiteitId: activiteit2.id,
+          effectieveDeelnamePerunage: 0.1,
+          id: actualAanmelding2.deelnames.find(
+            (deelname) => deelname.activiteitId === activiteit2.id,
+          )!.id,
+        },
+      ];
+      const expectedDeelnames3: Deelname[] = [
+        {
+          aanmeldingId: aanmelding3.id,
+          activiteitId: activiteit1.id,
+          effectieveDeelnamePerunage: 0,
+          id: actualAanmelding3.deelnames.find(
+            (deelname) => deelname.activiteitId === activiteit1.id,
+          )!.id,
+        },
+      ];
+      expect(actualAanmelding1.deelnames.sort(byId)).deep.eq(
+        expectedDeelnames1.sort(byId),
+      );
+      expect(actualAanmelding2.deelnames.sort(byId)).deep.eq(
+        expectedDeelnames2.sort(byId),
+      );
+      expect(actualAanmelding3.deelnames.sort(byId)).deep.eq(
+        expectedDeelnames3.sort(byId),
       );
     });
   });
@@ -1155,7 +1353,7 @@ describe(ProjectenController.name, () => {
 
       // Assert
       const actualProject = await harness.getProject(project.id);
-      expect(actualProject.aantalAanmeldingen).eq(0);
+      expect(actualProject.aantalInschrijvingen).eq(0);
     });
   });
 });

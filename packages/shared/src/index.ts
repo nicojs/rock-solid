@@ -6,7 +6,6 @@ export * from './project.js';
 export * from './serialization.js';
 export * from './util.js';
 export * from './aanmelding.js';
-export * from './deelname.js';
 export * from './paging.js';
 export * from './organisatie.js';
 export * from './adres.js';

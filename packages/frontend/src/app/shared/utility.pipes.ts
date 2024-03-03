@@ -70,6 +70,7 @@ export function pluralize(val: string) {
     case 'plaats':
     case 'activiteit':
     case 'aanmelding':
+    case 'inschrijving':
       return `${val}en`;
     case 'Emailadres':
       return `${val}sen`;

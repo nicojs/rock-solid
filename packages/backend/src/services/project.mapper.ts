@@ -1,6 +1,7 @@
 import {
   AanmeldingOf,
   Activiteit,
+  BaseActiviteit,
   CursusActiviteit,
   Decimal,
   empty,
@@ -43,15 +44,7 @@ const includeAggregate = {
       },
     ],
     include: {
-      _count: {
-        select: {
-          deelnames: {
-            where: {
-              effectieveDeelnamePerunage: { gt: 0 },
-            },
-          },
-        },
-      },
+      deelnames: true,
       locatie: {
         include: {
           adres: includeAdresWithPlaats,
@@ -238,7 +231,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
   const {
     activiteiten,
     begeleiders,
-    aantalAanmeldingen,
+    aantalInschrijvingen: aantalAanmeldingen,
     type,
     prijs,
     saldo,
@@ -287,6 +280,7 @@ function toCreateDBActiviteit(
     verblijf,
     vervoer,
     locatie,
+    isCompleted,
     id,
     ...data
   } = activiteit;
@@ -337,9 +331,7 @@ function determineYear(project: UpsertableProject) {
 }
 
 type DBActiviteitAggregate = db.Activiteit & {
-  _count: {
-    deelnames: number;
-  };
+  deelnames: db.Deelname[];
   locatie: {
     id: number;
     naam: string;
@@ -378,7 +370,7 @@ function toProject({
   const project = purgeNulls({
     type,
     begeleiders: begeleiders.map(toPersoon) as OverigPersoon[],
-    aantalAanmeldingen: _count.aanmeldingen,
+    aantalInschrijvingen: _count.aanmeldingen,
     id: projectProperties.id,
     projectnummer: projectProperties.projectnummer,
     jaar: projectProperties.jaar,
@@ -395,7 +387,9 @@ function toProject({
         ...project,
         type: 'cursus',
         activiteiten:
-          projectProperties.activiteiten?.map(toCursusActiviteit) ?? [],
+          projectProperties.activiteiten?.map((act) =>
+            toCursusActiviteit(act, project.aantalInschrijvingen),
+          ) ?? [],
         organisatieonderdeel: organisatieonderdeelMapper.toSchema(
           projectProperties.organisatieonderdeel!,
         ),
@@ -406,7 +400,9 @@ function toProject({
       return {
         ...project,
         activiteiten:
-          projectProperties.activiteiten?.map(toVakantieActiviteit) ?? [],
+          projectProperties.activiteiten?.map((act) =>
+            toVakantieActiviteit(act, project.aantalInschrijvingen),
+          ) ?? [],
         saldo,
         voorschot,
         prijs,
@@ -437,29 +433,59 @@ function calculatePrijs(
   return prijs;
 }
 
-function toCursusActiviteit({
-  locatie,
-  ...val
-}: DBActiviteitAggregate): CursusActiviteit {
-  const { locatieId, projectId, verblijf, vervoer, _count, ...activiteitData } =
-    purgeNulls(val);
+function toCursusActiviteit(
+  dbActiviteit: DBActiviteitAggregate,
+  aantalInschrijvingen: number,
+): CursusActiviteit {
   return {
-    ...activiteitData,
-    locatie: toCursuslocatie(locatie),
-    aantalDeelnames: _count.deelnames,
-    aantalDeelnemersuren: -1,
+    ...toBaseActiviteit(dbActiviteit, aantalInschrijvingen),
+    locatie: toCursuslocatie(dbActiviteit.locatie),
   };
 }
 
-function toVakantieActiviteit(val: DBActiviteitAggregate): VakantieActiviteit {
-  const { projectId, _count, verblijf, vervoer, ...activiteitData } =
-    purgeNulls(val);
+function toVakantieActiviteit(
+  val: DBActiviteitAggregate,
+  aantalInschrijvingen: number,
+): VakantieActiviteit {
   return {
-    ...activiteitData,
-    verblijf: vakantieVerblijfMapper.toSchema(verblijf),
-    vervoer: vakantieVervoerMapper.toSchema(vervoer),
-    aantalDeelnames: _count.deelnames,
-    aantalDeelnemersuren: -1,
+    ...toBaseActiviteit(val, aantalInschrijvingen),
+    verblijf: vakantieVerblijfMapper.toSchema(val.verblijf),
+    vervoer: vakantieVervoerMapper.toSchema(val.vervoer),
+  };
+}
+
+function toBaseActiviteit(
+  val: DBActiviteitAggregate,
+  aantalInschrijvingen: number,
+): BaseActiviteit {
+  const {
+    id,
+    deelnames,
+    vormingsuren,
+    begeleidingsuren,
+    van,
+    totEnMet,
+    metOvernachting,
+  } = purgeNulls(val);
+  return {
+    id,
+    van,
+    totEnMet,
+    vormingsuren,
+    begeleidingsuren,
+    metOvernachting,
+    aantalDeelnames: deelnames.reduce(
+      (acc, deelname) =>
+        deelname.effectieveDeelnamePerunage > 0 ? acc + 1 : acc,
+      0,
+    ),
+    aantalDeelnemersuren: deelnames.reduce(
+      (acc, deelname) =>
+        deelname.effectieveDeelnamePerunage * (vormingsuren ?? 0) + acc,
+      0,
+    ),
+    isCompleted:
+      aantalInschrijvingen > 0 && deelnames.length === aantalInschrijvingen,
   };
 }
 
