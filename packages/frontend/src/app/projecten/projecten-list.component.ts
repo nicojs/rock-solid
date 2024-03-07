@@ -18,6 +18,7 @@ import {
   notAvailable,
   pluralize,
   showMoney,
+  showNumber,
   toDeelnemersCsv,
 } from '../shared';
 import { projectService } from './project.service';
@@ -126,9 +127,14 @@ export class ProjectenListComponent extends LitElement {
                     </td>
                     <td>
                       ${project.type === 'cursus'
-                        ? project.activiteiten
-                            .map((act) => act.aantalDeelnemersuren)
-                            .reduce<number>((acc, cur) => acc + (cur ?? 0), 0)
+                        ? showNumber(
+                            project.activiteiten
+                              .map((act) => act.aantalDeelnemersuren)
+                              .reduce<number>(
+                                (acc, cur) => acc + (cur ?? 0),
+                                0,
+                              ),
+                          )
                         : notAvailable}
                     </td>`
                 : html`

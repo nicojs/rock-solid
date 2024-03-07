@@ -22,6 +22,15 @@ export const unknown = 'onbekend';
 export const notAvailable = 'n/a';
 export const none = 'geen';
 
+export function showNumber(value: number | undefined) {
+  return (
+    value?.toLocaleString('nl', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }) ?? ''
+  );
+}
+
 export function show<T>(value: T, nullishValue = notAvailable): string {
   if (value === undefined || value === null) {
     return nullishValue;
