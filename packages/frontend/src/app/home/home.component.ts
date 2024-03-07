@@ -8,6 +8,7 @@ import {
   toQueryString,
 } from '@rock-solid/shared';
 import pkg from '../../../package.json';
+import { showNumber } from '../shared';
 
 const keiJongOrganisatieonderdelen: ReadonlyArray<Organisatieonderdeel> =
   Object.freeze(['keiJongBuSO', 'keiJongNietBuSO']);
@@ -22,12 +23,15 @@ export class HomeComponent extends LitElement {
   private deelnemersUrenKeiJongThisYear: number | undefined;
   @state()
   private begeleidingsurenDeKeiThisYear: number | undefined;
+  @state()
+  private vormingsurenDeKeiThisYear: number | undefined;
 
   private year = new Date().getFullYear();
 
   public override firstUpdated(): void {
     this.updateDeelnemersuren();
     this.updateBegeleidingsuren();
+    this.updateVormingsuren();
   }
 
   public override render() {
@@ -60,7 +64,7 @@ export class HomeComponent extends LitElement {
             <div class="card-body">
               <h5 class="card-title">
                 <span class="text-success"
-                  >${this.deelnemersUrenKeiJongThisYear}</span
+                  >${showNumber(this.deelnemersUrenKeiJongThisYear)}</span
                 >
                 deelnemersuren in ${this.year}
               </h5>
@@ -88,11 +92,17 @@ export class HomeComponent extends LitElement {
             <div class="card-body">
               <h5 class="card-title">
                 <span class="text-success"
-                  >${this.begeleidingsurenDeKeiThisYear}</span
+                  >${showNumber(this.vormingsurenDeKeiThisYear)}</span
                 >
-                begeleidingsuren in ${this.year}
+                vormingsuren in ${this.year}
               </h5>
-              <p class="card-text">Begeleidingsuren De Kei in ${this.year}</p>
+              <p class="card-text">
+                En
+                <span class="text-success"
+                  >${showNumber(this.begeleidingsurenDeKeiThisYear)}</span
+                >
+                begeleidingsuren voor De Kei in ${this.year}
+              </p>
               <rock-link
                 href="/cursussen/${toQueryString({
                   type: 'cursus',
@@ -112,7 +122,7 @@ export class HomeComponent extends LitElement {
     </div>`;
   }
 
-  private updateDeelnemersuren() {
+  private updateBegeleidingsuren() {
     reportsClient
       .get(
         'reports/activiteiten/begeleidingsuren',
@@ -133,7 +143,7 @@ export class HomeComponent extends LitElement {
       });
   }
 
-  private updateBegeleidingsuren() {
+  private updateDeelnemersuren() {
     reportsClient
       .get(
         'reports/aanmeldingen/deelnemersuren',
@@ -147,6 +157,27 @@ export class HomeComponent extends LitElement {
         this.deelnemersUrenKeiJongThisYear = report
           .filter((row) =>
             keiJongOrganisatieonderdelen.includes(
+              row.key as Organisatieonderdeel,
+            ),
+          )
+          .reduce((acc, row) => acc + row.total, 0);
+      });
+  }
+
+  private updateVormingsuren() {
+    reportsClient
+      .get(
+        'reports/activiteiten/vormingsuren',
+        'organisatieonderdeel',
+        undefined,
+        {
+          jaar: this.year,
+        },
+      )
+      .then((report) => {
+        this.vormingsurenDeKeiThisYear = report
+          .filter((row) =>
+            deKeiOrganisatieonderdelen.includes(
               row.key as Organisatieonderdeel,
             ),
           )
