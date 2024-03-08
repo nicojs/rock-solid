@@ -99,7 +99,12 @@ describe(PersonenController.name, () => {
 
       // Assert
       const expectedCursusAanmeldingen: AanmeldingOf<Cursus>[] = [
-        { ...cursus1, aantalInschrijvingen: 1, status: 'Bevestigd' },
+        {
+          ...cursus1,
+          activiteiten: [{ ...cursus1.activiteiten[0]!, isCompleted: false }],
+          aantalInschrijvingen: 1,
+          status: 'Bevestigd',
+        },
         { ...cursus2, aantalInschrijvingen: 2, status: 'Aangemeld' },
       ];
       const expectedVakantieAanmeldingen: AanmeldingOf<Vakantie>[] = [

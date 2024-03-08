@@ -35,6 +35,12 @@ export const aanmeldingsstatussen: Options<Aanmeldingsstatus> = {
   OpWachtlijst: 'Op wachtlijst',
 };
 
+export const aanmeldingsstatussenWithoutDeelnames = [
+  'Geannuleerd',
+  'OpWachtlijst',
+  'Aangemeld',
+] as Aanmeldingsstatus[];
+
 export function isAanmeldingsstatus(maybe: string): maybe is Aanmeldingsstatus {
   return maybe in aanmeldingsstatussen;
 }
@@ -44,7 +50,7 @@ export type InsertableAanmelding = Upsertable<
   'deelnemerId' | 'projectId'
 >;
 
-export type UpdatableAanmelding = Upsertable<Aanmelding, 'id'> & {
+export type UpdatableAanmelding = Upsertable<Aanmelding, 'id' | 'status'> & {
   overrideDeelnemerFields?: boolean;
 };
 
