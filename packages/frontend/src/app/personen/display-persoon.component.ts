@@ -85,6 +85,7 @@ export class DisplayPersoonComponent extends RockElement {
           btn
           sm
           btnOutlinePrimary
+          keepQuery
           href="/${routesByPersoonType[this.persoon.type]}/edit/${this.persoon
             .id}"
           ><rock-icon icon="pencil"></rock-icon

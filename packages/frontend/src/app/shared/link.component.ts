@@ -1,11 +1,12 @@
-import { LitElement, css, html } from 'lit';
+import { PropertyValues, css, html } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { router } from '../router';
+import { RockElement } from '../rock-element';
 
 @customElement('rock-link')
-export class Link extends LitElement {
+export class Link extends RockElement {
   static override styles = [
     bootstrap,
     css`
@@ -45,6 +46,29 @@ export class Link extends LitElement {
   @property()
   public href = '';
 
+  @property({ type: Boolean })
+  public keepQuery = false;
+
+  protected override update(changedProperties: PropertyValues<Link>): void {
+    if (this.keepQuery) {
+      this.subscription.add(
+        router.routeChange$.subscribe(() => {
+          this.requestUpdate();
+        }),
+      );
+    }
+    super.update(changedProperties);
+  }
+
+  get url() {
+    const url = new URL(this.href, window.location.href);
+    this.keepQuery &&
+      Object.entries(router.activeRoute.query).forEach(([key, value]) =>
+        url.searchParams.set(key, value),
+      );
+    return url.href;
+  }
+
   override render() {
     return html`
       <a
@@ -59,7 +83,7 @@ export class Link extends LitElement {
           'btn-outline-secondary': this.btnOutlineSecondary,
           'btn-outline-primary': this.btnOutlinePrimary,
         })}"
-        href="${this.href}"
+        href="${this.url}"
         @click="${this.linkClick}"
       >
         <slot></slot>
@@ -69,6 +93,6 @@ export class Link extends LitElement {
 
   linkClick(event: MouseEvent) {
     event.preventDefault();
-    router.navigate(this.href);
+    router.navigate(this.url);
   }
 }

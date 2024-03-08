@@ -54,6 +54,7 @@ const locatieControls: FormControl<Locatie>[] = [
     name: 'naam',
     label: locatieLabels.naam,
     type: InputType.text,
+    validators: { required: true },
   },
   {
     name: 'opmerking',

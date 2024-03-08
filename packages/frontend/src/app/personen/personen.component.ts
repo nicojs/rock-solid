@@ -146,6 +146,7 @@ export class PersonenComponent extends RockElement {
               <rock-link
                 href="/${routesByPersoonType[this.type]}/new"
                 btn
+                keepQuery
                 btnSuccess
                 ><rock-icon icon="personPlus"></rock-icon> ${capitalize(
                   persoonTypes[this.type],
@@ -225,7 +226,7 @@ export class PersonenComponent extends RockElement {
   }
 
   private navigateToPersonenPage() {
-    router.navigate(`/${routesByPersoonType[this.type]}`);
+    router.navigate(`/${routesByPersoonType[this.type]}`, { keepQuery: true });
   }
 }
 

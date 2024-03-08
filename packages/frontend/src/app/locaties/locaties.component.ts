@@ -138,7 +138,7 @@ export class LocatiesComponent extends RockElement {
           </div>
           <div class="row">
             <div class="col">
-              <rock-link href="/locaties/new" btn btnSuccess
+              <rock-link href="/locaties/new" keepQuery btn btnSuccess
                 ><rock-icon icon="journalPlus" size="md"></rock-icon>
                 Locatie</rock-link
               >
@@ -183,7 +183,7 @@ export class LocatiesComponent extends RockElement {
   }
 }
 function navigateToLocatiesPage() {
-  router.navigate('/locaties');
+  router.navigate('/locaties', { keepQuery: true });
 }
 
 const mainSearchControl: InputControl<LocatieFilter> = {

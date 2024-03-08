@@ -73,6 +73,7 @@ export class OrganisatiesListComponent extends LitElement {
                   <rock-link
                     btn
                     sm
+                    keepQuery
                     btnOutlinePrimary
                     href="/organisaties/edit/${org.id}"
                     ><rock-icon icon="pencil"></rock-icon

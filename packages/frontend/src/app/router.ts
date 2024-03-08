@@ -10,7 +10,7 @@ export class RouteParams {
 
   static parse(
     href = `${window.location.pathname}${window.location.search}`,
-    base = `${window.location.protocol}//${window.location.host}`,
+    query?: Query,
   ): RouteParams {
     if (
       !href.startsWith('/') &&
@@ -21,9 +21,17 @@ export class RouteParams {
         `Relative paths are not supported by the rock solid router. Tried to resolve: ${href}`,
       );
     }
-    const { pathname, searchParams } = new URL(href, base);
+    const { pathname, searchParams } = new URL(
+      href,
+      `${window.location.protocol}//${window.location.host}`,
+    );
+    query &&
+      Object.entries(query).forEach(([key, value]) =>
+        searchParams.set(key, value),
+      );
+
     const path = pathname.slice(1).split('/').filter(Boolean);
-    const query: Query = {};
+    query = {};
     searchParams.forEach((val, key) => (query[key] = val));
     return new RouteParams(path, query);
   }
@@ -46,6 +54,9 @@ export class Router {
     RouteParams.parse(),
   );
   public routeChange$ = this.navigatorSubject.asObservable();
+  public get activeRoute() {
+    return this.navigatorSubject.value;
+  }
 
   constructor() {
     fromEvent(window, 'popstate')
@@ -59,8 +70,11 @@ export class Router {
     );
   }
 
-  navigate(path: string) {
-    const route = RouteParams.parse(path);
+  navigate(url: string, { keepQuery = false } = {}) {
+    const route = RouteParams.parse(
+      url,
+      keepQuery ? this.activeRoute.query : undefined,
+    );
     window.history.pushState({}, '', route.href);
     this.navigatorSubject.next(route);
   }
