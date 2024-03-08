@@ -93,88 +93,98 @@ describe(OrganisatiesController.name, () => {
   });
 
   describe('GET /organisaties', () => {
-    let acme: Organisatie;
-    let disney: Organisatie;
-    let nintendo: Organisatie;
-    beforeEach(async () => {
-      const antwerpen = await harness.db.insertPlaats(
-        factory.plaats({
-          postcode: '2000',
-          deelgemeente: 'Antwerpen',
-          provincie: 'Antwerpen',
-        }),
+    // See https://github.com/nicojs/rock-solid/issues/239
+    it('should return organisaties without contacten', async () => {
+      const org = await harness.createOrganisatie(
+        factory.organisatie({ contacten: [] }),
       );
-      const gent = await harness.db.insertPlaats(
-        factory.plaats({
-          postcode: '9000',
-          deelgemeente: 'Gent',
-          provincie: 'West-Vlaanderen',
-        }),
-      );
-      [acme, disney, nintendo] = await Promise.all([
-        harness.createOrganisatie({
-          naam: 'Acme',
-          soorten: [
-            'AmbulanteWoonondersteuning',
-            'BegeleidWerkOfVrijwilligerswerk',
-            'CAW',
-          ],
-          contacten: [
-            factory.organisatieContact({
-              terAttentieVan: 'Hans',
-              adres: {
-                straatnaam: 'AcmeStreet',
-                huisnummer: '1',
-                plaats: antwerpen,
-              },
-              foldervoorkeuren: [
-                { folder: 'deKeiCursussen', communicatie: 'post' },
-              ],
-            }),
-            factory.organisatieContact({
-              terAttentieVan: 'Piet',
-              foldervoorkeuren: [
-                { folder: 'keiJongBuso', communicatie: 'email' },
-              ],
-            }),
-          ],
-        }),
-        harness.createOrganisatie({
-          naam: 'Disney',
-          soorten: ['AmbulanteWoonondersteuning'],
-          contacten: [
-            factory.organisatieContact({
-              terAttentieVan: 'Mickey',
-              foldervoorkeuren: [
-                {
-                  folder: 'deKeiWintervakantie',
-                  communicatie: 'postEnEmail',
-                },
-                {
-                  folder: 'keiJongBuso',
-                  communicatie: 'postEnEmail',
-                },
-              ],
-            }),
-          ],
-        }),
-        harness.createOrganisatie({
-          naam: 'Nintendo',
-          contacten: [
-            factory.organisatieContact({
-              terAttentieVan: 'Miyamoto',
-              adres: {
-                straatnaam: 'NintendoStreet',
-                huisnummer: '1',
-                plaats: gent,
-              },
-            }),
-          ],
-        }),
-      ]);
+      const actual = await harness.getAllOrganisaties({});
+      expect(actual).deep.eq([org]);
     });
 
     describe('filters', () => {
+      let acme: Organisatie;
+      let disney: Organisatie;
+      let nintendo: Organisatie;
+      beforeEach(async () => {
+        const [antwerpen, gent] = await Promise.all([
+          harness.db.insertPlaats(
+            factory.plaats({
+              postcode: '2000',
+              deelgemeente: 'Antwerpen',
+              provincie: 'Antwerpen',
+            }),
+          ),
+          await harness.db.insertPlaats(
+            factory.plaats({
+              postcode: '9000',
+              deelgemeente: 'Gent',
+              provincie: 'West-Vlaanderen',
+            }),
+          ),
+        ]);
+        [acme, disney, nintendo] = await Promise.all([
+          harness.createOrganisatie({
+            naam: 'Acme',
+            soorten: [
+              'AmbulanteWoonondersteuning',
+              'BegeleidWerkOfVrijwilligerswerk',
+              'CAW',
+            ],
+            contacten: [
+              factory.organisatieContact({
+                terAttentieVan: 'Hans',
+                adres: {
+                  straatnaam: 'AcmeStreet',
+                  huisnummer: '1',
+                  plaats: antwerpen,
+                },
+                foldervoorkeuren: [
+                  { folder: 'deKeiCursussen', communicatie: 'post' },
+                ],
+              }),
+              factory.organisatieContact({
+                terAttentieVan: 'Piet',
+                foldervoorkeuren: [
+                  { folder: 'keiJongBuso', communicatie: 'email' },
+                ],
+              }),
+            ],
+          }),
+          harness.createOrganisatie({
+            naam: 'Disney',
+            soorten: ['AmbulanteWoonondersteuning'],
+            contacten: [
+              factory.organisatieContact({
+                terAttentieVan: 'Mickey',
+                foldervoorkeuren: [
+                  {
+                    folder: 'deKeiWintervakantie',
+                    communicatie: 'postEnEmail',
+                  },
+                  {
+                    folder: 'keiJongBuso',
+                    communicatie: 'postEnEmail',
+                  },
+                ],
+              }),
+            ],
+          }),
+          harness.createOrganisatie({
+            naam: 'Nintendo',
+            contacten: [
+              factory.organisatieContact({
+                terAttentieVan: 'Miyamoto',
+                adres: {
+                  straatnaam: 'NintendoStreet',
+                  huisnummer: '1',
+                  plaats: gent,
+                },
+              }),
+            ],
+          }),
+        ]);
+      });
       it('by naam', async () => {
         // Act
         const [acmeOrgs, disneyOrgs] = await Promise.all([

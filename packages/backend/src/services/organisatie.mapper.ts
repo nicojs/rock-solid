@@ -51,15 +51,16 @@ export class OrganisatieMapper {
     filter: OrganisatieFilter,
     pageNumber: number | undefined,
   ): Promise<Organisatie[]> {
+    const q = {
+      where: where(filter),
+      orderBy: { naam: 'asc' },
+      include: includeOrganisatie(filter),
+      ...toPage(pageNumber),
+    } as const;
     const dbOrganisaties: DBOrganisatieAggregate[] =
-      await this.db.organisatie.findMany({
-        where: where(filter),
-        orderBy: { naam: 'asc' },
-        include: includeOrganisatie(filter),
-        ...toPage(pageNumber),
-      });
+      await this.db.organisatie.findMany(q);
 
-    return dbOrganisaties.map(toOrganisatie);
+    return dbOrganisaties.map((org) => toOrganisatie(org));
   }
 
   public async count(filter: OrganisatieFilter): Promise<number> {
@@ -184,21 +185,18 @@ export class OrganisatieMapper {
   }
 }
 
-function where({
-  folders,
-  metAdres,
-  naam,
-  provincie,
-  soorten,
-}: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
-  const where: db.Prisma.OrganisatieWhereInput = {
-    contacten: {
+function where(filter: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
+  const where: db.Prisma.OrganisatieWhereInput = {};
+  const contactenWhereStatements = whereOrganisatieContacten(filter);
+  if (contactenWhereStatements.length) {
+    where.contacten = {
       some: {
-        AND: whereOrganisatieContacten({ folders, metAdres, provincie }),
+        AND: contactenWhereStatements,
       },
-    },
-  };
+    };
+  }
 
+  const { soorten, naam } = filter;
   if (naam) {
     where.naam = {
       contains: naam,
