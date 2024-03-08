@@ -114,7 +114,7 @@ export class ProjectenComponent extends RockElement {
     projectenStore
       .create(project)
       .pipe(
-        handleUniquenessError(
+        handleUniquenessError<Project>(
           (message) => (this.errorMessage = message),
           allProjectLabels,
         ),
@@ -133,7 +133,7 @@ export class ProjectenComponent extends RockElement {
     projectenStore
       .update(project.id, project)
       .pipe(
-        handleUniquenessError(
+        handleUniquenessError<Project>(
           (message) => (this.errorMessage = message),
           allProjectLabels,
         ),
