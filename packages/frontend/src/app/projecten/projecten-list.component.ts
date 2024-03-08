@@ -5,7 +5,6 @@ import {
   notEmpty,
   organisatieonderdelen,
   Project,
-  Query,
   showDatum,
   vakantieSeizoenen,
 } from '@rock-solid/shared';
