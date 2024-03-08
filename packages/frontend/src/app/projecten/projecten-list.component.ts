@@ -154,6 +154,7 @@ export class ProjectenListComponent extends LitElement {
                         title="Open activiteit"
                         btn
                         sm
+                        keepQuery
                         ?btnWarning=${!activiteit.isCompleted}
                         ?btnOutlinePrimary=${activiteit.isCompleted}
                         href="/${pluralize(
@@ -188,6 +189,7 @@ export class ProjectenListComponent extends LitElement {
                   btnOutlinePrimary
                   title="Wijzigen"
                   href="/${pluralize(project.type)}/${project.id}/edit"
+                  keepQuery
                   ><rock-icon icon="pencil"></rock-icon
                 ></rock-link>
                 <rock-link
@@ -195,6 +197,7 @@ export class ProjectenListComponent extends LitElement {
                   sm
                   btnOutlinePrimary
                   title="Aanmeldingen"
+                  keepQuery
                   href="/${pluralize(project.type)}/${project.id}/aanmeldingen"
                 >
                   <rock-icon icon="pencilSquare"></rock-icon>

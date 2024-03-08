@@ -174,6 +174,7 @@ export class ProjectenComponent extends RockElement {
               <rock-link
                 href="/${routesByProjectType[this.type]}/new"
                 btn
+                keepQuery
                 btnSuccess
                 ><rock-icon icon="journalPlus" size="md"></rock-icon>
                 ${capitalize(this.type)}</rock-link
@@ -238,7 +239,7 @@ export class ProjectenComponent extends RockElement {
   }
 
   private navigateToProjectenPage() {
-    router.navigate(`/${routesByProjectType[this.type]}`);
+    router.navigate(`/${routesByProjectType[this.type]}`, { keepQuery: true });
   }
 }
 

@@ -59,6 +59,7 @@ export class LocatieListComponent extends LitElement {
                   <rock-link
                     btn
                     sm
+                    keepQuery
                     btnOutlinePrimary
                     href="/locaties/edit/${loc.id}"
                     ><rock-icon icon="pencil"></rock-icon

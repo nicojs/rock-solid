@@ -84,6 +84,7 @@ export class PersonenComponent extends LitElement {
                   btn
                   btnOutlinePrimary
                   sm
+                  keepQuery
                   href="/${routesByPersoonType[
                     this.type
                   ]}/display/${persoon.id}"
@@ -92,6 +93,7 @@ export class PersonenComponent extends LitElement {
                 <rock-link
                   btn
                   sm
+                  keepQuery
                   btnOutlinePrimary
                   href="/${routesByPersoonType[this.type]}/edit/${persoon.id}"
                   ><rock-icon icon="pencil"></rock-icon

@@ -349,7 +349,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
   }
 
   private navigateToProjecten() {
-    router.navigate(`/${pluralize(this.project.type)}`);
+    router.navigate(`/${pluralize(this.project.type)}`, { keepQuery: true });
   }
 
   private navigateToAanmeldingen() {

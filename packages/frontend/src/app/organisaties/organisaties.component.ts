@@ -154,7 +154,7 @@ export class OrganisatiesComponent extends RockElement {
           </div>
           <div class="row">
             <div class="col">
-              <rock-link href="/organisaties/new" btn btnSuccess
+              <rock-link keepQuery href="/organisaties/new" btn btnSuccess
                 ><rock-icon icon="journalPlus" size="md"></rock-icon>
                 Organisatie</rock-link
               >
@@ -205,7 +205,7 @@ export class OrganisatiesComponent extends RockElement {
   }
 
   private navigateToOrganisatiesPage() {
-    router.navigate('/organisaties');
+    router.navigate('/organisaties', { keepQuery: true });
   }
 }
 
