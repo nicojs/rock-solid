@@ -112,7 +112,7 @@ export class ProjectBrievenVerzendenComponent extends LitElement {
           </tfoot>
         </table>
         <button
-          ${privilege('write:aanmeldingen')}
+          ${privilege('update:aanmeldingen')}
           class="btn btn-primary offset-sm-3"
           type="submit"
         >

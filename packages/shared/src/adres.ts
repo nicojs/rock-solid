@@ -51,5 +51,5 @@ export interface Adres {
 
 export type UpsertableAdres = Upsertable<
   Adres,
-  'plaats' | 'huisnummer' | 'busnummer' | 'straatnaam'
+  'plaats' | 'huisnummer' | 'straatnaam'
 >;

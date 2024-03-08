@@ -24,6 +24,18 @@ describe(ProjectenController.name, () => {
     await harness.clear();
   });
 
+  async function arrangeAanmelding() {
+    const [{ id: projectId }, { id: deelnemerId }] = await Promise.all([
+      harness.createProject(factory.cursus()),
+      harness.createDeelnemer(factory.deelnemer()),
+    ]);
+    const aanmelding = await harness.createAanmelding({
+      projectId,
+      deelnemerId,
+    });
+    return aanmelding;
+  }
+
   describe('auth', () => {
     it('GET /projecten should be allowed for projectverantwoordelijke', async () => {
       harness.login({ role: 'projectverantwoordelijke' });
@@ -73,6 +85,42 @@ describe(ProjectenController.name, () => {
     it('DELETE /projecten/:id should not be allowed for projectverantwoordelijke', async () => {
       harness.login({ role: 'projectverantwoordelijke' });
       await harness.delete('/projecten/1').expect(403);
+    });
+
+    it('POST /projecten/:id/aanmeldingen should be allowed for projectverantwoordelijke', async () => {
+      const [{ id: projectId }, { id: deelnemerId }] = await Promise.all([
+        harness.createProject(factory.cursus()),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.createAanmelding({ projectId, deelnemerId });
+    });
+
+    it('PUT /projecten/:id/aanmeldingen/:id should be allowed for projectverantwoordelijke', async () => {
+      const aanmelding = await arrangeAanmelding();
+      harness.login({ role: 'projectverantwoordelijke' });
+      aanmelding.status = 'Bevestigd';
+      await harness.updateAanmelding(aanmelding);
+    });
+
+    it('PATCH /projecten/:id/aanmeldingen/:id should be allowed for projectverantwoordelijke', async () => {
+      const aanmelding = await arrangeAanmelding();
+      harness.login({ role: 'projectverantwoordelijke' });
+      aanmelding.status = 'Bevestigd';
+      await harness.patchAanmelding(aanmelding.projectId, {
+        id: aanmelding.id,
+        status: 'Bevestigd',
+      });
+    });
+
+    it('DELETE /projecten/:id/aanmeldingen/:id should NOT be allowed for projectverantwoordelijke', async () => {
+      const aanmelding = await arrangeAanmelding();
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness
+        .delete(
+          `/projecten/${aanmelding.projectId}/aanmeldingen/${aanmelding.id}`,
+        )
+        .expect(403);
     });
   });
 
