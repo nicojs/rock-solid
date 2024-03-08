@@ -94,7 +94,7 @@ describe(OrganisatiesController.name, () => {
 
   describe('GET /organisaties', () => {
     // See https://github.com/nicojs/rock-solid/issues/239
-    it.only('should return organisaties without contacten', async () => {
+    it('should return organisaties without contacten', async () => {
       const org = await harness.createOrganisatie(
         factory.organisatie({ contacten: [] }),
       );
