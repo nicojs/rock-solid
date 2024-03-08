@@ -6,6 +6,7 @@ import {
   PatchableAanmelding,
   Deelname,
   UpsertableDeelname,
+  aanmeldingsstatussenWithoutDeelnames,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
@@ -241,6 +242,12 @@ export class AanmeldingMapper {
         woonsituatie: woonsituatieMapper.toDB(woonsituatie),
         geslacht: geslachtMapper.toDB(geslacht),
         plaatsId: plaats?.id,
+        deelnames:
+          status && aanmeldingsstatussenWithoutDeelnames.includes(status)
+            ? {
+                deleteMany: {},
+              }
+            : undefined,
       },
       where: {
         id,
@@ -288,12 +295,19 @@ function toUpdateAanmeldingData(
     geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? null,
     opmerking: opmerking ?? null,
     plaats: plaats ? { connect: { id: plaats.id } } : { disconnect: true },
-    deelnames: {
-      update: deelnames?.map((deelname) => ({
-        where: { id: deelname.id },
-        data: toDBDeelnameWithoutAanmelding(deelname.activiteitId, deelname),
-      })),
-    },
+    deelnames:
+      aanmelding.status &&
+      aanmeldingsstatussenWithoutDeelnames.includes(aanmelding.status)
+        ? { deleteMany: {} }
+        : {
+            update: deelnames?.map((deelname) => ({
+              where: { id: deelname.id },
+              data: toDBDeelnameWithoutAanmelding(
+                deelname.activiteitId,
+                deelname,
+              ),
+            })),
+          },
   };
 }
 

@@ -1,5 +1,6 @@
 import {
   AanmeldingOf,
+  aanmeldingsstatussenWithoutDeelnames,
   Activiteit,
   BaseActiviteit,
   CursusActiviteit,
@@ -83,13 +84,50 @@ export class ProjectMapper {
     filter: ProjectFilter,
     pageNumber: number | undefined,
   ): Promise<Project[]> {
-    const dbProjecten = await this.db.project.findMany({
-      include: includeAggregate,
-      where: where(filter),
-      ...toPage(pageNumber),
-      orderBy: [{ jaar: 'desc' }, { projectnummer: 'desc' }],
-    });
-    const projecten = dbProjecten.map(toProject);
+    const whereStatement = where(filter);
+    const paging = toPage(pageNumber);
+    const orderBy = [
+      { jaar: 'desc' },
+      { projectnummer: 'desc' },
+    ] as const satisfies db.Prisma.ProjectOrderByWithRelationInput[];
+
+    const [dbProjecten, projectenAndBevestigdeAanmeldingen] = await Promise.all(
+      [
+        this.db.project.findMany({
+          include: includeAggregate,
+          where: whereStatement,
+          ...paging,
+          orderBy,
+        }),
+        this.db.project.findMany({
+          where: whereStatement,
+          ...paging,
+          orderBy,
+          include: {
+            _count: {
+              select: {
+                aanmeldingen: {
+                  where: {
+                    status: {
+                      notIn: aanmeldingsstatussenWithoutDeelnames.map(
+                        aanmeldingsstatusMapper.toDB,
+                      ),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }),
+      ],
+    );
+    const projecten = dbProjecten.map((dbProject) =>
+      toProject(
+        dbProject,
+        projectenAndBevestigdeAanmeldingen.find((p) => p.id === dbProject.id)!
+          ._count.aanmeldingen,
+      ),
+    );
     await this.enrichWithDeelnemersuren(
       projecten.flatMap((project) => project.activiteiten),
     );
@@ -147,12 +185,15 @@ export class ProjectMapper {
   }
 
   async getOne(where: { id: number }): Promise<Project | null> {
-    const dbProject = await this.db.project.findUnique({
-      where,
-      include: includeAggregate,
-    });
+    const [dbProject, aantalBevestigdeAanmeldingen] = await Promise.all([
+      this.db.project.findUnique({
+        where,
+        include: includeAggregate,
+      }),
+      this.countBevestigdeAanmeldingen(where.id),
+    ]);
     if (dbProject) {
-      const project = toProject(dbProject);
+      const project = toProject(dbProject, aantalBevestigdeAanmeldingen);
       await this.enrichWithDeelnemersuren(project.activiteiten);
       return project;
     }
@@ -174,7 +215,10 @@ export class ProjectMapper {
         include: includeAggregate,
       }),
     );
-    const project = toProject(dbProject);
+    const project = toProject(
+      dbProject,
+      await this.countBevestigdeAanmeldingen(dbProject.id),
+    );
     await this.enrichWithDeelnemersuren(project.activiteiten);
     return project;
   }
@@ -185,40 +229,56 @@ export class ProjectMapper {
   ): Promise<Project> {
     const begeleiderIds =
       projectUpdates.begeleiders?.map(({ id }) => ({ id })) ?? [];
-    const result = await handleKnownPrismaErrors(
-      this.db.project.update({
-        where: { id },
-        data: {
-          ...toDBProject(projectUpdates),
-          activiteiten: {
-            deleteMany: {
-              projectId: id,
-              id: {
-                notIn: projectUpdates.activiteiten
-                  .map(({ id }) => id)
-                  .filter(notEmpty),
-              },
-            },
-            create: projectUpdates.activiteiten
-              .filter((act) => empty(act.id))
-              .map(toCreateDBActiviteit),
-            updateMany: projectUpdates.activiteiten
-              .filter((act) => notEmpty(act.id))
-              .map((act) => ({
-                where: {
-                  id: act.id!,
+    const [result, aantalBevestigdeAanmeldingen] = await Promise.all([
+      handleKnownPrismaErrors(
+        this.db.project.update({
+          where: { id },
+          data: {
+            ...toDBProject(projectUpdates),
+            activiteiten: {
+              deleteMany: {
+                projectId: id,
+                id: {
+                  notIn: projectUpdates.activiteiten
+                    .map(({ id }) => id)
+                    .filter(notEmpty),
                 },
-                data: toUpdateManyDBActiviteit(act),
-              })),
+              },
+              create: projectUpdates.activiteiten
+                .filter((act) => empty(act.id))
+                .map(toCreateDBActiviteit),
+              updateMany: projectUpdates.activiteiten
+                .filter((act) => notEmpty(act.id))
+                .map((act) => ({
+                  where: {
+                    id: act.id!,
+                  },
+                  data: toUpdateManyDBActiviteit(act),
+                })),
+            },
+            begeleiders: { set: begeleiderIds },
           },
-          begeleiders: { set: begeleiderIds },
-        },
-        include: includeAggregate,
-      }),
-    );
-    const project = toProject(result);
+          include: includeAggregate,
+        }),
+      ),
+      this.countBevestigdeAanmeldingen(id),
+    ]);
+    const project = toProject(result, aantalBevestigdeAanmeldingen);
     await this.enrichWithDeelnemersuren(project.activiteiten);
     return project;
+  }
+
+  private async countBevestigdeAanmeldingen(projectId: number) {
+    return await this.db.aanmelding.count({
+      where: {
+        projectId: projectId,
+        status: {
+          notIn: aanmeldingsstatussenWithoutDeelnames.map(
+            aanmeldingsstatusMapper.toDB,
+          ),
+        },
+      },
+    });
   }
 
   async delete(id: number) {
@@ -350,23 +410,27 @@ interface DBProjectAggregate extends db.Project {
 
 function toProjectAanmelding(
   projectWithAanmelding: DBProjectAggregate & { aanmeldingen: db.Aanmelding[] },
+  aantalBevestigdeAanmeldingen: number,
 ): AanmeldingOf<Project> {
   return {
-    ...toProject(projectWithAanmelding),
+    ...toProject(projectWithAanmelding, aantalBevestigdeAanmeldingen),
     status: aanmeldingsstatusMapper.toSchema(
       projectWithAanmelding.aanmeldingen[0]!.status,
     ),
   };
 }
 
-function toProject({
-  type,
-  begeleiders,
-  _count,
-  bestemming,
-  land,
-  ...projectProperties
-}: DBProjectAggregate): Project {
+function toProject(
+  {
+    type,
+    begeleiders,
+    _count,
+    bestemming,
+    land,
+    ...projectProperties
+  }: DBProjectAggregate,
+  aantalBevestigdeAanmeldingen: number,
+): Project {
   const project = purgeNulls({
     type,
     begeleiders: begeleiders.map(toPersoon) as OverigPersoon[],
@@ -388,7 +452,7 @@ function toProject({
         type: 'cursus',
         activiteiten:
           projectProperties.activiteiten?.map((act) =>
-            toCursusActiviteit(act, project.aantalInschrijvingen),
+            toCursusActiviteit(act, aantalBevestigdeAanmeldingen),
           ) ?? [],
         organisatieonderdeel: organisatieonderdeelMapper.toSchema(
           projectProperties.organisatieonderdeel!,
@@ -401,7 +465,7 @@ function toProject({
         ...project,
         activiteiten:
           projectProperties.activiteiten?.map((act) =>
-            toVakantieActiviteit(act, project.aantalInschrijvingen),
+            toVakantieActiviteit(act, aantalBevestigdeAanmeldingen),
           ) ?? [],
         saldo,
         voorschot,
@@ -435,20 +499,20 @@ function calculatePrijs(
 
 function toCursusActiviteit(
   dbActiviteit: DBActiviteitAggregate,
-  aantalInschrijvingen: number,
+  aantalBevestigdeAanmeldingen: number,
 ): CursusActiviteit {
   return {
-    ...toBaseActiviteit(dbActiviteit, aantalInschrijvingen),
+    ...toBaseActiviteit(dbActiviteit, aantalBevestigdeAanmeldingen),
     locatie: toCursuslocatie(dbActiviteit.locatie),
   };
 }
 
 function toVakantieActiviteit(
   val: DBActiviteitAggregate,
-  aantalInschrijvingen: number,
+  aantalBevestigdeAanmeldingen: number,
 ): VakantieActiviteit {
   return {
-    ...toBaseActiviteit(val, aantalInschrijvingen),
+    ...toBaseActiviteit(val, aantalBevestigdeAanmeldingen),
     verblijf: vakantieVerblijfMapper.toSchema(val.verblijf),
     vervoer: vakantieVervoerMapper.toSchema(val.vervoer),
   };
@@ -456,7 +520,7 @@ function toVakantieActiviteit(
 
 function toBaseActiviteit(
   val: DBActiviteitAggregate,
-  aantalInschrijvingen: number,
+  aantalBevestigdeAanmeldingen: number,
 ): BaseActiviteit {
   const {
     id,
@@ -485,7 +549,9 @@ function toBaseActiviteit(
       0,
     ),
     isCompleted:
-      aantalInschrijvingen > 0 && deelnames.length === aantalInschrijvingen,
+      (aantalBevestigdeAanmeldingen > 0 &&
+        deelnames.length === aantalBevestigdeAanmeldingen) ||
+      (aantalBevestigdeAanmeldingen === 0 && totEnMet < new Date()),
   };
 }
 

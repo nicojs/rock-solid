@@ -280,7 +280,7 @@ describe(ProjectenController.name, () => {
             metOvernachting: true,
             aantalDeelnames: 0,
             aantalDeelnemersuren: 0,
-            isCompleted: false,
+            isCompleted: true,
           },
         ],
         aantalInschrijvingen: 0,
@@ -454,7 +454,7 @@ describe(ProjectenController.name, () => {
       await Promise.all([
         harness.patchAanmelding(cursus.id, {
           id: aanmelding1.id,
-          status: 'Aangemeld',
+          status: 'Bevestigd',
         }),
         harness.patchAanmelding(cursus.id, {
           id: aanmelding2.id,
@@ -477,6 +477,43 @@ describe(ProjectenController.name, () => {
           // missing deelname 3
         ]),
       ]);
+
+      // Act
+      const actual = await harness.getProject(cursus.id);
+
+      // Assert
+      const actualActiviteit1 = actual.activiteiten.find(
+        (ac) => ac.id === cursus.activiteiten[0]!.id,
+      );
+      const actualActiviteit2 = actual.activiteiten.find(
+        (ac) => ac.id === cursus.activiteiten[1]!.id,
+      );
+      expect(actualActiviteit1?.isCompleted).true;
+      expect(actualActiviteit2?.isCompleted).false;
+    });
+
+    it('should mark an activiteit as "completed" it is in the past without aanmeldingen', async () => {
+      // Arrange
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const yesterday = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() - 1,
+      );
+      const tomorrow = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1,
+      );
+      const cursus = await harness.createProject(
+        factory.cursus({
+          activiteiten: [
+            factory.activiteit({ van: yesterday, totEnMet: today }),
+            factory.activiteit({ van: today, totEnMet: tomorrow }),
+          ],
+        }),
+      );
 
       // Act
       const actual = await harness.getProject(cursus.id);
@@ -672,7 +709,7 @@ describe(ProjectenController.name, () => {
             id: createdProject.activiteiten[0]!.id,
             aantalDeelnames: 0,
             aantalDeelnemersuren: 0,
-            isCompleted: false,
+            isCompleted: true,
           },
         ],
       } satisfies Vakantie);
@@ -1139,6 +1176,68 @@ describe(ProjectenController.name, () => {
       expect(actualAanmelding.geslacht).eq('x');
       expect(actualAanmelding.opmerking).eq('Foo');
     });
+
+    it('should also delete existing deelnames when the status is not "Bevestigd"', async () => {
+      // Arrange
+      const [deelnemer3, deelnemer4, deelnemer5] = await Promise.all([
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+        harness.createDeelnemer(factory.deelnemer()),
+      ]);
+      const [aanmelding3, aanmelding4, aanmelding5] = await Promise.all([
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer3.id,
+        }),
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer4.id,
+        }),
+        harness.createAanmelding({
+          projectId: project.id,
+          deelnemerId: deelnemer5.id,
+        }),
+      ]);
+      await harness.updateDeelnames(project.id, project.activiteiten[0]!.id, [
+        { aanmeldingId: aanmelding1.id, effectieveDeelnamePerunage: 1 },
+        { aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 0 },
+        { aanmeldingId: aanmelding3.id, effectieveDeelnamePerunage: 0 },
+        { aanmeldingId: aanmelding4.id, effectieveDeelnamePerunage: 1 },
+        { aanmeldingId: aanmelding5.id, effectieveDeelnamePerunage: 1 },
+      ]);
+
+      // Act
+      const [bevestigd, aangemeld, geannuleerd, wachtlijst, und] =
+        await Promise.all([
+          harness.patchAanmelding(project.id, {
+            id: aanmelding1.id,
+            status: 'Bevestigd',
+          }),
+          harness.patchAanmelding(project.id, {
+            id: aanmelding2.id,
+            status: 'Aangemeld',
+          }),
+          harness.patchAanmelding(project.id, {
+            id: aanmelding3.id,
+            status: 'Geannuleerd',
+          }),
+          harness.patchAanmelding(project.id, {
+            id: aanmelding4.id,
+            status: 'OpWachtlijst',
+          }),
+          harness.patchAanmelding(project.id, {
+            id: aanmelding5.id,
+            status: undefined,
+          }),
+        ]);
+
+      // Assert
+      expect(bevestigd.deelnames).length(1);
+      expect(aangemeld.deelnames).length(0);
+      expect(geannuleerd.deelnames).length(0);
+      expect(wachtlijst.deelnames).length(0);
+      expect(und.deelnames).length(1);
+    });
   });
 
   describe('PUT /projecten/:id/aanmeldingen/:id', () => {
@@ -1311,6 +1410,58 @@ describe(ProjectenController.name, () => {
 
       // Assert
       await harness.get(`/personen/${deelnemer.id}`).expect(404);
+    });
+
+    it('should also delete existing deelnames when the status is not "Bevestigd"', async () => {
+      // Arrange
+      const [deelnemer1, deelnemer2, deelnemer3, deelnemer4] =
+        await Promise.all([
+          harness.createDeelnemer(factory.deelnemer()),
+          harness.createDeelnemer(factory.deelnemer()),
+          harness.createDeelnemer(factory.deelnemer()),
+          harness.createDeelnemer(factory.deelnemer()),
+        ]);
+      const [aanmelding1, aanmelding2, aanmelding3, aanmelding4] =
+        await Promise.all([
+          harness.createAanmelding({
+            projectId: project.id,
+            deelnemerId: deelnemer1.id,
+          }),
+          harness.createAanmelding({
+            projectId: project.id,
+            deelnemerId: deelnemer2.id,
+          }),
+          harness.createAanmelding({
+            projectId: project.id,
+            deelnemerId: deelnemer3.id,
+          }),
+          harness.createAanmelding({
+            projectId: project.id,
+            deelnemerId: deelnemer4.id,
+          }),
+        ]);
+      await harness.updateDeelnames(project.id, project.activiteiten[0]!.id, [
+        { aanmeldingId: aanmelding1.id, effectieveDeelnamePerunage: 1 },
+        { aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 0 },
+        { aanmeldingId: aanmelding3.id, effectieveDeelnamePerunage: 0 },
+        { aanmeldingId: aanmelding4.id, effectieveDeelnamePerunage: 1 },
+      ]);
+
+      // Act
+      const [bevestigd, aangemeld, geannuleerd, wachtlijst] = await Promise.all(
+        [
+          harness.updateAanmelding({ ...aanmelding1, status: 'Bevestigd' }),
+          harness.updateAanmelding({ ...aanmelding2, status: 'Aangemeld' }),
+          harness.updateAanmelding({ ...aanmelding3, status: 'Geannuleerd' }),
+          harness.updateAanmelding({ ...aanmelding4, status: 'OpWachtlijst' }),
+        ],
+      );
+
+      // Assert
+      expect(bevestigd.deelnames).length(1);
+      expect(aangemeld.deelnames).length(0);
+      expect(geannuleerd.deelnames).length(0);
+      expect(wachtlijst.deelnames).length(0);
     });
   });
 

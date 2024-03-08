@@ -8,6 +8,7 @@ import {
   Persoon,
   Project,
   aanmeldingLabels,
+  aanmeldingsstatussenWithoutDeelnames,
   calculateAge,
   fotoToestemmingLabels,
   showDatum,
@@ -37,6 +38,7 @@ import {
   toAanmeldingenCsv,
   capitalize,
   unknown,
+  entities,
 } from '../shared';
 import { router } from '../router';
 import { privilege } from '../auth/privilege.directive';
@@ -136,6 +138,30 @@ export class ProjectAanmeldingenComponent extends LitElement {
   }
 
   private async patchStatus(aanmelding: Aanmelding, status: Aanmeldingsstatus) {
+    const deelnameCount = aanmelding.deelnames.reduce(
+      (acc, d) => acc + (d.effectieveDeelnamePerunage > 0 ? 1 : 0),
+      0,
+    );
+    if (
+      aanmeldingsstatussenWithoutDeelnames.includes(status) &&
+      deelnameCount > 0
+    ) {
+      const confirmed = await ModalComponent.instance.confirm(
+        html`Weet je zeker dat je de
+          aanmelding${aanmelding.deelnemer
+            ? html` van <strong>${fullName(aanmelding.deelnemer)}</strong>`
+            : nothing}
+          wilt
+          ${status === 'Geannuleerd'
+            ? 'annuleren'
+            : 'verplaatsen naar de wachtrij'}?
+          Je verwijdert ook
+          <strong>${entities(deelnameCount, 'deelname')}</strong>`,
+      );
+      if (!confirmed) {
+        return;
+      }
+    }
     projectService
       .patchAanmelding(this.project.id, aanmelding.id, { status })
       .then((aanmelding) => {
