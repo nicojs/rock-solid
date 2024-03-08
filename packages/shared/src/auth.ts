@@ -17,7 +17,9 @@ export type Privilege =
   | 'update:projecten'
   | 'delete:projecten'
   | 'write:organisaties'
-  | 'write:aanmeldingen'
+  | 'create:aanmeldingen'
+  | 'update:aanmeldingen'
+  | 'delete:aanmeldingen'
   | 'write:deelnames'
   | 'create:personen'
   | 'update:personen'
@@ -47,7 +49,9 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'update:projecten',
     'delete:projecten',
     'write:organisaties',
-    'write:aanmeldingen',
+    'create:aanmeldingen',
+    'update:aanmeldingen',
+    'delete:aanmeldingen',
     'write:deelnames',
     'create:personen',
     'update:personen',
@@ -62,7 +66,8 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'update:locaties',
     'update:personen',
     'write:deelnames',
-    'write:aanmeldingen',
+    'create:aanmeldingen',
+    'update:aanmeldingen',
   ],
-  financieelBeheerder: ['read', 'write:aanmeldingen'],
+  financieelBeheerder: ['read', 'update:aanmeldingen'],
 };

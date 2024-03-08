@@ -415,7 +415,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       <button
                         title="Naar aangemeld"
                         class="btn btn-outline-warning btn-sm me-2"
-                        ${privilege('write:aanmeldingen')}
+                        ${privilege('update:aanmeldingen')}
                         type="button"
                         @click=${() =>
                           this.patchStatus(aanmelding, 'Aangemeld')}
@@ -549,7 +549,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       ${aanmelding.status === 'Aangemeld'
                         ? html`<button
                             title="Bevestigen"
-                            ${privilege('write:aanmeldingen')}
+                            ${privilege('update:aanmeldingen')}
                             class="btn btn-outline-success btn-sm"
                             type="button"
                             @click=${() =>
@@ -559,7 +559,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           </button>`
                         : html`<button
                             title="Terug naar aangemeld"
-                            ${privilege('write:aanmeldingen')}
+                            ${privilege('update:aanmeldingen')}
                             class="btn btn-success btn-sm"
                             type="button"
                             @click=${() =>
@@ -569,7 +569,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           </button>`}
                       <button
                         title="Naar wachtlijst"
-                        ${privilege('write:aanmeldingen')}
+                        ${privilege('update:aanmeldingen')}
                         class="btn btn-outline-warning btn-sm"
                         type="button"
                         @click=${() =>
@@ -579,7 +579,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       </button>
                       <button
                         title="Naar geannuleerd"
-                        ${privilege('write:aanmeldingen')}
+                        ${privilege('update:aanmeldingen')}
                         class="btn btn-outline-warning btn-sm"
                         type="button"
                         @click=${() =>
@@ -626,7 +626,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
         title="Aanmelding verwijderen"
         class="btn btn-outline-danger btn-sm ${floatEnd ? 'float-end' : ''}"
         type="button"
-        ${privilege('write:aanmeldingen')}
+        ${privilege('delete:aanmeldingen')}
         @click=${() => this.deleteAanmelding(aanmelding)}
       >
         <rock-icon icon="trash"></rock-icon></button
@@ -657,7 +657,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           ? 'outline-'
           : ''}success btn-sm"
         type="button"
-        ${privilege('write:aanmeldingen')}
+        ${privilege('update:aanmeldingen')}
         @click=${() => this.patchStatussen(aanmeldingen, toState)}
       >
         <rock-icon icon="checkCircle"></rock-icon></button
@@ -679,7 +679,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
       <div class="col">
         <div class="form-floating flex-grow-1">
           <input
-            ${privilege('write:aanmeldingen')}
+            ${privilege('create:aanmeldingen')}
             type="text"
             class="form-control"
             id="searchPersoonInput"

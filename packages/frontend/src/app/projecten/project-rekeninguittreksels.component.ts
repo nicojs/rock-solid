@@ -55,7 +55,7 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
             ></rock-reactive-form-control>`,
         )}
         <button
-          ${privilege('write:aanmeldingen')}
+          ${privilege('update:aanmeldingen')}
           class="btn btn-primary offset-sm-2"
           type="submit"
         >

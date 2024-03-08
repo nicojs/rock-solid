@@ -103,7 +103,7 @@ export class ProjectenController {
   }
 
   @Post(':id/aanmeldingen')
-  @Privileges('write:aanmeldingen')
+  @Privileges('create:aanmeldingen')
   @HttpCode(HttpStatus.CREATED)
   async createAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
@@ -114,7 +114,7 @@ export class ProjectenController {
   }
 
   @Patch(':id/aanmeldingen')
-  @Privileges('write:aanmeldingen')
+  @Privileges('update:aanmeldingen')
   async partialUpdateAanmeldingen(
     @Param('id', ParseIntPipe) projectId: number,
     @Body() aanmeldingen: PatchableAanmelding[],
@@ -124,7 +124,7 @@ export class ProjectenController {
   }
 
   @Put(':id/aanmeldingen/:aanmeldingId')
-  @Privileges('write:aanmeldingen')
+  @Privileges('update:aanmeldingen')
   async updateAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
     @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
@@ -135,7 +135,7 @@ export class ProjectenController {
   }
 
   @Patch(':id/aanmeldingen/:aanmeldingId')
-  @Privileges('write:aanmeldingen')
+  @Privileges('update:aanmeldingen')
   async partialUpdateAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
     @Param('aanmeldingId', ParseIntPipe) aanmeldingId: number,
@@ -146,7 +146,7 @@ export class ProjectenController {
   }
 
   @Delete(':id/aanmeldingen/:aanmeldingId')
-  @Privileges('write:aanmeldingen')
+  @Privileges('delete:aanmeldingen')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAanmelding(
     @Param('id', ParseIntPipe) projectId: number,
