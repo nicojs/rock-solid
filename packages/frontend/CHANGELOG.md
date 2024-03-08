@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/nicojs/rock-solid/compare/v1.6.0...v1.7.0) (2024-03-08)
+
+### Bug Fixes
+
+- **deelnames:** verwijder deelnames bij annuleren of naar wachtrij ([#237](https://github.com/nicojs/rock-solid/issues/237)) ([b29f956](https://github.com/nicojs/rock-solid/commit/b29f95633d2f4cd7636d2d1861b021dd06f3b2b3))
+- **deelnemersuren:** formaat met 2 cijfers achter de komma ([#232](https://github.com/nicojs/rock-solid/issues/232)) ([11dcecd](https://github.com/nicojs/rock-solid/commit/11dcecdf124faddfb5589b9073868844eda54479))
+
+### Features
+
+- **aanmeldingen:** aanmelding verwijderen verboden maken voor projectverantwoordelijken ([#235](https://github.com/nicojs/rock-solid/issues/235)) ([bdbde8f](https://github.com/nicojs/rock-solid/commit/bdbde8f52bc9527851be96422d5f2d6ca0e6610e))
+- **opslaan:** zoek filter onthouden na opslaan. ([#238](https://github.com/nicojs/rock-solid/issues/238)) ([93fff6a](https://github.com/nicojs/rock-solid/commit/93fff6a17387349748ec26b72f94686a3d78cfce))
+- **vormingsuren:** rapporteer vormingsuren op de home page voor De Kei ([#233](https://github.com/nicojs/rock-solid/issues/233)) ([a45beb3](https://github.com/nicojs/rock-solid/commit/a45beb3a3f22e4869c4cc58fa83b908ed5b05470))
+
 # [1.6.0](https://github.com/nicojs/rock-solid/compare/v1.5.0...v1.6.0) (2024-03-03)
 
 ### Features

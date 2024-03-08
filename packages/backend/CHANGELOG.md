@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/nicojs/rock-solid/compare/v1.6.0...v1.7.0) (2024-03-08)
+
+### Bug Fixes
+
+- **deelnames:** verwijder deelnames bij annuleren of naar wachtrij ([#237](https://github.com/nicojs/rock-solid/issues/237)) ([b29f956](https://github.com/nicojs/rock-solid/commit/b29f95633d2f4cd7636d2d1861b021dd06f3b2b3))
+
+### Features
+
+- **aanmeldingen:** aanmelding verwijderen verboden maken voor projectverantwoordelijken ([#235](https://github.com/nicojs/rock-solid/issues/235)) ([bdbde8f](https://github.com/nicojs/rock-solid/commit/bdbde8f52bc9527851be96422d5f2d6ca0e6610e))
+
 # [1.6.0](https://github.com/nicojs/rock-solid/compare/v1.5.0...v1.6.0) (2024-03-03)
 
 ### Features
