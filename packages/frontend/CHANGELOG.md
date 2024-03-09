@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.1](https://github.com/nicojs/rock-solid/compare/v1.7.0...v1.7.1) (2024-03-09)
+
+### Features
+
+- **deelnamen:** voeg een 'new' indicator toe bij nieuwe deenamen ([#241](https://github.com/nicojs/rock-solid/issues/241)) ([e6e1b31](https://github.com/nicojs/rock-solid/commit/e6e1b3113de958252df455a288d52d240dd95537))
+
 # [1.7.0](https://github.com/nicojs/rock-solid/compare/v1.6.0...v1.7.0) (2024-03-08)
 
 ### Bug Fixes
