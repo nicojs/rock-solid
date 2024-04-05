@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.2](https://github.com/nicojs/rock-solid/compare/v1.7.1...v1.7.2) (2024-04-05)
+
+### Bug Fixes
+
+- **project:** maak begeleidingsuren onafhankelijk van vormingsuren ([#244](https://github.com/nicojs/rock-solid/issues/244)) ([f8c4cfe](https://github.com/nicojs/rock-solid/commit/f8c4cfee185c26898d92878df3f20ae551f75613))
+
 ## [1.7.1](https://github.com/nicojs/rock-solid/compare/v1.7.0...v1.7.1) (2024-03-09)
 
 ### Features
