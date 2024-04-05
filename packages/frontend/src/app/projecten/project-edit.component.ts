@@ -16,7 +16,6 @@ import {
   OverigPersoonSelectie,
   cursusLabels,
   Privilege,
-  Decimal,
   activiteitLabels,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
@@ -119,27 +118,6 @@ const baseActiviteitenControls: FormControl<BaseActiviteit>[] = [
   {
     name: 'vormingsuren',
     type: InputType.number,
-    validators: {
-      custom(value, entity) {
-        if (value instanceof Decimal) {
-          throw new Error(
-            'Value for "begeleidingsuren" should be a number, was a Decimal',
-          );
-        }
-        if (value === undefined && entity.begeleidingsuren !== undefined) {
-          return 'Vormingsuren zijn verplicht als er ook begeleidingsuren zijn.';
-        }
-        if (
-          value !== undefined &&
-          entity.begeleidingsuren !== undefined &&
-          value > entity.begeleidingsuren
-        ) {
-          return `Vul een waarde in die lager of gelijk zijn aan de begeleidingsuren (${entity.begeleidingsuren}).`;
-        }
-        return '';
-      },
-    },
-    dependsOn: ['begeleidingsuren'],
   },
   {
     name: 'begeleidingsuren',
