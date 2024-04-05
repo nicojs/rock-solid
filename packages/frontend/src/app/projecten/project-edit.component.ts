@@ -16,7 +16,6 @@ import {
   OverigPersoonSelectie,
   cursusLabels,
   Privilege,
-  Decimal,
   activiteitLabels,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
