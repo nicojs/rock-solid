@@ -28,6 +28,7 @@
     "test:mutation:incremental": "npm run test:mutation -- -- --incremental",
     "import:az2csv": "tasks/import-az2csv.sh",
     "import:csv2json": "node tasks/import-csv2json.mjs",
+    "release": "GH_TOKEN=$(gh auth token) lerna version",
     "deploy:prepare": "tasks/prepare-deploy.sh",
     "deploy:acc:az": "az webapp deployment source config-zip --resource-group acc-rock-solid --name acc-rock-solid-web-app --src .deploy/deploy.zip",
     "deploy:acc:prepare": "npm run clean && npm run import:az2csv && npm run build:src && npm run deploy:prepare",
