@@ -346,7 +346,7 @@ class IntegrationTestingHarness {
         [PAGE_QUERY_STRING_NAME]: page,
       })}`,
     ).expect(200);
-    return [response.body, +response.get(TOTAL_COUNT_HEADER)];
+    return [response.body, +response.get(TOTAL_COUNT_HEADER)!];
   }
 
   public async getLocatie(id: number): Promise<Locatie> {
