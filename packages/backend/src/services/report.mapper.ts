@@ -75,7 +75,6 @@ export class ReportMapper {
       secondGroupField ? `, ${fieldName(secondGroupField)} DESC` : ''
     }
     `;
-    console.log(query);
     return this.execReportQuery(query, groupField, secondGroupField);
   }
 
