@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.1](https://github.com/nicojs/rock-solid/compare/v1.8.0...v1.8.1) (2024-06-01)
+
+### Bug Fixes
+
+- **deps:** include reflect-metadata in final package ([#248](https://github.com/nicojs/rock-solid/issues/248)) ([617daf2](https://github.com/nicojs/rock-solid/commit/617daf25dfcb728cf2751414cc418a4bb7924b3c))
+
 # [1.8.0](https://github.com/nicojs/rock-solid/compare/v1.7.2...v1.8.0) (2024-06-01)
 
 ### Features
