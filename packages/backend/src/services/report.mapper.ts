@@ -126,10 +126,11 @@ function reportTypeJoin(reportType: AanmeldingReportType): string {
       return 'INNER JOIN deelname ON deelname.aanmeldingId = Aanmelding.id AND deelname.effectieveDeelnamePerunage > 0';
     case 'aanmeldingen':
       return '';
+    case 'deelnemersurenPrognose':
     case 'deelnemersuren':
       return `
-      INNER JOIN deelname ON deelname.aanmeldingId = Aanmelding.id AND deelname.effectieveDeelnamePerunage > 0
-      INNER JOIN activiteit ON activiteit.id = deelname.activiteitId
+      INNER JOIN activiteit ON activiteit.projectId = project.id
+      ${reportType === 'deelnemersurenPrognose' ? 'LEFT' : 'INNER'} JOIN deelname ON deelname.aanmeldingId = aanmelding.id AND deelname.activiteitId = activiteit.id 
       `;
   }
 }
@@ -190,6 +191,12 @@ function aanmeldingReportAggregator(reportType: AanmeldingReportType): string {
       return 'COUNT(Aanmelding.id)';
     case 'deelnemersuren':
       return 'SUM(deelname.effectieveDeelnamePerunage * activiteit.vormingsuren)';
+    case 'deelnemersurenPrognose':
+      return `SUM(CASE WHEN deelname.id IS NULL THEN (CASE WHEN Aanmelding.status IN (${aanmeldingsstatusMapper.toDB(
+        'Aangemeld',
+      )}, ${aanmeldingsstatusMapper.toDB(
+        'Bevestigd',
+      )}) THEN activiteit.vormingsuren ELSE 0 END) ELSE deelname.effectieveDeelnamePerunage * activiteit.vormingsuren END)`;
   }
 }
 function activiteitReportAggregator(reportType: ActiviteitReportType): string {

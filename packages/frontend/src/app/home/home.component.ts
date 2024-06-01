@@ -3,6 +3,8 @@ import { customElement, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { reportsClient } from '../rapportages/reports-client';
 import {
+  AanmeldingReportType,
+  ActiviteitReportType,
   Organisatieonderdeel,
   ProjectFilter,
   toQueryString,
@@ -12,15 +14,15 @@ import { showNumber } from '../shared';
 
 const keiJongOrganisatieonderdelen: ReadonlyArray<Organisatieonderdeel> =
   Object.freeze(['keiJongBuSO', 'keiJongNietBuSO']);
-const deKeiOrganisatieonderdelen: ReadonlyArray<Organisatieonderdeel> =
-  Object.freeze(['deKei']);
 
 @customElement('rock-home')
 export class HomeComponent extends LitElement {
   public static override styles = [bootstrap];
 
   @state()
-  private deelnemersUrenKeiJongThisYear: number | undefined;
+  private deelnemersurenKeiJongThisYear: number | undefined;
+  @state()
+  private deelnemersurenPrognoseKeiJongThisYear: number | undefined;
   @state()
   private begeleidingsurenDeKeiThisYear: number | undefined;
   @state()
@@ -30,6 +32,7 @@ export class HomeComponent extends LitElement {
 
   public override firstUpdated(): void {
     this.updateDeelnemersuren();
+    this.updateDeelnemersurenPrognose();
     this.updateBegeleidingsuren();
     this.updateVormingsuren();
   }
@@ -60,16 +63,22 @@ export class HomeComponent extends LitElement {
       <div class="row">
         <div class="${colClass}">
           <div class="card">
-            <div class="card-header">Deelnemersuren Kei-Jong</div>
+            <div class="card-header">Deelnemersuren Kei-Jong ${this.year}</div>
             <div class="card-body">
               <h5 class="card-title">
                 <span class="text-success"
-                  >${showNumber(this.deelnemersUrenKeiJongThisYear)}</span
+                  >${showNumber(this.deelnemersurenKeiJongThisYear)}</span
                 >
-                deelnemersuren in ${this.year}
+                deelnemersuren
               </h5>
               <p class="card-text">
-                Deelnemersuren voor Kei-Jong in ${this.year}
+                met
+                <span class="text-success"
+                  >${showNumber(
+                    this.deelnemersurenPrognoseKeiJongThisYear,
+                  )}</span
+                >
+                prognose
               </p>
               <rock-link
                 href="/cursussen/${toQueryString({
@@ -88,20 +97,22 @@ export class HomeComponent extends LitElement {
         </div>
         <div class="${colClass}">
           <div class="card">
-            <div class="card-header">Begeleidingsuren De Kei</div>
+            <div class="card-header">
+              Begeleidingsuren De Kei in ${this.year}
+            </div>
             <div class="card-body">
               <h5 class="card-title">
                 <span class="text-success"
                   >${showNumber(this.vormingsurenDeKeiThisYear)}</span
                 >
-                vormingsuren in ${this.year}
+                vormingsuren
               </h5>
               <p class="card-text">
                 En
                 <span class="text-success"
                   >${showNumber(this.begeleidingsurenDeKeiThisYear)}</span
                 >
-                begeleidingsuren voor De Kei in ${this.year}
+                begeleidingsuren
               </p>
               <rock-link
                 href="/cursussen/${toQueryString({
@@ -121,67 +132,62 @@ export class HomeComponent extends LitElement {
       </footer>
     </div>`;
   }
-
-  private updateBegeleidingsuren() {
-    reportsClient
-      .get(
-        'reports/activiteiten/begeleidingsuren',
-        'organisatieonderdeel',
-        undefined,
-        {
-          jaar: this.year,
-        },
-      )
-      .then((report) => {
-        this.begeleidingsurenDeKeiThisYear = report
-          .filter((row) =>
-            deKeiOrganisatieonderdelen.includes(
-              row.key as Organisatieonderdeel,
-            ),
-          )
-          .reduce((acc, row) => acc + row.total, 0);
-      });
+  private async updateDeelnemersuren() {
+    this.deelnemersurenKeiJongThisYear =
+      await this.retrieveReportKeiJongThisYear('deelnemersuren');
   }
 
-  private updateDeelnemersuren() {
-    reportsClient
-      .get(
-        'reports/aanmeldingen/deelnemersuren',
-        'organisatieonderdeel',
-        undefined,
-        {
-          jaar: this.year,
-        },
-      )
-      .then((report) => {
-        this.deelnemersUrenKeiJongThisYear = report
-          .filter((row) =>
-            keiJongOrganisatieonderdelen.includes(
-              row.key as Organisatieonderdeel,
-            ),
-          )
-          .reduce((acc, row) => acc + row.total, 0);
-      });
+  private async updateDeelnemersurenPrognose() {
+    this.deelnemersurenPrognoseKeiJongThisYear =
+      await this.retrieveReportKeiJongThisYear('deelnemersurenPrognose');
   }
 
-  private updateVormingsuren() {
-    reportsClient
-      .get(
-        'reports/activiteiten/vormingsuren',
-        'organisatieonderdeel',
-        undefined,
-        {
-          jaar: this.year,
-        },
+  private async updateVormingsuren() {
+    this.vormingsurenDeKeiThisYear =
+      await this.retrieveReportDeKeiThisYear('vormingsuren');
+  }
+
+  private async updateBegeleidingsuren() {
+    this.begeleidingsurenDeKeiThisYear =
+      await this.retrieveReportDeKeiThisYear('begeleidingsuren');
+  }
+
+  private async retrieveReportDeKeiThisYear(
+    reportType: Extract<
+      ActiviteitReportType,
+      'vormingsuren' | 'begeleidingsuren'
+    >,
+  ) {
+    const results = await reportsClient.get(
+      `reports/activiteiten/${reportType}`,
+      'jaar',
+      undefined,
+      {
+        jaar: this.year,
+        organisatieonderdeel: 'deKei',
+      },
+    );
+    return results.reduce((acc, row) => acc + row.total, 0);
+  }
+
+  private async retrieveReportKeiJongThisYear(
+    reportType: Extract<
+      AanmeldingReportType,
+      'deelnemersuren' | 'deelnemersurenPrognose'
+    >,
+  ) {
+    const results = await reportsClient.get(
+      `reports/aanmeldingen/${reportType}`,
+      'organisatieonderdeel',
+      undefined,
+      {
+        jaar: this.year,
+      },
+    );
+    return results
+      .filter((row) =>
+        keiJongOrganisatieonderdelen.includes(row.key as Organisatieonderdeel),
       )
-      .then((report) => {
-        this.vormingsurenDeKeiThisYear = report
-          .filter((row) =>
-            deKeiOrganisatieonderdelen.includes(
-              row.key as Organisatieonderdeel,
-            ),
-          )
-          .reduce((acc, row) => acc + row.total, 0);
-      });
+      .reduce((acc, row) => acc + row.total, 0);
   }
 }
