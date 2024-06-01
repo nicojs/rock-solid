@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.2](https://github.com/nicojs/rock-solid/compare/v1.8.1...v1.8.2) (2024-06-01)
+
+### Bug Fixes
+
+- **reflect-metadata:** explicitly list reflect-metadata as a dependency ([#249](https://github.com/nicojs/rock-solid/issues/249)) ([bae8814](https://github.com/nicojs/rock-solid/commit/bae8814aa068356d6c465ca9b7992224be7806b1))
+
 ## [1.8.1](https://github.com/nicojs/rock-solid/compare/v1.8.0...v1.8.1) (2024-06-01)
 
 **Note:** Version bump only for package @rock-solid/backend
