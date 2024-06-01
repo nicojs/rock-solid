@@ -17,7 +17,7 @@ describe(ReportsController.name, () => {
       await harness.getReport('reports/aanmeldingen/aanmeldingen', 'jaar');
     });
 
-    describe.only('report types', () => {
+    describe('report types', () => {
       async function arrangeDeelnamenTestSet() {
         const [deelnemerA, deelnemerB, project1, project2] = await Promise.all([
           harness.createDeelnemer(factory.deelnemer({ achternaam: 'A' })),
