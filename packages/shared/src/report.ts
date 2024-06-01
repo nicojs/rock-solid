@@ -5,7 +5,8 @@ import { Organisatieonderdeel, ProjectType } from './project.js';
 export type AanmeldingReportType =
   | 'aanmeldingen'
   | 'deelnames'
-  | 'deelnemersuren';
+  | 'deelnemersuren'
+  | 'deelnemersurenPrognose';
 
 export type ActiviteitReportType = 'vormingsuren' | 'begeleidingsuren';
 
@@ -14,6 +15,7 @@ export const aanmeldingReportTypes: Options<AanmeldingReportType> =
     aanmeldingen: 'Aanmeldingen',
     deelnames: 'Deelnames',
     deelnemersuren: 'Deelnemersuren',
+    deelnemersurenPrognose: 'Deelnemersuren Prognose',
   });
 
 export const activiteitReportTypes: Options<ActiviteitReportType> =

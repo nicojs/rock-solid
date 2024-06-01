@@ -110,6 +110,7 @@ export class RapportageComponent extends RockElement {
           case 'aanmeldingen':
           case 'deelnames':
           case 'deelnemersuren':
+          case 'deelnemersurenPrognose':
             reportRequest = reportsClient.get(
               `reports/aanmeldingen/${this.reportType}`,
               this.group1,
@@ -389,6 +390,7 @@ function reportRoot<
   switch (reportType) {
     case 'aanmeldingen':
     case 'deelnames':
+    case 'deelnemersurenPrognose':
     case 'deelnemersuren':
       return 'aanmeldingen' as TReport extends AanmeldingReportType
         ? 'aanmeldingen'
