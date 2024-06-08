@@ -1,6 +1,7 @@
 import {
   Aanmelding,
   Cursus,
+  Geslacht,
   OverigPersoon,
   Werksituatie,
   Woonsituatie,
@@ -59,7 +60,7 @@ export class ProjectRapportComponent extends LitElement {
   private copyButtonResetTimeout?: number;
   private async copy() {
     const type = 'text/html';
-    const blob = new Blob([this.rapportContent.outerHTML], { type });
+    const blob = new Blob([this.rapportContent.innerHTML], { type });
     const data = [new ClipboardItem({ [type]: blob })];
     await navigator.clipboard.write(data);
     this.copied = true;
@@ -96,11 +97,26 @@ export class ProjectRapportComponent extends LitElement {
           (${this.project.naam})
         </h1>
         <h2>Situering</h2>
-        ${this.renderBegeleiding()} ${this.renderActiviteitLocaties()}
-        ${this.renderVormingsuren()} ${this.renderProvincies()}
-        ${this.renderWoonsituaties()} ${this.renderWerksituaties()}
-        ${this.renderRekrutering()}
+        ${this.project.organisatieonderdeel === 'deKei'
+          ? this.renderSitueringDeKei()
+          : this.renderSitueringKeiJong()}
       </div>`;
+  }
+
+  private renderSitueringDeKei() {
+    return html` ${this.renderBegeleiding()} ${this.renderActiviteitLocaties()}
+    ${this.renderVormingEnBegeleidingsurenDeKei()} ${this.renderProvincies()}
+    ${this.renderWoonsituaties()} ${this.renderWerksituaties()}
+    ${this.renderRekrutering()} ${this.renderDiversiteit()}`;
+  }
+
+  private renderSitueringKeiJong() {
+    return html`
+      ${this.renderBegeleiding()} ${this.renderActiviteitLocaties()}
+      ${this.renderVormingsurenKeiJong()} ${this.renderProvincies()}
+      ${this.renderWoonsituaties()} ${this.renderWerksituaties()}
+      ${this.renderRekrutering()}
+    `;
   }
 
   private renderBegeleiding() {
@@ -140,7 +156,10 @@ export class ProjectRapportComponent extends LitElement {
             (activiteit, i) =>
               html`<tr>
                 <td>${renderRangtelwoord(i)}</td>
-                <td>${showDatum(activiteit.van)}</td>
+                <td>
+                  ${showDatum(activiteit.van)} tot en met
+                  ${showDatum(activiteit.totEnMet)}
+                </td>
                 <td>${activiteit.locatie?.naam}</td>
               </tr>`,
           )}
@@ -148,7 +167,39 @@ export class ProjectRapportComponent extends LitElement {
       </table>`;
   }
 
-  private renderVormingsuren() {
+  private renderVormingEnBegeleidingsurenDeKei() {
+    const totaalVormingsuren = this.project.activiteiten.reduce(
+      (acc, act) => acc + (act.vormingsuren ?? 0),
+      0,
+    );
+    const totaalBegeleidingsuren = this.project.activiteiten.reduce(
+      (acc, act) => acc + (act.begeleidingsuren ?? 0),
+      0,
+    );
+    return html`<h3>Vormingsuren en begeleidingsuren</h3>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <th>Gezamenlijk</th>
+            <td>${totaalVormingsuren}u</td>
+          </tr>
+          <tr>
+            <th>Gesplitste</th>
+            <td>/</td>
+          </tr>
+          <tr>
+            <th>Totaal</th>
+            <td><strong>${totaalVormingsuren}u</strong></td>
+          </tr>
+          <tr>
+            <th>Begeleidingsuren</th>
+            <td>${totaalBegeleidingsuren}u</td>
+          </tr>
+        </tbody>
+      </table>`;
+  }
+
+  private renderVormingsurenKeiJong() {
     return html`<h3>Vormingsuren met begin- en einduur</h3>
       <table class="table table-bordered">
         <thead>
@@ -331,6 +382,96 @@ export class ProjectRapportComponent extends LitElement {
             <td></td>
             <td></td>
             <td></td>
+          </tr>
+        </tbody>
+      </table> `;
+  }
+  private renderDiversiteit() {
+    const countGeslacht = (geslacht: Geslacht) =>
+      this.aanmeldingen.filter((aanmelding) => aanmelding.geslacht === geslacht)
+        .length;
+
+    const byAge = {
+      unknown: 0,
+      '<20': 0,
+      '20-29': 0,
+      '30-39': 0,
+      '40-49': 0,
+      '50-59': 0,
+      '60-69': 0,
+      '70+': 0,
+    };
+
+    this.aanmeldingen.forEach((aanmelding) => {
+      if (!aanmelding.deelnemer?.geboortedatum) {
+        byAge['unknown']++;
+        return;
+      }
+      const age = calculateAge(
+        aanmelding.deelnemer.geboortedatum,
+        this.project.activiteiten[0]?.van,
+      );
+      if (age < 20) {
+        byAge['<20']++;
+      } else if (age < 30) {
+        byAge['20-29']++;
+      } else if (age < 40) {
+        byAge['30-39']++;
+      } else if (age < 50) {
+        byAge['40-49']++;
+      } else if (age < 60) {
+        byAge['50-59']++;
+      } else if (age < 70) {
+        byAge['60-69']++;
+      } else {
+        byAge['70+']++;
+      }
+    });
+
+    return html`<h3>Diversiteit</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Vrouw</th>
+            <th>Man</th>
+            <th>Andere</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Aantal</th>
+            <td>${countGeslacht('man')}</td>
+            <td>${countGeslacht('vrouw')}</td>
+            <td>${countGeslacht('x')}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Leeftijd</th>
+            ${byAge.unknown ? html`<th>Onbekend</th>` : nothing}
+            ${byAge['<20'] ? html`<th>&lt;20</th>` : nothing}
+            ${byAge['20-29'] ? html`<th>20-29</th>` : nothing}
+            ${byAge['30-39'] ? html`<th>30-39</th>` : nothing}
+            ${byAge['40-49'] ? html`<th>40-49</th>` : nothing}
+            ${byAge['50-59'] ? html`<th>50-59</th>` : nothing}
+            ${byAge['60-69'] ? html`<th>60-69</th>` : nothing}
+            ${byAge['70+'] ? html`<th>70+</th>` : nothing}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Aantal</th>
+            ${byAge.unknown ? html`<td>${byAge.unknown}</td>` : nothing}
+            ${byAge['<20'] ? html`<td>${byAge['<20']}</td>` : nothing}
+            ${byAge['20-29'] ? html`<td>${byAge['20-29']}</td>` : nothing}
+            ${byAge['30-39'] ? html`<td>${byAge['30-39']}</td>` : nothing}
+            ${byAge['40-49'] ? html`<td>${byAge['40-49']}</td>` : nothing}
+            ${byAge['50-59'] ? html`<td>${byAge['50-59']}</td>` : nothing}
+            ${byAge['60-69'] ? html`<td>${byAge['60-69']}</td>` : nothing}
+            ${byAge['70+'] ? html`<td>${byAge['70+']}</td>` : nothing}
           </tr>
         </tbody>
       </table> `;
