@@ -329,6 +329,62 @@ describe(ReportsController.name, () => {
           expect(bevestigdReport).deep.eq(expectedBevestigdReport);
         });
       });
+
+      describe('doelgroepen', () => {
+        let testData: Awaited<ReturnType<typeof arrangeCursussenTestSet>>;
+        beforeEach(async () => {
+          testData = await arrangeCursussenTestSet();
+        });
+
+        it('should be able to filter on "doelgroepen', async () => {
+          const { project2020, project2021 } = testData;
+          await Promise.all([
+            harness.updateProject({
+              ...project2020,
+              organisatieonderdeel: 'keiJong',
+              doelgroep: 'BuSO',
+            }),
+            await harness.updateProject({
+              ...project2021,
+              organisatieonderdeel: 'keiJong',
+              doelgroep: 'nietBuSO',
+            }),
+          ]);
+
+          const [buso, nietBuso, both, control] = await Promise.all([
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { doelgroepen: ['BuSO'] },
+            ),
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { doelgroepen: ['nietBuSO'] },
+            ),
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { doelgroepen: ['nietBuSO', 'BuSO'] },
+            ),
+            harness.getReport('reports/aanmeldingen/aanmeldingen', 'jaar'),
+          ]);
+
+          const expectedBuso: Report = [{ key: '2020', total: 1 }];
+          const expectedNietBuso: Report = [{ key: '2021', total: 2 }];
+          const expectedBoth: Report = [
+            { key: '2021', total: 2 },
+            { key: '2020', total: 1 },
+          ];
+          expect(both).deep.eq(expectedBoth);
+          expect(control).deep.eq(expectedBoth);
+          expect(buso).deep.eq(expectedBuso);
+          expect(nietBuso).deep.eq(expectedNietBuso);
+        });
+      });
     });
   });
   describe('activiteiten report', () => {
@@ -383,6 +439,71 @@ describe(ReportsController.name, () => {
           },
         ];
         expect(report).deep.eq(expectedReport);
+      });
+    });
+
+    describe('filter', () => {
+      describe('doelgroepen', () => {
+        it('should be able to filter on "doelgroepen', async () => {
+          await Promise.all([
+            harness.createProject(
+              factory.cursus({
+                naam: 'A',
+                projectnummer: '001',
+                doelgroep: 'BuSO',
+                activiteiten: [
+                  factory.activiteit({
+                    van: new Date(2021, 1, 1),
+                    vormingsuren: 20,
+                  }),
+                ],
+              }),
+            ),
+            harness.createProject(
+              factory.cursus({
+                projectnummer: '002',
+                doelgroep: 'nietBuSO',
+                naam: 'B',
+                activiteiten: [
+                  factory.activiteit({
+                    van: new Date(2021, 1, 1),
+                    vormingsuren: 10,
+                  }),
+                ],
+              }),
+            ),
+          ]);
+
+          const [buso, nietBuso, both, control] = await Promise.all([
+            harness.getReport(
+              'reports/activiteiten/vormingsuren',
+              'jaar',
+              undefined,
+              { doelgroepen: ['BuSO'] },
+            ),
+            harness.getReport(
+              'reports/activiteiten/vormingsuren',
+              'jaar',
+              undefined,
+              { doelgroepen: ['nietBuSO'] },
+            ),
+            harness.getReport(
+              'reports/activiteiten/vormingsuren',
+              'jaar',
+              undefined,
+              { doelgroepen: ['nietBuSO', 'BuSO'] },
+            ),
+            harness.getReport('reports/activiteiten/vormingsuren', 'jaar'),
+          ]);
+
+          const expectedBuso: Report = [{ key: '2021', total: 20 }];
+          const expectedNietBuso: Report = [{ key: '2021', total: 10 }];
+          const expectedBoth: Report = [{ key: '2021', total: 30 }];
+          expect(both).deep.eq(expectedBoth);
+          expect(control).deep.eq(expectedBoth);
+          expect(buso).deep.eq(expectedBuso);
+          expect(nietBuso).deep.eq(expectedNietBuso);
+        });
       });
     });
   });

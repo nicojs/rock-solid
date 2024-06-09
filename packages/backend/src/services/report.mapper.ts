@@ -12,6 +12,7 @@ import {
 import { DBService } from './db.service.js';
 import {
   aanmeldingsstatusMapper,
+  doelgroepMapper,
   geslachtMapper,
   organisatieonderdeelMapper,
   projectTypeMapper,
@@ -177,6 +178,11 @@ function filterWhere(filter: AanmeldingReportFilter): string {
       `Project.id IN (SELECT projectId FROM activiteit WHERE activiteit.metOvernachting = ${
         filter.overnachting === 'met' ? 'true' : 'false'
       })`,
+    );
+  }
+  if (filter.doelgroepen && filter.doelgroepen.length) {
+    whereClauses.push(
+      `Project.doelgroep IN (${filter.doelgroepen.map((doelgroep) => doelgroepMapper.toDB(doelgroep)).join(',')})`,
     );
   }
   if (whereClauses.length) {

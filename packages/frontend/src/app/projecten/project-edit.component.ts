@@ -17,6 +17,7 @@ import {
   cursusLabels,
   Privilege,
   activiteitLabels,
+  doelgroepen,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -159,6 +160,25 @@ const cursusProjectControls: FormControl<Cursus>[] = [
   radioControl('organisatieonderdeel', organisatieonderdelen, {
     validators: { required: true },
     label: cursusLabels.organisatieonderdeel,
+  }),
+  radioControl('doelgroep', doelgroepen, {
+    allowDeselect: true,
+    validators: {
+      custom: (val, cursus) => {
+        if (
+          cursus.type === 'cursus' &&
+          cursus.organisatieonderdeel === 'keiJong'
+        ) {
+          if (!val) {
+            return 'Doelgroep is verplicht voor KEI-JONG';
+          }
+        } else if (val) {
+          return 'Doelgroep is enkel toegestaan voor KEI-JONG';
+        }
+        return '';
+      },
+    },
+    dependsOn: ['organisatieonderdeel'],
   }),
   formArray('activiteiten', cursusActiviteitenControls, newActiviteit),
 ];

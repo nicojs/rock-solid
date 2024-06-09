@@ -1,6 +1,6 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, nothing, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, queryAll } from 'lit/decorators.js';
 import {
   InputType,
   KeysOfType,
@@ -45,7 +45,13 @@ export class ReactiveFormInputControl<
     `;
   }
 
-  private inputRef = createRef<HTMLInputElement>();
+  /**
+   * All inputs in this form control.
+   * Note: there can be more inputs when the control is a radio or select.
+   */
+  @queryAll('input')
+  private inputs!: NodeListOf<HTMLInputElement>;
+
   override updated() {
     this.validate();
   }
@@ -55,12 +61,14 @@ export class ReactiveFormInputControl<
       (this.entity as any)[this.control.name] as unknown as never,
       this.entity,
     );
-    this.inputRef.value!.setCustomValidity(errorMessage ?? '');
+    for (const input of this.inputs) {
+      input.setCustomValidity(errorMessage ?? '');
+    }
     this.updateValidationMessage();
   }
 
   private updateValidationMessage() {
-    this.validationMessage = this.inputRef.value!.validationMessage;
+    this.validationMessage = this.inputs.item(0).validationMessage;
   }
 
   private renderInput(control: InputControl<TEntity>): TemplateResult {
@@ -89,7 +97,6 @@ export class ReactiveFormInputControl<
     return html`<div class="form-check">
       <input
         id=${this.inputId}
-        ${ref(this.inputRef)}
         name="${control.name}"
         type="checkbox"
         class="form-check-input"
@@ -110,7 +117,6 @@ export class ReactiveFormInputControl<
     return html`<input
       type="${control.type}"
       class="form-control"
-      ${ref(this.inputRef)}
       id=${this.inputId}
       name="${control.name}"
       value="${ifDefined(this.entity[control.name])}"
@@ -135,7 +141,6 @@ export class ReactiveFormInputControl<
       <input
         type="number"
         class="form-control"
-        ${ref(this.inputRef)}
         id=${this.inputId}
         name="${control.name}"
         value="${this.entity[control.name]}"
@@ -174,7 +179,6 @@ export class ReactiveFormInputControl<
       type="${control.type}"
       class="form-control"
       id=${this.inputId}
-      ${ref(this.inputRef)}
       name="${control.name}"
       value="${dateToString(this.entity[control.name] as unknown as Date)}"
       ?required=${control.validators?.required}
@@ -217,7 +221,6 @@ export class ReactiveFormInputControl<
     return html`<select
       class="form-select"
       name="${control.name}"
-      ${ref(this.inputRef)}
       ?multiple=${control.multiple}
       ?required=${control.validators?.required}
       size=${ifDefined(control.size)}
@@ -273,12 +276,15 @@ export class ReactiveFormInputControl<
     return html` ${Object.entries(control.items).map(([key, value]) => {
       const id = `${this.inputId}-${key}`;
       const currentRadioRef = createRef<HTMLInputElement>();
-      return html`<div class="form-check me-2">
+      return html`<div
+        class="form-check me-2 ${this.validationMessage
+          ? 'radio-input-invalid'
+          : ''}"
+      >
         <input
           class="form-check-input"
           type="radio"
           name=${this.name}
-          ${ref(this.inputRef)}
           ${ref(currentRadioRef)}
           id=${id}
           ?required=${control.validators?.required}

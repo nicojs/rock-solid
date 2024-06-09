@@ -116,6 +116,7 @@ model Project {
 
   // Cursus
   organisatieonderdeel Int?
+  doelgroep            Int?
 
   // Vakantie. Total price is saldo + voorschot
   bestemming String?

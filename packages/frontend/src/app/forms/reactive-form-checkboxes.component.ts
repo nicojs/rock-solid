@@ -13,6 +13,9 @@ export class ReactiveFormTags<
   @property({ attribute: false })
   public control!: CheckboxesControl<TEntity>;
 
+  @property()
+  public labelClasses = 'col-lg-2 col-md-4';
+
   get value(): any {
     return (this.entity as any)[this.control.name];
   }
@@ -24,7 +27,7 @@ export class ReactiveFormTags<
   override render() {
     return html`
       <div class="mb-3 row">
-        <div class="col-lg-2 col-md-4">
+        <div class="${this.labelClasses}">
           <div class="col-form-label">
             ${this.control.label ?? capitalize(this.control.name)}
           </div>
@@ -69,9 +72,10 @@ export class ReactiveFormTags<
   private renderCheckboxes(
     items: Readonly<Record<TEntity[TKey] & string, string>>,
     initialValues: string[],
-    checkAction: (option: string) => void = (item) => initialValues.push(item),
+    checkAction: (option: string) => void = (item) =>
+      (this.value = [...initialValues, item]),
     uncheckAction: (option: string) => void = (item) =>
-      initialValues.splice(initialValues.indexOf(item), 1),
+      (this.value = initialValues.filter((val) => val !== item)),
   ) {
     return Object.entries(items).map(([key, value]) => {
       const checkboxRef = createRef<HTMLInputElement>();

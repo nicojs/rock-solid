@@ -27,6 +27,8 @@ import {
   Woonsituatie,
   toCsv,
   Provincie,
+  Doelgroep,
+  doelgroepen,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, nothing, PropertyValues } from 'lit';
@@ -34,6 +36,7 @@ import {
   CheckboxInputControl,
   InputType,
   NumberInputControl,
+  checkboxesItemsControl,
   selectControl,
 } from '../forms';
 import {
@@ -70,7 +73,10 @@ export class RapportageComponent extends RockElement {
   public enkelEersteAanmeldingen?: boolean;
 
   @state()
-  public enkelOrganisatieonderdeel?: Organisatieonderdeel;
+  public organisatieonderdeel?: Organisatieonderdeel;
+
+  @state()
+  public doelgroepen?: Doelgroep[];
 
   @state()
   public overnachting?: OvernachtingDescription;
@@ -92,7 +98,8 @@ export class RapportageComponent extends RockElement {
       props.has('group2') ||
       props.has('enkelEersteAanmeldingen') ||
       props.has('enkelJaar') ||
-      props.has('enkelOrganisatieonderdeel') ||
+      props.has('organisatieonderdeel') ||
+      props.has('doelgroepen') ||
       props.has('aanmeldingsstatus') ||
       props.has('overnachting')
     ) {
@@ -117,11 +124,12 @@ export class RapportageComponent extends RockElement {
               this.group2,
               {
                 enkelEersteAanmeldingen: this.enkelEersteAanmeldingen,
-                organisatieonderdeel: this.enkelOrganisatieonderdeel,
+                organisatieonderdeel: this.organisatieonderdeel,
                 type: this.projectType,
                 jaar: this.enkelJaar,
                 overnachting: this.overnachting,
                 aanmeldingsstatus: this.aanmeldingsstatus,
+                doelgroepen: this.doelgroepen,
               },
             );
             break;
@@ -132,10 +140,11 @@ export class RapportageComponent extends RockElement {
               this.group1,
               this.group2,
               {
-                organisatieonderdeel: this.enkelOrganisatieonderdeel,
+                organisatieonderdeel: this.organisatieonderdeel,
                 type: this.projectType,
                 jaar: this.enkelJaar,
                 overnachting: this.overnachting,
+                doelgroepen: this.doelgroepen,
               },
             );
             break;
@@ -192,8 +201,7 @@ export class RapportageComponent extends RockElement {
   };
 
   override render() {
-    return html`<div class="row">
-      <fieldset class="row mt-3 mb-3 ">
+    return html` <fieldset class="row pt-3">
         <legend class="h6">Groeperen</legend>
 
         <rock-reactive-form-input-control
@@ -207,7 +215,7 @@ export class RapportageComponent extends RockElement {
           .entity=${this}
         ></rock-reactive-form-input-control>
       </fieldset>
-      <fieldset class="row mb-3">
+      <fieldset class="row pt-3 mb-3">
         <legend class="h6">Filteren</legend>
         <rock-reactive-form-input-control
           class="col-12 col-md-4 col-sm-6"
@@ -241,10 +249,17 @@ export class RapportageComponent extends RockElement {
                 .entity=${this}
               ></rock-reactive-form-input-control>`
           : nothing}
+        <rock-reactive-checkboxes
+          class="mt-2 col-12 col-md-6"
+          labelClasses="col-lg-4 col-md-6 col-12"
+          .control=${doelgroepenFilterControl}
+          .entity=${this}
+        ></rock-reactive-checkboxes>
       </fieldset>
 
       <div class="row">
         <div class="col">
+          <h6>Resultaten</h6>
           ${this.isLoading
             ? html`<rock-loading></rock-loading>`
             : this.report && this.group1
@@ -286,10 +301,12 @@ export class RapportageComponent extends RockElement {
                       )}
                     </tbody>
                   </table>`
-              : html`Kies een groep`}
+              : html`<p class="text-muted">
+                  Nog geen rapport geladen. Kies bij "Groeperen" ten minste 1
+                  groep om te starten.
+                </p>`}
         </div>
-      </div>
-    </div>`;
+      </div>`;
 
     function renderRowData(
       group: AanmeldingGroupField,
@@ -350,10 +367,15 @@ const aanmeldingsstatusControl = selectControl<
 
 const organisatieonderdeelFilterControl = selectControl<
   RapportageComponent,
-  'enkelOrganisatieonderdeel'
->('enkelOrganisatieonderdeel', organisatieonderdelen, {
+  'organisatieonderdeel'
+>('organisatieonderdeel', organisatieonderdelen, {
   placeholder: 'Enkel organisatieonderdeel...',
 });
+
+const doelgroepenFilterControl = checkboxesItemsControl<
+  RapportageComponent,
+  'doelgroepen'
+>('doelgroepen', doelgroepen);
 
 const enkelNieuwkomersControl: CheckboxInputControl<RapportageComponent> = {
   name: 'enkelEersteAanmeldingen',

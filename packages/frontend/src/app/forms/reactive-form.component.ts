@@ -24,6 +24,10 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
         width: auto;
         max-width: inherit;
       }
+
+      .was-validated .radio-input-invalid ~ .invalid-feedback {
+        display: block;
+      }
     `,
   ];
 

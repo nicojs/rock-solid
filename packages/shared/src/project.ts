@@ -33,6 +33,7 @@ export function isProjectType(maybe: string): maybe is ProjectType {
 export interface Cursus extends BaseProject {
   type: 'cursus';
   organisatieonderdeel: Organisatieonderdeel;
+  doelgroep?: Doelgroep;
   activiteiten: CursusActiviteit[];
 }
 
@@ -65,6 +66,7 @@ export const cursusLabels: Labels<Cursus> = {
   ...projectLabels,
   activiteiten: 'Activiteiten',
   organisatieonderdeel: 'Organisatie',
+  doelgroep: 'Doelgroep',
 };
 
 export const vakantieLabels: Labels<Vakantie> = {
@@ -147,19 +149,28 @@ export const vakantieVervoerOptions: Options<VakantieVervoer> = Object.freeze({
   boot: 'Boot',
 });
 
-export type Organisatieonderdeel = 'keiJongBuSO' | 'keiJongNietBuSO' | 'deKei';
+export type Organisatieonderdeel = 'deKei' | 'keiJong';
+export type Doelgroep = 'BuSO' | 'nietBuSO' | 'BuSOEnNietBuSO';
 
 export const organisatieonderdelen: Options<Organisatieonderdeel> =
   Object.freeze({
     deKei: 'de KEI',
-    keiJongBuSO: 'KEI-JONG BuSO',
-    keiJongNietBuSO: 'KEI-JONG niet BuSO',
+    keiJong: 'KEI-JONG',
   });
+export const doelgroepen: Options<Doelgroep> = Object.freeze({
+  BuSO: 'BuSO',
+  nietBuSO: 'Niet BuSO',
+  BuSOEnNietBuSO: 'BuSO en niet BuSO',
+});
 
 export function isOrganisatieonderdeel(
   maybe: string,
 ): maybe is Organisatieonderdeel {
   return maybe in organisatieonderdelen;
+}
+
+export function isDoelgroep(maybe: string): maybe is Doelgroep {
+  return maybe in doelgroepen;
 }
 
 export type Project = Cursus | Vakantie;
@@ -192,6 +203,7 @@ export type ProjectFilter = Pick<Project, 'type'> &
     aanmeldingPersoonId?: number;
     begeleidDoorPersoonId?: number;
     organisatieonderdelen?: Organisatieonderdeel[];
+    doelgroepen?: Doelgroep[];
   };
 
 export function toProjectFilter(
@@ -200,9 +212,10 @@ export function toProjectFilter(
   return {
     ...filterMetaQuery(query),
     jaar: tryParseInt(query.jaar),
-    organisatieonderdelen: query.organisatieonderdelen?.split(
-      ',',
-    ) as Organisatieonderdeel[],
+    organisatieonderdelen: query.organisatieonderdelen
+      ?.split(',')
+      .filter(isOrganisatieonderdeel),
+    doelgroepen: query.doelgroepen?.split(',').filter(isDoelgroep),
     begeleidDoorPersoonId: tryParseInt(query.begeleidDoorPersoonId),
     aanmeldingPersoonId: tryParseInt(query.aanmeldingPersoonId),
   };
