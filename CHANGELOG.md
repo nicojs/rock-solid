@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/nicojs/rock-solid/compare/v1.8.2...v1.9.0) (2024-06-09)
+
+### Bug Fixes
+
+- **deps:** update checkout action ([5a0afbe](https://github.com/nicojs/rock-solid/commit/5a0afbeda61d9ca035a69b6b957d2416d505050b))
+
+### Features
+
+- **projectrapport:** ondersteun het projectrapport van De Kei ([#261](https://github.com/nicojs/rock-solid/issues/261)) ([17a4f47](https://github.com/nicojs/rock-solid/commit/17a4f47db9e75011974d8bc39e09fdaa8e0bfbab))
+
 ## [1.8.2](https://github.com/nicojs/rock-solid/compare/v1.8.1...v1.8.2) (2024-06-01)
 
 ### Bug Fixes

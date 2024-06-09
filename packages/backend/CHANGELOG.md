@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/nicojs/rock-solid/compare/v1.8.2...v1.9.0) (2024-06-09)
+
+**Note:** Version bump only for package @rock-solid/backend
+
 ## [1.8.2](https://github.com/nicojs/rock-solid/compare/v1.8.1...v1.8.2) (2024-06-01)
 
 ### Bug Fixes
