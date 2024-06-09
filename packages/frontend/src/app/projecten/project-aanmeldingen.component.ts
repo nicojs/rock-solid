@@ -441,7 +441,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       <button
                         title="Naar aangemeld"
                         class="btn btn-outline-warning btn-sm me-2"
-                        ${privilege('update:aanmeldingen')}
+                        ${privilege('custom:statusverandering')}
                         type="button"
                         @click=${() =>
                           this.patchStatus(aanmelding, 'Aangemeld')}
@@ -472,6 +472,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           <rock-link
             btn
             btnOutlinePrimary
+            ${privilege('custom:rekeninguittreksels')}
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/rekeninguittreksels"
             ><rock-icon icon="cashCoin"></rock-icon> Rekeninguittreksels
@@ -480,6 +481,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           <rock-link
             btn
             btnOutlinePrimary
+            ${privilege('custom:brieven')}
             href="/${pluralize(this.project.type)}/${this.project
               .id}/aanmeldingen/brieven-verzenden"
             ><rock-icon icon="mailbox"></rock-icon> Brieven verzenden</rock-link
@@ -543,7 +545,10 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 </th>
                 <th class="align-middle">Rekeninguittreksel</th>
                 <th class="align-middle">Opmerkingen</th>
-                <th class="align-middle">
+                <th
+                  ${privilege('custom:statusverandering')}
+                  class="align-middle"
+                >
                   ${this.renderActiesButton(aanmeldingen)} Status
                 </th>
                 <th class="align-middle text-center">Acties</th>
@@ -571,11 +576,10 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     <td>${this.renderGeboortedatumWithAge(aanmelding)}</td>
                     <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
                     <td>${show(aanmelding.opmerking, '')}</td>
-                    <td class="">
+                    <td ${privilege('custom:statusverandering')} class="">
                       ${aanmelding.status === 'Aangemeld'
                         ? html`<button
                             title="Bevestigen"
-                            ${privilege('update:aanmeldingen')}
                             class="btn btn-outline-success btn-sm"
                             type="button"
                             @click=${() =>
@@ -585,7 +589,6 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           </button>`
                         : html`<button
                             title="Terug naar aangemeld"
-                            ${privilege('update:aanmeldingen')}
                             class="btn btn-success btn-sm"
                             type="button"
                             @click=${() =>
@@ -595,7 +598,6 @@ export class ProjectAanmeldingenComponent extends LitElement {
                           </button>`}
                       <button
                         title="Naar wachtlijst"
-                        ${privilege('update:aanmeldingen')}
                         class="btn btn-outline-warning btn-sm"
                         type="button"
                         @click=${() =>
@@ -605,7 +607,6 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       </button>
                       <button
                         title="Naar geannuleerd"
-                        ${privilege('update:aanmeldingen')}
                         class="btn btn-outline-warning btn-sm"
                         type="button"
                         @click=${() =>
@@ -683,7 +684,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           ? 'outline-'
           : ''}success btn-sm"
         type="button"
-        ${privilege('update:aanmeldingen')}
+        ${privilege('custom:statusverandering')}
         @click=${() => this.patchStatussen(aanmeldingen, toState)}
       >
         <rock-icon icon="checkCircle"></rock-icon></button

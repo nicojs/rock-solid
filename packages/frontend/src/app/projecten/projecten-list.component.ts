@@ -76,7 +76,7 @@ export class ProjectenListComponent extends LitElement {
   private renderTable() {
     const isCursus = this.projecten[0]!.type === 'cursus';
     const hasStatus = 'status' in (this.projecten[0] ?? {});
-    const hasDoelgroepen = this.projecten.some(
+    const showDoelgroepen = this.projecten.some(
       (project) => project.type === 'cursus' && project.doelgroep,
     );
     const showDeelnemersuren = this.projecten.some(
@@ -100,7 +100,7 @@ export class ProjectenListComponent extends LitElement {
             ? html`
                 <th>Locatie(s)</th>
                 <th>Organisatieonderdeel</th>
-                ${hasDoelgroepen
+                ${showDoelgroepen
                   ? html`<th>${cursusLabels.doelgroep}</th>`
                   : ''}
                 ${showDeelnemersuren ? html`<th>Deelnemersuren</th>` : ''}
@@ -141,7 +141,7 @@ export class ProjectenListComponent extends LitElement {
                         ? organisatieonderdelen[project.organisatieonderdeel]
                         : notAvailable}
                     </td>
-                    ${hasDoelgroepen
+                    ${showDoelgroepen
                       ? html`<td>${showDoelgroep(project.doelgroep)}</td>`
                       : ''}
                     ${showDeelnemersuren
@@ -171,9 +171,7 @@ export class ProjectenListComponent extends LitElement {
                               )
                             : ''}
                         </td>`
-                      : ''}
-
-                    <td class="text-end">${showMoney(project.prijs)}</td> `
+                      : ''}`
                 : html`
                     <td class="text-end">${showMoney(project.voorschot)}</td>
                     <td class="text-center">
@@ -182,7 +180,7 @@ export class ProjectenListComponent extends LitElement {
                         : notAvailable}
                     </td>
                   `}
-
+              <td class="text-end">${showMoney(project.prijs)}</td>
               <td>
                 ${project.activiteiten.map((activiteit) => {
                   const inPast = activiteit.totEnMet < new Date();
