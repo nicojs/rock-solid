@@ -45,7 +45,7 @@ export class ReactiveFormTags<
             ([key, value]) =>
               html`<div class="mb-3 col-md-6 col-xl-4 col-xxl-3 col-12">
                 <h6>${key}</h6>
-                ${this.renderCheckboxes(
+                ${this.renderItemsCheckboxes(
                   value as Readonly<Record<TEntity[TKey] & string, string>>,
                   (this.value ??= []),
                 )}
@@ -53,14 +53,17 @@ export class ReactiveFormTags<
           )}
         </div>`;
       case CheckboxesKind.items:
-        return this.renderCheckboxes(this.control.items, (this.value ??= []));
+        return this.renderItemsCheckboxes(
+          this.control.items,
+          (this.value ??= []),
+        );
       case CheckboxesKind.props:
         const currentSelected = Object.entries(
           ((this.value as Record<string, boolean>) ??= {}),
         )
           .filter(([, flag]) => flag)
           .map(([prop]) => prop);
-        return this.renderCheckboxes(
+        return this.renderItemsCheckboxes(
           this.control.items,
           currentSelected,
           (item) => (this.value[item] = true),
@@ -69,13 +72,13 @@ export class ReactiveFormTags<
     }
   }
 
-  private renderCheckboxes(
+  private renderItemsCheckboxes(
     items: Readonly<Record<TEntity[TKey] & string, string>>,
     initialValues: string[],
     checkAction: (option: string) => void = (item) =>
-      (this.value = [...initialValues, item]),
+      (this.value = [...this.value, item]),
     uncheckAction: (option: string) => void = (item) =>
-      (this.value = initialValues.filter((val) => val !== item)),
+      (this.value = this.value.filter((val: string) => val !== item)),
   ) {
     return Object.entries(items).map(([key, value]) => {
       const checkboxRef = createRef<HTMLInputElement>();
