@@ -27,8 +27,8 @@
     "test:mutation:download-incremental-report": "tasks/download-incremental-report.sh",
     "test:mutation:incremental": "npm run test:mutation -- -- --incremental",
     "release": "GH_TOKEN=$(gh auth token) lerna version",
-    "deploy:prepare": "tasks/prepare-deploy.sh",
-    "deploy:prepare": "npm run clean && npm run build:src && npm run deploy:prepare",
+    "deploy:prepare:pack": "tasks/prepare-deploy.sh",
+    "deploy:prepare": "npm run clean && npm run build:src && npm run deploy:prepare:pack",
     "deploy:acc": "gh workflow run Deploy",
     "deploy:prd": "gh workflow run Deploy -F environment=Production"
   },
