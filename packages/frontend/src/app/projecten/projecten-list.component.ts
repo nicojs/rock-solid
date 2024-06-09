@@ -3,11 +3,9 @@ import {
   aanmeldingsstatussen,
   Cursus,
   cursusLabels,
-  doelgroepen,
   notEmpty,
   organisatieonderdelen,
   Project,
-  projectLabels,
   showDatum,
   vakantieSeizoenen,
 } from '@rock-solid/shared';
@@ -100,7 +98,7 @@ export class ProjectenListComponent extends LitElement {
                 <th>Land</th>`}
           ${isCursus
             ? html`
-                <th class="text-center">Locatie(s)</th>
+                <th>Locatie(s)</th>
                 <th>Organisatieonderdeel</th>
                 ${hasDoelgroepen
                   ? html`<th>${cursusLabels.doelgroep}</th>`

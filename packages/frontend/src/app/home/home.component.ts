@@ -5,7 +5,6 @@ import { reportsClient } from '../rapportages/reports-client';
 import {
   AanmeldingReportType,
   ActiviteitReportType,
-  Organisatieonderdeel,
   ProjectFilter,
   toQueryString,
 } from '@rock-solid/shared';
