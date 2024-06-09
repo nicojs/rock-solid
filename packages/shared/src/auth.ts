@@ -26,7 +26,11 @@ export type Privilege =
   | 'delete:personen'
   | 'create:locaties'
   | 'update:locaties'
-  | 'delete:locaties';
+  | 'delete:locaties'
+  // Usability privileges
+  | 'custom:statusverandering'
+  | 'custom:rekeninguittreksels'
+  | 'custom:brieven';
 
 export const userRoleNames: Options<UserRole> = {
   admin: 'Admin',
@@ -59,6 +63,9 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'create:locaties',
     'update:locaties',
     'delete:locaties',
+    'custom:statusverandering',
+    'custom:rekeninguittreksels',
+    'custom:brieven',
   ],
   projectverantwoordelijke: [
     'read',
@@ -69,5 +76,9 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'create:aanmeldingen',
     'update:aanmeldingen',
   ],
-  financieelBeheerder: ['read', 'update:aanmeldingen'],
+  financieelBeheerder: [
+    'read',
+    'update:aanmeldingen',
+    'custom:rekeninguittreksels',
+  ],
 };

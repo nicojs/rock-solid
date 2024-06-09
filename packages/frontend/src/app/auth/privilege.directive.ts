@@ -1,43 +1,38 @@
-import { Privilege, privileges, userRoleNames } from '@rock-solid/shared';
-import { PartInfo, PartType, directive } from 'lit/directive.js';
+import { Privilege, privileges } from '@rock-solid/shared';
+import { directive } from 'lit/directive.js';
 import { AsyncDirective } from 'lit/async-directive.js';
 import { Subscription } from 'rxjs';
 import { ElementPart, Part, nothing } from 'lit';
 import { authStore } from './auth.store';
 
-const validElements = Object.freeze(['BUTTON', 'INPUT']);
+const VALID_ELEMENTS = Object.freeze([
+  'BUTTON',
+  'INPUT',
+  'A',
+  'ROCK-LINK',
+  'TH',
+  'TD',
+]);
+const formatWrongPlacementMessage = (tagName: string) =>
+  `The 'privilege' directive must be used inside a button, anchor or input element. Was ${tagName}`;
+type ValidPrivilegeElement =
+  | HTMLButtonElement
+  | HTMLInputElement
+  | HTMLAnchorElement;
 
 class PrivilegeDirective extends AsyncDirective {
   private sub?: Subscription;
-
-  constructor(partInfo: PartInfo) {
-    super(partInfo);
-    if (partInfo.type !== PartType.ELEMENT) {
-      throw new Error(
-        'The `privilege` directive must be used inside a button element',
-      );
-    }
-  }
 
   override update(part: Part, [privilege]: [Privilege | undefined]): unknown {
     if (!this.sub) {
       if (privilege) {
         const { element } = part as ElementPart;
-        if (!validElements.includes(element.tagName)) {
-          throw new Error(
-            'The `privilege` directive must be used inside a button element',
-          );
+        if (!VALID_ELEMENTS.includes(element.tagName)) {
+          throw new Error(formatWrongPlacementMessage(element.tagName));
         }
-        const btn = element as HTMLButtonElement | HTMLInputElement;
         this.sub = authStore.user$.subscribe((user) => {
-          btn.disabled = !user || !privileges[user.role].includes(privilege);
-          if (btn.parentElement) {
-            btn.parentElement.title = btn.disabled
-              ? `Als ${
-                  user?.role ? userRoleNames[user?.role] : 'uitgelogd persoon'
-                } mag je deze actie niet uitvoeren.`
-              : '';
-          }
+          (element as ValidPrivilegeElement).hidden =
+            !user || !privileges[user.role].includes(privilege);
         });
       }
       return this.render(privilege);
