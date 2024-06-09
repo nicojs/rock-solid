@@ -26,12 +26,9 @@
     "test:mutation": "lerna run test:mutation --stream --concurrency 1",
     "test:mutation:download-incremental-report": "tasks/download-incremental-report.sh",
     "test:mutation:incremental": "npm run test:mutation -- -- --incremental",
-    "import:az2csv": "tasks/import-az2csv.sh",
-    "import:csv2json": "node tasks/import-csv2json.mjs",
     "release": "GH_TOKEN=$(gh auth token) lerna version",
     "deploy:prepare": "tasks/prepare-deploy.sh",
-    "deploy:acc:az": "az webapp deployment source config-zip --resource-group acc-rock-solid --name acc-rock-solid-web-app --src .deploy/deploy.zip",
-    "deploy:acc:prepare": "npm run clean && npm run import:az2csv && npm run build:src && npm run deploy:prepare",
+    "deploy:prepare": "npm run clean && npm run build:src && npm run deploy:prepare",
     "deploy:acc": "gh workflow run Deploy",
     "deploy:prd": "gh workflow run Deploy -F environment=Production"
   },
@@ -46,7 +43,6 @@
     "@typescript-eslint/parser": "^7.12.0",
     "chai": "^5.1.1",
     "concurrently": "^8.2.2",
-    "csv-parser": "^3.0.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -57,7 +53,6 @@
     "prettier": "^3.3.1",
     "rimraf": "^5.0.7",
     "source-map-support": "^0.5.21",
-    "strip-bom-stream": "^5.0.0",
     "supertest": "^7.0.0",
     "typescript": "^5.4.5"
   }
