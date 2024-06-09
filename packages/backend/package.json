@@ -46,6 +46,7 @@
   "devDependencies": {
     "@nestjs/schematics": "^10.1.1",
     "@nestjs/testing": "^10.3.8",
+    "@stryker-mutator/core": "^8.2.6",
     "@stryker-mutator/mocha-runner": "^8.2.6",
     "@types/better-sqlite3": "^7.6.10",
     "@types/body-parser": "^1.19.5",
