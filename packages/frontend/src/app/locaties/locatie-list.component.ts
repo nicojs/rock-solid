@@ -40,7 +40,7 @@ export class LocatieListComponent extends LitElement {
   private renderTable() {
     return html`<div class="row">
       <table class="table table-hover table-sm">
-        <thead>
+        <thead class="sticky-top">
           <tr>
             <th>Naam</th>
             <th>Adres</th>

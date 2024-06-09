@@ -51,7 +51,7 @@ export class OrganisatiesListComponent extends LitElement {
   private renderTable() {
     return html`<div class="row">
       <table class="table table-hover">
-        <thead>
+        <thead class="sticky-top">
           <tr>
             <th>Naam</th>
             <th>TAV</th>
