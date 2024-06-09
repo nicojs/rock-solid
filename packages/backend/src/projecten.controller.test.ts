@@ -534,12 +534,13 @@ describe(ProjectenController.name, () => {
       let creteVakantie: Project;
       let cookCursus: Project;
       let cleanCursus: Project;
+      let deKeiCursus: Project;
       beforeEach(async () => {
         const jan2022 = new Date(2022, 0, 2);
         const jan2022Plus2 = new Date(2022, 0, 4);
         const jan2021 = new Date(2021, 0, 2);
         const jan2021Plus2 = new Date(2021, 0, 4);
-        [athensVakantie, creteVakantie, cookCursus, cleanCursus] =
+        [athensVakantie, creteVakantie, cookCursus, cleanCursus, deKeiCursus] =
           await Promise.all([
             harness.createProject(
               factory.vakantie({ bestemming: 'Athens', land: 'Greece' }),
@@ -551,7 +552,8 @@ describe(ProjectenController.name, () => {
               factory.cursus({
                 projectnummer: 'KJ/23/048',
                 naam: 'Learning to cook',
-                organisatieonderdeel: 'keiJongBuSO',
+                organisatieonderdeel: 'keiJong',
+                doelgroep: 'BuSO',
                 activiteiten: [
                   factory.activiteit({ van: jan2022, totEnMet: jan2022Plus2 }),
                 ],
@@ -561,7 +563,8 @@ describe(ProjectenController.name, () => {
               factory.cursus({
                 projectnummer: 'KJ/23/050',
                 naam: 'Learning to clean',
-                organisatieonderdeel: 'keiJongNietBuSO',
+                organisatieonderdeel: 'keiJong',
+                doelgroep: 'nietBuSO',
                 activiteiten: [
                   factory.activiteit({ van: jan2021, totEnMet: jan2021Plus2 }),
                 ],
@@ -642,27 +645,52 @@ describe(ProjectenController.name, () => {
 
       it('by organisatieonderdelen', async () => {
         // Act
-        const [keiJongBuSO, keiJongNietBuSO, keiJong] = await Promise.all([
+        const [keiJong, deKei, all] = await Promise.all([
           harness.getAllProjecten({
             type: 'cursus',
-            organisatieonderdelen: ['keiJongBuSO'],
+            organisatieonderdelen: ['keiJong'],
           }),
           harness.getAllProjecten({
             type: 'cursus',
-            organisatieonderdelen: ['keiJongNietBuSO'],
+            organisatieonderdelen: ['deKei'],
           }),
           harness.getAllProjecten({
             type: 'cursus',
-            organisatieonderdelen: ['keiJongBuSO', 'keiJongNietBuSO'],
+            organisatieonderdelen: ['deKei', 'keiJong'],
           }),
         ]);
 
         // Assert
-        expect(keiJongBuSO).deep.eq([cookCursus]);
-        expect(keiJongNietBuSO).deep.eq([cleanCursus]);
         expect(keiJong.sort(byId)).deep.eq(
           [cookCursus, cleanCursus].sort(byId),
         );
+        expect(deKei).deep.eq([deKeiCursus]);
+        expect(all.sort(byId)).deep.eq(
+          [cookCursus, cleanCursus, deKeiCursus].sort(byId),
+        );
+      });
+
+      it('by doelgroepen', async () => {
+        // Act
+        const [buso, nietBuso, all] = await Promise.all([
+          harness.getAllProjecten({
+            type: 'cursus',
+            doelgroepen: ['BuSO'],
+          }),
+          harness.getAllProjecten({
+            type: 'cursus',
+            doelgroepen: ['nietBuSO'],
+          }),
+          harness.getAllProjecten({
+            type: 'cursus',
+            doelgroepen: ['BuSO', 'nietBuSO'],
+          }),
+        ]);
+
+        // Assert
+        expect(buso).deep.eq([cookCursus]);
+        expect(nietBuso).deep.eq([cleanCursus]);
+        expect(all.sort(byId)).deep.eq([cookCursus, cleanCursus].sort(byId));
       });
     });
   });

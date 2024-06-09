@@ -1,6 +1,6 @@
 import { Aanmeldingsstatus } from './aanmelding.js';
 import { Options } from './options.js';
-import { Organisatieonderdeel, ProjectType } from './project.js';
+import { Doelgroep, Organisatieonderdeel, ProjectType } from './project.js';
 
 export type AanmeldingReportType =
   | 'aanmeldingen'
@@ -86,6 +86,7 @@ export interface ActiviteitReportFilter {
   type?: ProjectType;
   jaar?: number;
   overnachting?: OvernachtingDescription;
+  doelgroepen?: Doelgroep[];
 }
 
 export type OvernachtingDescription = 'met' | 'zonder';

@@ -28,6 +28,7 @@ import {
 } from './persoon.mapper.js';
 import {
   aanmeldingsstatusMapper,
+  doelgroepMapper,
   organisatieonderdeelMapper,
   projectTypeMapper,
   vakantieseizoenMapper,
@@ -308,6 +309,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
       seizoen: vakantieseizoenMapper.toDB(project.seizoen),
       titel: toTitel(projectData.projectnummer, naam),
       type: projectTypeMapper.toDB('vakantie'),
+      doelgroep: undefined,
       jaar,
       naam,
     };
@@ -322,6 +324,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
       seizoen: vakantieseizoenMapper.toDB(undefined),
       titel: toTitel(projectData.projectnummer, project.naam),
       type: projectTypeMapper.toDB('cursus'),
+      doelgroep: doelgroepMapper.toDB(project.doelgroep),
       jaar,
       naam: project.naam,
     };
@@ -457,6 +460,7 @@ function toProject(
         organisatieonderdeel: organisatieonderdeelMapper.toSchema(
           projectProperties.organisatieonderdeel!,
         ),
+        doelgroep: doelgroepMapper.toSchema(projectProperties.doelgroep),
         saldo,
         prijs,
       };
@@ -575,6 +579,11 @@ function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
   if (filter.organisatieonderdelen) {
     whereClause.organisatieonderdeel = {
       in: filter.organisatieonderdelen.map(organisatieonderdeelMapper.toDB),
+    };
+  }
+  if (filter.doelgroepen) {
+    whereClause.doelgroep = {
+      in: filter.doelgroepen.map(doelgroepMapper.toDB),
     };
   }
   whereClause.jaar = filter.jaar;

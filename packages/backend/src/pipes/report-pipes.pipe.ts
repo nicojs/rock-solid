@@ -11,6 +11,7 @@ import {
   isAanmeldingReportType,
   isAanmeldingsstatus,
   isActiviteitReportType,
+  isDoelgroep,
   isOrganisatieonderdeel,
   isOvernachtingDescription,
   isProjectType,
@@ -103,6 +104,11 @@ export class ActiviteitReportFilterPipe
     if (overnachting && isOvernachtingDescription(overnachting)) {
       filter.overnachting = overnachting;
     }
+    const doelgroepen = value[key('doelgroepen')];
+    if (doelgroepen) {
+      filter.doelgroepen = doelgroepen.split(',').filter(isDoelgroep);
+    }
+
     return filter;
   }
 }

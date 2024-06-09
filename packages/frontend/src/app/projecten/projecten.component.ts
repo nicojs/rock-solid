@@ -9,6 +9,7 @@ import {
   organisatieonderdelen,
   allProjectLabels,
   Privilege,
+  doelgroepen,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -274,5 +275,8 @@ const advancedCursusSearchControls: FormControl<ProjectFilter>[] = [
   },
   checkboxesItemsControl('organisatieonderdelen', organisatieonderdelen, {
     label: 'Organisatieonderdelen',
+  }),
+  checkboxesItemsControl('doelgroepen', doelgroepen, {
+    label: 'Doelgroepen',
   }),
 ];

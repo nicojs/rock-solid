@@ -1,6 +1,7 @@
 import {
   Aanmeldingsstatus,
   Communicatievoorkeur,
+  Doelgroep,
   Foldersoort,
   Geslacht,
   Organisatieonderdeel,
@@ -101,9 +102,14 @@ export const projectTypeMapper = createEnumMapper<ProjectType>('projectType', {
 export const organisatieonderdeelMapper =
   createEnumMapper<Organisatieonderdeel>('organisatieonderdeel', {
     deKei: 1,
-    keiJongBuSO: 2,
-    keiJongNietBuSO: 3,
+    keiJong: 2,
   });
+
+export const doelgroepMapper = createEnumMapper<Doelgroep>('doelgroep', {
+  BuSO: 1,
+  nietBuSO: 2,
+  BuSOEnNietBuSO: 3,
+});
 
 export const woonsituatieMapper = createEnumMapper<Woonsituatie>(
   'woonsituatie',

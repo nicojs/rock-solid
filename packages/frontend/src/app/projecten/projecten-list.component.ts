@@ -2,6 +2,7 @@ import {
   AanmeldingOf,
   aanmeldingsstatussen,
   Cursus,
+  cursusLabels,
   notEmpty,
   organisatieonderdelen,
   Project,
@@ -24,7 +25,7 @@ import {
 import { projectService } from './project.service';
 import { privilege } from '../auth/privilege.directive';
 import { ModalComponent } from '../shared/modal.component';
-import { printProject } from './project.pipes';
+import { printProject, showDoelgroep } from './project.pipes';
 
 @customElement('rock-projecten-list')
 export class ProjectenListComponent extends LitElement {
@@ -75,8 +76,19 @@ export class ProjectenListComponent extends LitElement {
   private renderTable() {
     const isCursus = this.projecten[0]!.type === 'cursus';
     const hasStatus = 'status' in (this.projecten[0] ?? {});
+    const hasDoelgroepen = this.projecten.some(
+      (project) => project.type === 'cursus' && project.doelgroep,
+    );
+    const showDeelnemersuren = this.projecten.some(
+      (project) =>
+        project.type === 'cursus' && project.organisatieonderdeel === 'keiJong',
+    );
+    const showVormingsuren = this.projecten.some(
+      (project) =>
+        project.type === 'cursus' && project.organisatieonderdeel === 'deKei',
+    );
     return html`<table class="table table-hover table-sm">
-      <thead>
+      <thead class="sticky-top">
         <tr>
           ${hasStatus ? html`<th>Status</th>` : ''}
           <th>Projectnummer</th>
@@ -84,17 +96,21 @@ export class ProjectenListComponent extends LitElement {
             ? html`<th>Naam</th>`
             : html`<th>Bestemming</th>
                 <th>Land</th>`}
-          <th class="text-end">Prijs</th>
           ${isCursus
             ? html`
-                <th class="text-center">Locatie(s)</th>
+                <th>Locatie(s)</th>
                 <th>Organisatieonderdeel</th>
-                <th>Deelnemersuren</th>
+                ${hasDoelgroepen
+                  ? html`<th>${cursusLabels.doelgroep}</th>`
+                  : ''}
+                ${showDeelnemersuren ? html`<th>Deelnemersuren</th>` : ''}
+                ${showVormingsuren ? html`<th>Vormingsuren</th>` : ''}
               `
             : html`
                 <th class="text-end">Voorschot</th>
                 <th class="text-center">Seizoen</th>
               `}
+          <th class="text-end">Prijs</th>
           <th>Activiteiten</th>
           <th style="width: 230px">Acties</th>
         </tr>
@@ -117,26 +133,47 @@ export class ProjectenListComponent extends LitElement {
                     <td>${project.bestemming}</td>
                     <td>${project.land}</td>
                   `}
-              <td class="text-end">${showMoney(project.prijs)}</td>
               ${project.type === 'cursus'
                 ? html`<td>${renderLocaties(project)}</td>
+
                     <td>
                       ${project.type === 'cursus'
                         ? organisatieonderdelen[project.organisatieonderdeel]
                         : notAvailable}
                     </td>
-                    <td>
-                      ${project.type === 'cursus'
-                        ? showNumber(
-                            project.activiteiten
-                              .map((act) => act.aantalDeelnemersuren)
-                              .reduce<number>(
-                                (acc, cur) => acc + (cur ?? 0),
-                                0,
-                              ),
-                          )
-                        : notAvailable}
-                    </td>`
+                    ${hasDoelgroepen
+                      ? html`<td>${showDoelgroep(project.doelgroep)}</td>`
+                      : ''}
+                    ${showDeelnemersuren
+                      ? html`<td>
+                          ${project.organisatieonderdeel === 'keiJong'
+                            ? showNumber(
+                                project.activiteiten
+                                  .map((act) => act.aantalDeelnemersuren)
+                                  .reduce<number>(
+                                    (acc, cur) => acc + (cur ?? 0),
+                                    0,
+                                  ),
+                              )
+                            : ''}
+                        </td>`
+                      : ''}
+                    ${showVormingsuren
+                      ? html`<td>
+                          ${project.organisatieonderdeel === 'deKei'
+                            ? showNumber(
+                                project.activiteiten
+                                  .map((act) => act.vormingsuren)
+                                  .reduce<number>(
+                                    (acc, cur) => acc + (cur ?? 0),
+                                    0,
+                                  ),
+                              )
+                            : ''}
+                        </td>`
+                      : ''}
+
+                    <td class="text-end">${showMoney(project.prijs)}</td> `
                 : html`
                     <td class="text-end">${showMoney(project.voorschot)}</td>
                     <td class="text-center">

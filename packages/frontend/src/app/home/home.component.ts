@@ -5,15 +5,11 @@ import { reportsClient } from '../rapportages/reports-client';
 import {
   AanmeldingReportType,
   ActiviteitReportType,
-  Organisatieonderdeel,
   ProjectFilter,
   toQueryString,
 } from '@rock-solid/shared';
 import pkg from '../../../package.json';
 import { showNumber } from '../shared';
-
-const keiJongOrganisatieonderdelen: ReadonlyArray<Organisatieonderdeel> =
-  Object.freeze(['keiJongBuSO', 'keiJongNietBuSO']);
 
 @customElement('rock-home')
 export class HomeComponent extends LitElement {
@@ -83,7 +79,7 @@ export class HomeComponent extends LitElement {
               <rock-link
                 href="/cursussen/${toQueryString({
                   type: 'cursus',
-                  organisatieonderdelen: ['keiJongBuSO', 'keiJongNietBuSO'],
+                  organisatieonderdelen: ['keiJong'],
                 } satisfies ProjectFilter)}"
                 btn
                 btnPrimary
@@ -182,12 +178,9 @@ export class HomeComponent extends LitElement {
       undefined,
       {
         jaar: this.year,
+        organisatieonderdeel: 'keiJong',
       },
     );
-    return results
-      .filter((row) =>
-        keiJongOrganisatieonderdelen.includes(row.key as Organisatieonderdeel),
-      )
-      .reduce((acc, row) => acc + row.total, 0);
+    return results.reduce((acc, row) => acc + row.total, 0);
   }
 }
