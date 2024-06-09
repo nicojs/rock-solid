@@ -49,7 +49,7 @@ export class AanmeldingMapper {
     const aanmeldingen = await this.db.aanmelding.findMany({
       where: filter,
       include: includeAanmeldingFields,
-      orderBy: { deelnemer: { volledigeNaam: 'asc' } },
+      orderBy: { id: 'asc' },
     });
     return aanmeldingen.map(toAanmelding);
   }
