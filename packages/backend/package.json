@@ -11,8 +11,6 @@
     "prisma:migrate:create": "prisma migrate dev --name ",
     "prisma:migrate:deploy": "node ../../node_modules/prisma/build/index.js migrate deploy",
     "prisma:push:force": "prisma db push --force-reset",
-    "prisma:seed": "node dist/seed/all.seed.js",
-    "prisma:seed:readonly": "npm run prisma:seed -- --readonly",
     "dev": "node --inspect -r dotenv/config --enable-source-maps --watch dist/main.js",
     "start": "node dist/main.js",
     "test": "mocha --node-option enable-source-maps",

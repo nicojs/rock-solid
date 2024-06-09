@@ -22,7 +22,7 @@ jobs:
       with:
         node-version: '20.x'
     - run: npm ci
-    - run: npm run deploy:acc:prepare
+    - run: npm run deploy:prepare
       env:
         AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
         AZURE_STORAGE_KEY: ${{ secrets.AZURE_STORAGE_KEY }}
