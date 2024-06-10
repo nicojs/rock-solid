@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/nicojs/rock-solid/compare/v1.9.2...v2.0.0) (2024-06-10)
+
+### Features
+
+- **cursus:** voeg categorie toe ([#267](https://github.com/nicojs/rock-solid/issues/267)) ([a3fc478](https://github.com/nicojs/rock-solid/commit/a3fc47879f7b1698e8b9be38c79079148f817c2a))
+- **doelgroep:** ondersteun KEI-JONG doelgroepen bij cursussen ([#263](https://github.com/nicojs/rock-solid/issues/263)) ([d703e13](https://github.com/nicojs/rock-solid/commit/d703e1325a54ea4afc5b122c1080207a4ec01353))
+- **knoppen:** knoppen verbergen die je niet mag gebruiken ([#264](https://github.com/nicojs/rock-solid/issues/264)) ([ff455a3](https://github.com/nicojs/rock-solid/commit/ff455a30e69b02492876c54e545c50e3a0b8bee7))
+- **tabellen:** bevries de titel van tabellen ([#266](https://github.com/nicojs/rock-solid/issues/266)) ([6f8ccd1](https://github.com/nicojs/rock-solid/commit/6f8ccd1e189c1bd0cf04866eb274e7ce6b0f59fe))
+
 ## [1.9.2](https://github.com/nicojs/rock-solid/compare/v1.9.1...v1.9.2) (2024-06-09)
 
 **Note:** Version bump only for package @rock-solid/frontend

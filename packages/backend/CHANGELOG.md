@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/nicojs/rock-solid/compare/v1.9.2...v2.0.0) (2024-06-10)
+
+### Features
+
+- **aanmelding:** sorteer aanmeldingen op datum aangemeld ([#265](https://github.com/nicojs/rock-solid/issues/265)) ([54ee4fa](https://github.com/nicojs/rock-solid/commit/54ee4fa547d0bb46ff5350a0d9c8030872887fca))
+- **cursus:** voeg categorie toe ([#267](https://github.com/nicojs/rock-solid/issues/267)) ([a3fc478](https://github.com/nicojs/rock-solid/commit/a3fc47879f7b1698e8b9be38c79079148f817c2a))
+- **doelgroep:** ondersteun KEI-JONG doelgroepen bij cursussen ([#263](https://github.com/nicojs/rock-solid/issues/263)) ([d703e13](https://github.com/nicojs/rock-solid/commit/d703e1325a54ea4afc5b122c1080207a4ec01353))
+
 ## [1.9.2](https://github.com/nicojs/rock-solid/compare/v1.9.1...v1.9.2) (2024-06-09)
 
 **Note:** Version bump only for package @rock-solid/backend
