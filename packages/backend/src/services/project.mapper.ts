@@ -28,6 +28,7 @@ import {
 } from './persoon.mapper.js';
 import {
   aanmeldingsstatusMapper,
+  cursusCategorieMapper,
   doelgroepMapper,
   organisatieonderdeelMapper,
   projectTypeMapper,
@@ -310,6 +311,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
       titel: toTitel(projectData.projectnummer, naam),
       type: projectTypeMapper.toDB('vakantie'),
       doelgroep: undefined,
+      categorie: undefined,
       jaar,
       naam,
     };
@@ -325,6 +327,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
       titel: toTitel(projectData.projectnummer, project.naam),
       type: projectTypeMapper.toDB('cursus'),
       doelgroep: doelgroepMapper.toDB(project.doelgroep),
+      categorie: cursusCategorieMapper.toDB(project.categorie),
       jaar,
       naam: project.naam,
     };
@@ -337,7 +340,6 @@ function toCreateDBActiviteit(
   const {
     aantalDeelnemersuren,
     aantalDeelnames,
-    metOvernachting: unused,
     vormingsuren,
     begeleidingsuren,
     verblijf,
@@ -347,18 +349,12 @@ function toCreateDBActiviteit(
     id,
     ...data
   } = activiteit;
-  const { van, totEnMet } = data;
-  const metOvernachting =
-    van.getFullYear() !== totEnMet.getFullYear() ||
-    van.getMonth() !== totEnMet.getMonth() ||
-    van.getDate() !== totEnMet.getDate();
   return {
     ...data,
     verblijf: vakantieVerblijfMapper.toDB(verblijf),
     vervoer: vakantieVervoerMapper.toDB(vervoer),
     vormingsuren: vormingsuren ?? null,
     begeleidingsuren: begeleidingsuren ?? null,
-    metOvernachting,
     locatie: locatie
       ? {
           connect: {
@@ -461,6 +457,7 @@ function toProject(
           projectProperties.organisatieonderdeel!,
         ),
         doelgroep: doelgroepMapper.toSchema(projectProperties.doelgroep),
+        categorie: cursusCategorieMapper.toSchema(projectProperties.categorie)!,
         saldo,
         prijs,
       };
@@ -526,22 +523,14 @@ function toBaseActiviteit(
   val: DBActiviteitAggregate,
   aantalBevestigdeAanmeldingen: number,
 ): BaseActiviteit {
-  const {
-    id,
-    deelnames,
-    vormingsuren,
-    begeleidingsuren,
-    van,
-    totEnMet,
-    metOvernachting,
-  } = purgeNulls(val);
+  const { id, deelnames, vormingsuren, begeleidingsuren, van, totEnMet } =
+    purgeNulls(val);
   return {
     id,
     van,
     totEnMet,
     vormingsuren,
     begeleidingsuren,
-    metOvernachting,
     aantalDeelnames: deelnames.reduce(
       (acc, deelname) =>
         deelname.effectieveDeelnamePerunage > 0 ? acc + 1 : acc,

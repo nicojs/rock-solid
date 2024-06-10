@@ -5,24 +5,33 @@ import { reportsClient } from '../rapportages/reports-client';
 import {
   AanmeldingReportType,
   ActiviteitReportType,
+  CursusCategorie,
   ProjectFilter,
+  Report,
   toQueryString,
 } from '@rock-solid/shared';
 import pkg from '../../../package.json';
 import { showNumber } from '../shared';
+
+type CategorieReport = Record<CursusCategorie, number>;
 
 @customElement('rock-home')
 export class HomeComponent extends LitElement {
   public static override styles = [bootstrap];
 
   @state()
-  private deelnemersurenKeiJongThisYear: number | undefined;
+  private deelnemersurenKeiJongThisYear?: CategorieReport;
+
   @state()
-  private deelnemersurenPrognoseKeiJongThisYear: number | undefined;
+  private deelnemersurenPrognoseKeiJongThisYear?: CategorieReport;
+
   @state()
-  private begeleidingsurenDeKeiThisYear: number | undefined;
+  private activeKeiJongReport: 'current' | 'prognose' = 'current';
+
   @state()
-  private vormingsurenDeKeiThisYear: number | undefined;
+  private begeleidingsurenDeKeiThisYear?: number;
+  @state()
+  private vormingsurenDeKeiThisYear?: number;
 
   private year = new Date().getFullYear();
 
@@ -59,23 +68,40 @@ export class HomeComponent extends LitElement {
       <div class="row">
         <div class="${colClass}">
           <div class="card">
-            <div class="card-header">Deelnemersuren Kei-Jong ${this.year}</div>
+            <div class="card-header">
+              <div class="mb-2">Deelnemersuren Kei-Jong ${this.year}</div>
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                  <button
+                    @click=${() => (this.activeKeiJongReport = 'current')}
+                    class="nav-link ${this.activeKeiJongReport === 'current'
+                      ? 'active'
+                      : ''}"
+                    aria-current="true"
+                    href="#"
+                  >
+                    Huidig
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    @click=${() => (this.activeKeiJongReport = 'prognose')}
+                    class="nav-link ${this.activeKeiJongReport === 'prognose'
+                      ? 'active'
+                      : ''}"
+                  >
+                    Prognose
+                  </button>
+                </li>
+              </ul>
+            </div>
             <div class="card-body">
-              <h5 class="card-title">
-                <span class="text-success"
-                  >${showNumber(this.deelnemersurenKeiJongThisYear)}</span
-                >
-                deelnemersuren
-              </h5>
-              <p class="card-text">
-                met
-                <span class="text-success"
-                  >${showNumber(
-                    this.deelnemersurenPrognoseKeiJongThisYear,
-                  )}</span
-                >
-                prognose
-              </p>
+              ${renderDeelnemersReport(
+                this.activeKeiJongReport === 'current'
+                  ? this.deelnemersurenKeiJongThisYear
+                  : this.deelnemersurenPrognoseKeiJongThisYear,
+              )}
+
               <rock-link
                 href="/cursussen/${toQueryString({
                   type: 'cursus',
@@ -128,6 +154,7 @@ export class HomeComponent extends LitElement {
       </footer>
     </div>`;
   }
+
   private async updateDeelnemersuren() {
     this.deelnemersurenKeiJongThisYear =
       await this.retrieveReportKeiJongThisYear('deelnemersuren');
@@ -174,13 +201,63 @@ export class HomeComponent extends LitElement {
   ) {
     const results = await reportsClient.get(
       `reports/aanmeldingen/${reportType}`,
-      'organisatieonderdeel',
+      'categorie',
       undefined,
       {
         jaar: this.year,
         organisatieonderdeel: 'keiJong',
       },
     );
-    return results.reduce((acc, row) => acc + row.total, 0);
+    return toCategorieReport(results);
   }
+}
+
+function renderDeelnemersReport(report: CategorieReport | undefined) {
+  return html`<h5 class="card-title">
+      <span class="text-success">${showNumber(total(report))}</span>
+      Deelnemersuren
+    </h5>
+    ${renderDeelnemersReportTable(report)}`;
+}
+
+function renderDeelnemersReportTable(report: CategorieReport | undefined) {
+  return html` <table class="table table-sm">
+    <tr>
+      <th>Met overnachting</th>
+      <td class="text-end">${showNumber(report?.cursusMetOvernachting, 2)}</td>
+    </tr>
+    <tr>
+      <th>Zonder overnachting</th>
+      <td class="text-end">
+        ${showNumber(report?.cursusZonderOvernachting, 2)}
+      </td>
+    </tr>
+    <tr>
+      <th>Inspraakproject</th>
+      <td class="text-end">${showNumber(report?.inspraakproject, 2)}</td>
+    </tr>
+  </table>`;
+}
+
+function toCategorieReport(rows: Report): CategorieReport {
+  const result: CategorieReport = {
+    cursusMetOvernachting: 0,
+    cursusZonderOvernachting: 0,
+    inspraakproject: 0,
+  };
+  for (const row of rows) {
+    result[row.key as CursusCategorie] = row.total;
+  }
+  return result;
+}
+
+function total(report: CategorieReport | undefined) {
+  if (!report) {
+    return undefined;
+  }
+  return (
+    report.cursusMetOvernachting +
+    report.cursusZonderOvernachting +
+    report.inspraakproject
+  );
 }

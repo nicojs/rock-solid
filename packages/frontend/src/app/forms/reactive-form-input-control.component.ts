@@ -49,8 +49,10 @@ export class ReactiveFormInputControl<
    * All inputs in this form control.
    * Note: there can be more inputs when the control is a radio or select.
    */
-  @queryAll('input')
-  private inputs!: NodeListOf<HTMLInputElement>;
+  @queryAll(':is(input, select, textarea)')
+  private inputs!: NodeListOf<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  >;
 
   override updated() {
     this.validate();

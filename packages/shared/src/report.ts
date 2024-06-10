@@ -1,6 +1,11 @@
 import { Aanmeldingsstatus } from './aanmelding.js';
 import { Options } from './options.js';
-import { Doelgroep, Organisatieonderdeel, ProjectType } from './project.js';
+import {
+  CursusCategorie,
+  Doelgroep,
+  Organisatieonderdeel,
+  ProjectType,
+} from './project.js';
 
 export type AanmeldingReportType =
   | 'aanmeldingen'
@@ -54,6 +59,7 @@ export type AanmeldingGroupField =
   | 'woonsituatie'
   | 'geslacht'
   | 'werksituatie'
+  | 'categorie'
   | ActiviteitGroupField;
 
 export type ActiviteitGroupField = 'jaar' | 'organisatieonderdeel' | 'project';
@@ -67,6 +73,7 @@ export const aanmeldingGroupingFieldOptions: Options<AanmeldingGroupField> = {
   woonsituatie: 'Woonsituatie',
   werksituatie: 'Werksituatie',
   geslacht: 'Geslacht',
+  categorie: 'Categorie',
   ...activiteitGroupingFieldOptions,
 };
 
@@ -85,20 +92,6 @@ export interface ActiviteitReportFilter {
   organisatieonderdeel?: Organisatieonderdeel;
   type?: ProjectType;
   jaar?: number;
-  overnachting?: OvernachtingDescription;
   doelgroepen?: Doelgroep[];
-}
-
-export type OvernachtingDescription = 'met' | 'zonder';
-
-export const overnachtingDescriptions: Options<OvernachtingDescription> =
-  Object.freeze({
-    met: 'Enkel met overnachting',
-    zonder: 'Enkel zonder overnachting',
-  });
-
-export function isOvernachtingDescription(
-  maybe: string,
-): maybe is OvernachtingDescription {
-  return maybe in overnachtingDescriptions;
+  categorieen?: CursusCategorie[];
 }

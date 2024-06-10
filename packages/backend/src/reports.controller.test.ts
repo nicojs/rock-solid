@@ -177,7 +177,7 @@ describe(ReportsController.name, () => {
     });
 
     describe('grouping', () => {
-      it('should support grouping by year', async () => {
+      it('by year', async () => {
         await arrangeCursussenTestSet();
         const report = await harness.getReport(
           'reports/aanmeldingen/aanmeldingen',
@@ -190,7 +190,7 @@ describe(ReportsController.name, () => {
         expect(report).deep.eq(expectedReport);
       });
 
-      it('should support grouping by year and project', async () => {
+      it('by year and project', async () => {
         await arrangeCursussenTestSet();
         const report = await harness.getReport(
           'reports/aanmeldingen/aanmeldingen',
@@ -218,6 +218,31 @@ describe(ReportsController.name, () => {
               },
             ],
           },
+        ];
+        expect(report).deep.eq(expectedReport);
+      });
+
+      it('by cursus categorie', async () => {
+        const { project2020, project2021 } = await arrangeCursussenTestSet();
+        await Promise.all([
+          harness.updateProject({
+            ...project2020,
+            categorie: 'cursusMetOvernachting',
+          }),
+          harness.updateProject({
+            ...project2021,
+            categorie: 'cursusZonderOvernachting',
+          }),
+        ]);
+
+        const report = await harness.getReport(
+          'reports/aanmeldingen/aanmeldingen',
+          'categorie',
+        );
+
+        const expectedReport: Report = [
+          { key: 'cursusZonderOvernachting', total: 2 },
+          { key: 'cursusMetOvernachting', total: 1 },
         ];
         expect(report).deep.eq(expectedReport);
       });
@@ -383,6 +408,60 @@ describe(ReportsController.name, () => {
           expect(control).deep.eq(expectedBoth);
           expect(buso).deep.eq(expectedBuso);
           expect(nietBuso).deep.eq(expectedNietBuso);
+        });
+      });
+
+      describe('categorie', () => {
+        it('should support filtering on "categorie"', async () => {
+          const { project2020, project2021 } = await arrangeCursussenTestSet();
+          await Promise.all([
+            harness.updateProject({
+              ...project2020,
+              categorie: 'cursusMetOvernachting',
+            }),
+            harness.updateProject({
+              ...project2021,
+              categorie: 'cursusZonderOvernachting',
+            }),
+          ]);
+
+          const [overnachting, zonder, both, control] = await Promise.all([
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { categorieen: ['cursusMetOvernachting'] },
+            ),
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { categorieen: ['cursusZonderOvernachting'] },
+            ),
+            harness.getReport('reports/aanmeldingen/aanmeldingen', 'jaar'),
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              {
+                categorieen: [
+                  'cursusMetOvernachting',
+                  'cursusZonderOvernachting',
+                ],
+              },
+            ),
+          ]);
+
+          const expectedOvernachting: Report = [{ key: '2020', total: 1 }];
+          const expectedZonder: Report = [{ key: '2021', total: 2 }];
+          const expectedBoth: Report = [
+            { key: '2021', total: 2 },
+            { key: '2020', total: 1 },
+          ];
+          expect(both).deep.eq(expectedBoth);
+          expect(control).deep.eq(expectedBoth);
+          expect(overnachting).deep.eq(expectedOvernachting);
+          expect(zonder).deep.eq(expectedZonder);
         });
       });
     });

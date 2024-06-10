@@ -528,6 +528,7 @@ export const factory = {
       naam: `Test project ${seed}`,
       activiteiten: [this.activiteit()],
       organisatieonderdeel: 'deKei',
+      categorie: 'cursusMetOvernachting',
       ...overrides,
     };
   },

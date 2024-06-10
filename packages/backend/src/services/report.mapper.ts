@@ -12,6 +12,7 @@ import {
 import { DBService } from './db.service.js';
 import {
   aanmeldingsstatusMapper,
+  cursusCategorieMapper,
   doelgroepMapper,
   geslachtMapper,
   organisatieonderdeelMapper,
@@ -173,16 +174,14 @@ function filterWhere(filter: AanmeldingReportFilter): string {
       )}`,
     );
   }
-  if (filter.overnachting !== undefined) {
-    whereClauses.push(
-      `Project.id IN (SELECT projectId FROM activiteit WHERE activiteit.metOvernachting = ${
-        filter.overnachting === 'met' ? 'true' : 'false'
-      })`,
-    );
-  }
   if (filter.doelgroepen && filter.doelgroepen.length) {
     whereClauses.push(
       `Project.doelgroep IN (${filter.doelgroepen.map((doelgroep) => doelgroepMapper.toDB(doelgroep)).join(',')})`,
+    );
+  }
+  if (filter.categorieen && filter.categorieen.length) {
+    whereClauses.push(
+      `Project.categorie IN (${filter.categorieen.map((categorie) => cursusCategorieMapper.toDB(categorie)).join(',')})`,
     );
   }
   if (whereClauses.length) {
@@ -230,6 +229,8 @@ function fieldName(field: AanmeldingGroupField): string {
       return 'Project.organisatieonderdeel';
     case 'project':
       return 'Project.id';
+    case 'categorie':
+      return 'Project.categorie';
   }
 }
 
@@ -249,6 +250,8 @@ function select(field: AanmeldingGroupField): string {
       return 'organisatieonderdeel';
     case 'project':
       return 'Project.titel';
+    case 'categorie':
+      return 'Project.categorie';
   }
 }
 
@@ -267,6 +270,8 @@ function keyFromGroupField(
       return organisatieonderdeelMapper.toSchema(keyAsNumberIfString());
     case 'provincie':
       return provincieMapper.toSchema(keyAsNumberIfString());
+    case 'categorie':
+      return cursusCategorieMapper.toSchema(keyAsNumberIfString());
     default:
       if (key === null || key === undefined) {
         return undefined;
