@@ -18,6 +18,7 @@ import {
   Privilege,
   activiteitLabels,
   doelgroepen,
+  cursusCategorieën,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -179,6 +180,9 @@ const cursusProjectControls: FormControl<Cursus>[] = [
       },
     },
     dependsOn: ['organisatieonderdeel'],
+  }),
+  radioControl('categorie', cursusCategorieën, {
+    validators: { required: true },
   }),
   formArray('activiteiten', cursusActiviteitenControls, newActiviteit),
 ];

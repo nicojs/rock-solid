@@ -4,7 +4,6 @@ import {
   Cursus,
   cursusLabels,
   notEmpty,
-  organisatieonderdelen,
   Project,
   showDatum,
   vakantieSeizoenen,
@@ -93,16 +92,16 @@ export class ProjectenListComponent extends LitElement {
           ${hasStatus ? html`<th>Status</th>` : ''}
           <th>Projectnummer</th>
           ${isCursus
-            ? html`<th>Naam</th>`
+            ? html`<th>Naam</th>
+                ${showDoelgroepen
+                  ? html`<th>${cursusLabels.doelgroep}</th>`
+                  : ''}`
             : html`<th>Bestemming</th>
                 <th>Land</th>`}
           ${isCursus
             ? html`
                 <th>Locatie(s)</th>
-                <th>Organisatieonderdeel</th>
-                ${showDoelgroepen
-                  ? html`<th>${cursusLabels.doelgroep}</th>`
-                  : ''}
+
                 ${showDeelnemersuren ? html`<th>Deelnemersuren</th>` : ''}
                 ${showVormingsuren ? html`<th>Vormingsuren</th>` : ''}
               `
@@ -128,7 +127,10 @@ export class ProjectenListComponent extends LitElement {
                 : ''}
               <td>${project.projectnummer}</td>
               ${project.type === 'cursus'
-                ? html`<td>${project.naam}</td>`
+                ? html`<td>${project.naam}</td>
+                    ${showDoelgroepen
+                      ? html`<td>${showDoelgroep(project.doelgroep)}</td>`
+                      : ''} `
                 : html`
                     <td>${project.bestemming}</td>
                     <td>${project.land}</td>
@@ -136,14 +138,6 @@ export class ProjectenListComponent extends LitElement {
               ${project.type === 'cursus'
                 ? html`<td>${renderLocaties(project)}</td>
 
-                    <td>
-                      ${project.type === 'cursus'
-                        ? organisatieonderdelen[project.organisatieonderdeel]
-                        : notAvailable}
-                    </td>
-                    ${showDoelgroepen
-                      ? html`<td>${showDoelgroep(project.doelgroep)}</td>`
-                      : ''}
                     ${showDeelnemersuren
                       ? html`<td>
                           ${project.organisatieonderdeel === 'keiJong'

@@ -22,11 +22,11 @@ export const unknown = 'onbekend';
 export const notAvailable = 'n/a';
 export const none = 'geen';
 
-export function showNumber(value: number | undefined) {
+export function showNumber(value: number | undefined, fraction?: number) {
   return (
     value?.toLocaleString('nl', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: fraction ?? 0,
+      maximumFractionDigits: fraction ?? 2,
     }) ?? ''
   );
 }

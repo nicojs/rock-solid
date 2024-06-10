@@ -244,12 +244,12 @@ describe(ProjectenController.name, () => {
         totEnMet: new Date(2011, 2, 4, 16, 0, 0),
         vormingsuren: 20,
         begeleidingsuren: 40,
-        metOvernachting: true,
       } as const satisfies Partial<CursusActiviteit>;
       const projectData = {
         projectnummer: '123',
         naam: 'Foo project',
         saldo: new Decimal(2000),
+        categorie: 'cursusZonderOvernachting',
         organisatieonderdeel: 'deKei',
       } as const satisfies Partial<Cursus>;
       const project = factory.cursus({
@@ -269,6 +269,7 @@ describe(ProjectenController.name, () => {
         projectnummer: '123',
         naam: 'Foo project',
         jaar: 2011,
+        categorie: 'cursusZonderOvernachting',
         organisatieonderdeel: 'deKei',
         activiteiten: [
           {
@@ -277,7 +278,6 @@ describe(ProjectenController.name, () => {
             totEnMet: new Date(2011, 2, 4, 16, 0, 0),
             vormingsuren: 20,
             begeleidingsuren: 40,
-            metOvernachting: true,
             aantalDeelnames: 0,
             aantalDeelnemersuren: 0,
             isCompleted: true,
@@ -703,7 +703,6 @@ describe(ProjectenController.name, () => {
         totEnMet: new Date(2011, 2, 4, 16, 0, 0),
         vormingsuren: 20,
         begeleidingsuren: 40,
-        metOvernachting: true,
         verblijf: 'boot',
         vervoer: 'autocarOverdag',
       } as const satisfies Partial<Activiteit>;

@@ -34,6 +34,7 @@ export interface Cursus extends BaseProject {
   type: 'cursus';
   organisatieonderdeel: Organisatieonderdeel;
   doelgroep?: Doelgroep;
+  categorie: CursusCategorie;
   activiteiten: CursusActiviteit[];
 }
 
@@ -66,6 +67,7 @@ export const cursusLabels: Labels<Cursus> = {
   ...projectLabels,
   activiteiten: 'Activiteiten',
   organisatieonderdeel: 'Organisatie',
+  categorie: 'Categorie',
   doelgroep: 'Doelgroep',
 };
 
@@ -87,7 +89,6 @@ export const activiteitLabels: Labels<VakantieActiviteit & CursusActiviteit> = {
   aantalDeelnemersuren: 'Aantal deelnemersuren',
   begeleidingsuren: 'Begeleidingsuren',
   id: 'id',
-  metOvernachting: 'Met overnachting',
   totEnMet: 'Tot en met',
   van: 'Van',
   vormingsuren: 'Vormingsuren',
@@ -103,7 +104,6 @@ export interface BaseActiviteit {
   id: number;
   van: Date;
   totEnMet: Date;
-  metOvernachting: boolean;
   aantalDeelnames: number;
   vormingsuren?: number;
   begeleidingsuren?: number;
@@ -151,6 +151,10 @@ export const vakantieVervoerOptions: Options<VakantieVervoer> = Object.freeze({
 
 export type Organisatieonderdeel = 'deKei' | 'keiJong';
 export type Doelgroep = 'BuSO' | 'nietBuSO' | 'BuSOEnNietBuSO';
+export type CursusCategorie =
+  | 'cursusMetOvernachting'
+  | 'cursusZonderOvernachting'
+  | 'inspraakproject';
 
 export const organisatieonderdelen: Options<Organisatieonderdeel> =
   Object.freeze({
@@ -163,6 +167,12 @@ export const doelgroepen: Options<Doelgroep> = Object.freeze({
   BuSOEnNietBuSO: 'BuSO en niet BuSO',
 });
 
+export const cursusCategorieën: Options<CursusCategorie> = Object.freeze({
+  cursusMetOvernachting: 'Cursus met overnachting',
+  cursusZonderOvernachting: 'Cursus zonder overnachting',
+  inspraakproject: 'Inspraakproject',
+});
+
 export function isOrganisatieonderdeel(
   maybe: string,
 ): maybe is Organisatieonderdeel {
@@ -171,6 +181,10 @@ export function isOrganisatieonderdeel(
 
 export function isDoelgroep(maybe: string): maybe is Doelgroep {
   return maybe in doelgroepen;
+}
+
+export function isCursusCategorie(maybe: string): maybe is CursusCategorie {
+  return maybe in cursusCategorieën;
 }
 
 export type Project = Cursus | Vakantie;
@@ -184,7 +198,7 @@ export type UpsertableProject = UpsertableCursus | UpsertableVakantie;
 
 export type UpsertableCursus = Upsertable<
   Omit<Cursus, 'activiteiten'>,
-  'projectnummer' | 'naam' | 'type' | 'organisatieonderdeel'
+  'projectnummer' | 'naam' | 'type' | 'organisatieonderdeel' | 'categorie'
 > & {
   type: 'cursus';
   activiteiten: UpsertableActiviteit[];
@@ -204,6 +218,7 @@ export type ProjectFilter = Pick<Project, 'type'> &
     begeleidDoorPersoonId?: number;
     organisatieonderdelen?: Organisatieonderdeel[];
     doelgroepen?: Doelgroep[];
+    categorieen?: CursusCategorie[];
   };
 
 export function toProjectFilter(
@@ -216,6 +231,7 @@ export function toProjectFilter(
       ?.split(',')
       .filter(isOrganisatieonderdeel),
     doelgroepen: query.doelgroepen?.split(',').filter(isDoelgroep),
+    categorieen: query.categorieen?.split(',').filter(isCursusCategorie),
     begeleidDoorPersoonId: tryParseInt(query.begeleidDoorPersoonId),
     aanmeldingPersoonId: tryParseInt(query.aanmeldingPersoonId),
   };

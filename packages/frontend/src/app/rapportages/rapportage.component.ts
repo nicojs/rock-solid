@@ -13,8 +13,6 @@ import {
   werksituaties,
   AanmeldingReportType,
   organisatieonderdelen,
-  OvernachtingDescription,
-  overnachtingDescriptions,
   Aanmeldingsstatus,
   aanmeldingLabels,
   aanmeldingsstatussen,
@@ -29,6 +27,8 @@ import {
   Provincie,
   Doelgroep,
   doelgroepen,
+  cursusCategorieën,
+  CursusCategorie,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, nothing, PropertyValues } from 'lit';
@@ -79,7 +79,7 @@ export class RapportageComponent extends RockElement {
   public doelgroepen?: Doelgroep[];
 
   @state()
-  public overnachting?: OvernachtingDescription;
+  public categorieen?: CursusCategorie[];
 
   @state()
   public enkelJaar?: number;
@@ -90,7 +90,7 @@ export class RapportageComponent extends RockElement {
   @state()
   public isLoading = false;
 
-  public override updated(props: PropertyValues<RapportageComponent>) {
+  public override update(props: PropertyValues<RapportageComponent>) {
     if (
       props.has('reportType') ||
       props.has('projectType') ||
@@ -101,7 +101,7 @@ export class RapportageComponent extends RockElement {
       props.has('organisatieonderdeel') ||
       props.has('doelgroepen') ||
       props.has('aanmeldingsstatus') ||
-      props.has('overnachting')
+      props.has('categorieen')
     ) {
       if (isActiviteitReportType(this.reportType)) {
         if (this.group1 && !isActiviteitGroupingField(this.group1)) {
@@ -127,7 +127,7 @@ export class RapportageComponent extends RockElement {
                 organisatieonderdeel: this.organisatieonderdeel,
                 type: this.projectType,
                 jaar: this.enkelJaar,
-                overnachting: this.overnachting,
+                categorieen: this.categorieen,
                 aanmeldingsstatus: this.aanmeldingsstatus,
                 doelgroepen: this.doelgroepen,
               },
@@ -143,7 +143,7 @@ export class RapportageComponent extends RockElement {
                 organisatieonderdeel: this.organisatieonderdeel,
                 type: this.projectType,
                 jaar: this.enkelJaar,
-                overnachting: this.overnachting,
+                categorieen: this.categorieen,
                 doelgroepen: this.doelgroepen,
               },
             );
@@ -157,6 +157,7 @@ export class RapportageComponent extends RockElement {
           });
       }
     }
+    super.update(props);
   }
 
   private downloadReport = () => {
@@ -201,110 +202,122 @@ export class RapportageComponent extends RockElement {
   };
 
   override render() {
-    return html` <fieldset class="row pt-3">
-        <legend class="h6">Groeperen</legend>
-
-        <rock-reactive-form-input-control
-          class="col-12 col-md-3 col-sm-5 col-lg-3"
-          .control=${groupingControl('group1', this.reportType)}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
-        <rock-reactive-form-input-control
-          class="col-12 col-md-3 col-sm-5 col-lg-3"
-          .control=${groupingControl('group2', this.reportType)}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
+    return html` <fieldset class="mt-3 p-2 mb-3 border border-success-subtle">
+        <legend class="h6 text-success-emphasis">Groeperen</legend>
+        <div class="row">
+          <rock-reactive-form-input-control
+            class="col-12 col-md-3 col-sm-5 col-lg-3"
+            .control=${groupingControl('group1', this.reportType)}
+            .entity=${this}
+          ></rock-reactive-form-input-control>
+          <rock-reactive-form-input-control
+            class="col-12 col-md-3 col-sm-5 col-lg-3"
+            .control=${groupingControl('group2', this.reportType)}
+            .entity=${this}
+          ></rock-reactive-form-input-control>
+        </div>
       </fieldset>
-      <fieldset class="row pt-3 mb-3">
-        <legend class="h6">Filteren</legend>
-        <rock-reactive-form-input-control
-          class="col-12 col-md-4 col-sm-6"
-          .control=${projectTypeControl}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
-        <rock-reactive-form-input-control
-          class="col-12 col-md-4 col-sm-6"
-          .control=${projectJaarControl}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
-        <rock-reactive-form-input-control
-          class="col-12 col-md-4 col-sm-6"
-          .control=${organisatieonderdeelFilterControl}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
-        <rock-reactive-form-input-control
-          class="col-12 col-md-4 col-sm-6"
-          .control=${overnachtingControl}
-          .entity=${this}
-        ></rock-reactive-form-input-control>
-        ${reportRoot(this.reportType) === 'aanmeldingen'
-          ? html`<rock-reactive-form-input-control
-                class="col-12 col-md-4 col-sm-6"
-                .control=${aanmeldingsstatusControl}
-                .entity=${this}
-              ></rock-reactive-form-input-control>
-              <rock-reactive-form-input-control
-                class="col-12 col-md-4 col-sm-6"
-                .control=${enkelNieuwkomersControl}
-                .entity=${this}
-              ></rock-reactive-form-input-control>`
-          : nothing}
-        <rock-reactive-checkboxes
-          class="mt-2 col-12 col-md-6"
-          labelClasses="col-lg-4 col-md-6 col-12"
-          .control=${doelgroepenFilterControl}
-          .entity=${this}
-        ></rock-reactive-checkboxes>
+      <fieldset class="mt-3 p-2 mb-3 border border-info-subtle">
+        <legend class="h6 text-info-emphasis">Filteren</legend>
+        <div class="row">
+          <rock-reactive-form-input-control
+            class="col-12 col-md-4 col-sm-6"
+            .control=${projectTypeControl}
+            .entity=${this}
+          ></rock-reactive-form-input-control>
+          <rock-reactive-form-input-control
+            class="col-12 col-md-4 col-sm-6"
+            .control=${projectJaarControl}
+            .entity=${this}
+          ></rock-reactive-form-input-control>
+          <rock-reactive-form-input-control
+            class="col-12 col-md-4 col-sm-6"
+            .control=${organisatieonderdeelFilterControl}
+            .entity=${this}
+          ></rock-reactive-form-input-control>
+
+          ${reportRoot(this.reportType) === 'aanmeldingen'
+            ? html`<rock-reactive-form-input-control
+                  class="col-12 col-md-4 col-sm-6"
+                  .control=${aanmeldingsstatusControl}
+                  .entity=${this}
+                ></rock-reactive-form-input-control>
+                <rock-reactive-form-input-control
+                  class="col-12 col-md-4 col-sm-6"
+                  .control=${enkelNieuwkomersControl}
+                  .entity=${this}
+                ></rock-reactive-form-input-control>`
+            : nothing}
+        </div>
+        <div class="row p-3">
+          <rock-reactive-checkboxes
+            class="pt-2 col-12 col-md-6 border ml-2"
+            labelClasses="col-auto"
+            .control=${categorieFilterControl}
+            .entity=${this}
+          ></rock-reactive-checkboxes>
+          <rock-reactive-checkboxes
+            class="pt-2 col-12 col-md-6 border"
+            labelClasses="col-auto"
+            .control=${doelgroepenFilterControl}
+            .entity=${this}
+          ></rock-reactive-checkboxes>
+        </div>
       </fieldset>
 
-      <div class="row">
-        <div class="col">
-          <h6>Resultaten</h6>
-          ${this.isLoading
-            ? html`<rock-loading></rock-loading>`
-            : this.report && this.group1
-              ? html` <button
-                    @click=${this.downloadReport}
-                    class="btn btn-outline-secondary"
-                  >
-                    <rock-icon icon="download"></rock-icon> Export
-                  </button>
-                  <table class="table table-hover table-sm">
-                    <thead>
-                      <tr>
-                        <th>${aanmeldingGroupingFieldOptions[this.group1]}</th>
-                        <th>${GROUP1_TITLE}</th>
-                        ${this.group2
-                          ? html`<th>
-                                ${aanmeldingGroupingFieldOptions[this.group2]}
-                              </th>
-                              <th>${GROUP2_TITLE}</th>`
-                          : ''}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      ${this.report.map(
-                        ({ key, rows, total }) =>
-                          html`<tr>
-                              <th rowspan="${rows?.length}">
-                                ${showGroupKey(this.group1!, key)}
-                              </th>
-                              <td rowspan="${rows?.length}">${total}</td>
-                              ${renderRowData(this.group2!, rows?.[0])}
-                            </tr>
-                            ${rows?.slice(1).map(
-                              (row) =>
-                                html`<tr>
-                                  ${renderRowData(this.group2!, row)}
-                                </tr>`,
-                            )}`,
-                      )}
-                    </tbody>
-                  </table>`
-              : html`<p class="text-muted">
-                  Nog geen rapport geladen. Kies bij "Groeperen" ten minste 1
-                  groep om te starten.
-                </p>`}
+      <div class="mt-3 p-2 mb-3 border border-light-subtle">
+        <div class="row">
+          <div class="col">
+            <h6>Resultaten</h6>
+
+            ${this.isLoading
+              ? html`<rock-loading></rock-loading>`
+              : this.report && this.group1
+                ? html` <button
+                      @click=${this.downloadReport}
+                      class="btn btn-outline-secondary"
+                    >
+                      <rock-icon icon="download"></rock-icon> Export
+                    </button>
+                    <table class="table table-hover table-sm">
+                      <thead>
+                        <tr>
+                          <th>
+                            ${aanmeldingGroupingFieldOptions[this.group1]}
+                          </th>
+                          <th>${GROUP1_TITLE}</th>
+                          ${this.group2
+                            ? html`<th>
+                                  ${aanmeldingGroupingFieldOptions[this.group2]}
+                                </th>
+                                <th>${GROUP2_TITLE}</th>`
+                            : ''}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${this.report.map(
+                          ({ key, rows, total }) =>
+                            html`<tr>
+                                <th rowspan="${rows?.length}">
+                                  ${showGroupKey(this.group1!, key)}
+                                </th>
+                                <td rowspan="${rows?.length}">${total}</td>
+                                ${renderRowData(this.group2!, rows?.[0])}
+                              </tr>
+                              ${rows?.slice(1).map(
+                                (row) =>
+                                  html`<tr>
+                                    ${renderRowData(this.group2!, row)}
+                                  </tr>`,
+                              )}`,
+                        )}
+                      </tbody>
+                    </table>`
+                : html`<p class="text-muted">
+                    Nog geen rapport geladen. Kies bij "Groeperen" ten minste 1
+                    groep om te starten.
+                  </p>`}
+          </div>
         </div>
       </div>`;
 
@@ -348,15 +361,6 @@ const projectJaarControl: NumberInputControl<RapportageComponent> = {
   step: 1,
 };
 
-const overnachtingControl = selectControl<RapportageComponent, 'overnachting'>(
-  'overnachting',
-  overnachtingDescriptions,
-  {
-    placeholder: 'Met en zonder overnachting',
-    label: 'Overnachting',
-  },
-);
-
 const aanmeldingsstatusControl = selectControl<
   RapportageComponent,
   'aanmeldingsstatus'
@@ -376,6 +380,13 @@ const doelgroepenFilterControl = checkboxesItemsControl<
   RapportageComponent,
   'doelgroepen'
 >('doelgroepen', doelgroepen);
+
+const categorieFilterControl = checkboxesItemsControl<
+  RapportageComponent,
+  'categorieen'
+>('categorieen', cursusCategorieën, {
+  label: 'Categorie',
+});
 
 const enkelNieuwkomersControl: CheckboxInputControl<RapportageComponent> = {
   name: 'enkelEersteAanmeldingen',
@@ -402,6 +413,10 @@ function showGroupKey(
       return key ? woonsituaties[key as Woonsituatie] : unknown;
     case 'werksituatie':
       return key ? werksituaties[key as Werksituatie] : unknown;
+    case 'categorie':
+      return key
+        ? cursusCategorieën[key as keyof typeof cursusCategorieën]
+        : '';
   }
 }
 function reportRoot<

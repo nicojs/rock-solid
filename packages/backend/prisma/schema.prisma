@@ -117,6 +117,7 @@ model Project {
   // Cursus
   organisatieonderdeel Int?
   doelgroep            Int?
+  categorie            Int?
 
   // Vakantie. Total price is saldo + voorschot
   bestemming String?
@@ -159,7 +160,6 @@ model Activiteit {
   totEnMet         DateTime
   vormingsuren     Float?
   begeleidingsuren Float?
-  metOvernachting  Boolean    @default(false)
   deelnames        Deelname[]
 
   // Cursussen

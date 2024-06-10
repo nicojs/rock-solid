@@ -11,9 +11,9 @@ import {
   isAanmeldingReportType,
   isAanmeldingsstatus,
   isActiviteitReportType,
+  isCursusCategorie,
   isDoelgroep,
   isOrganisatieonderdeel,
-  isOvernachtingDescription,
   isProjectType,
 } from '@rock-solid/shared';
 
@@ -100,13 +100,13 @@ export class ActiviteitReportFilterPipe
     if (jaar) {
       filter.jaar = parseInt(jaar);
     }
-    const overnachting = value[key('overnachting')];
-    if (overnachting && isOvernachtingDescription(overnachting)) {
-      filter.overnachting = overnachting;
-    }
     const doelgroepen = value[key('doelgroepen')];
     if (doelgroepen) {
       filter.doelgroepen = doelgroepen.split(',').filter(isDoelgroep);
+    }
+    const categorieen = value[key('categorieen')];
+    if (categorieen) {
+      filter.categorieen = categorieen.split(',').filter(isCursusCategorie);
     }
 
     return filter;

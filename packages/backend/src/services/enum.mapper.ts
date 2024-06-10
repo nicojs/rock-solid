@@ -1,6 +1,7 @@
 import {
   Aanmeldingsstatus,
   Communicatievoorkeur,
+  CursusCategorie,
   Doelgroep,
   Foldersoort,
   Geslacht,
@@ -110,6 +111,15 @@ export const doelgroepMapper = createEnumMapper<Doelgroep>('doelgroep', {
   nietBuSO: 2,
   BuSOEnNietBuSO: 3,
 });
+
+export const cursusCategorieMapper = createEnumMapper<CursusCategorie>(
+  'categorie',
+  {
+    cursusMetOvernachting: 1,
+    cursusZonderOvernachting: 2,
+    inspraakproject: 3,
+  },
+);
 
 export const woonsituatieMapper = createEnumMapper<Woonsituatie>(
   'woonsituatie',
