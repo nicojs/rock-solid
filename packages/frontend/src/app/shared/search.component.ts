@@ -77,16 +77,16 @@ export class SearchComponent<
                     this.filter[this.mainControl.name as keyof TFilter],
                   )}
                 />
+                <button type="submit" class="btn btn-outline-secondary">
+                  <rock-icon icon="search"></rock-icon>
+                </button>
                 <button
                   title="Geavanceerd zoeken"
                   type="button"
                   @click=${() => (this.showAdvancedSearch = true)}
                   class="btn btn-outline-secondary"
                 >
-                  <rock-icon icon="caretDownFill"></rock-icon>
-                </button>
-                <button type="submit" class="btn btn-outline-secondary">
-                  <rock-icon icon="search"></rock-icon>
+                  <rock-icon icon="sliders2Vertical"></rock-icon>
                 </button>
               </div>
             </div>
