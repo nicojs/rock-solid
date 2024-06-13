@@ -1,6 +1,6 @@
 {
   "name": "@rock-solid/frontend",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "private": true,
   "main": "index.js",
@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@rock-solid/shared": "^2.0.0",
+    "@rock-solid/shared": "^2.0.1",
     "bootstrap": "^5.3.3",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",

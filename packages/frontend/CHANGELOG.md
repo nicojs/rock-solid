@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/nicojs/rock-solid/compare/v2.0.0...v2.0.1) (2024-06-13)
+
+### Features
+
+- **zoeken:** een beter 'geavanceerd zoeken' icoontje ([#269](https://github.com/nicojs/rock-solid/issues/269)) ([bdfc3ab](https://github.com/nicojs/rock-solid/commit/bdfc3ab532c7004da0b2dee9623f26e017f11a72))
+
 # [2.0.0](https://github.com/nicojs/rock-solid/compare/v1.9.2...v2.0.0) (2024-06-10)
 
 ### Features
