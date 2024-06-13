@@ -753,6 +753,30 @@ describe(PersonenController.name, () => {
       expect(actualDeelnemer.domicilieadres).undefined;
     });
 
+    it("should be able to delete a address's busnummer", async () => {
+      // Arrange
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        verblijfadres: {
+          ...deelnemer.verblijfadres!,
+          busnummer: '1',
+        },
+      });
+
+      // Act
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        verblijfadres: {
+          ...deelnemer.verblijfadres!,
+          busnummer: undefined,
+        },
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.verblijfadres!.busnummer).undefined;
+    });
+
     it('should be able to update contactpersoon fields', async () => {
       // Arrange
       const contactpersoon: Contactpersoon = {

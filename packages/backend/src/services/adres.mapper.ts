@@ -63,6 +63,7 @@ export function toUpdateAdresInput(
         },
         update: {
           ...props,
+          busnummer: props.busnummer ?? null,
           plaats: { connect: { id: plaats.id } },
         },
       },
