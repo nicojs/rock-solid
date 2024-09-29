@@ -60,6 +60,7 @@ export type OrganisatieFilter = {
   metAdres?: boolean;
   provincie?: Provincie;
   soorten?: Organisatiesoort[];
+  emailadres?: string;
 };
 
 export type UpsertableOrganisatie = Upsertable<

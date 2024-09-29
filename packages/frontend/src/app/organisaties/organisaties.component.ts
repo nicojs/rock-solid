@@ -176,7 +176,8 @@ export class OrganisatiesComponent extends RockElement {
             ? html`
                 <rock-organisaties-list
                   .organisaties=${this.organisaties}
-                  @delete=${(ev: CustomEvent<Organisatie>) => this.deleteOrganisatie(ev)}
+                  @delete=${(ev: CustomEvent<Organisatie>) =>
+                    this.deleteOrganisatie(ev)}
                 ></rock-organisaties-list>
                 <rock-paging .store=${organisatieStore}></rock-paging>
               `
@@ -231,4 +232,10 @@ const advancedSearchControls: FormControl<OrganisatieFilter>[] = [
     type: InputType.checkbox,
   },
   selectControl('provincie', provincies, { placeholder: '' }),
+  {
+    type: InputType.text,
+    name: 'emailadres',
+    label: 'Emailadres',
+    placeholder: 'Zoek op emailadres',
+  },
 ];

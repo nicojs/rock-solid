@@ -134,6 +134,7 @@ describe(OrganisatiesController.name, () => {
             contacten: [
               factory.organisatieContact({
                 terAttentieVan: 'Hans',
+                emailadres: 'hans@acme.com',
                 adres: {
                   straatnaam: 'AcmeStreet',
                   huisnummer: '1',
@@ -145,6 +146,7 @@ describe(OrganisatiesController.name, () => {
               }),
               factory.organisatieContact({
                 terAttentieVan: 'Piet',
+                emailadres: 'piet@acme.com',
                 foldervoorkeuren: [
                   { folder: 'keiJongBuso', communicatie: 'email' },
                 ],
@@ -157,6 +159,7 @@ describe(OrganisatiesController.name, () => {
             contacten: [
               factory.organisatieContact({
                 terAttentieVan: 'Mickey',
+                emailadres: 'mickey@disney.com',
                 foldervoorkeuren: [
                   {
                     folder: 'deKeiWintervakantie',
@@ -175,6 +178,7 @@ describe(OrganisatiesController.name, () => {
             contacten: [
               factory.organisatieContact({
                 terAttentieVan: 'Miyamoto',
+                emailadres: 'miyamoto@nintendo.com',
                 adres: {
                   straatnaam: 'NintendoStreet',
                   huisnummer: '1',
@@ -306,6 +310,28 @@ describe(OrganisatiesController.name, () => {
           disney.id,
           nintendo.id,
         ]);
+        expect(noFilter.map(({ id }) => id)).deep.eq([
+          acme.id,
+          disney.id,
+          nintendo.id,
+        ]);
+      });
+
+      it('by emailadres', async () => {
+        // Act
+        const [hansOrgs, hansCaseInsensitiveOrgs, noFilter] = await Promise.all(
+          [
+            harness.getAllOrganisaties({ emailadres: 'hans' }),
+            harness.getAllOrganisaties({ emailadres: 'HANS' }),
+            harness.getAllOrganisaties({}),
+          ],
+        );
+
+        // Assert
+        expect(hansOrgs.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(hansOrgs[0]?.contacten).lengthOf(1);
+        expect(hansCaseInsensitiveOrgs.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(hansCaseInsensitiveOrgs[0]?.contacten).lengthOf(1);
         expect(noFilter.map(({ id }) => id)).deep.eq([
           acme.id,
           disney.id,
