@@ -50,7 +50,7 @@ export class ReactiveFormComponent<TEntity> extends LitElement {
     return html`<form
       novalidate
       class="${this.wasValidated ? 'was-validated' : ''}"
-      @submit="${this.submit}"
+      @submit="${(e: SubmitEvent) => this.submit(e)}"
     >
       ${this.renderControls()}
       <div class="row">

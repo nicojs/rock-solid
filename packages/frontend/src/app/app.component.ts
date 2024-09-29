@@ -69,7 +69,7 @@ export class RockSolidApp extends LitElement {
           .queryString=${this.route.queryString}
         ></rock-login>`;
       case 'cursussen':
-      case 'vakanties':
+      case 'vakanties': {
         const projectType: ProjectType =
           this.route.path[0] === 'cursussen' ? 'cursus' : 'vakantie';
         return html`<rock-projecten
@@ -77,8 +77,9 @@ export class RockSolidApp extends LitElement {
           .type=${projectType}
           .query="${this.route.query}"
         ></rock-projecten>`;
+      }
       case 'overige-personen':
-      case 'deelnemers':
+      case 'deelnemers': {
         const persoonType: PersoonType =
           this.route?.path[0] === 'deelnemers' ? 'deelnemer' : 'overigPersoon';
         return html`<rock-personen
@@ -86,6 +87,7 @@ export class RockSolidApp extends LitElement {
           .path="${this.route.path.slice(1)}"
           .query=${this.route.query}
         ></rock-personen>`;
+      }
       case 'organisaties':
         return html`<rock-organisaties
           .path=${this.route.path.slice(1)}

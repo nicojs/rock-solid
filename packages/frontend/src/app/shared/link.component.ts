@@ -62,10 +62,11 @@ export class Link extends RockElement {
 
   get url() {
     const url = new URL(this.href, window.location.href);
-    this.keepQuery &&
+    if (this.keepQuery) {
       Object.entries(router.activeRoute.query).forEach(([key, value]) =>
         url.searchParams.set(key, value),
       );
+    }
     return url.href;
   }
 
@@ -84,7 +85,7 @@ export class Link extends RockElement {
           'btn-outline-primary': this.btnOutlinePrimary,
         })}"
         href="${this.url}"
-        @click="${this.linkClick}"
+        @click="${(ev: MouseEvent) => this.linkClick(ev)}"
       >
         <slot></slot>
       </a>

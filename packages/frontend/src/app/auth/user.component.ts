@@ -31,7 +31,10 @@ export class UserComponent extends RockElement {
       ${this.user
         ? `${this.user.name} (${userRoleNames[this.user.role]})`
         : 'gast'}${this.user
-        ? html`&nbsp;<a class="text-reset" href="#" @click=${this.logoff}
+        ? html`&nbsp;<a
+              class="text-reset"
+              href="#"
+              @click=${(event: MouseEvent) => this.logoff(event)}
               >uitloggen</a
             >`
         : ''}

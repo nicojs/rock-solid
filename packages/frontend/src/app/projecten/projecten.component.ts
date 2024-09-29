@@ -110,7 +110,7 @@ export class ProjectenComponent extends RockElement {
     super.update(props);
   }
 
-  private async addProject(project: Project) {
+  private addProject(project: Project) {
     this.loading = true;
     projectenStore
       .create(project)
@@ -129,7 +129,7 @@ export class ProjectenComponent extends RockElement {
       });
   }
 
-  private async editProject(project: Project) {
+  private editProject(project: Project) {
     this.loading = true;
     projectenStore
       .update(project.id, project)
@@ -148,7 +148,7 @@ export class ProjectenComponent extends RockElement {
       });
   }
 
-  private async deleteProject(event: CustomEvent<Project>) {
+  private deleteProject(event: CustomEvent<Project>) {
     this.loading = true;
     projectenStore.delete(event.detail.id).subscribe({
       next: () => {
@@ -195,7 +195,8 @@ export class ProjectenComponent extends RockElement {
           ${this.projecten
             ? html`<rock-projecten-list
                   .projecten=${this.projecten}
-                  @delete=${this.deleteProject}
+                  @delete=${(event: CustomEvent<Project>) =>
+                    this.deleteProject(event)}
                 ></rock-projecten-list>
                 <rock-paging .store=${projectenStore}></rock-paging>`
             : html`<rock-loading></rock-loading>`} `;

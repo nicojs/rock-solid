@@ -220,7 +220,7 @@ export class AutocompleteComponent extends LitElement {
     this.subscription?.unsubscribe();
   }
 
-  private async hintClicked(event: MouseEvent, hint: TypeAheadHint) {
+  private hintClicked(event: MouseEvent, hint: TypeAheadHint) {
     event.preventDefault();
     this.submit(hint);
   }
@@ -304,10 +304,10 @@ export class AutocompleteComponent extends LitElement {
           highlighted: false,
         });
         textParts.push({
-          text: part!,
+          text: part,
           highlighted: true,
         });
-        offset = match.index! + part!.length;
+        offset = match.index + part.length;
       }
     }
     textParts.push({ text: hint.text.substr(offset), highlighted: false });

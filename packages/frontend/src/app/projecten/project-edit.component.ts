@@ -61,7 +61,7 @@ export class ProjectEditComponent extends LitElement {
       </h2>
       <rock-alert .message=${this.errorMessage}></rock-alert>
       <rock-reactive-form
-        @rock-submit="${this.save}"
+        @rock-submit="${() => this.save()}"
         privilege="${this.privilege}"
         .controls="${this.type === 'cursus'
           ? cursusProjectControls

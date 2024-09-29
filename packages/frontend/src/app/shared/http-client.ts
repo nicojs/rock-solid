@@ -16,7 +16,7 @@ export class HttpClient {
 
   public async fetch(
     input: RequestInfo,
-    init?: RequestInit | undefined,
+    init?: RequestInit  ,
   ): Promise<Response> {
     if (this.currentJwt) {
       init = init ?? {};
@@ -49,7 +49,7 @@ export class HttpClient {
     if (response.status >= 500) {
       const responseText = await response.text();
       const technicalDetails = `Status: ${response.status}. Response: ${responseText}`;
-      ModalComponent.instance.alert(
+      void ModalComponent.instance.alert(
         html`<rock-technical-error-message
           .technicalDetails=${technicalDetails}
         ></rock-technical-error-message>`,

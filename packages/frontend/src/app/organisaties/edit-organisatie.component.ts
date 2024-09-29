@@ -39,7 +39,7 @@ export class EditOrganisatieComponent extends LitElement {
       <rock-alert .message=${this.errorMessage}></rock-alert>
 
       <rock-reactive-form
-        @rock-submit="${this.save}"
+        @rock-submit="${() => this.save()}"
         privilege="${'write:organisaties' satisfies Privilege}"
         .controls=${organisatieControls}
         .entity="${this.organisatie}"

@@ -46,7 +46,7 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
         Rekeninguittreksels voor bevestigde inschrijvingen van
         ${printProject(this.project)}
       </h2>
-      <form @submit=${this.submit}>
+      <form @submit=${(e: SubmitEvent) => this.submit(e)}>
         ${this.patchableAanmeldingen.map(
           (aanmelding, index) =>
             html` <rock-reactive-form-control

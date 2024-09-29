@@ -174,11 +174,12 @@ export class PersonenComponent extends RockElement {
             ? html`<rock-personen-list
                   .type=${this.type}
                   .personen=${this.personen}
-                  @delete=${this.deletePersoon}
+                  @delete=${(event: CustomEvent<Persoon>) =>
+                    this.deletePersoon(event)}
                 ></rock-personen-list>
                 <rock-paging .store=${personenStore}></rock-paging> `
             : html`<rock-loading></rock-loading>`}`;
-      case 'new':
+      case 'new': {
         const persoon: DeepPartial<Deelnemer | OverigPersoon> = {
           type: this.type,
           verblijfadres: {},
@@ -195,8 +196,9 @@ export class PersonenComponent extends RockElement {
             : html`<rock-edit-persoon
                 .persoon="${persoon}"
                 privilege="${'create:personen' satisfies Privilege}"
-                @persoon-submitted=${this.createNewPersoon}
+                @persoon-submitted=${(event: CustomEvent<Persoon>) => this.createNewPersoon(event)}
               ></rock-edit-persoon>`}`;
+      }
       case 'edit':
         return html`${this.focussedPersoon
           ? html`<h2>
@@ -206,7 +208,7 @@ export class PersonenComponent extends RockElement {
               <rock-edit-persoon
                 .persoon="${this.focussedPersoon}"
                 privilege="${'update:personen' satisfies Privilege}"
-                @persoon-submitted=${this.updatePersoon}
+                @persoon-submitted=${() => this.updatePersoon()}
               ></rock-edit-persoon>`
           : html`<rock-loading></rock-loading>`}`;
       case 'display':

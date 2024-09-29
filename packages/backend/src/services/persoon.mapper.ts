@@ -325,7 +325,8 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
         ),
       };
     default:
-      throw new Error(`Unknown persoon type ${type}`);
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      throw new Error(`Unknown persoon type ${type satisfies never}`);
   }
 }
 

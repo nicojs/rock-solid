@@ -47,7 +47,7 @@ export function toCsv<T>(
     }
     if (typeof val === 'object' || typeof val === 'function') {
       throw new Error(
-        `Csv of ${typeof val} is not supported. Requested ${column}: ${val}`,
+        `Csv of ${typeof val} is not supported. Requested ${column}: ${String(val)}`,
       );
     }
 

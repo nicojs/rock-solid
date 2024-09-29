@@ -43,8 +43,6 @@ export class ThemeToggleComponent extends RockElement {
     this.theme = theme;
     this.open = false;
     localStorage.setItem('theme', theme);
-    if (theme === 'auto') {
-    }
     this.dispatchThemeChangedEvent(this.#determineConcreteTheme(theme));
   }
 

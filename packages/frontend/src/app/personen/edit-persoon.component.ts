@@ -51,7 +51,7 @@ export class EditPersoonComponent extends LitElement {
 
   override render() {
     return html`<rock-reactive-form
-      @rock-submit="${this.submit}"
+      @rock-submit="${() => this.submit()}"
       privilege="${this.privilege}"
       .controls="${controlsByType[this.persoon.type]}"
       .entity="${this.persoon}"

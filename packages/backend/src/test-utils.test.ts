@@ -617,7 +617,7 @@ function parseBody(
         }
       });
       break;
-    case 'application/octet-stream':
+    case 'application/octet-stream': {
       // Grabbed from: https://github.com/ladjs/superagent/blob/master/src/node/parsers/image.js
       const data: any[] = [];
       res.on('data', (chunk) => {
@@ -627,6 +627,7 @@ function parseBody(
         cb(null, Buffer.concat(data));
       });
       break;
+    }
     case undefined:
       cb(null, undefined);
       break;

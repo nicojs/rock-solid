@@ -153,7 +153,7 @@ export class LocatiesComponent extends RockElement {
             ? html`
                 <rock-locatie-list
                   .locaties=${this.locaties}
-                  @delete=${this.deleteLocatie}
+                  @delete=${(ev: CustomEvent<Locatie>) => this.deleteLocatie(ev)}
                 ></rock-locatie-list>
                 <rock-paging .store=${locatieStore}></rock-paging>
               `
