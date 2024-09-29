@@ -176,7 +176,7 @@ export class OrganisatiesComponent extends RockElement {
             ? html`
                 <rock-organisaties-list
                   .organisaties=${this.organisaties}
-                  @delete=${this.deleteOrganisatie}
+                  @delete=${(ev: CustomEvent<Organisatie>) => this.deleteOrganisatie(ev)}
                 ></rock-organisaties-list>
                 <rock-paging .store=${organisatieStore}></rock-paging>
               `
@@ -196,7 +196,7 @@ export class OrganisatiesComponent extends RockElement {
           ? html`<rock-edit-organisatie
               .organisatie="${this.organisatieToEdit}"
               .errorMessage=${this.errorMessage}
-              @organisatie-submitted=${this.updateOrganisatie}
+              @organisatie-submitted=${() => this.updateOrganisatie()}
             ></rock-edit-organisatie>`
           : html`<rock-loading></rock-loading>`}`;
       default:

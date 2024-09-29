@@ -25,10 +25,11 @@ export class RouteParams {
       href,
       `${window.location.protocol}//${window.location.host}`,
     );
-    query &&
+    if (query) {
       Object.entries(query).forEach(([key, value]) =>
         searchParams.set(key, value),
       );
+    }
 
     const path = pathname.slice(1).split('/').filter(Boolean);
     query = {};

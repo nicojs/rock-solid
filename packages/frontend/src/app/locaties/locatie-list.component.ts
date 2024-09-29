@@ -49,7 +49,7 @@ export class LocatieListComponent extends LitElement {
           </tr>
         </thead>
         <tbody>
-          ${this.locaties!.map(
+          ${this.locaties.map(
             (loc) =>
               html`<tr>
                 <td>${loc.naam}</td>

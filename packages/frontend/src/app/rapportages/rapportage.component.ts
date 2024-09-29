@@ -150,7 +150,7 @@ export class RapportageComponent extends RockElement {
             break;
         }
         this.isLoading = true;
-        reportRequest
+        void reportRequest
           .then((report) => (this.report = report))
           .finally(() => {
             this.isLoading = false;
@@ -438,6 +438,7 @@ function reportRoot<
         ? 'aanmeldingen'
         : 'activiteiten';
     default:
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`Unknown report type ${reportType satisfies never}`);
   }
 }

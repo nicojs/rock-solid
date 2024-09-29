@@ -326,7 +326,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
               .aanmeldingen=${bevestigdeAanmeldingen}
             ></rock-projectrapport>`
           : html`<rock-loading></rock-loading>`;
-      case 'deelnames':
+      case 'deelnames': {
         const activiteitId = rest[0] ? parseInt(rest[0]) : undefined;
         const activiteit = this.project.activiteiten.find(
           (act) => act.id === activiteitId,
@@ -341,6 +341,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           @deelnames-submitted=${(event: CustomEvent<Deelname[]>) =>
             this.updateDeelnames(event.detail)}
         ></rock-project-deelnames>`;
+      }
       case undefined:
         return this.renderProjectAanmeldingen();
       default:

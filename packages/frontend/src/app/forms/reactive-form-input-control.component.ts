@@ -128,7 +128,7 @@ export class ReactiveFormInputControl<
       max="${ifDefined(toDateString(control.validators?.max))}"
       pattern="${ifDefined(control.validators?.pattern)}"
       minlength="${ifDefined(control.validators?.minLength)}"
-      @invalid="${this.updateValidationMessage}"
+      @invalid=${() => this.updateValidationMessage()}
       @change="${(e: Event) => {
         const inputEl = e.target as HTMLInputElement;
         this.updateValue(inputEl.value || undefined);
@@ -151,7 +151,7 @@ export class ReactiveFormInputControl<
         placeholder=${ifDefined(control.placeholder)}
         min="${ifDefined(control.validators?.min)}"
         max="${ifDefined(control.validators?.max)}"
-        @invalid="${this.updateValidationMessage}"
+        @invalid="${() => this.updateValidationMessage()}"
         @change="${(e: Event) => {
           const inputEl = e.target as HTMLInputElement;
           if (control.type === InputType.currency) {
@@ -193,10 +193,11 @@ export class ReactiveFormInputControl<
         const inputEl = e.target as HTMLInputElement;
         inputEl.showPicker();
       }}"
-      @invalid="${this.updateValidationMessage}"
+      @invalid=${() => this.updateValidationMessage()}
       @change="${(e: Event) => {
         const inputEl = e.target as HTMLInputElement;
         this.updateValue(
+          // eslint-disable-next-line no-constant-binary-expression
           inputEl.valueAsDate ?? new Date(inputEl.value) ?? undefined,
         );
       }}"

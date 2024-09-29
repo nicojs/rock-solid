@@ -96,7 +96,7 @@ export class ReactiveFormAutocomplete<
           }}
           ?required=${this.control.validators?.required}
           placeholder=${ifDefined(this.control.placeholder)}
-          @invalid="${this.updateValidationMessage}"
+          @invalid=${(e: Event) => this.updateValidationMessage(e)}
         />
         <div class="invalid-feedback">${this.validationMessage}</div>
         <rock-autocomplete

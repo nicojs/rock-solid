@@ -106,7 +106,7 @@ export class ProjectDeelnamesComponent extends LitElement {
         : html`<form
             novalidate
             class="${this.wasValidated ? 'was-validated' : ''}"
-            @submit="${this.submit}"
+            @submit="${(e: SubmitEvent) => this.submit(e)}"
           >
             ${this.deelnameRows?.map(
               ({ deelname, deelnemer, isNew }, index) => {

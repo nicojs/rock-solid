@@ -50,7 +50,7 @@ export class ProjectBrievenVerzendenComponent extends LitElement {
     return html`<h2 class="mb-4">
         Brieven verzenden voor ${printProject(this.project)}
       </h2>
-      <form @submit=${this.submit}>
+      <form @submit=${(e: SubmitEvent) => this.submit(e)}>
         <table class="table table-sm">
           <thead>
             <tr>

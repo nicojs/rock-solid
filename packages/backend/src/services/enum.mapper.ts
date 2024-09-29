@@ -59,7 +59,7 @@ function createEnumMapper<T extends string>(name: string, map: EnumDBMap<T>) {
       if (value === undefined || value === null) {
         return undefined as SchemaType<T, U>;
       }
-      const mapped = reverseMap[value as number];
+      const mapped = reverseMap[value];
       if (mapped === undefined) {
         throw new Error(`Value ${value} is not a valid enum value for ${name}`);
       }

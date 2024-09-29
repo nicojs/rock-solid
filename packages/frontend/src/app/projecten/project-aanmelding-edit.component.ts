@@ -46,7 +46,7 @@ export class ProjectAanmeldingEditComponent extends LitElement {
         : nothing}
 
       <rock-reactive-form
-        @rock-submit="${this.save}"
+        @rock-submit="${() => this.save()}"
         privilege="${'update:aanmeldingen' satisfies Privilege}"
         .controls=${aanmeldingControls}
         .entity=${this.aanmelding}

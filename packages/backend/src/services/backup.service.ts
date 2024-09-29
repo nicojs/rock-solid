@@ -40,6 +40,7 @@ export class BackupService {
       try {
         fs.unlinkSync(backupPath);
       } catch (error) {
+        console.error('Backup file cannot be deleted.', error);
         throw new BadRequestException(
           'An error occurred while removing the file.',
         );

@@ -32,7 +32,7 @@ export class EditLocatieComponent extends LitElement {
       <rock-alert .message=${this.errorMessage}></rock-alert>
 
       <rock-reactive-form
-        @rock-submit="${this.save}"
+        @rock-submit="${() => this.save()}"
         privilege="${this.privilege}"
         .controls=${locatieControls}
         .entity="${this.locatie}"

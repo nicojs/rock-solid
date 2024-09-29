@@ -264,7 +264,6 @@ export class AanmeldingMapper {
   }
 
   public patchAll(aanmeldingen: PatchableAanmelding[]): Promise<Aanmelding[]> {
-    aanmeldingen[0]?.rekeninguittrekselNummer;
     return Promise.all(
       aanmeldingen.map((aanmelding) => this.patch(aanmelding.id, aanmelding)),
     );

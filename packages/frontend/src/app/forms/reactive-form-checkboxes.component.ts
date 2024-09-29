@@ -57,7 +57,7 @@ export class ReactiveFormTags<
           this.control.items,
           (this.value ??= []),
         );
-      case CheckboxesKind.props:
+      case CheckboxesKind.props: {
         const currentSelected = Object.entries(
           ((this.value as Record<string, boolean>) ??= {}),
         )
@@ -69,6 +69,7 @@ export class ReactiveFormTags<
           (item) => (this.value[item] = true),
           (item) => (this.value[item] = false),
         );
+      }
     }
   }
 
@@ -78,6 +79,7 @@ export class ReactiveFormTags<
     checkAction: (option: string) => void = (item) =>
       (this.value = [...this.value, item]),
     uncheckAction: (option: string) => void = (item) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       (this.value = this.value.filter((val: string) => val !== item)),
   ) {
     return Object.entries(items).map(([key, value]) => {
