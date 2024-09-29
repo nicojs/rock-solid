@@ -61,6 +61,8 @@ export type PersoonFilter = Partial<
   foldersoorten?: Foldersoort[];
   laatsteAanmeldingMinimaalJaarGeleden?: number;
   laatsteAanmeldingMaximaalJaarGeleden?: number;
+  laatsteBegeleiddeProjectMinimaalJaarGeleden?: number;
+  laatsteBegeleiddeProjectMaximaalJaarGeleden?: number;
   zonderAanmeldingen?: boolean;
   minLeeftijd?: number;
   maxLeeftijd?: number;
@@ -253,6 +255,8 @@ export function toPersoonFilter(
     foldersoorten,
     laatsteAanmeldingMinimaalJaarGeleden,
     laatsteAanmeldingMaximaalJaarGeleden,
+    laatsteBegeleiddeProjectMinimaalJaarGeleden,
+    laatsteBegeleiddeProjectMaximaalJaarGeleden,
     zonderAanmeldingen,
     metVerblijfadres,
     minLeeftijd,
@@ -268,6 +272,12 @@ export function toPersoonFilter(
     ),
     laatsteAanmeldingMaximaalJaarGeleden: tryParseInt(
       laatsteAanmeldingMaximaalJaarGeleden,
+    ),
+    laatsteBegeleiddeProjectMinimaalJaarGeleden: tryParseInt(
+      laatsteBegeleiddeProjectMinimaalJaarGeleden,
+    ),
+    laatsteBegeleiddeProjectMaximaalJaarGeleden: tryParseInt(
+      laatsteBegeleiddeProjectMaximaalJaarGeleden,
     ),
     minLeeftijd: tryParseInt(minLeeftijd),
     maxLeeftijd: tryParseInt(maxLeeftijd),
