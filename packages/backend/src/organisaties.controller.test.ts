@@ -319,11 +319,13 @@ describe(OrganisatiesController.name, () => {
 
       it('by emailadres', async () => {
         // Act
-        const [hansOrgs, hansCaseInsensitiveOrgs, noFilter] = await Promise.all([
-          harness.getAllOrganisaties({ emailadres: 'hans' }),
-          harness.getAllOrganisaties({ emailadres: 'HANS' }),
-          harness.getAllOrganisaties({}),
-          ]);
+        const [hansOrgs, hansCaseInsensitiveOrgs, noFilter] = await Promise.all(
+          [
+            harness.getAllOrganisaties({ emailadres: 'hans' }),
+            harness.getAllOrganisaties({ emailadres: 'HANS' }),
+            harness.getAllOrganisaties({}),
+          ],
+        );
 
         // Assert
         expect(hansOrgs.map(({ id }) => id)).deep.eq([acme.id]);
@@ -335,6 +337,7 @@ describe(OrganisatiesController.name, () => {
           disney.id,
           nintendo.id,
         ]);
+      });
     });
   });
 
