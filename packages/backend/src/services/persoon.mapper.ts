@@ -345,6 +345,8 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
     selectie,
     laatsteAanmeldingMinimaalJaarGeleden,
     laatsteAanmeldingMaximaalJaarGeleden,
+    laatsteBegeleiddeProjectMinimaalJaarGeleden,
+    laatsteBegeleiddeProjectMaximaalJaarGeleden,
     zonderAanmeldingen,
     minLeeftijd,
     maxLeeftijd,
@@ -377,10 +379,12 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
           },
         }
       : {}),
-    ...aanmeldingenWhere({
+    ...jaarGeledenWhere({
       laatsteAanmeldingMinimaalJaarGeleden,
       laatsteAanmeldingMaximaalJaarGeleden,
       zonderAanmeldingen,
+      laatsteBegeleiddeProjectMinimaalJaarGeleden,
+      laatsteBegeleiddeProjectMaximaalJaarGeleden,
     }),
     geboortedatum: dateRangeFilter({ minLeeftijd, maxLeeftijd }),
     type: persoonTypeMapper.toDB(type),
@@ -415,20 +419,27 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
 
 type LeeftijdRangeFilter = Pick<PersoonFilter, 'minLeeftijd' | 'maxLeeftijd'>;
 
-function aanmeldingenWhere({
+function jaarGeledenWhere({
   laatsteAanmeldingMaximaalJaarGeleden,
   laatsteAanmeldingMinimaalJaarGeleden,
   zonderAanmeldingen,
+  laatsteBegeleiddeProjectMinimaalJaarGeleden,
+  laatsteBegeleiddeProjectMaximaalJaarGeleden,
 }: Pick<
   PersoonFilter,
   | 'laatsteAanmeldingMinimaalJaarGeleden'
   | 'laatsteAanmeldingMaximaalJaarGeleden'
   | 'zonderAanmeldingen'
+  | 'laatsteBegeleiddeProjectMinimaalJaarGeleden'
+  | 'laatsteBegeleiddeProjectMaximaalJaarGeleden'
 >): db.Prisma.PersoonWhereInput {
   const thisYear = new Date().getFullYear();
 
-  const someFilters: db.Prisma.AanmeldingWhereInput[] = [];
-  const everyFilters: db.Prisma.AanmeldingWhereInput[] = [];
+  const someAanmeldingenFilters: db.Prisma.AanmeldingWhereInput[] = [];
+  const everyAanmeldingenFilters: db.Prisma.AanmeldingWhereInput[] = [];
+  const someBegeleiddeProjectenFilters: db.Prisma.ProjectWhereInput[] = [];
+  const everyBegeleiddeProjectenFilters: db.Prisma.ProjectWhereInput[] = [];
+
   if (laatsteAanmeldingMaximaalJaarGeleden !== undefined) {
     const maximaalFilter = {
       project: {
@@ -438,8 +449,8 @@ function aanmeldingenWhere({
       },
     };
     // Also fill in `someFilters`, so that empty aanmeldingen don't get returned
-    someFilters.push(maximaalFilter);
-    everyFilters.push(maximaalFilter);
+    someAanmeldingenFilters.push(maximaalFilter);
+    everyAanmeldingenFilters.push(maximaalFilter);
   }
   if (laatsteAanmeldingMinimaalJaarGeleden !== undefined) {
     const minimaalFilter = {
@@ -449,7 +460,24 @@ function aanmeldingenWhere({
         },
       },
     };
-    someFilters.push(minimaalFilter);
+    someAanmeldingenFilters.push(minimaalFilter);
+  }
+  if (laatsteBegeleiddeProjectMaximaalJaarGeleden !== undefined) {
+    const maximaalFilter = {
+      jaar: {
+        lte: thisYear - laatsteBegeleiddeProjectMaximaalJaarGeleden,
+      },
+    };
+    // Also fill in `someFilters`, so that empty begeleidingen don't get returned
+    someBegeleiddeProjectenFilters.push(maximaalFilter);
+    everyBegeleiddeProjectenFilters.push(maximaalFilter);
+  }
+  if (laatsteBegeleiddeProjectMinimaalJaarGeleden !== undefined) {
+    someBegeleiddeProjectenFilters.push({
+      jaar: {
+        gte: thisYear - laatsteBegeleiddeProjectMinimaalJaarGeleden,
+      },
+    });
   }
 
   let zonderFilter: db.Prisma.AanmeldingWhereInput | undefined;
@@ -458,9 +486,21 @@ function aanmeldingenWhere({
   }
   return {
     aanmeldingen: {
-      some: someFilters.length ? { AND: someFilters } : undefined,
-      every: everyFilters.length ? { AND: everyFilters } : undefined,
+      some: someAanmeldingenFilters.length
+        ? { AND: someAanmeldingenFilters }
+        : undefined,
+      every: everyAanmeldingenFilters.length
+        ? { AND: everyAanmeldingenFilters }
+        : undefined,
       none: zonderFilter,
+    },
+    begeleidtProjecten: {
+      some: someBegeleiddeProjectenFilters.length
+        ? { AND: someBegeleiddeProjectenFilters }
+        : undefined,
+      every: everyBegeleiddeProjectenFilters.length
+        ? { AND: everyBegeleiddeProjectenFilters }
+        : undefined,
     },
   };
 }

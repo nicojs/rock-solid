@@ -447,6 +447,109 @@ describe(PersonenController.name, () => {
       );
     });
 
+    it('by laatsteBegeleiddeProjectMinimaalJaarGeleden', async () => {
+      const {
+        vrijwilliger1,
+        vrijwilliger2,
+        vrijwilliger3,
+        vrijwilliger4,
+        vrijwilligerNonBegeleid,
+      } = await arrangeJaarGeledenBegeleiders();
+
+      // Act
+      const [
+        begeleiddeProjectOneYearAgo,
+        begeleiddeProjectTwoYearsAgo,
+        begeleiddeProject3YearsAgo,
+        noFilter,
+      ] = await Promise.all([
+        harness.getAllPersonen({
+          laatsteBegeleiddeProjectMinimaalJaarGeleden: 1,
+        }),
+        harness.getAllPersonen({
+          laatsteBegeleiddeProjectMinimaalJaarGeleden: 2,
+        }),
+        harness.getAllPersonen({
+          laatsteBegeleiddeProjectMinimaalJaarGeleden: 3,
+        }),
+        harness.getAllPersonen({
+          laatsteBegeleiddeProjectMinimaalJaarGeleden: undefined,
+        }),
+      ]);
+
+      // Assert
+      expect(begeleiddeProjectOneYearAgo).deep.eq([vrijwilliger1]);
+      expect(begeleiddeProjectTwoYearsAgo.sort(byId)).deep.eq(
+        [vrijwilliger1, vrijwilliger2].sort(byId),
+      );
+      expect(begeleiddeProject3YearsAgo.sort(byId)).deep.eq(
+        [vrijwilliger1, vrijwilliger2, vrijwilliger3, vrijwilliger4].sort(byId),
+      );
+      expect(noFilter.sort(byId)).deep.eq(
+        [
+          vrijwilliger1,
+          vrijwilliger2,
+          vrijwilliger3,
+          vrijwilliger4,
+          vrijwilligerNonBegeleid,
+        ].sort(byId),
+      );
+    });
+
+    it('by laatsteBegeleiddeProjectMaximaalJaarGeleden', async () => {
+      const {
+        vrijwilliger1,
+        vrijwilliger2,
+        vrijwilliger3,
+        vrijwilliger4,
+        vrijwilligerNonBegeleid,
+      } = await arrangeJaarGeledenBegeleiders();
+
+      // Act
+      const [
+        begeleiddeProjectOneYearAgo,
+        begeleiddeProjectTwoYearsAgo,
+        begeleiddeProject3YearsAgo,
+        noFilter,
+      ] = await Promise.all([
+        harness.getAllPersonen({
+          laatsteBegeleiddeProjectMaximaalJaarGeleden: 1,
+        }),
+        harness.getAllPersonen({
+          laatsteBegeleiddeProjectMaximaalJaarGeleden: 2,
+        }),
+        harness.getAllPersonen({
+          laatsteBegeleiddeProjectMaximaalJaarGeleden: 3,
+        }),
+        harness.getAllPersonen({
+          laatsteBegeleiddeProjectMaximaalJaarGeleden: undefined,
+        }),
+      ]);
+
+      // Assert
+      expect(begeleiddeProjectOneYearAgo).deep.eq([
+        vrijwilliger1,
+        vrijwilliger2,
+        vrijwilliger3,
+        vrijwilliger4,
+      ]);
+      expect(begeleiddeProjectTwoYearsAgo.sort(byId)).deep.eq(
+        [vrijwilliger2, vrijwilliger3, vrijwilliger4].sort(byId),
+      );
+      expect(begeleiddeProject3YearsAgo.sort(byId)).deep.eq(
+        [vrijwilliger3, vrijwilliger4].sort(byId),
+      );
+      expect(noFilter.sort(byId)).deep.eq(
+        [
+          vrijwilliger1,
+          vrijwilliger2,
+          vrijwilliger3,
+          vrijwilliger4,
+          vrijwilligerNonBegeleid,
+        ].sort(byId),
+      );
+    });
+
     it('by zonderAanmeldingen', async () => {
       // Arrange
       const { deelnemerNoAanmeldingen } = await arrangeJaarGeledenDeelnemers();
@@ -655,6 +758,58 @@ describe(PersonenController.name, () => {
           ),
         ]);
       return { deelnemer18Y, deelnemer17Y, deelnemerNoGeboortedatum };
+    }
+
+    async function arrangeJaarGeledenBegeleiders() {
+      // Arrange
+      const { y, m, d } = today();
+      const lastYear = new Date(y - 1, m, d);
+      const twoYearAgo = new Date(y - 2, m, d);
+      const threeYearsAgo = new Date(y - 3, m, d);
+      const [
+        vrijwilliger1,
+        vrijwilliger2,
+        vrijwilliger3,
+        vrijwilliger4,
+        vrijwilligerNonBegeleid,
+      ] = await Promise.all([
+        harness.createOverigPersoon(factory.overigPersoon({ achternaam: '1' })),
+        harness.createOverigPersoon(factory.overigPersoon({ achternaam: '2' })),
+        harness.createOverigPersoon(factory.overigPersoon({ achternaam: '3' })),
+        harness.createOverigPersoon(factory.overigPersoon({ achternaam: '4' })),
+        harness.createOverigPersoon(
+          factory.overigPersoon({ achternaam: 'non begeleid' }),
+        ),
+      ]);
+
+      await Promise.all([
+        harness.createProject(
+          factory.cursus({
+            begeleiders: [vrijwilliger1],
+            activiteiten: [factory.activiteit({ van: lastYear })],
+          }),
+        ),
+        harness.createProject(
+          factory.cursus({
+            begeleiders: [vrijwilliger2],
+            activiteiten: [factory.activiteit({ van: twoYearAgo })],
+          }),
+        ),
+        harness.createProject(
+          factory.cursus({
+            begeleiders: [vrijwilliger3, vrijwilliger4],
+            activiteiten: [factory.activiteit({ van: threeYearsAgo })],
+          }),
+        ),
+      ]);
+
+      return {
+        vrijwilliger1,
+        vrijwilliger2,
+        vrijwilliger3,
+        vrijwilliger4,
+        vrijwilligerNonBegeleid,
+      };
     }
   });
 

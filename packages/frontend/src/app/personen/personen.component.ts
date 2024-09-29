@@ -255,6 +255,18 @@ const overigPersoonSearchControls: FormControl<PersoonFilter>[] = [
   checkboxesItemsControl('foldersoorten', foldersoorten, {
     label: 'Folders',
   }),
+  {
+    type: InputType.number,
+    label: 'Laatste begeleidde project',
+    name: 'laatsteBegeleiddeProjectMinimaalJaarGeleden',
+    postfix: 'jaar geleden of korter',
+  },
+  {
+    type: InputType.number,
+    label: 'Laatste begeleidde project',
+    name: 'laatsteBegeleiddeProjectMaximaalJaarGeleden',
+    postfix: 'jaar geleden of langer',
+  },
   ...basePersoonFilers,
 ];
 
