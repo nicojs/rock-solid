@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/nicojs/rock-solid/compare/v2.0.1...v2.1.0) (2024-09-29)
+
+### Features
+
+- **organisaties:** maak zoeken op emailadres mogelijk ([#277](https://github.com/nicojs/rock-solid/issues/277)) ([c574c06](https://github.com/nicojs/rock-solid/commit/c574c06223e418d965d7f3af48b74b3afa693519))
+- **overige personen:** zoeken op aantal jaar geleden van laatste begeleidde project ([#278](https://github.com/nicojs/rock-solid/issues/278)) ([5d602e3](https://github.com/nicojs/rock-solid/commit/5d602e39c10f55182bcb6317e6c4582e2dfee568))
+
 ## [2.0.1](https://github.com/nicojs/rock-solid/compare/v2.0.0...v2.0.1) (2024-06-13)
 
 **Note:** Version bump only for package @rock-solid/shared

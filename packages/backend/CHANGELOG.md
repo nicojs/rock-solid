@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/nicojs/rock-solid/compare/v2.0.1...v2.1.0) (2024-09-29)
+
+### Bug Fixes
+
+- **plaats:** Brussel tonen als 'Brussel' in plaats van onbekend ([#276](https://github.com/nicojs/rock-solid/issues/276)) ([c3d57fe](https://github.com/nicojs/rock-solid/commit/c3d57fe81c6120552dc73d1991e550ba12e14a8c))
+
+### Features
+
+- **organisaties:** maak zoeken op emailadres mogelijk ([#277](https://github.com/nicojs/rock-solid/issues/277)) ([c574c06](https://github.com/nicojs/rock-solid/commit/c574c06223e418d965d7f3af48b74b3afa693519))
+- **overige personen:** zoeken op aantal jaar geleden van laatste begeleidde project ([#278](https://github.com/nicojs/rock-solid/issues/278)) ([5d602e3](https://github.com/nicojs/rock-solid/commit/5d602e39c10f55182bcb6317e6c4582e2dfee568))
+
 ## [2.0.1](https://github.com/nicojs/rock-solid/compare/v2.0.0...v2.0.1) (2024-06-13)
 
 ### Bug Fixes
