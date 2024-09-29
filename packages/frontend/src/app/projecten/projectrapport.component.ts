@@ -433,8 +433,8 @@ export class ProjectRapportComponent extends LitElement {
         <thead>
           <tr>
             <th></th>
-            <th>Vrouw</th>
             <th>Man</th>
+            <th>Vrouw</th>
             <th>Andere</th>
           </tr>
         </thead>
