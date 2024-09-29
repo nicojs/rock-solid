@@ -16,7 +16,6 @@ export class PlaatsMapper {
     const plaatsen = await this.db.plaats.findMany({
       where: {
         volledigeNaam: { contains: filter.search },
-        id: { gt: 1 }, // Plaats 1 is "onbekend"
       },
       orderBy: [{ volledigeNaam: 'asc' }],
     });

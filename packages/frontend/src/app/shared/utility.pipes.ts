@@ -118,9 +118,6 @@ export function showDatumWithAge(val?: Date): string {
 
 export function showPlaats(plaats?: Plaats): string {
   if (plaats) {
-    if (plaats.id === 1) {
-      return unknown;
-    }
     return `${plaats.postcode} ${plaats.deelgemeente} (${plaats.gemeente})`;
   } else {
     return '';
