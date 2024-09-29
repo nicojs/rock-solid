@@ -219,9 +219,10 @@ function whereOrganisatieContacten({
   folders,
   metAdres,
   provincie,
+  emailadres,
 }: Pick<
   OrganisatieFilter,
-  'folders' | 'metAdres' | 'provincie'
+  'folders' | 'metAdres' | 'provincie' | 'emailadres'
 >): db.Prisma.OrganisatieContactWhereInput[] {
   const whereContacten: db.Prisma.OrganisatieContactWhereInput[] = [];
 
@@ -252,7 +253,13 @@ function whereOrganisatieContacten({
       },
     });
   }
-
+  if (emailadres) {
+    whereContacten.push({
+      emailadres: {
+        contains: emailadres,
+      },
+    });
+  }
   return whereContacten;
 }
 
