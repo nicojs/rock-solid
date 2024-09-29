@@ -194,7 +194,9 @@ export class AutocompleteComponent extends LitElement {
           ),
           tap(() => (this.isLoading = false)),
         )
-        .subscribe((hints) => (this.hints = hints)),
+        .subscribe((hints) => {
+          this.hints = hints;
+        }),
     );
   }
 
