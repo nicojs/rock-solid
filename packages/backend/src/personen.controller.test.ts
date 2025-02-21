@@ -5,6 +5,7 @@ import {
   Deelnemer,
   Foldervoorkeur,
   FotoToestemming,
+  Locatie,
   UpsertableDeelnemer,
   Vakantie,
 } from '@rock-solid/shared';
@@ -815,6 +816,11 @@ describe(PersonenController.name, () => {
 
   describe('POST /personen', () => {
     it('should create a deelnemer with all fields', async () => {
+      // Arrange
+      const gewensteOpstapplaats = await harness.createLocatie(
+        factory.locatie(),
+      );
+
       // Act
       const expectedDeelnemer: UpsertableDeelnemer = {
         achternaam: 'achternaam',
@@ -862,6 +868,7 @@ describe(PersonenController.name, () => {
         woonsituatieOpmerking: 'opmerking',
         geslacht: 'x',
         geslachtOpmerking: 'opmerking geslacht',
+        gewensteOpstapplaats,
       };
 
       // Act
@@ -930,6 +937,41 @@ describe(PersonenController.name, () => {
       // Assert
       const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
       expect(actualDeelnemer.verblijfadres!.busnummer).undefined;
+    });
+
+    it('should be able to update gewensteOpstapplaats', async () => {
+      // Arrange
+      const gewensteOpstapplaats = await harness.createLocatie(
+        factory.locatie(),
+      );
+
+      // Act
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        gewensteOpstapplaats,
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.gewensteOpstapplaats).deep.eq(
+        gewensteOpstapplaats,
+      );
+    });
+
+    it('should be able to delete gewensteOpstapplaats', async () => {
+      // Arrange
+      const gewensteOpstapplaats = await harness.createLocatie(
+        factory.locatie(),
+      );
+      await harness.updateDeelnemer({
+        ...deelnemer,
+        gewensteOpstapplaats,
+      });
+      await harness.updateDeelnemer(deelnemer);
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.gewensteOpstapplaats).undefined;
     });
 
     it('should be able to update contactpersoon fields', async () => {

@@ -1,4 +1,5 @@
 import { Adres, Provincie, UpsertableAdres } from './adres.js';
+import { Locatie } from './locatie.js';
 import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
 import { Upsertable } from './upsertable.js';
@@ -100,6 +101,7 @@ export interface Deelnemer extends BasePersoon {
   /** Projectnummer van de eerste vakantie */
   eersteVakantie?: string;
   fotoToestemming: FotoToestemming;
+  gewensteOpstapplaats?: Locatie;
 }
 
 export interface OverigPersoon extends BasePersoon {
@@ -155,6 +157,7 @@ export const deelnemerLabels: Labels<Deelnemer> = {
   woonsituatieOpmerking: 'Woonsituatie opmerking',
   werksituatie: 'Werksituatie',
   werksituatieOpmerking: 'Werksituatie opmerking',
+  gewensteOpstapplaats: 'Gewenste opstapplaats',
 };
 
 export const fotoToestemmingLabels: Labels<FotoToestemming> = {

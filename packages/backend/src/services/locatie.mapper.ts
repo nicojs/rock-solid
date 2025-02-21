@@ -13,6 +13,7 @@ import {
 } from './adres.mapper.js';
 import { ExplicitNulls } from './mapper-utils.js';
 import { handleKnownPrismaErrors } from '../errors/index.js';
+import { connect } from 'rxjs';
 
 type DBLocatieAggregate = Omit<db.Locatie, 'adresId'> & {
   adres: DBAdresWithPlaats | null;
@@ -136,4 +137,22 @@ function toUpdateLocatieFields(locatie: UpsertableLocatie): LocatieFields {
     adres: locatie.adres ? locatie.adres : null,
     id: locatie.id ? locatie.id : null,
   };
+}
+
+export function toUpdateLocatieInput(
+  locatie: Locatie | null | undefined,
+): db.Prisma.LocatieUpdateOneWithoutPersoonNestedInput {
+  return locatie
+    ? {
+        connect: { id: locatie.id },
+      }
+    : { disconnect: true };
+}
+
+export function toConnectLocatieInput(locatie: Locatie | undefined) {
+  return locatie
+    ? {
+        connect: { id: locatie.id },
+      }
+    : undefined;
 }

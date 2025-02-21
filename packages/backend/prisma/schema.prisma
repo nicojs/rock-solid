@@ -57,6 +57,8 @@ model Persoon {
   toestemmingFotosSocialeMedia Boolean      @default(false)
   toestemmingFotosNieuwsbrief  Boolean      @default(false)
   toestemmingFotosInfoboekje   Boolean      @default(false)
+  gewensteOpstapplaats         Locatie?     @relation(fields: [gewensteOpstapplaatsId], references: [id])
+  gewensteOpstapplaatsId       Int?
 
   // OverigePersonen
   selectie           OverigPersoonSelectie[]
@@ -179,6 +181,7 @@ model Locatie {
   opmerking String?
 
   Activiteit Activiteit[]
+  Persoon    Persoon[]
 }
 
 model Deelname {

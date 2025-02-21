@@ -33,12 +33,17 @@ import {
   werksituatieMapper,
   woonsituatieMapper,
 } from './enum.mapper.js';
+import {
+  toConnectLocatieInput,
+  toUpdateLocatieInput,
+} from './locatie.mapper.js';
 
 export type DBPersonAggregate = db.Persoon & {
   verblijfadres: DBAdresAggregate | null;
   domicilieadres: DBAdresAggregate | null;
   foldervoorkeuren: db.Foldervoorkeur[];
   selectie: db.OverigPersoonSelectie[];
+  gewensteOpstapplaats: db.Locatie | null;
   eersteCursusAanmelding: (db.Aanmelding & { project: db.Project }) | null;
   eersteVakantieAanmelding: (db.Aanmelding & { project: db.Project }) | null;
 };
@@ -108,6 +113,7 @@ export class PersoonMapper {
       werksituatie,
       voedingswens,
       selectie,
+      gewensteOpstapplaats,
       ...props
     } = fillOutAllUpsertablePersoonFields(persoon);
     const dbPersoon = await this.db.persoon.create({
@@ -130,6 +136,7 @@ export class PersoonMapper {
             selectie: overigPersoonSelectieMapper.toDB(s),
           })),
         },
+        gewensteOpstapplaats: toConnectLocatieInput(gewensteOpstapplaats),
         foldervoorkeuren: foldervoorkeuren
           ? {
               create: foldervoorkeuren.map(({ communicatie, folder }) => ({
@@ -165,6 +172,7 @@ export class PersoonMapper {
       selectie,
       geslacht,
       type,
+      gewensteOpstapplaats,
       ...props
     } = toUpdatePersonFields(persoon);
     const { verblijfadresId, domicilieadresId } =
@@ -187,6 +195,7 @@ export class PersoonMapper {
           domicilieadres,
           typeof domicilieadresId === 'number',
         ),
+        gewensteOpstapplaats: toUpdateLocatieInput(gewensteOpstapplaats),
         type: persoonTypeMapper.toDB(type),
         geslacht: geslachtMapper.toDB(geslacht),
         woonsituatie: woonsituatieMapper.toDB(woonsituatie),
@@ -276,6 +285,7 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     toestemmingFotosNieuwsbrief,
     toestemmingFotosSocialeMedia,
     toestemmingFotosWebsite,
+    gewensteOpstapplaatsId,
     selectie,
     type: dbType,
     woonsituatie,
@@ -325,7 +335,6 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
         ),
       };
     default:
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`Unknown persoon type ${type satisfies never}`);
   }
 }
@@ -546,6 +555,7 @@ export const includePersoonAggregate = Object.freeze({
       project: true,
     }),
   }),
+  gewensteOpstapplaats: true,
   selectie: true,
 } as const satisfies db.Prisma.PersoonInclude);
 
@@ -640,6 +650,7 @@ function toUpdatePersonFields(persoon: Persoon): PersoonUpdateFields {
       socialeMedia: false,
       website: false,
     },
+    gewensteOpstapplaats: null,
     contactpersoon: {},
     ...persoon,
   };

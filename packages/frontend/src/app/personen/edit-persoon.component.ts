@@ -29,6 +29,8 @@ import {
   radioControl,
   checkboxesPropsControl,
 } from '../forms';
+import { locatieService } from '../locaties/locatie.service';
+import { showLocatie } from '../locaties/locatie.pipe';
 
 @customElement('rock-edit-persoon')
 export class EditPersoonComponent extends LitElement {
@@ -185,6 +187,13 @@ function controlsFor<TType extends PersoonType>(
         name: 'begeleidendeDienst',
         label: deelnemerLabels.begeleidendeDienst,
         type: InputType.text,
+      },
+      {
+        name: 'gewensteOpstapplaats',
+        type: InputType.autocomplete,
+        label: deelnemerLabels.gewensteOpstapplaats,
+        searchAction: (text) => locatieService.getAll({ naam: text }),
+        labelFor: showLocatie,
       },
       formGroup(
         'contactpersoon',
