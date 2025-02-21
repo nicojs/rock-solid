@@ -27,8 +27,8 @@ export class Office365Strategy extends PassportStrategy(
     super({
       authorizationURL: `https://login.microsoftonline.com/${authConstants.tenantId}/oauth2/v2.0/authorize`,
       tokenURL: `https://login.microsoftonline.com/${authConstants.tenantId}/oauth2/v2.0/token`,
-      clientID: process.env['OFFICE_365_CLIENT_ID'],
-      clientSecret: process.env['OFFICE_365_CLIENT_SECRET'],
+      clientID: process.env['OFFICE_365_CLIENT_ID']!,
+      clientSecret: process.env['OFFICE_365_CLIENT_SECRET']!,
       callbackURL: `${process.env['BASE_URL']}/login`,
       scope: 'User.Read',
     });

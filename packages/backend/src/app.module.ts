@@ -30,7 +30,7 @@ const rootPath = fileURLToPath(
   imports: [
     ServeStaticModule.forRoot({
       rootPath,
-      exclude: ['/api/(.*)', '/auth/(.*)'],
+      exclude: ['/api/{*path}', '/auth/{*path}'],
     }),
     AuthModule,
   ],
