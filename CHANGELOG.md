@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/nicojs/rock-solid/compare/v2.1.0...v2.1.1) (2025-04-22)
+
+### Bug Fixes
+
+- **rapport:** prognose deelnemersuren ([#286](https://github.com/nicojs/rock-solid/issues/286)) ([9effdb4](https://github.com/nicojs/rock-solid/commit/9effdb450032e9737b7d7fb2161fb8a6486045e0))
+
 # [2.1.0](https://github.com/nicojs/rock-solid/compare/v2.0.1...v2.1.0) (2024-09-29)
 
 ### Bug Fixes
