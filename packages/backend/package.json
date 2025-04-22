@@ -12,7 +12,7 @@
     "prisma:migrate:deploy": "node ../../node_modules/prisma/build/index.js migrate deploy",
     "prisma:push:force": "prisma db push --force-reset",
     "dev": "node --inspect -r dotenv/config --enable-source-maps --watch dist/main.js",
-    "start": "node --enable-sourcemaps dist/main.js",
+    "start": "node dist/main.js",
     "test": "mocha --node-option enable-source-maps",
     "test:mutation": "stryker run",
     "prebuild-stryker": "node ../../../../node_modules/prisma/build/index.js generate",
