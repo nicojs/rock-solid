@@ -201,7 +201,7 @@ function aanmeldingReportAggregator(reportType: AanmeldingReportType): string {
         'Aangemeld',
       )}, ${aanmeldingsstatusMapper.toDB(
         'Bevestigd',
-      )}) THEN activiteit.vormingsuren ELSE 0 END) ELSE deelname.effectieveDeelnamePerunage * activiteit.vormingsuren END)`;
+      )}) THEN COALESCE(activiteit.vormingsuren, 0.0) ELSE 0.0 END) ELSE deelname.effectieveDeelnamePerunage * COALESCE(activiteit.vormingsuren, 0.0) END)`;
   }
 }
 function activiteitReportAggregator(reportType: ActiviteitReportType): string {
