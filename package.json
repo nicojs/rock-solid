@@ -17,7 +17,6 @@
     "build:tsc:src": "tsc -b packages/backend/tsconfig.src.json ",
     "build:db": "lerna run prisma:client:generate --scope=\"@rock-solid/backend\"",
     "build:fe": "lerna run build --scope=\"@rock-solid/frontend\"",
-    "predev": "npm run build",
     "dev": "concurrently npm:dev:tsc npm:dev:backend npm:dev:frontend",
     "start": "npm run -w packages/backend start",
     "dev:backend": "cd packages/backend && npm run dev",
@@ -37,21 +36,21 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "@types/chai": "^5.0.1",
+    "@eslint/js": "^9.25.1",
+    "@types/chai": "^5.2.1",
     "@types/mocha": "^10.0.10",
-    "@types/supertest": "^6.0.2",
+    "@types/supertest": "^6.0.3",
     "chai": "^5.2.0",
     "concurrently": "^9.1.2",
-    "eslint": "^9.20.1",
+    "eslint": "^9.25.1",
     "eslint-plugin-chai-friendly": "^1.0.1",
-    "lerna": "^8.2.0",
+    "lerna": "^8.2.2",
     "mocha": "^11.1.0",
-    "prettier": "^3.5.1",
+    "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "source-map-support": "^0.5.21",
-    "supertest": "^7.0.0",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.1"
+    "supertest": "^7.1.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0"
   }
 }
