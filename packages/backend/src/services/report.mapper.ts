@@ -85,12 +85,12 @@ export class ReportMapper {
     groupField: AanmeldingGroupField,
     secondGroupField: AanmeldingGroupField | undefined,
   ): Promise<Report> {
-    // console.log(query);
+    console.log(query);
     const rawResults = await this.db.$queryRawUnsafe<
       {
         key1: string | number | null;
         key2?: string | number | null;
-        total: bigint;
+        total: bigint | number;
       }[]
     >(query);
     const aanmeldingen: Report = [];
