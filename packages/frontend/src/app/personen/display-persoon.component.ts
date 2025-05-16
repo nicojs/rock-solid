@@ -2,6 +2,7 @@ import {
   AanmeldingOf,
   Cursus,
   Deelnemer,
+  deelnemerLabels,
   OverigPersoon,
   Persoon,
   persoonLabels,
@@ -29,6 +30,7 @@ import {
   showVoedingswens,
 } from './persoon.pipe';
 import { routesByPersoonType } from './routing-helper';
+import { showLocatie } from '../locaties/locatie.pipe';
 
 @customElement('rock-display-persoon')
 export class DisplayPersoonComponent extends RockElement {
@@ -183,6 +185,8 @@ export class DisplayPersoonComponent extends RockElement {
         : nothing}
       <dt>Contactpersoon</dt>
       <dd>${showContactpersoon(deelnemer.contactpersoon)}</dd>
+      <dt>${deelnemerLabels.gewensteOpstapplaats}</dt>
+      <dd>${showLocatie(deelnemer.gewensteOpstapplaats)}</dd>
     `;
   }
   private renderOverigPersoonProperties(persoon: OverigPersoon) {

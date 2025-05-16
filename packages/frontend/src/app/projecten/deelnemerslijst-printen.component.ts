@@ -5,6 +5,7 @@ import {
   Aanmelding,
   Contactpersoon,
   Project,
+  deelnemerLabels,
   notEmpty,
   showDatum,
 } from '@rock-solid/shared';
@@ -16,6 +17,7 @@ import {
   showVoedingswens,
 } from '../personen/persoon.pipe';
 import { show, showPlaats } from '../shared';
+import { showLocatie } from '../locaties/locatie.pipe';
 
 @customElement('rock-deelnemerslijst-printen')
 export class DeelnemerslijstPrintenComponent extends RockElement {
@@ -60,6 +62,7 @@ export class DeelnemerslijstPrintenComponent extends RockElement {
               <th>Voedingswens</th>
               <th>Telefoonnummer</th>
               <th>GSM</th>
+              <th>${deelnemerLabels.gewensteOpstapplaats}</th>
               <th>Begeleidende dienst</th>
               <th>Contactpersoon</th>
             </tr>
@@ -78,6 +81,7 @@ export class DeelnemerslijstPrintenComponent extends RockElement {
                     <td>${showVoedingswens(deelnemer)}</td>
                     <td>${deelnemer.telefoonnummer}</td>
                     <td>${deelnemer.gsmNummer}</td>
+                    <td>${showLocatie(deelnemer.gewensteOpstapplaats)}</td>
                     <td>${deelnemer.begeleidendeDienst}</td>
                     <td>
                       ${this.renderContactpersoon(deelnemer.contactpersoon)}
