@@ -46,7 +46,7 @@ import {
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma/index.js';
 import { toPlaats } from './services/plaats.mapper.js';
 import { provincieMapper } from './services/enum.mapper.js';
 
