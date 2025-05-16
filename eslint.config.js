@@ -14,7 +14,6 @@ export default tseslint.config(
           'packages/backend/tsconfig.test.json',
           'packages/frontend/tsconfig.json',
           'packages/shared/tsconfig.json',
-          './tsconfig.lint.json',
         ],
         tsconfigRootDir: import.meta.dirname,
       },
@@ -65,6 +64,7 @@ export default tseslint.config(
     ignores: [
       'packages/frontend/dist/',
       'packages/backend/dist/',
+      'packages/backend/generated/',
       'packages/shared/dist/',
     ],
   },

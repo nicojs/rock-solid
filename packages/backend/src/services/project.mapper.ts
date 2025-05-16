@@ -16,8 +16,8 @@ import {
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
-import * as db from '@prisma/client';
-import { Prisma } from '@prisma/client';
+import * as db from '../../generated/prisma/index.js';
+import { Prisma } from '../../generated/prisma/index.js';
 import { purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 import { handleKnownPrismaErrors } from '../errors/index.js';

@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../generated/prisma/index.js';
 import { UniqueKeyFailedError } from './errors.js';
 import { NotFoundException } from '@nestjs/common';
 

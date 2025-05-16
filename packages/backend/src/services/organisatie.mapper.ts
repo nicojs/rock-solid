@@ -1,4 +1,4 @@
-import * as db from '@prisma/client';
+import * as db from '../../generated/prisma/index.js';
 import {
   UpsertableOrganisatie,
   Organisatie,
