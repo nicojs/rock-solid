@@ -5,6 +5,7 @@ import {
   Doelgroep,
   Foldersoort,
   Geslacht,
+  Locatiesoort,
   Organisatieonderdeel,
   Organisatiesoort,
   OverigPersoonSelectie,
@@ -255,3 +256,11 @@ export const provincieMapper = createEnumMapper<Provincie>('provincie', {
   'West-Vlaanderen': 10,
   'Oost-Vlaanderen': 11,
 });
+
+export const locatiesoortMapper = createEnumMapper<Locatiesoort>(
+  'locatiesoort',
+  {
+    cursushuis: 0,
+    opstapplaats: 1,
+  },
+);

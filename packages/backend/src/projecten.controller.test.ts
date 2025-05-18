@@ -239,11 +239,16 @@ describe(ProjectenController.name, () => {
   describe('GET /projecten', () => {
     it('should return the correct properties', async () => {
       // Arrange
+      const cursushuis = await harness.createLocatie({
+        soort: 'cursushuis',
+        naam: 'Cursushuis',
+      });
       const activiteitData = {
         van: new Date(2011, 2, 2, 20, 0, 0),
         totEnMet: new Date(2011, 2, 4, 16, 0, 0),
         vormingsuren: 20,
         begeleidingsuren: 40,
+        locatie: cursushuis,
       } as const satisfies Partial<CursusActiviteit>;
       const projectData = {
         projectnummer: '123',
@@ -281,6 +286,7 @@ describe(ProjectenController.name, () => {
             aantalDeelnames: 0,
             aantalDeelnemersuren: 0,
             isCompleted: true,
+            locatie: cursushuis,
           },
         ],
         aantalInschrijvingen: 0,

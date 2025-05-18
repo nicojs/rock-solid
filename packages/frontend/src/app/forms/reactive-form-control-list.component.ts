@@ -1,6 +1,6 @@
 import { customElement, property } from 'lit/decorators.js';
 import { FormElement } from './form-element';
-import { html } from 'lit';
+import { html, PropertyValues } from 'lit';
 import { BaseInputControl, FormControl } from './form-control';
 
 @customElement('rock-reactive-form-control-list')
@@ -24,6 +24,7 @@ export class ReactiveFormControlList<TEntity> extends FormElement<TEntity> {
       );
       formElementsToUpdate.forEach((formElement) => {
         formElement.validate();
+        formElement.updateShow();
       });
     });
   }

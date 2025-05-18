@@ -28,7 +28,9 @@ import {
   checkboxesItemsControl,
   radioControl,
   checkboxesPropsControl,
+  tagsControl,
 } from '../forms';
+import { locatieService } from '../locaties/locatie.service';
 
 @customElement('rock-edit-persoon')
 export class EditPersoonComponent extends LitElement {
@@ -213,6 +215,23 @@ function controlsFor<TType extends PersoonType>(
       checkboxesPropsControl('fotoToestemming', fotoToestemmingLabels, {
         label: deelnemerLabels.fotoToestemming,
       }),
+      tagsControl(
+        'mogelijkeOpstapplaatsen',
+        (loc) => loc.naam,
+        async (text) => {
+          const locaties = await locatieService.getAll({
+            soort: 'opstapplaats',
+            naam: text,
+          });
+          return locaties.map((loc) => ({
+            text: loc.naam,
+            value: loc,
+          }));
+        },
+        {
+          label: deelnemerLabels.mogelijkeOpstapplaatsen,
+        },
+      ),
     );
   } else {
     controls.push(...voedingswensControls);

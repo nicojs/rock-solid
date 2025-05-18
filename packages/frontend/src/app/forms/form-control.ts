@@ -111,7 +111,10 @@ export function tagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   searchAction: (
     text: string,
   ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>,
-  additionalOptions?: Pick<TagsControl<TEntity, TKey>, 'minCharacters'>,
+  additionalOptions?: Pick<
+    TagsControl<TEntity, TKey>,
+    'minCharacters' | 'label'
+  >,
 ): TagsControl<TEntity, TKey> {
   return {
     type: InputType.tags,
@@ -263,6 +266,8 @@ export interface BaseInputControl<TEntity, TValue> {
   dependsOn?: (keyof TEntity & string)[];
   /** When updated with empty text, should the underlying field be set to null? */
   nullable?: boolean;
+  /** When should this control be shown? */
+  show?: (entity: TEntity) => boolean;
 }
 
 export type KeysOfType<TEntity, TValue> = keyof {
@@ -406,7 +411,9 @@ export function selectControl<
     grouped: false,
     ...options,
     size:
-      options.size ?? options.multiple ? Object.keys(items).length : undefined,
+      (options.size ?? options.multiple)
+        ? Object.keys(items).length
+        : undefined,
   };
 }
 
@@ -425,7 +432,7 @@ export function groupedSelectControl<
     grouped: true,
     ...options,
     size:
-      options.size ?? options.multiple
+      (options.size ?? options.multiple)
         ? Object.entries(groupedItems).reduce(
             (acc, [, items]) => Object.entries(items).length + 1 + acc,
             0,

@@ -6,6 +6,7 @@ import {
   Privilege,
   UpsertableLocatie,
   locatieLabels,
+  locatiesoorten,
 } from '@rock-solid/shared';
 import { showLocatie } from './locatie.pipe';
 import { FormControl, InputType, adresControls, formGroup } from '../forms';
@@ -55,6 +56,20 @@ const locatieControls: FormControl<Locatie>[] = [
     label: locatieLabels.naam,
     type: InputType.text,
     validators: { required: true },
+  },
+  {
+    name: 'soort',
+    label: locatieLabels.soort,
+    type: InputType.radio,
+    items: locatiesoorten,
+    validators: { required: true },
+  },
+  {
+    name: 'geschiktVoorVakantie',
+    label: locatieLabels.geschiktVoorVakantie,
+    type: InputType.checkbox,
+    show: (locatie) => locatie.soort === 'opstapplaats',
+    dependsOn: ['soort'],
   },
   {
     name: 'opmerking',
