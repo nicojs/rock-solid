@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { LocatiesController } from './locaties.controller.js';
 import { byId, factory, harness } from './test-utils.test.js';
-import { Decimal, Locatie } from '@rock-solid/shared';
+import { Locatie } from '@rock-solid/shared';
 
 describe(LocatiesController.name, () => {
   beforeEach(() => {
