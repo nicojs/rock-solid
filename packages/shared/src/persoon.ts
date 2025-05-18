@@ -1,4 +1,5 @@
 import { Adres, Provincie, UpsertableAdres } from './adres.js';
+import { Locatie } from './locatie.js';
 import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
 import { Upsertable } from './upsertable.js';
@@ -53,7 +54,11 @@ export type PersoonFilter = Partial<
   Omit<OverigPersoon, 'type' | 'foldervoorkeuren'> &
     Omit<
       Deelnemer,
-      'type' | 'eersteCursus' | 'eersteVakantie' | 'foldervoorkeuren'
+      | 'type'
+      | 'eersteCursus'
+      | 'eersteVakantie'
+      | 'foldervoorkeuren'
+      | 'mogelijkeOpstapplaatsen'
     > & {
       type: PersoonType;
     }
@@ -100,6 +105,7 @@ export interface Deelnemer extends BasePersoon {
   /** Projectnummer van de eerste vakantie */
   eersteVakantie?: string;
   fotoToestemming: FotoToestemming;
+  mogelijkeOpstapplaatsen: Locatie[];
 }
 
 export interface OverigPersoon extends BasePersoon {
@@ -155,6 +161,7 @@ export const deelnemerLabels: Labels<Deelnemer> = {
   woonsituatieOpmerking: 'Woonsituatie opmerking',
   werksituatie: 'Werksituatie',
   werksituatieOpmerking: 'Werksituatie opmerking',
+  mogelijkeOpstapplaatsen: 'Mogelijke opstapplaatsen',
 };
 
 export const fotoToestemmingLabels: Labels<FotoToestemming> = {

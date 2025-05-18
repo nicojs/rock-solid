@@ -20,6 +20,7 @@ import {
   showOverigPersoonSelectie,
   showDatumWithAge,
   pluralize,
+  unknown,
 } from '../shared';
 import {
   fullName,
@@ -183,6 +184,12 @@ export class DisplayPersoonComponent extends RockElement {
         : nothing}
       <dt>Contactpersoon</dt>
       <dd>${showContactpersoon(deelnemer.contactpersoon)}</dd>
+      <dt>Mogelijke opstapplaatsen</dt>
+      <dd>
+        ${deelnemer.mogelijkeOpstapplaatsen.length
+          ? deelnemer.mogelijkeOpstapplaatsen.map(({ naam }) => naam).join(', ')
+          : unknown}
+      </dd>
     `;
   }
   private renderOverigPersoonProperties(persoon: OverigPersoon) {

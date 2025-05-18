@@ -140,3 +140,7 @@ export function showTijd(val: Date | undefined): string {
   }
   return notAvailable;
 }
+
+export type Prettify<T> = {
+  [K in keyof T]: T[K];
+};

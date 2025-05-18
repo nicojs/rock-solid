@@ -15,6 +15,10 @@ export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
     this.inputRef.value?.validate();
   }
 
+  public override updateShow() {
+    this.inputRef.value?.updateShow();
+  }
+
   inputRef = createRef<FormControlElement<unknown>>();
 
   override render() {
