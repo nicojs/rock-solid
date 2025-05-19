@@ -3,7 +3,13 @@ import { Options } from './options.js';
 import { OverigPersoon } from './persoon.js';
 import { Upsertable } from './upsertable.js';
 import { Aanmeldingsstatus } from './aanmelding.js';
-import { Labels, Queryfied, filterMetaQuery, tryParseInt } from './util.js';
+import {
+  Labels,
+  Queryfied,
+  filterMetaQuery,
+  notEmpty,
+  tryParseInt,
+} from './util.js';
 import { Locatie } from './locatie.js';
 
 export interface BaseProject {
@@ -219,6 +225,7 @@ export type ProjectFilter = Pick<Project, 'type'> &
     organisatieonderdelen?: Organisatieonderdeel[];
     doelgroepen?: Doelgroep[];
     categorieen?: CursusCategorie[];
+    ids?: number[];
   };
 
 export function toProjectFilter(
@@ -234,5 +241,9 @@ export function toProjectFilter(
     categorieen: query.categorieen?.split(',').filter(isCursusCategorie),
     begeleidDoorPersoonId: tryParseInt(query.begeleidDoorPersoonId),
     aanmeldingPersoonId: tryParseInt(query.aanmeldingPersoonId),
+    ids: query.ids
+      ?.split(',')
+      .map((id) => tryParseInt(id))
+      .filter(notEmpty),
   };
 }

@@ -90,7 +90,6 @@ export class RockSolidDBContainer {
   }
 
   static async start() {
-    // const postgres = await new PostgreSqlContainer().start();
     const dbName = `test${process.env['STRYKER_MUTATOR_WORKER'] ?? ''}`;
     const connectionUri = `file:./${dbName}.db?connection_limit=1`;
     console.log(`Started db@${connectionUri}`);

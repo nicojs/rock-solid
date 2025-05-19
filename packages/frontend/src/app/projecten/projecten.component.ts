@@ -10,6 +10,7 @@ import {
   allProjectLabels,
   Privilege,
   doelgroepen,
+  notEmpty,
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -18,6 +19,7 @@ import { RockElement } from '../rock-element';
 import { router } from '../router';
 import {
   capitalize,
+  entities,
   handleUniquenessError,
   pluralize,
   toQuery,
@@ -31,6 +33,10 @@ import {
   checkboxesItemsControl,
 } from '../forms';
 import { routesByProjectType } from './routing-helper';
+import {
+  HeaderSelectionChange,
+  ProjectSelectionChange,
+} from './projecten-list.component';
 
 @customElement('rock-projecten')
 export class ProjectenComponent extends RockElement {
@@ -64,6 +70,9 @@ export class ProjectenComponent extends RockElement {
   private filter: ProjectFilter = {
     type: 'cursus',
   };
+
+  @state()
+  public selectedProjectIds: number[] = [];
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -106,6 +115,9 @@ export class ProjectenComponent extends RockElement {
       this.filter.type = this.type;
       const currentPage = (tryParseInt(page) ?? 1) - 1;
       projectenStore.setCurrentPage(currentPage, { ...this.filter });
+    }
+    if (props.has('type')) {
+      this.selectedProjectIds = [];
     }
     super.update(props);
   }
@@ -180,6 +192,21 @@ export class ProjectenComponent extends RockElement {
                 ><rock-icon icon="journalPlus" size="md"></rock-icon>
                 ${capitalize(this.type)}</rock-link
               >
+              <rock-link
+                href="/${routesByProjectType[
+                  this.type
+                ]}/vervoerstoer/${this.selectedProjectIds.join('+')}"
+                btn
+                keepQuery
+                btnOutlinePrimary
+                ?disabled=${this.selectedProjectIds.length === 0}
+                ><rock-icon icon="busFront" size="md"></rock-icon> Vervoerstoer
+                maken
+                (${entities(
+                  this.selectedProjectIds.length,
+                  this.type,
+                )})</rock-link
+              >
             </div>
           </div>
           <rock-search
@@ -195,6 +222,37 @@ export class ProjectenComponent extends RockElement {
           ${this.projecten
             ? html`<rock-projecten-list
                   .projecten=${this.projecten}
+                  selectable
+                  .selectedProjectIds=${this.selectedProjectIds}
+                  @selection-header-changed=${(
+                    event: CustomEvent<HeaderSelectionChange>,
+                  ) => {
+                    if (event.detail.selected) {
+                      this.selectedProjectIds = [
+                        ...new Set(
+                          this.selectedProjectIds.concat(
+                            this.projecten?.map((project) => project.id) ?? [],
+                          ),
+                        ),
+                      ];
+                    } else {
+                      this.selectedProjectIds = [];
+                    }
+                  }}
+                  @selection-changed=${({
+                    detail: { selected, projectId },
+                  }: CustomEvent<ProjectSelectionChange>) => {
+                    if (selected) {
+                      this.selectedProjectIds = [
+                        ...this.selectedProjectIds,
+                        projectId,
+                      ];
+                    } else {
+                      this.selectedProjectIds = this.selectedProjectIds.filter(
+                        (id) => id !== projectId,
+                      );
+                    }
+                  }}
                   @delete=${(event: CustomEvent<Project>) =>
                     this.deleteProject(event)}
                 ></rock-projecten-list>
@@ -211,6 +269,21 @@ export class ProjectenComponent extends RockElement {
               @project-submitted="${(event: CustomEvent<Project>) =>
                 this.addProject(event.detail)}"
             ></rock-project-edit>`;
+      case 'vervoerstoer': {
+        const projectIds = this.path[1]
+          ?.split('+')
+          .map((id) => tryParseInt(id))
+          .filter(notEmpty);
+        if (!projectIds?.length) {
+          return this.navigateToProjectenPage();
+        }
+
+        return html`<rock-vervoerstoer
+          .type=${this.type}
+          .enkelVakanties=${this.type === 'vakantie'}
+          .projectIds=${projectIds}
+        ></rock-vervoerstoer>`;
+      }
       default:
         if (this.path[0]?.match(/\d+/)) {
           const [, page, ...rest] = this.path;

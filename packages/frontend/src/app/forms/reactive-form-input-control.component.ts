@@ -330,7 +330,6 @@ export class ReactiveFormInputControl<
   }
 
   private updateValue(value: unknown) {
-    console.log('updateValue radio', value);
     if (value === undefined && this.control.nullable) {
       value = null;
     }

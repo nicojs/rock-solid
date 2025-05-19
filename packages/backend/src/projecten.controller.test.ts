@@ -698,6 +698,35 @@ describe(ProjectenController.name, () => {
         expect(nietBuso).deep.eq([cleanCursus]);
         expect(all.sort(byId)).deep.eq([cookCursus, cleanCursus].sort(byId));
       });
+
+      it('by ids', async () => {
+        // Act
+        const [cursussen, vakanties, allCursussen] = await Promise.all([
+          harness.getAllProjecten({
+            type: 'cursus',
+            ids: [cleanCursus.id, cookCursus.id],
+          }),
+          harness.getAllProjecten({
+            type: 'vakantie',
+            ids: [athensVakantie.id],
+          }),
+          harness.getAllProjecten({
+            type: 'cursus',
+            ids: undefined,
+          }),
+        ]);
+
+        // Assert
+        expect(cursussen.map(({ id }) => id).sort()).deep.eq(
+          [cleanCursus.id, cookCursus.id].sort(),
+        );
+        expect(vakanties.map(({ id }) => id).sort()).deep.eq(
+          [athensVakantie.id].sort(),
+        );
+        expect(allCursussen.map(({ id }) => id).sort()).deep.eq(
+          [cleanCursus.id, cookCursus.id, deKeiCursus.id].sort(),
+        );
+      });
     });
   });
 

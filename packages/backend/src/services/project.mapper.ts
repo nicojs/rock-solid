@@ -571,6 +571,11 @@ function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
       in: filter.doelgroepen.map(doelgroepMapper.toDB),
     };
   }
+  if (filter.ids) {
+    whereClause.id = {
+      in: filter.ids,
+    };
+  }
   whereClause.jaar = filter.jaar;
   return whereClause;
 }
