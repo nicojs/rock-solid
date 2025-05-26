@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import { Locatie, LocatieFilter, UpsertableLocatie } from '@rock-solid/shared';
-import * as db from '@prisma/client';
+import * as db from '../../generated/prisma/index.js';
 import { toPage } from './paging.js';
 
 import {
