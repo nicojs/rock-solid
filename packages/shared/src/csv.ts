@@ -45,15 +45,15 @@ export function toCsv<T>(
     if (val instanceof Date) {
       return showDatum(val);
     }
+    if (val === undefined || val === null) {
+      return '';
+    }
     if (typeof val === 'object' || typeof val === 'function') {
       throw new Error(
         `Csv of ${typeof val} is not supported. Requested ${column}: ${String(val)}`,
       );
     }
 
-    if (val === undefined || val === null) {
-      return '';
-    }
     return String(val);
   }
 
