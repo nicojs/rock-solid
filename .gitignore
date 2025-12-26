@@ -9,3 +9,4 @@ package.release.json
 *.zip
 *.db
 *.db-journal
+.DS_Store
