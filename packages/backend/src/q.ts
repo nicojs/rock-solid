@@ -1,9 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import {
-  aanmeldingsstatusMapper,
-  geslachtMapper,
-  organisatieonderdeelMapper,
-} from './services/enum.mapper.js';
+import { organisatieonderdeelMapper } from './services/enum.mapper.js';
 import { calculateAge, toCsv } from '@rock-solid/shared';
 
 const prisma = new PrismaClient({
@@ -47,7 +43,8 @@ const deelnemersMetGeboortedatum: {
   AND organisatieonderdeel = ${organisatieonderdeelMapper.toDB('keiJong')}
   `;
 
-const uniqueDeelnemersPerJaar: { jaar: number; deelnemerCount: bigint }[] = await prisma.$queryRaw`
+const uniqueDeelnemersPerJaar: { jaar: number; deelnemerCount: bigint }[] =
+  await prisma.$queryRaw`
   SELECT jaar, COUNT(DISTINCT Aanmelding.deelnemerId) AS deelnemerCount
   FROM Deelname
   INNER JOIN Aanmelding ON Aanmelding.id = Deelname.aanmeldingId
@@ -59,7 +56,8 @@ const uniqueDeelnemersPerJaar: { jaar: number; deelnemerCount: bigint }[] = awai
   GROUP BY jaar
   `;
 
-const avgDeelnamesPerDeelnemer: { jaar: number; avgDeelnames: number }[] = await prisma.$queryRaw`
+const avgDeelnamesPerDeelnemer: { jaar: number; avgDeelnames: number }[] =
+  await prisma.$queryRaw`
   SELECT jaar, AVG(deelnameCount) AS avgDeelnames
   FROM (
     SELECT jaar, Aanmelding.deelnemerId, COUNT(*) AS deelnameCount
@@ -75,15 +73,18 @@ const avgDeelnamesPerDeelnemer: { jaar: number; avgDeelnames: number }[] = await
   GROUP BY jaar
   `;
 
-const totalen: { jaar: number; deelnemerCount: number; avgDeelnames: number }[] =
-  uniqueDeelnemersPerJaar.map((ud) => {
-    const avg = avgDeelnamesPerDeelnemer.find((a) => a.jaar === ud.jaar);
-    return {
-      jaar: ud.jaar,
-      deelnemerCount: Number(ud.deelnemerCount),
-      avgDeelnames: avg!.avgDeelnames,
-    };
-  });
+const totalen: {
+  jaar: number;
+  deelnemerCount: number;
+  avgDeelnames: number;
+}[] = uniqueDeelnemersPerJaar.map((ud) => {
+  const avg = avgDeelnamesPerDeelnemer.find((a) => a.jaar === ud.jaar);
+  return {
+    jaar: ud.jaar,
+    deelnemerCount: Number(ud.deelnemerCount),
+    avgDeelnames: avg!.avgDeelnames,
+  };
+});
 
 console.log('Totalen per jaar:', totalen);
 
@@ -108,7 +109,6 @@ result.forEach((row) => {
   entry.count++;
 });
 
-
 const avgDeelnamesPerLeeftijdCsv = toCsv(
   avgDeelnamesPerLeeftijd,
   ['jaar', 'leeftijd', 'count'],
@@ -127,5 +127,8 @@ const totalenCsv = toCsv(
 // console.log(avgDeelnamesPerLeeftijdCsv);
 // // console.log(avgDeelnamesPerLeeftijd);
 import fs from 'fs';
-fs.writeFileSync('deelnames-per-leeftijd-per-jaar.csv', avgDeelnamesPerLeeftijdCsv);
+fs.writeFileSync(
+  'deelnames-per-leeftijd-per-jaar.csv',
+  avgDeelnamesPerLeeftijdCsv,
+);
 fs.writeFileSync('totalen.csv', totalenCsv);
