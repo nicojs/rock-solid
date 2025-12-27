@@ -49,6 +49,9 @@ import bodyParser from 'body-parser';
 import { PrismaClient } from '../generated/prisma/index.js';
 import { toPlaats } from './services/plaats.mapper.js';
 import { provincieMapper } from './services/enum.mapper.js';
+import { DBService } from './services/db.service.js';
+import { Server } from 'http';
+import { AddressInfo } from 'net';
 
 /**
  * @see https://stackoverflow.com/questions/45881829/how-to-have-mocha-show-entire-object-in-diff-on-assertion-error
@@ -59,7 +62,7 @@ process.env.TZ = 'Etc/UTC';
 const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
 
-export class RockSolidDBContainer {
+class TestDB {
   public client;
   #seedPlaats?: Plaats;
 
@@ -70,40 +73,8 @@ export class RockSolidDBContainer {
     return this.#seedPlaats;
   }
 
-  private constructor(public readonly connectionUri: string) {
-    this.client = new PrismaClient({
-      datasources: {
-        db: {
-          url: this.connectionUri,
-        },
-      },
-      log: [
-        {
-          emit: 'event',
-          level: 'query',
-        },
-      ],
-    });
-    // this.client.$on('query', async (e) => {
-    //   console.log(`${e.query} ${e.params}`);
-    // });
-  }
-
-  static async start() {
-    // const postgres = await new PostgreSqlContainer().start();
-    const dbName = `test${process.env['STRYKER_MUTATOR_WORKER'] ?? ''}`;
-    const connectionUri = `file:./${dbName}.db?connection_limit=1`;
-    console.log(`Started db@${connectionUri}`);
-    await execAsync('npm run prisma:push:force', {
-      env: {
-        ...process.env,
-        DATABASE_URL: connectionUri,
-      },
-      cwd,
-    });
-    const db = new RockSolidDBContainer(connectionUri);
-    await db.init();
-    return db;
+  constructor(client: PrismaClient) {
+    this.client = client;
   }
 
   public async init() {
@@ -158,17 +129,28 @@ export class RockSolidDBContainer {
 class IntegrationTestingHarness {
   private readonly app;
   private authToken?: string;
-  public db = rockSolidDBContainer;
-  constructor(app: INestApplication) {
+  public db;
+  private constructor(app: INestApplication<Server>) {
     this.app = app;
+    this.db = new TestDB(app.get(DBService));
   }
 
   static async init() {
+    const dbName = `test${process.env['STRYKER_MUTATOR_WORKER'] ?? ''}`;
+    const connectionUri = `file:./prisma/${dbName}.db`;
+    console.log(`Started db@${connectionUri}`);
+    await execAsync('npm run prisma:push:force', {
+      env: {
+        ...process.env,
+        DATABASE_URL: connectionUri,
+      },
+      cwd,
+    });
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider('DatabaseUrl')
-      .useValue(rockSolidDBContainer.connectionUri)
+      .useValue(connectionUri)
       .compile();
 
     const app = moduleFixture.createNestApplication({
@@ -176,7 +158,10 @@ class IntegrationTestingHarness {
     });
     app.use(bodyParser.json({ reviver: rockReviver }));
     await app.init();
-    return new IntegrationTestingHarness(app);
+    await app.listen(0, 'localhost');
+    const harness =  new IntegrationTestingHarness(app);
+    await harness.db.init();
+    return harness;
   }
 
   async dispose() {
@@ -191,35 +176,36 @@ class IntegrationTestingHarness {
 
   async clear() {
     this.authToken = undefined;
-    await rockSolidDBContainer.clear();
+    await this.db.clear();
   }
 
   get(url: string, query?: Record<string, unknown>): request.Test {
     return this.wrapBodyRequest(
-      request(this.app.getHttpServer()).get(url + toQueryString(query)),
+      request(this.#addr).get(url + toQueryString(query)),
     );
   }
 
   delete(url: string): request.Test {
-    return this.wrapBodyRequest(request(this.app.getHttpServer()).delete(url));
+    return this.wrapBodyRequest(request(this.#addr).delete(url));
   }
 
   post(url: string, body?: string | object): request.Test {
-    return this.wrapBodyRequest(
-      request(this.app.getHttpServer()).post(url),
-      body,
-    );
+    return this.wrapBodyRequest(request(this.#addr).post(url), body);
+  }
+
+  get #addr() {
+    return `http://localhost:${(this.app.getHttpServer().address() as AddressInfo).port}`;
   }
 
   put(url: string, body?: string | object): request.Test {
     return this.wrapBodyRequest(
-      request(this.app.getHttpServer()).put(url),
+      request(this.#addr).put(url),
       body,
     );
   }
   patch(url: string, body?: string | object): request.Test {
     return this.wrapBodyRequest(
-      request(this.app.getHttpServer()).patch(url),
+      request(this.#addr).patch(url),
       body,
     );
   }
@@ -498,7 +484,7 @@ export const factory = {
     return {
       straatnaam: 'Onbekend',
       huisnummer: '1',
-      plaats: rockSolidDBContainer.seedPlaats,
+      plaats: harness.db.seedPlaats,
       ...overrides,
     };
   },
@@ -562,20 +548,13 @@ export const factory = {
   },
 };
 
-let rockSolidDBContainer: RockSolidDBContainer;
 export let harness: IntegrationTestingHarness;
 
 before(async () => {
-  if (rockSolidDBContainer) {
-    await rockSolidDBContainer.clear();
-  } else {
-    rockSolidDBContainer = await RockSolidDBContainer.start();
-  }
   harness = await IntegrationTestingHarness.init();
 });
 after(async () => {
   await harness.dispose();
-  await rockSolidDBContainer.stop();
 });
 
 /**

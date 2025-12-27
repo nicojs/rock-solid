@@ -5,6 +5,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import prisma, { Prisma } from '../../generated/prisma/index.js';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 
 @Injectable()
 export class DBService
@@ -12,12 +13,9 @@ export class DBService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor(@Inject('DatabaseUrl') databaseUrl: string) {
+    const adapter = new PrismaBetterSqlite3({ url: databaseUrl  });
     super({
-      datasources: {
-        db: {
-          url: databaseUrl,
-        },
-      },
+      adapter,
       log: [
         {
           emit: 'event',
