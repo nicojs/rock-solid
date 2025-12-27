@@ -78,7 +78,7 @@ RES_GROUP=acc-rock-solid # Resource Group name
 AKV_NAME=acc-rock-solid-kv   # Azure Key Vault vault name
 APP_NAME=acc-rock-solid-web
 APP_SERVICE_PLAN=acc-rock-solid-web-plan
-DATABASE_URL="file:./acc.db?connection_limit=1"
+DATABASE_URL="file:./acc.db"
 ```
 
 ### Create
