@@ -148,12 +148,18 @@ describe(PersonenController.name, () => {
       });
 
       // Assert
-      expect(oo).deep.eq([fooBar]);
-      expect(ba.sort(byId)).deep.eq([fooBar, bazQux].sort(byId));
-      expect(bazQu).deep.eq([bazQux]);
-      expect(ond).deep.eq([bond]);
-      expect(fooBaz).deep.eq([]);
-      expect(noFilter.sort(byId)).deep.eq([fooBar, bazQux, bond].sort(byId));
+      expect(oo.body).deep.eq([fooBar]);
+      expect(ba.body.sort(byId)).deep.eq([fooBar, bazQux].sort(byId));
+      expect(bazQu.body).deep.eq([bazQux]);
+      expect(ond.body).deep.eq([bond]);
+      expect(fooBaz.body).deep.eq([]);
+      expect(noFilter.body.sort(byId)).deep.eq([fooBar, bazQux, bond].sort(byId));
+      expect(noFilter.totalCount).eq(3);
+      expect(oo.totalCount).eq(1);
+      expect(ba.totalCount).eq(2);
+      expect(bazQu.totalCount).eq(1);
+      expect(ond.totalCount).eq(1);
+      expect(fooBaz.totalCount).eq(0);
     });
 
     it('by selectie', async () => {
@@ -196,18 +202,22 @@ describe(PersonenController.name, () => {
       ]);
 
       // Assert
-      expect(personeelResult).deep.eq([werknemer]);
-      expect(algemeneVergaderingResult).deep.eq([bestuurslid]);
-      expect(noSelectieResult.sort(byId)).deep.eq(
+      expect(personeelResult.body).deep.eq([werknemer]);
+      expect(algemeneVergaderingResult.body).deep.eq([bestuurslid]);
+      expect(noSelectieResult.body.sort(byId)).deep.eq(
         [deelnemer, overigPersoon, bestuurslid, vrijwilliger, werknemer].sort(
           byId,
         ),
       );
-      expect(noFilterResult.sort(byId)).deep.eq(
+      expect(noFilterResult.body.sort(byId)).deep.eq(
         [deelnemer, overigPersoon, bestuurslid, vrijwilliger, werknemer].sort(
           byId,
         ),
       );
+      expect(personeelResult.totalCount).eq(1);
+      expect(algemeneVergaderingResult.totalCount).eq(1);
+      expect(noSelectieResult.totalCount).eq(5);
+      expect(noFilterResult.totalCount).eq(5);
     });
 
     it('by foldersoort', async () => {
@@ -265,14 +275,14 @@ describe(PersonenController.name, () => {
         ]);
 
       // Assert
-      expect(actualDeKei).deep.eq([deelnemerDeKei]);
-      expect(actualKeiJongBuso.sort(byId)).deep.eq(
+      expect(actualDeKei.body).deep.eq([deelnemerDeKei]);
+      expect(actualKeiJongBuso.body.sort(byId)).deep.eq(
         [deelnemerBuso, deelnemerKeiJong].sort(byId),
       );
-      expect(actualKeiJong.sort(byId)).deep.eq(
+      expect(actualKeiJong.body.sort(byId)).deep.eq(
         [deelnemerBuso, deelnemerKeiJong, deelnemerNietBuso].sort(byId),
       );
-      expect(actualNoFilter.sort(byId)).deep.eq(
+      expect(actualNoFilter.body.sort(byId)).deep.eq(
         [
           deelnemerNoFolder,
           deelnemerDeKei,
@@ -281,6 +291,10 @@ describe(PersonenController.name, () => {
           deelnemerKeiJong,
         ].sort(byId),
       );
+      expect(actualDeKei.totalCount).eq(1);
+      expect(actualKeiJongBuso.totalCount).eq(2);
+      expect(actualKeiJong.totalCount).eq(3);
+      expect(actualNoFilter.totalCount).eq(5);
     });
 
     it('by minLeeftijd', async () => {
@@ -297,13 +311,16 @@ describe(PersonenController.name, () => {
         ]);
 
       // Assert
-      expect(deelnemers18Years).deep.eq([deelnemer18Y]);
-      expect(deelnemers17Years.sort(byId)).deep.eq(
+      expect(deelnemers18Years.body).deep.eq([deelnemer18Y]);
+      expect(deelnemers17Years.body.sort(byId)).deep.eq(
         [deelnemer18Y, deelnemer17Y].sort(byId),
       );
-      expect(noFilter.sort(byId)).deep.eq(
+      expect(noFilter.body.sort(byId)).deep.eq(
         [deelnemer18Y, deelnemer17Y, deelnemerNoGeboortedatum].sort(byId),
       );
+      expect(deelnemers18Years.totalCount).eq(1);
+      expect(deelnemers17Years.totalCount).eq(2);
+      expect(noFilter.totalCount).eq(3);
     });
 
     it('by maxLeeftijd', async () => {
@@ -320,13 +337,16 @@ describe(PersonenController.name, () => {
         ]);
 
       // Assert
-      expect(deelnemers18Years.sort(byId)).deep.eq(
+      expect(deelnemers18Years.body.sort(byId)).deep.eq(
         [deelnemer17Y, deelnemer18Y].sort(byId),
       );
-      expect(deelnemers17Years).deep.eq([deelnemer17Y]);
-      expect(noFilter.sort(byId)).deep.eq(
+      expect(deelnemers17Years.body).deep.eq([deelnemer17Y]);
+      expect(noFilter.body.sort(byId)).deep.eq(
         [deelnemer18Y, deelnemer17Y, deelnemerNoGeboortedatum].sort(byId),
       );
+      expect(deelnemers18Years.totalCount).eq(2);
+      expect(deelnemers17Years.totalCount).eq(1);
+      expect(noFilter.totalCount).eq(3);
     });
 
     it('by laatsteAanmeldingMinimaalJaarGeleden', async () => {
@@ -354,11 +374,11 @@ describe(PersonenController.name, () => {
         ]);
 
       // Assert
-      expect(deelnemersOneYearAgo).deep.eq([deelnemer1]);
-      expect(deelnemersTwoYearsAgo.sort(byId)).deep.eq(
+      expect(deelnemersOneYearAgo.body).deep.eq([deelnemer1]);
+      expect(deelnemersTwoYearsAgo.body.sort(byId)).deep.eq(
         [deelnemer1, deelnemer2, deelnemer4].sort(byId),
       );
-      expect(noFilter.sort(byId)).deep.eq(
+      expect(noFilter.body.sort(byId)).deep.eq(
         [
           deelnemer1,
           deelnemer2,
@@ -367,6 +387,9 @@ describe(PersonenController.name, () => {
           deelnemerNoAanmeldingen,
         ].sort(byId),
       );
+      expect(deelnemersOneYearAgo.totalCount).eq(1);
+      expect(deelnemersTwoYearsAgo.totalCount).eq(3);
+      expect(noFilter.totalCount).eq(5);
     });
 
     it('by laatsteAanmeldingMaximaalJaarGeleden', async () => {
@@ -405,15 +428,15 @@ describe(PersonenController.name, () => {
       ]);
 
       // Assert
-      expect(deelnemersMax1Year.sort(byId)).deep.eq(
+      expect(deelnemersMax1Year.body.sort(byId)).deep.eq(
         [deelnemer1, deelnemer2, deelnemer3, deelnemer4].sort(byId),
       );
-      expect(deelnemersMax2YearsAgo.sort(byId)).deep.eq(
+      expect(deelnemersMax2YearsAgo.body.sort(byId)).deep.eq(
         [deelnemer2, deelnemer3, deelnemer4].sort(byId),
       );
-      expect(deelnemersMax3YearsAgo).deep.eq([deelnemer3]);
-      expect(deelnemersMax4YearsAgo).deep.eq([]);
-      expect(noFilter.sort(byId)).deep.eq(
+      expect(deelnemersMax3YearsAgo.body).deep.eq([deelnemer3]);
+      expect(deelnemersMax4YearsAgo.body).deep.eq([]);
+      expect(noFilter.body.sort(byId)).deep.eq(
         [
           deelnemer1,
           deelnemer2,
@@ -422,6 +445,11 @@ describe(PersonenController.name, () => {
           deelnemerNoAanmeldingen,
         ].sort(byId),
       );
+      expect(deelnemersMax1Year.totalCount).eq(4);
+      expect(deelnemersMax2YearsAgo.totalCount).eq(3);
+      expect(deelnemersMax3YearsAgo.totalCount).eq(1);
+      expect(deelnemersMax4YearsAgo.totalCount).eq(0);
+      expect(noFilter.totalCount).eq(5);
     });
 
     it('by laatsteAanmeldingMaximaalJaarGeleden and laatsteAanmeldingMinimaalJaarGeleden', async () => {
@@ -442,10 +470,12 @@ describe(PersonenController.name, () => {
       ]);
 
       // Assert
-      expect(deelnemersLastYear).deep.eq([deelnemer1]);
-      expect(deelnemers2YearAgoExact.sort(byId)).deep.eq(
+      expect(deelnemersLastYear.body).deep.eq([deelnemer1]);
+      expect(deelnemers2YearAgoExact.body.sort(byId)).deep.eq(
         [deelnemer2, deelnemer4].sort(byId),
       );
+      expect(deelnemersLastYear.totalCount).eq(1);
+      expect(deelnemers2YearAgoExact.totalCount).eq(2);
     });
 
     it('by laatsteBegeleiddeProjectMinimaalJaarGeleden', async () => {
@@ -479,14 +509,14 @@ describe(PersonenController.name, () => {
       ]);
 
       // Assert
-      expect(begeleiddeProjectOneYearAgo).deep.eq([vrijwilliger1]);
-      expect(begeleiddeProjectTwoYearsAgo.sort(byId)).deep.eq(
+      expect(begeleiddeProjectOneYearAgo.body).deep.eq([vrijwilliger1]);
+      expect(begeleiddeProjectTwoYearsAgo.body.sort(byId)).deep.eq(
         [vrijwilliger1, vrijwilliger2].sort(byId),
       );
-      expect(begeleiddeProject3YearsAgo.sort(byId)).deep.eq(
+      expect(begeleiddeProject3YearsAgo.body.sort(byId)).deep.eq(
         [vrijwilliger1, vrijwilliger2, vrijwilliger3, vrijwilliger4].sort(byId),
       );
-      expect(noFilter.sort(byId)).deep.eq(
+      expect(noFilter.body.sort(byId)).deep.eq(
         [
           vrijwilliger1,
           vrijwilliger2,
@@ -495,6 +525,10 @@ describe(PersonenController.name, () => {
           vrijwilligerNonBegeleid,
         ].sort(byId),
       );
+      expect(begeleiddeProjectOneYearAgo.totalCount).eq(1);
+      expect(begeleiddeProjectTwoYearsAgo.totalCount).eq(2);
+      expect(begeleiddeProject3YearsAgo.totalCount).eq(4);
+      expect(noFilter.totalCount).eq(5);
     });
 
     it('by laatsteBegeleiddeProjectMaximaalJaarGeleden', async () => {
@@ -528,19 +562,19 @@ describe(PersonenController.name, () => {
       ]);
 
       // Assert
-      expect(begeleiddeProjectOneYearAgo).deep.eq([
+      expect(begeleiddeProjectOneYearAgo.body).deep.eq([
         vrijwilliger1,
         vrijwilliger2,
         vrijwilliger3,
         vrijwilliger4,
       ]);
-      expect(begeleiddeProjectTwoYearsAgo.sort(byId)).deep.eq(
+      expect(begeleiddeProjectTwoYearsAgo.body.sort(byId)).deep.eq(
         [vrijwilliger2, vrijwilliger3, vrijwilliger4].sort(byId),
       );
-      expect(begeleiddeProject3YearsAgo.sort(byId)).deep.eq(
+      expect(begeleiddeProject3YearsAgo.body.sort(byId)).deep.eq(
         [vrijwilliger3, vrijwilliger4].sort(byId),
       );
-      expect(noFilter.sort(byId)).deep.eq(
+      expect(noFilter.body.sort(byId)).deep.eq(
         [
           vrijwilliger1,
           vrijwilliger2,
@@ -549,6 +583,10 @@ describe(PersonenController.name, () => {
           vrijwilligerNonBegeleid,
         ].sort(byId),
       );
+      expect(begeleiddeProjectOneYearAgo.totalCount).eq(4);
+      expect(begeleiddeProjectTwoYearsAgo.totalCount).eq(3);
+      expect(begeleiddeProject3YearsAgo.totalCount).eq(2);
+      expect(noFilter.totalCount).eq(5);
     });
 
     it('by zonderAanmeldingen', async () => {
@@ -565,11 +603,14 @@ describe(PersonenController.name, () => {
 
       await harness.getAllPersonen({ zonderAanmeldingen: true });
       // Assert
-      expect(zonderAanmeldingen).deep.eq([deelnemerNoAanmeldingen]);
-      expect(nietZonderAanmeldingen).lengthOf(5);
-      expect(noFilter).lengthOf(5);
+      expect(zonderAanmeldingen.body).deep.eq([deelnemerNoAanmeldingen]);
+      expect(nietZonderAanmeldingen.body).lengthOf(5);
+      expect(noFilter.body).lengthOf(5);
       // zonderAanmeldingen false or undefined should be the same (it's a checkbox)
-      expect(noFilter.sort(byId)).deep.eq(nietZonderAanmeldingen.sort(byId));
+      expect(noFilter.body.sort(byId)).deep.eq(nietZonderAanmeldingen.body.sort(byId));
+      expect(zonderAanmeldingen.totalCount).eq(1);
+      expect(nietZonderAanmeldingen.totalCount).eq(5);
+      expect(noFilter.totalCount).eq(5);
     });
 
     it('by metVerblijfadres', async () => {
@@ -584,7 +625,7 @@ describe(PersonenController.name, () => {
               verblijfadres: {
                 straatnaam: 'Kerkstraat',
                 huisnummer: '123',
-                plaats: harness.db.seedPlaats,
+                plaats: harness.seedPlaats,
               },
             }),
           ),
@@ -599,27 +640,30 @@ describe(PersonenController.name, () => {
         ]);
 
       // Assert
-      expect(metVerblijfadres).deep.eq([deelnemerMetVerblijfadres]);
-      expect(zonderVerblijfadres.sort(byId)).deep.eq(
+      expect(metVerblijfadres.body).deep.eq([deelnemerMetVerblijfadres]);
+      expect(zonderVerblijfadres.body.sort(byId)).deep.eq(
         // because it is a checkbox in the frontend
         [deelnemerNoVerblijfadres, deelnemerMetVerblijfadres].sort(byId),
       );
-      expect(noFilter.sort(byId)).deep.eq(
+      expect(noFilter.body.sort(byId)).deep.eq(
         [deelnemerNoVerblijfadres, deelnemerMetVerblijfadres].sort(byId),
       );
+      expect(metVerblijfadres.totalCount).eq(1);
+      expect(zonderVerblijfadres.totalCount).eq(2);
+      expect(noFilter.totalCount).eq(2);
     });
 
     it('by provincie', async () => {
       // Arrange
       const [antwerpen, gent] = await Promise.all([
-        harness.db.insertPlaats(
+        harness.insertPlaats(
           factory.plaats({
             postcode: '2000',
             deelgemeente: 'Antwerpen',
             provincie: 'Antwerpen',
           }),
         ),
-        harness.db.insertPlaats(
+        harness.insertPlaats(
           factory.plaats({
             postcode: '9000',
             deelgemeente: 'Gent',
@@ -648,11 +692,14 @@ describe(PersonenController.name, () => {
       ]);
 
       // Assert
-      expect(antwerpenResult).deep.eq([deelnemerAntwerpen]);
-      expect(gentResult).deep.eq([deelnemerGent]);
-      expect(noFilter.sort(byId)).deep.eq(
+      expect(antwerpenResult.body).deep.eq([deelnemerAntwerpen]);
+      expect(gentResult.body).deep.eq([deelnemerGent]);
+      expect(noFilter.body.sort(byId)).deep.eq(
         [deelnemerAntwerpen, deelnemerGent].sort(byId),
       );
+      expect(antwerpenResult.totalCount).eq(1);
+      expect(gentResult.totalCount).eq(1);
+      expect(noFilter.totalCount).eq(2);
     });
 
     async function arrangeJaarGeledenDeelnemers() {
@@ -844,7 +891,7 @@ describe(PersonenController.name, () => {
         domicilieadres: {
           straatnaam: 'Kerkstraat',
           huisnummer: '123',
-          plaats: harness.db.seedPlaats,
+          plaats: harness.seedPlaats,
         },
         opmerking: 'opmerking',
         rekeningnummer: '123',
@@ -863,7 +910,7 @@ describe(PersonenController.name, () => {
         verblijfadres: {
           straatnaam: 'Plein',
           huisnummer: '1',
-          plaats: harness.db.seedPlaats,
+          plaats: harness.seedPlaats,
         },
         werksituatie: 'werkzoekend',
         werksituatieOpmerking: 'opmerking',
@@ -908,7 +955,7 @@ describe(PersonenController.name, () => {
           verblijfadres: {
             straatnaam: 'Kerkstraat',
             huisnummer: '123',
-            plaats: harness.db.seedPlaats,
+            plaats: harness.seedPlaats,
           },
           mogelijkeOpstapplaatsen: [opstapplaats1, opstapplaats2],
         }),

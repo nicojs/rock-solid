@@ -46,9 +46,11 @@ import {
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
-import { PrismaClient } from '@prisma/client';
 import { toPlaats } from './services/plaats.mapper.js';
 import { provincieMapper } from './services/enum.mapper.js';
+import { DBService } from './services/db.service.js';
+import { Server } from 'http';
+import { AddressInfo } from 'net';
 
 /**
  * @see https://stackoverflow.com/questions/45881829/how-to-have-mocha-show-entire-object-in-diff-on-assertion-error
@@ -59,39 +61,26 @@ process.env.TZ = 'Etc/UTC';
 const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
 
-export class RockSolidDBContainer {
-  public client;
+export interface GetAllResult<T> {
+  body: T[];
+  totalCount: number;
+}
+
+class IntegrationTestingHarness {
+  private readonly app;
+  private authToken?: string;
+  public db;
+  #addr;
   #seedPlaats?: Plaats;
-
-  get seedPlaats() {
-    if (!this.#seedPlaats) {
-      throw new Error('Seed plaats not set');
-    }
-    return this.#seedPlaats;
+  private constructor(app: INestApplication<Server>) {
+    this.app = app;
+    this.db = app.get(DBService);
+    this.#addr = `http://localhost:${(this.app.getHttpServer().address() as AddressInfo).port}`;
   }
 
-  private constructor(public readonly connectionUri: string) {
-    this.client = new PrismaClient({
-      datasources: {
-        db: {
-          url: this.connectionUri,
-        },
-      },
-      log: [
-        {
-          emit: 'event',
-          level: 'query',
-        },
-      ],
-    });
-    // this.client.$on('query', async (e) => {
-    //   console.log(`${e.query} ${e.params}`);
-    // });
-  }
-
-  static async start() {
+  static async init() {
     const dbName = `test${process.env['STRYKER_MUTATOR_WORKER'] ?? ''}`;
-    const connectionUri = `file:./${dbName}.db?connection_limit=1`;
+    const connectionUri = `file:./prisma/${dbName}.db`;
     console.log(`Started db@${connectionUri}`);
     await execAsync('npm run prisma:push:force', {
       env: {
@@ -100,14 +89,29 @@ export class RockSolidDBContainer {
       },
       cwd,
     });
-    const db = new RockSolidDBContainer(connectionUri);
-    await db.init();
-    return db;
+    const moduleFixture = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider('DatabaseUrl')
+      .useValue(connectionUri)
+      .compile();
+
+    const app = moduleFixture.createNestApplication({
+      bodyParser: false,
+    });
+    app.use(bodyParser.json({ reviver: rockReviver }));
+    await app.init();
+    await app.listen(0, 'localhost');
+    const harness = new IntegrationTestingHarness(app);
+    await harness.clear();
+    return harness;
   }
 
-  public async init() {
-    await this.client.$connect();
-    await this.seed();
+  get seedPlaats() {
+    if (!this.#seedPlaats) {
+      throw new Error('Seed plaats not set');
+    }
+    return this.#seedPlaats;
   }
 
   private async seed() {
@@ -116,7 +120,7 @@ export class RockSolidDBContainer {
 
   public async insertPlaats(plaats: Omit<Plaats, 'id'>): Promise<Plaats> {
     const { provincie, ...plaatsData } = plaats;
-    const dbPlaats = await this.client.plaats.create({
+    const dbPlaats = await this.db.plaats.create({
       data: {
         ...plaatsData,
         provincieId: provincieMapper.toDB(provincie),
@@ -124,58 +128,6 @@ export class RockSolidDBContainer {
       },
     });
     return toPlaats(dbPlaats);
-  }
-
-  /**
-   * Clears all state from the database (except seeded data).
-   */
-  async clear(): Promise<void> {
-    await this.client.$queryRaw`DELETE FROM Foldervoorkeur`;
-    await this.client.$queryRaw`DELETE FROM Aanmelding`;
-    await this.client.$queryRaw`DELETE FROM Deelname`;
-    await this.client.$queryRaw`DELETE FROM Activiteit`;
-    await this.client.$queryRaw`DELETE FROM OrganisatieContact`;
-    await this.client.$queryRaw`DELETE FROM Organisatiesoort`;
-    await this.client.$queryRaw`DELETE FROM Organisatie`;
-    await this.client.$queryRaw`DELETE FROM "_PersoonToProject"`;
-    await this.client.$queryRaw`DELETE FROM OverigPersoonSelectie`;
-    await this.client.$queryRaw`DELETE FROM Persoon`;
-    await this.client.$queryRaw`DELETE FROM Project`;
-    await this.client.$queryRaw`DELETE FROM Locatie`;
-    await this.client.$queryRaw`DELETE FROM Adres`;
-    await this.client.$queryRaw`DELETE FROM Plaats`;
-    await this.client
-      .$queryRaw`UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'Plaats'`;
-    await this.seed();
-  }
-
-  async stop() {
-    await this.client.$disconnect();
-  }
-}
-
-class IntegrationTestingHarness {
-  private readonly app;
-  private authToken?: string;
-  public db = rockSolidDBContainer;
-  constructor(app: INestApplication) {
-    this.app = app;
-  }
-
-  static async init() {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      .overrideProvider('DatabaseUrl')
-      .useValue(rockSolidDBContainer.connectionUri)
-      .compile();
-
-    const app = moduleFixture.createNestApplication({
-      bodyParser: false,
-    });
-    app.use(bodyParser.json({ reviver: rockReviver }));
-    await app.init();
-    return new IntegrationTestingHarness(app);
   }
 
   async dispose() {
@@ -190,37 +142,54 @@ class IntegrationTestingHarness {
 
   async clear() {
     this.authToken = undefined;
-    await rockSolidDBContainer.clear();
+    await this.db.$queryRaw`DELETE FROM Foldervoorkeur`;
+    await this.db.$queryRaw`DELETE FROM Aanmelding`;
+    await this.db.$queryRaw`DELETE FROM Deelname`;
+    await this.db.$queryRaw`DELETE FROM Activiteit`;
+    await this.db.$queryRaw`DELETE FROM OrganisatieContact`;
+    await this.db.$queryRaw`DELETE FROM Organisatiesoort`;
+    await this.db.$queryRaw`DELETE FROM Organisatie`;
+    await this.db.$queryRaw`DELETE FROM "_PersoonToProject"`;
+    await this.db.$queryRaw`DELETE FROM OverigPersoonSelectie`;
+    await this.db.$queryRaw`DELETE FROM Persoon`;
+    await this.db.$queryRaw`DELETE FROM Project`;
+    await this.db.$queryRaw`DELETE FROM Locatie`;
+    await this.db.$queryRaw`DELETE FROM Adres`;
+    await this.db.$queryRaw`DELETE FROM Plaats`;
+    await this.db
+      .$queryRaw`UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'Plaats'`;
+    await this.seed();
   }
 
   get(url: string, query?: Record<string, unknown>): request.Test {
     return this.wrapBodyRequest(
-      request(this.app.getHttpServer()).get(url + toQueryString(query)),
+      request(this.#addr).get(url + toQueryString(query)),
     );
+  }
+  async getAll<T>(
+    url: string,
+    query?: Record<string, unknown>,
+  ): Promise<{ body: T[]; totalCount: number }> {
+    const response = await this.get(url, query).expect(200);
+    return {
+      body: response.body,
+      totalCount: parseInt(response.get(TOTAL_COUNT_HEADER)!, 10),
+    };
   }
 
   delete(url: string): request.Test {
-    return this.wrapBodyRequest(request(this.app.getHttpServer()).delete(url));
+    return this.wrapBodyRequest(request(this.#addr).delete(url));
   }
 
   post(url: string, body?: string | object): request.Test {
-    return this.wrapBodyRequest(
-      request(this.app.getHttpServer()).post(url),
-      body,
-    );
+    return this.wrapBodyRequest(request(this.#addr).post(url), body);
   }
 
   put(url: string, body?: string | object): request.Test {
-    return this.wrapBodyRequest(
-      request(this.app.getHttpServer()).put(url),
-      body,
-    );
+    return this.wrapBodyRequest(request(this.#addr).put(url), body);
   }
   patch(url: string, body?: string | object): request.Test {
-    return this.wrapBodyRequest(
-      request(this.app.getHttpServer()).patch(url),
-      body,
-    );
+    return this.wrapBodyRequest(request(this.#addr).patch(url), body);
   }
 
   private wrapBodyRequest(req: request.Test, body?: string | object) {
@@ -259,11 +228,10 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  public async getAllProjecten(filter: ProjectFilter): Promise<Project[]> {
-    const response = await this.get(
-      `/projecten${toQueryString(filter)}`,
-    ).expect(200);
-    return response.body;
+  public getAllProjecten(
+    filter: ProjectFilter,
+  ): Promise<GetAllResult<Project>> {
+    return this.getAll(`/projecten${toQueryString(filter)}`);
   }
 
   async createAanmelding(
@@ -369,11 +337,8 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async getAllPersonen(filter: PersoonFilter): Promise<Persoon[]> {
-    const response = await this.get(`/personen${toQueryString(filter)}`).expect(
-      200,
-    );
-    return response.body;
+  getAllPersonen(filter: PersoonFilter): Promise<GetAllResult<Persoon>> {
+    return this.getAll(`/personen${toQueryString(filter)}`);
   }
 
   async deleteDeelnemer(id: number): Promise<void> {
@@ -431,11 +396,10 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async getAllOrganisaties(filter: OrganisatieFilter): Promise<Organisatie[]> {
-    const response = await this.get(
-      `/organisaties${toQueryString(filter)}`,
-    ).expect(200);
-    return response.body;
+  async getAllOrganisaties(
+    filter: OrganisatieFilter,
+  ): Promise<GetAllResult<Organisatie>> {
+    return this.getAll(`/organisaties${toQueryString(filter)}`);
   }
 
   async createOrganisatie(
@@ -497,7 +461,7 @@ export const factory = {
     return {
       straatnaam: 'Onbekend',
       huisnummer: '1',
-      plaats: rockSolidDBContainer.seedPlaats,
+      plaats: harness.seedPlaats,
       ...overrides,
     };
   },
@@ -562,20 +526,13 @@ export const factory = {
   },
 };
 
-let rockSolidDBContainer: RockSolidDBContainer;
 export let harness: IntegrationTestingHarness;
 
 before(async () => {
-  if (rockSolidDBContainer) {
-    await rockSolidDBContainer.clear();
-  } else {
-    rockSolidDBContainer = await RockSolidDBContainer.start();
-  }
   harness = await IntegrationTestingHarness.init();
 });
 after(async () => {
   await harness.dispose();
-  await rockSolidDBContainer.stop();
 });
 
 /**

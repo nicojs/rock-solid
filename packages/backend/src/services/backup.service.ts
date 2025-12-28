@@ -14,14 +14,14 @@ export class BackupService {
   #databaseFile?: string;
   get databaseFile(): string {
     if (!this.#databaseFile) {
-      const match = this.databaseUrl.match(/file:(.+)\?connection_limit=1$/);
+      const match = this.databaseUrl.match(/^file:(.+)/);
       if (!match) {
         throw new Error(
           `Could not resolve database file name from database url ${this.databaseUrl}.`,
         );
       }
       this.#databaseFile = fileURLToPath(
-        new URL(`../../prisma/${match[1]!}`, import.meta.url),
+        new URL(`../../${match[1]!}`, import.meta.url),
       );
     }
     return this.#databaseFile;

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma/index.js';
 import { organisatieonderdeelMapper } from './services/enum.mapper.js';
 import { calculateAge, toCsv } from '@rock-solid/shared';
 

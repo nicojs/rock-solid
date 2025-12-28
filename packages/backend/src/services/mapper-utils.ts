@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime/library.js';
+import { Decimal } from '@prisma/client/runtime/client';
 import { Decimal as OtherDecimal } from '@rock-solid/shared';
 
 export type NullsPurged<T> =

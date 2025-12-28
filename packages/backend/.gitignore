@@ -1,5 +1,6 @@
 /import
 /import-v1
+/generated
 
 # stryker temp files
 /.stryker-tmp

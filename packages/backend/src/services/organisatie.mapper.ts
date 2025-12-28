@@ -1,4 +1,4 @@
-import * as db from '@prisma/client';
+import * as db from '../../generated/prisma/index.js';
 import {
   UpsertableOrganisatie,
   Organisatie,
@@ -51,22 +51,29 @@ export class OrganisatieMapper {
     filter: OrganisatieFilter,
     pageNumber: number | undefined,
   ): Promise<Organisatie[]> {
-    const q = {
-      where: where(filter),
-      orderBy: { naam: 'asc' },
-      include: includeOrganisatie(filter),
-      ...toPage(pageNumber),
-    } as const;
     const dbOrganisaties: DBOrganisatieAggregate[] =
-      await this.db.organisatie.findMany(q);
+      await this.db.organisatie.findMany({
+        where: where(filter),
+        orderBy: { naam: 'asc' },
+        include: includeOrganisatie(filter),
+        distinct: ['id'], // TODO: Remove when https://github.com/prisma/prisma/issues/28968 is fixed
+        ...toPage(pageNumber),
+      });
 
     return dbOrganisaties.map((org) => toOrganisatie(org));
   }
 
   public async count(filter: OrganisatieFilter): Promise<number> {
-    return await this.db.organisatie.count({
+    // TODO: Change back when https://github.com/prisma/prisma/issues/28968 is fixed
+    // const result = await this.db.organisatie.count({
+    //   where: where(filter),
+    // });
+    // return result;
+    const result = await this.db.organisatie.groupBy({
+      by: ['id'],
       where: where(filter),
     });
+    return result.length;
   }
 
   async getOne(
@@ -187,13 +194,9 @@ export class OrganisatieMapper {
 
 function where(filter: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
   const where: db.Prisma.OrganisatieWhereInput = {};
-  const contactenWhereStatements = whereOrganisatieContacten(filter);
-  if (contactenWhereStatements.length) {
-    where.contacten = {
-      some: {
-        AND: contactenWhereStatements,
-      },
-    };
+  const contactenWhereStatement = whereOrganisatieContacten(filter);
+  if (Object.keys(contactenWhereStatement).length) {
+    where.contacten = { some: contactenWhereStatement };
   }
 
   const { soorten, naam } = filter;
@@ -223,42 +226,32 @@ function whereOrganisatieContacten({
 }: Pick<
   OrganisatieFilter,
   'folders' | 'metAdres' | 'provincie' | 'emailadres'
->): db.Prisma.OrganisatieContactWhereInput[] {
-  const whereContacten: db.Prisma.OrganisatieContactWhereInput[] = [];
+>): db.Prisma.OrganisatieContactWhereInput {
+  const whereContacten: db.Prisma.OrganisatieContactWhereInput = {};
 
   if (folders) {
-    whereContacten.push({
-      foldervoorkeuren: folders
-        ? {
-            some: {
-              folder: {
-                in: folders.map(foldersoortMapper.toDB),
-              },
-            },
-          }
-        : undefined,
-    });
-  }
-  if (metAdres) {
-    whereContacten.push({
-      adres: { isNot: null },
-    });
-  }
-  if (provincie !== undefined) {
-    whereContacten.push({
-      adres: {
-        plaats: {
-          provincieId: provincieMapper.toDB(provincie),
+    whereContacten.foldervoorkeuren = {
+      some: {
+        folder: {
+          in: folders.map(foldersoortMapper.toDB),
         },
       },
-    });
+    };
+  }
+  if (metAdres) {
+    whereContacten.adres = { isNot: null };
+  }
+  if (provincie !== undefined) {
+    whereContacten.adres = {
+      plaats: {
+        provincieId: provincieMapper.toDB(provincie),
+      },
+    };
   }
   if (emailadres) {
-    whereContacten.push({
-      emailadres: {
-        contains: emailadres,
-      },
-    });
+    whereContacten.emailadres = {
+      contains: emailadres,
+    };
   }
   return whereContacten;
 }
@@ -297,7 +290,7 @@ function includeOrganisatie(filter?: OrganisatieFilter) {
       orderBy: {
         terAttentieVan: 'asc',
       },
-      where: { AND: whereOrganisatieContacten(filter ?? {}) },
+      where: whereOrganisatieContacten(filter ?? {}),
     },
     soorten: true,
   } as const satisfies db.Prisma.OrganisatieInclude;

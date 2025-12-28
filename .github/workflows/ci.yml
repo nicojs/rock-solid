@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - run: npm ci
-    - run: cp .env.template .env
+    - run: cp packages/backend/.env.template packages/backend/.env
     - run: npm run all
     - run: npm run test:mutation:download-incremental-report
     - name: '👽 Run Stryker incrementally'

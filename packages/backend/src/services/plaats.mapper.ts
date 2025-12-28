@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
 import { PlaatsFilter, Plaats } from '@rock-solid/shared';
-import * as db from '@prisma/client';
+import * as db from '../../generated/prisma/index.js';
 import { provincieMapper } from './enum.mapper.js';
 
 /**
