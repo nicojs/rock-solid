@@ -35,7 +35,7 @@ describe(OrganisatiesController.name, () => {
       const adres = {
         straatnaam: 'Foostraat',
         huisnummer: '1',
-        plaats: harness.db.seedPlaats,
+        plaats: harness.seedPlaats,
       };
       const response = await harness
         .post(
@@ -108,14 +108,14 @@ describe(OrganisatiesController.name, () => {
       let nintendo: Organisatie;
       beforeEach(async () => {
         const [antwerpen, gent] = await Promise.all([
-          harness.db.insertPlaats(
+          harness.insertPlaats(
             factory.plaats({
               postcode: '2000',
               deelgemeente: 'Antwerpen',
               provincie: 'Antwerpen',
             }),
           ),
-          harness.db.insertPlaats(
+          harness.insertPlaats(
             factory.plaats({
               postcode: '9000',
               deelgemeente: 'Gent',
@@ -398,7 +398,7 @@ describe(OrganisatiesController.name, () => {
             adres: {
               straatnaam: 'Mousestreet',
               huisnummer: '1',
-              plaats: harness.db.seedPlaats,
+              plaats: harness.seedPlaats,
             },
             foldervoorkeuren: [
               {

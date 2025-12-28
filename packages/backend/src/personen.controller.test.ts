@@ -625,7 +625,7 @@ describe(PersonenController.name, () => {
               verblijfadres: {
                 straatnaam: 'Kerkstraat',
                 huisnummer: '123',
-                plaats: harness.db.seedPlaats,
+                plaats: harness.seedPlaats,
               },
             }),
           ),
@@ -656,14 +656,14 @@ describe(PersonenController.name, () => {
     it('by provincie', async () => {
       // Arrange
       const [antwerpen, gent] = await Promise.all([
-        harness.db.insertPlaats(
+        harness.insertPlaats(
           factory.plaats({
             postcode: '2000',
             deelgemeente: 'Antwerpen',
             provincie: 'Antwerpen',
           }),
         ),
-        harness.db.insertPlaats(
+        harness.insertPlaats(
           factory.plaats({
             postcode: '9000',
             deelgemeente: 'Gent',
@@ -891,7 +891,7 @@ describe(PersonenController.name, () => {
         domicilieadres: {
           straatnaam: 'Kerkstraat',
           huisnummer: '123',
-          plaats: harness.db.seedPlaats,
+          plaats: harness.seedPlaats,
         },
         opmerking: 'opmerking',
         rekeningnummer: '123',
@@ -910,7 +910,7 @@ describe(PersonenController.name, () => {
         verblijfadres: {
           straatnaam: 'Plein',
           huisnummer: '1',
-          plaats: harness.db.seedPlaats,
+          plaats: harness.seedPlaats,
         },
         werksituatie: 'werkzoekend',
         werksituatieOpmerking: 'opmerking',
@@ -955,7 +955,7 @@ describe(PersonenController.name, () => {
           verblijfadres: {
             straatnaam: 'Kerkstraat',
             huisnummer: '123',
-            plaats: harness.db.seedPlaats,
+            plaats: harness.seedPlaats,
           },
           mogelijkeOpstapplaatsen: [opstapplaats1, opstapplaats2],
         }),

@@ -221,7 +221,7 @@ describe(ProjectenController.name, () => {
         projectId: cursus1.id,
         deelnemerId: deelnemer1.id,
       });
-      await harness.db.client.activiteit.deleteMany({
+      await harness.db.activiteit.deleteMany({
         where: { projectId: cursus1.id },
       });
 
@@ -730,15 +730,18 @@ describe(ProjectenController.name, () => {
         ]);
 
         // Assert
-        expect(cursussen.map(({ id }) => id).sort()).deep.eq(
+        expect(cursussen.body.map(({ id }) => id).sort()).deep.eq(
           [cleanCursus.id, cookCursus.id].sort(),
         );
-        expect(vakanties.map(({ id }) => id).sort()).deep.eq(
+        expect(vakanties.body.map(({ id }) => id).sort()).deep.eq(
           [athensVakantie.id].sort(),
         );
-        expect(allCursussen.map(({ id }) => id).sort()).deep.eq(
+        expect(allCursussen.body.map(({ id }) => id).sort()).deep.eq(
           [cleanCursus.id, cookCursus.id, deKeiCursus.id].sort(),
         );
+        expect(cursussen.totalCount).eq(2);
+        expect(vakanties.totalCount).eq(1);
+        expect(allCursussen.totalCount).eq(3);
       });
     });
   });
@@ -1182,7 +1185,7 @@ describe(ProjectenController.name, () => {
 
     it('should store "woonsituatie", "werksituatie", "geslacht" en "woonplaats" in the aanmelding', async () => {
       // Arrange
-      const luik = await harness.db.insertPlaats(
+      const luik = await harness.insertPlaats(
         factory.plaats({
           gemeente: 'Luik',
           postcode: '4000',
@@ -1329,7 +1332,7 @@ describe(ProjectenController.name, () => {
             verblijfadres: undefined,
           }),
         ),
-        harness.db.insertPlaats(
+        harness.insertPlaats(
           factory.plaats({
             gemeente: 'Luik',
             postcode: '4000',

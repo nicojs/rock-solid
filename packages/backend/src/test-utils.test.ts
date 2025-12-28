@@ -46,7 +46,6 @@ import {
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
-import { PrismaClient } from '../generated/prisma/index.js';
 import { toPlaats } from './services/plaats.mapper.js';
 import { provincieMapper } from './services/enum.mapper.js';
 import { DBService } from './services/db.service.js';
@@ -62,70 +61,6 @@ process.env.TZ = 'Etc/UTC';
 const execAsync = promisify(exec);
 const cwd = new URL('..', import.meta.url);
 
-class TestDB {
-  public client;
-  #seedPlaats?: Plaats;
-
-  get seedPlaats() {
-    if (!this.#seedPlaats) {
-      throw new Error('Seed plaats not set');
-    }
-    return this.#seedPlaats;
-  }
-
-  constructor(client: PrismaClient) {
-    this.client = client;
-  }
-
-  public async init() {
-    await this.client.$connect();
-    await this.seed();
-  }
-
-  private async seed() {
-    this.#seedPlaats = await this.insertPlaats(factory.plaats());
-  }
-
-  public async insertPlaats(plaats: Omit<Plaats, 'id'>): Promise<Plaats> {
-    const { provincie, ...plaatsData } = plaats;
-    const dbPlaats = await this.client.plaats.create({
-      data: {
-        ...plaatsData,
-        provincieId: provincieMapper.toDB(provincie),
-        volledigeNaam: `${plaats.gemeente} (${plaats.postcode})`,
-      },
-    });
-    return toPlaats(dbPlaats);
-  }
-
-  /**
-   * Clears all state from the database (except seeded data).
-   */
-  async clear(): Promise<void> {
-    await this.client.$queryRaw`DELETE FROM Foldervoorkeur`;
-    await this.client.$queryRaw`DELETE FROM Aanmelding`;
-    await this.client.$queryRaw`DELETE FROM Deelname`;
-    await this.client.$queryRaw`DELETE FROM Activiteit`;
-    await this.client.$queryRaw`DELETE FROM OrganisatieContact`;
-    await this.client.$queryRaw`DELETE FROM Organisatiesoort`;
-    await this.client.$queryRaw`DELETE FROM Organisatie`;
-    await this.client.$queryRaw`DELETE FROM "_PersoonToProject"`;
-    await this.client.$queryRaw`DELETE FROM OverigPersoonSelectie`;
-    await this.client.$queryRaw`DELETE FROM Persoon`;
-    await this.client.$queryRaw`DELETE FROM Project`;
-    await this.client.$queryRaw`DELETE FROM Locatie`;
-    await this.client.$queryRaw`DELETE FROM Adres`;
-    await this.client.$queryRaw`DELETE FROM Plaats`;
-    await this.client
-      .$queryRaw`UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'Plaats'`;
-    await this.seed();
-  }
-
-  async stop() {
-    await this.client.$disconnect();
-  }
-}
-
 export interface GetAllResult<T> {
   body: T[];
   totalCount: number;
@@ -135,9 +70,12 @@ class IntegrationTestingHarness {
   private readonly app;
   private authToken?: string;
   public db;
+  #addr;
+  #seedPlaats?: Plaats;
   private constructor(app: INestApplication<Server>) {
     this.app = app;
-    this.db = new TestDB(app.get(DBService));
+    this.db = app.get(DBService);
+    this.#addr = `http://localhost:${(this.app.getHttpServer().address() as AddressInfo).port}`;
   }
 
   static async init() {
@@ -165,8 +103,31 @@ class IntegrationTestingHarness {
     await app.init();
     await app.listen(0, 'localhost');
     const harness = new IntegrationTestingHarness(app);
-    await harness.db.init();
+    await harness.clear();
     return harness;
+  }
+
+  get seedPlaats() {
+    if (!this.#seedPlaats) {
+      throw new Error('Seed plaats not set');
+    }
+    return this.#seedPlaats;
+  }
+
+  private async seed() {
+    this.#seedPlaats = await this.insertPlaats(factory.plaats());
+  }
+
+  public async insertPlaats(plaats: Omit<Plaats, 'id'>): Promise<Plaats> {
+    const { provincie, ...plaatsData } = plaats;
+    const dbPlaats = await this.db.plaats.create({
+      data: {
+        ...plaatsData,
+        provincieId: provincieMapper.toDB(provincie),
+        volledigeNaam: `${plaats.gemeente} (${plaats.postcode})`,
+      },
+    });
+    return toPlaats(dbPlaats);
   }
 
   async dispose() {
@@ -181,7 +142,23 @@ class IntegrationTestingHarness {
 
   async clear() {
     this.authToken = undefined;
-    await this.db.clear();
+    await this.db.$queryRaw`DELETE FROM Foldervoorkeur`;
+    await this.db.$queryRaw`DELETE FROM Aanmelding`;
+    await this.db.$queryRaw`DELETE FROM Deelname`;
+    await this.db.$queryRaw`DELETE FROM Activiteit`;
+    await this.db.$queryRaw`DELETE FROM OrganisatieContact`;
+    await this.db.$queryRaw`DELETE FROM Organisatiesoort`;
+    await this.db.$queryRaw`DELETE FROM Organisatie`;
+    await this.db.$queryRaw`DELETE FROM "_PersoonToProject"`;
+    await this.db.$queryRaw`DELETE FROM OverigPersoonSelectie`;
+    await this.db.$queryRaw`DELETE FROM Persoon`;
+    await this.db.$queryRaw`DELETE FROM Project`;
+    await this.db.$queryRaw`DELETE FROM Locatie`;
+    await this.db.$queryRaw`DELETE FROM Adres`;
+    await this.db.$queryRaw`DELETE FROM Plaats`;
+    await this.db
+      .$queryRaw`UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'Plaats'`;
+    await this.seed();
   }
 
   get(url: string, query?: Record<string, unknown>): request.Test {
@@ -206,10 +183,6 @@ class IntegrationTestingHarness {
 
   post(url: string, body?: string | object): request.Test {
     return this.wrapBodyRequest(request(this.#addr).post(url), body);
-  }
-
-  get #addr() {
-    return `http://localhost:${(this.app.getHttpServer().address() as AddressInfo).port}`;
   }
 
   put(url: string, body?: string | object): request.Test {
@@ -488,7 +461,7 @@ export const factory = {
     return {
       straatnaam: 'Onbekend',
       huisnummer: '1',
-      plaats: harness.db.seedPlaats,
+      plaats: harness.seedPlaats,
       ...overrides,
     };
   },

@@ -1,5 +1,4 @@
 import type { UserRole } from '@rock-solid/shared';
-import 'dotenv/config';
 
 // Stryker disable StringLiteral: Static mutants we're not interested in
 export const authConstants = Object.freeze({
