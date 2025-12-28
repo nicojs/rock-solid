@@ -2,19 +2,14 @@
 import pluginChaiFriendly from 'eslint-plugin-chai-friendly';
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-
-export default tseslint.config(
+import { defineConfig } from 'eslint/config';
+export default defineConfig(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
       parserOptions: {
-        project: [
-          'packages/backend/tsconfig.src.json',
-          'packages/backend/tsconfig.test.json',
-          'packages/frontend/tsconfig.json',
-          'packages/shared/tsconfig.json',
-        ],
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },

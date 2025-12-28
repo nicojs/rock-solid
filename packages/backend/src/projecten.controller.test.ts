@@ -610,19 +610,24 @@ describe(ProjectenController.name, () => {
         ]);
 
         // Assert
-        expect(learningCursussen.map(({ id }) => id).sort()).deep.eq(
+        expect(learningCursussen.body.map(({ id }) => id).sort()).deep.eq(
           [cookCursus.id, cleanCursus.id].sort(),
         );
-        expect(cookCursussen.map(({ id }) => id)).deep.eq([cookCursus.id]);
-        expect(greeceVakanties.map(({ id }) => id).sort()).deep.eq(
+        expect(cookCursussen.body.map(({ id }) => id)).deep.eq([cookCursus.id]);
+        expect(greeceVakanties.body.map(({ id }) => id).sort()).deep.eq(
           [athensVakantie.id, creteVakantie.id].sort(),
         );
-        expect(athensVakanties.map(({ id }) => id)).deep.eq([
+        expect(athensVakanties.body.map(({ id }) => id)).deep.eq([
           athensVakantie.id,
         ]);
-        expect(kj23Cursussen.sort(byId)).deep.eq(
+        expect(kj23Cursussen.body.sort(byId)).deep.eq(
           [cleanCursus, cookCursus].sort(byId),
         );
+        expect(learningCursussen.totalCount).eq(2);
+        expect(cookCursussen.totalCount).eq(1);
+        expect(greeceVakanties.totalCount).eq(2);
+        expect(athensVakanties.totalCount).eq(1);
+        expect(kj23Cursussen.totalCount).eq(2);
       });
 
       it('by jaar', async () => {
@@ -639,8 +644,10 @@ describe(ProjectenController.name, () => {
         ]);
 
         // Assert
-        expect(cursus2022.map(({ id }) => id)).deep.eq([cookCursus.id]);
-        expect(cursus2021.map(({ id }) => id)).deep.eq([cleanCursus.id]);
+        expect(cursus2022.body.map(({ id }) => id)).deep.eq([cookCursus.id]);
+        expect(cursus2021.body.map(({ id }) => id)).deep.eq([cleanCursus.id]);
+        expect(cursus2022.totalCount).eq(1);
+        expect(cursus2021.totalCount).eq(1);
       });
 
       it('by organisatieonderdelen', async () => {
@@ -661,13 +668,16 @@ describe(ProjectenController.name, () => {
         ]);
 
         // Assert
-        expect(keiJong.sort(byId)).deep.eq(
+        expect(keiJong.body.sort(byId)).deep.eq(
           [cookCursus, cleanCursus].sort(byId),
         );
-        expect(deKei).deep.eq([deKeiCursus]);
-        expect(all.sort(byId)).deep.eq(
+        expect(deKei.body).deep.eq([deKeiCursus]);
+        expect(all.body.sort(byId)).deep.eq(
           [cookCursus, cleanCursus, deKeiCursus].sort(byId),
         );
+        expect(keiJong.totalCount).eq(2);
+        expect(deKei.totalCount).eq(1);
+        expect(all.totalCount).eq(3);
       });
 
       it('by doelgroepen', async () => {
@@ -688,9 +698,12 @@ describe(ProjectenController.name, () => {
         ]);
 
         // Assert
-        expect(buso).deep.eq([cookCursus]);
-        expect(nietBuso).deep.eq([cleanCursus]);
-        expect(all.sort(byId)).deep.eq([cookCursus, cleanCursus].sort(byId));
+        expect(buso.body).deep.eq([cookCursus]);
+        expect(nietBuso.body).deep.eq([cleanCursus]);
+        expect(all.body.sort(byId)).deep.eq([cookCursus, cleanCursus].sort(byId));
+        expect(buso.totalCount).eq(1);
+        expect(nietBuso.totalCount).eq(1);
+        expect(all.totalCount).eq(2);
       });
     });
   });

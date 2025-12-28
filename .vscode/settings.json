@@ -153,4 +153,5 @@
   "cSpell.ignoreWords": ["transform", "bootstrap", "hour"],
   "cSpell.language": "en,nl",
   "typescript.tsdk": "node_modules/typescript/lib",
+  "prisma.pinToPrisma6": false,
 }

@@ -369,7 +369,7 @@ describe(ReportsController.name, () => {
               organisatieonderdeel: 'keiJong',
               doelgroep: 'BuSO',
             }),
-            await harness.updateProject({
+            harness.updateProject({
               ...project2021,
               organisatieonderdeel: 'keiJong',
               doelgroep: 'nietBuSO',

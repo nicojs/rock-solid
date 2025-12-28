@@ -126,6 +126,11 @@ class TestDB {
   }
 }
 
+export interface GetAllResult<T> {
+  body: T[];
+  totalCount: number;
+}
+
 class IntegrationTestingHarness {
   private readonly app;
   private authToken?: string;
@@ -159,7 +164,7 @@ class IntegrationTestingHarness {
     app.use(bodyParser.json({ reviver: rockReviver }));
     await app.init();
     await app.listen(0, 'localhost');
-    const harness =  new IntegrationTestingHarness(app);
+    const harness = new IntegrationTestingHarness(app);
     await harness.db.init();
     return harness;
   }
@@ -184,6 +189,16 @@ class IntegrationTestingHarness {
       request(this.#addr).get(url + toQueryString(query)),
     );
   }
+  async getAll<T>(
+    url: string,
+    query?: Record<string, unknown>,
+  ): Promise<{ body: T[]; totalCount: number }> {
+    const response = await this.get(url, query).expect(200);
+    return {
+      body: response.body,
+      totalCount: parseInt(response.get(TOTAL_COUNT_HEADER)!, 10),
+    };
+  }
 
   delete(url: string): request.Test {
     return this.wrapBodyRequest(request(this.#addr).delete(url));
@@ -198,16 +213,10 @@ class IntegrationTestingHarness {
   }
 
   put(url: string, body?: string | object): request.Test {
-    return this.wrapBodyRequest(
-      request(this.#addr).put(url),
-      body,
-    );
+    return this.wrapBodyRequest(request(this.#addr).put(url), body);
   }
   patch(url: string, body?: string | object): request.Test {
-    return this.wrapBodyRequest(
-      request(this.#addr).patch(url),
-      body,
-    );
+    return this.wrapBodyRequest(request(this.#addr).patch(url), body);
   }
 
   private wrapBodyRequest(req: request.Test, body?: string | object) {
@@ -246,11 +255,10 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  public async getAllProjecten(filter: ProjectFilter): Promise<Project[]> {
-    const response = await this.get(
-      `/projecten${toQueryString(filter)}`,
-    ).expect(200);
-    return response.body;
+  public getAllProjecten(
+    filter: ProjectFilter,
+  ): Promise<GetAllResult<Project>> {
+    return this.getAll(`/projecten${toQueryString(filter)}`);
   }
 
   async createAanmelding(
@@ -356,11 +364,8 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async getAllPersonen(filter: PersoonFilter): Promise<Persoon[]> {
-    const response = await this.get(`/personen${toQueryString(filter)}`).expect(
-      200,
-    );
-    return response.body;
+  getAllPersonen(filter: PersoonFilter): Promise<GetAllResult<Persoon>> {
+    return this.getAll(`/personen${toQueryString(filter)}`);
   }
 
   async deleteDeelnemer(id: number): Promise<void> {
@@ -418,11 +423,10 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
-  async getAllOrganisaties(filter: OrganisatieFilter): Promise<Organisatie[]> {
-    const response = await this.get(
-      `/organisaties${toQueryString(filter)}`,
-    ).expect(200);
-    return response.body;
+  async getAllOrganisaties(
+    filter: OrganisatieFilter,
+  ): Promise<GetAllResult<Organisatie>> {
+    return this.getAll(`/organisaties${toQueryString(filter)}`);
   }
 
   async createOrganisatie(
