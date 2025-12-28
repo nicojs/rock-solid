@@ -547,6 +547,7 @@ export const factory = {
   locatie(overrides?: Partial<UpsertableLocatie>): UpsertableLocatie {
     return {
       naam: 'Onbekend',
+      soort: 'cursushuis',
       ...overrides,
     };
   },

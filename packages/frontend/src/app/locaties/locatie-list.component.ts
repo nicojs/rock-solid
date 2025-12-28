@@ -43,6 +43,7 @@ export class LocatieListComponent extends LitElement {
         <thead class="sticky-top">
           <tr>
             <th>Naam</th>
+            <th>Soort</th>
             <th>Adres</th>
             <th>Opmerking</th>
             <th style="width: 190px">Acties</th>
@@ -53,6 +54,12 @@ export class LocatieListComponent extends LitElement {
             (loc) =>
               html`<tr>
                 <td>${loc.naam}</td>
+                <td>
+                  ${loc.soort}${loc.soort === 'opstapplaats' &&
+                  loc.geschiktVoorVakantie
+                    ? ' (ook vakanties)'
+                    : ''}
+                </td>
                 <td>${showAdres(loc.adres)}</td>
                 <td>${show(loc.opmerking)}</td>
                 <td>

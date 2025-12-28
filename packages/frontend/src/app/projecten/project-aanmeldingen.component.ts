@@ -18,7 +18,12 @@ import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
 import { createRef, ref } from 'lit/directives/ref.js';
-import { deelnemerVerwijderd, printProject } from './project.pipes';
+import {
+  deelnemerLink,
+  deelnemerVerwijderd,
+  printProject,
+  statusIcon,
+} from './project.pipes';
 import { bootstrap } from '../../styles';
 import { projectService } from './project.service';
 import { persoonService } from '../personen/persoon.service';
@@ -560,7 +565,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 (aanmelding, i) =>
                   html`<tr>
                     <td class="text-end text-muted">${i + 1}</td>
-                    <td>${renderStatusIcon(aanmelding)}</td>
+                    <td>${statusIcon(aanmelding)}</td>
                     <td>${this.renderDeelnemerTableData(aanmelding)}</td>
                     <td class="text-center">
                       ${renderToestemmingFotos(aanmelding)}
@@ -747,18 +752,6 @@ export class ProjectAanmeldingenComponent extends LitElement {
   }
 }
 
-function renderStatusIcon(aanmelding: Aanmelding): unknown {
-  return aanmelding.status === 'Bevestigd'
-    ? html`<rock-icon
-        title="${aanmelding.deelnemer
-          ? fullName(aanmelding.deelnemer)
-          : 'Deelnemer'} is bevestigd"
-        icon="checkCircle"
-        class="text-success"
-      ></rock-icon>`
-    : nothing;
-}
-
 function renderToestemmingFotos(aanmelding: Aanmelding): unknown {
   if (aanmelding.deelnemer) {
     const name = fullName(aanmelding.deelnemer);
@@ -810,14 +803,6 @@ const fotoToestemmingIcons: Record<keyof FotoToestemming, string> = {
   nieuwsbrief: 'newspaper',
   website: 'globe',
 };
-
-function deelnemerLink(deelnemer: Deelnemer) {
-  return html`<a
-    class="link-body-emphasis"
-    href="/deelnemers/display/${deelnemer.id}"
-    >${fullName(deelnemer)}</a
-  >`;
-}
 
 function renderGeslacht(aanmelding: Aanmelding) {
   const title = `Geslacht: ${show(aanmelding.geslacht, unknown)}${

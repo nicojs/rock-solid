@@ -38,6 +38,9 @@ export class Link extends RockElement {
   public btnOutlinePrimary = false;
 
   @property({ type: Boolean })
+  public disabled = false;
+
+  @property({ type: Boolean })
   public lg = false;
 
   @property({ type: Boolean })
@@ -83,7 +86,9 @@ export class Link extends RockElement {
           'btn-secondary': this.btnSecondary,
           'btn-outline-secondary': this.btnOutlineSecondary,
           'btn-outline-primary': this.btnOutlinePrimary,
+          disabled: this.disabled,
         })}"
+        ?aria-disabled="${this.disabled}"
         href="${this.url}"
         @click="${(ev: MouseEvent) => this.linkClick(ev)}"
       >

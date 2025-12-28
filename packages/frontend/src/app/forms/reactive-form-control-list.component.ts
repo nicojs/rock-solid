@@ -24,6 +24,7 @@ export class ReactiveFormControlList<TEntity> extends FormElement<TEntity> {
       );
       formElementsToUpdate.forEach((formElement) => {
         formElement.validate();
+        formElement.updateShow();
       });
     });
   }

@@ -99,26 +99,52 @@ describe(LocatiesController.name, () => {
         locaties.slice(0, -1).sort(byId),
       );
     });
+
+    it('by soort', async () => {
+      // Arrange
+      const locaties = await Promise.all([
+        harness.createLocatie(
+          factory.locatie({ naam: '1', soort: 'opstapplaats' }),
+        ),
+        harness.createLocatie(
+          factory.locatie({ naam: '2', soort: 'cursushuis' }),
+        ),
+        harness.createLocatie(
+          factory.locatie({ naam: '3', soort: 'opstapplaats' }),
+        ),
+      ]);
+
+      // Act
+      const actualLocaties = await harness.getAllLocaties({
+        soort: 'opstapplaats',
+      });
+
+      // Assert
+      expect(actualLocaties.sort(byId)).deep.equal(
+        [locaties[0], locaties[2]].sort(byId),
+      );
+    });
   });
 
   describe('POST /locaties', () => {
     it('should create a locatie', async () => {
       // Arrange
-      const cursusLocatie = factory.locatie({
+      const opstapplaats = factory.locatie({
         naam: 'locatie 1',
         adres: factory.adres({ straatnaam: 'straat 1' }),
         opmerking: 'Modder op de oprit',
+        soort: 'opstapplaats',
       });
 
       // Act
-      const created = await harness.createLocatie(cursusLocatie);
+      const created = await harness.createLocatie(opstapplaats);
       const actual = await harness.getLocatie(created.id);
 
       // Assert
       expect(created).deep.equal({
-        ...cursusLocatie,
+        ...opstapplaats,
         id: created.id,
-        adres: { id: created.adres!.id, ...cursusLocatie.adres },
+        adres: { id: created.adres!.id, ...opstapplaats.adres },
       });
       expect(actual).deep.equal(created);
     });
@@ -150,6 +176,7 @@ describe(LocatiesController.name, () => {
       const updated = await harness.updateLocatie(id, {
         naam: 'locatie 2',
         adres: factory.adres({ straatnaam: 'straat 2' }),
+        soort: 'cursushuis',
       });
       const actual = await harness.getLocatie(updated.id);
 
@@ -157,6 +184,7 @@ describe(LocatiesController.name, () => {
       const expected: Locatie = {
         id,
         naam: 'locatie 2',
+        soort: 'cursushuis',
         adres: { ...updated.adres!, straatnaam: 'straat 2' },
       };
       expect(updated).deep.equal(expected);
@@ -175,12 +203,13 @@ describe(LocatiesController.name, () => {
       // Act
       const updated = await harness.updateLocatie(id, {
         naam: 'locatie 2',
+        soort: 'cursushuis',
         adres: undefined,
       });
       const actual = await harness.getLocatie(updated.id);
 
       // Assert
-      const expected: Locatie = { id, naam: 'locatie 2' };
+      const expected: Locatie = { id, naam: 'locatie 2', soort: 'cursushuis' };
       expect(updated).deep.equal(expected);
       expect(actual).deep.equal(updated);
     });

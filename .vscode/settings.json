@@ -10,9 +10,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.rules.customizations": [
-    { "rule": "*", "severity": "warn" }
-  ],
+  "eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
   "cSpell.words": [
     "Aanmelding",
     "Aantal",
@@ -25,6 +23,7 @@
     "antwerpen",
     "Arbeidscircuit",
     "athens",
+    "autoincrement",
     "bedrijfsonderdelen",
     "begeleidt",
     "begeleidwerk",
@@ -125,8 +124,10 @@
     "vakantie",
     "Vakanties",
     "vegetarisch",
+    "verblijfpersonen",
     "Verblijfpersonen",
     "Vervoersbrief",
+    "vervoerstoer",
     "Verzenden",
     "vindt",
     "Voedingswens",
@@ -153,5 +154,5 @@
   "cSpell.ignoreWords": ["transform", "bootstrap", "hour"],
   "cSpell.language": "en,nl",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "prisma.pinToPrisma6": false,
+  "prisma.pinToPrisma6": false
 }

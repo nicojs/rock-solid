@@ -13,12 +13,13 @@ import {
 } from './adres.mapper.js';
 import { ExplicitNulls } from './mapper-utils.js';
 import { handleKnownPrismaErrors } from '../errors/index.js';
+import { locatiesoortMapper } from './enum.mapper.js';
 
-type DBLocatieAggregate = Omit<db.Locatie, 'adresId'> & {
+export type DBLocatieAggregate = Omit<db.Locatie, 'adresId'> & {
   adres: DBAdresWithPlaats | null;
 };
 
-const includeAdres = Object.freeze({
+export const includeAdres = Object.freeze({
   adres: includeAdresWithPlaats,
 });
 
@@ -36,7 +37,7 @@ export class LocatieMapper {
       ...toPage(pageNumber),
     });
 
-    return dbLocaties.map(toCursuslocatie);
+    return dbLocaties.map(toLocatie);
   }
 
   async count(filter: LocatieFilter | undefined): Promise<number> {
@@ -52,29 +53,31 @@ export class LocatieMapper {
     });
 
     if (dbLocatie) {
-      return toCursuslocatie(dbLocatie);
+      return toLocatie(dbLocatie);
     }
     return;
   }
 
   async create(cursusLocatie: UpsertableLocatie): Promise<Locatie> {
-    const { adres, id, ...props } = toUpdateLocatieFields(cursusLocatie);
+    const { adres, id, soort, ...props } = toUpdateLocatieFields(cursusLocatie);
     const created = await handleKnownPrismaErrors(
       this.db.locatie.create({
         data: {
           ...props,
+          soort: locatiesoortMapper.toDB(soort),
           adres: adres ? toCreateAdresInput(adres) : undefined,
         },
         include: includeAdres,
       }),
     );
-    return toCursuslocatie(created);
+    return toLocatie(created);
   }
 
   async update(id: number, cursusLocatie: UpsertableLocatie) {
     const {
       adres,
       id: unused,
+      soort,
       ...props
     } = toUpdateLocatieFields(cursusLocatie);
 
@@ -87,12 +90,13 @@ export class LocatieMapper {
         where: { id },
         data: {
           ...props,
+          soort: locatiesoortMapper.toDB(soort),
           adres: toUpdateAdresInput(adres, adresId !== null),
         },
         include: includeAdres,
       }),
     );
-    return toCursuslocatie(updated);
+    return toLocatie(updated);
   }
 
   async delete(id: number) {
@@ -100,9 +104,9 @@ export class LocatieMapper {
   }
 }
 
-export function toCursuslocatie<
-  T extends DBLocatieAggregate | undefined | null,
->(dbLocatie?: T): T extends undefined | null ? undefined : Locatie {
+export function toLocatie<T extends DBLocatieAggregate | undefined | null>(
+  dbLocatie?: T,
+): T extends undefined | null ? undefined : Locatie {
   if (!dbLocatie) {
     return undefined as T extends undefined | null ? undefined : Locatie;
   }
@@ -111,6 +115,8 @@ export function toCursuslocatie<
     naam: dbLocatie.naam,
     adres: toNullableAdres(dbLocatie.adres),
     opmerking: dbLocatie.opmerking ?? undefined,
+    soort: locatiesoortMapper.toSchema(dbLocatie.soort),
+    geschiktVoorVakantie: dbLocatie.geschiktVoorVakantie ?? undefined,
   } as T extends undefined | null ? undefined : Locatie;
 }
 function where(
@@ -124,6 +130,7 @@ function where(
     naam: {
       contains: filter.naam,
     },
+    soort: filter.soort ? locatiesoortMapper.toDB(filter.soort) : undefined,
   };
 }
 
@@ -132,8 +139,9 @@ type LocatieFields = ExplicitNulls<UpsertableLocatie>;
 function toUpdateLocatieFields(locatie: UpsertableLocatie): LocatieFields {
   return {
     ...locatie,
-    opmerking: locatie.opmerking ? locatie.opmerking : null,
-    adres: locatie.adres ? locatie.adres : null,
-    id: locatie.id ? locatie.id : null,
+    opmerking: locatie.opmerking ?? null,
+    adres: locatie.adres ?? null,
+    id: locatie.id ?? null,
+    geschiktVoorVakantie: locatie.geschiktVoorVakantie ?? null,
   };
 }

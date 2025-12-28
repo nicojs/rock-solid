@@ -24,6 +24,8 @@ export abstract class FormControlElement<TEntity> extends FormElement<TEntity> {
 
   validate() {}
 
+  updateShow() {}
+
   get name() {
     return generateInputName(this.path, this.control.name);
   }

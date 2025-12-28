@@ -5,6 +5,7 @@ import {
   Deelnemer,
   Foldervoorkeur,
   FotoToestemming,
+  Locatie,
   UpsertableDeelnemer,
   Vakantie,
 } from '@rock-solid/shared';
@@ -862,6 +863,14 @@ describe(PersonenController.name, () => {
 
   describe('POST /personen', () => {
     it('should create a deelnemer with all fields', async () => {
+      // Arrange
+      const opstapplaats = await harness.createLocatie(
+        factory.locatie({
+          naam: 'locatie',
+          soort: 'opstapplaats',
+        }),
+      );
+
       // Act
       const expectedDeelnemer: UpsertableDeelnemer = {
         achternaam: 'achternaam',
@@ -909,6 +918,7 @@ describe(PersonenController.name, () => {
         woonsituatieOpmerking: 'opmerking',
         geslacht: 'x',
         geslachtOpmerking: 'opmerking geslacht',
+        mogelijkeOpstapplaatsen: [opstapplaats],
       };
 
       // Act
@@ -929,7 +939,17 @@ describe(PersonenController.name, () => {
 
   describe('PUT /personen/:id', () => {
     let deelnemer: Deelnemer;
+    let opstapplaats1: Locatie;
+    let opstapplaats2: Locatie;
     beforeEach(async () => {
+      [opstapplaats1, opstapplaats2] = await Promise.all([
+        harness.createLocatie(
+          factory.locatie({ naam: 'opstapplaats1', soort: 'opstapplaats' }),
+        ),
+        harness.createLocatie(
+          factory.locatie({ naam: 'opstapplaats2', soort: 'opstapplaats' }),
+        ),
+      ]);
       deelnemer = await harness.createDeelnemer(
         factory.deelnemer({
           verblijfadres: {
@@ -937,6 +957,7 @@ describe(PersonenController.name, () => {
             huisnummer: '123',
             plaats: harness.db.seedPlaats,
           },
+          mogelijkeOpstapplaatsen: [opstapplaats1, opstapplaats2],
         }),
       );
     });
@@ -953,6 +974,76 @@ describe(PersonenController.name, () => {
       const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
       expect(actualDeelnemer.verblijfadres).undefined;
       expect(actualDeelnemer.domicilieadres).undefined;
+    });
+
+    describe('mogelijkeOpstapplaatsen', () => {
+      it('should be able to delete one', async () => {
+        // Act
+        await harness.updateDeelnemer({
+          ...deelnemer,
+          mogelijkeOpstapplaatsen: [opstapplaats1],
+        });
+        // Assert
+        const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+        expect(actualDeelnemer.mogelijkeOpstapplaatsen).deep.eq([
+          opstapplaats1,
+        ]);
+      });
+      it('should be able to delete all', async () => {
+        // Act
+        await harness.updateDeelnemer({
+          ...deelnemer,
+          mogelijkeOpstapplaatsen: [],
+        });
+        // Assert
+        const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+        expect(actualDeelnemer.mogelijkeOpstapplaatsen).empty;
+      });
+      it('should be able to add one', async () => {
+        // Arrange
+        const opstapplaats3 = await harness.createLocatie(
+          factory.locatie({
+            naam: 'opstapplaats3',
+            soort: 'opstapplaats',
+          }),
+        );
+        // Act
+        await harness.updateDeelnemer({
+          ...deelnemer,
+          mogelijkeOpstapplaatsen: [
+            opstapplaats1,
+            opstapplaats2,
+            opstapplaats3,
+          ],
+        });
+        // Assert
+        const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+        expect(actualDeelnemer.mogelijkeOpstapplaatsen).deep.eq([
+          opstapplaats1,
+          opstapplaats2,
+          opstapplaats3,
+        ]);
+      });
+      it('should be able to add one and delete one', async () => {
+        // Arrange
+        const opstapplaats3 = await harness.createLocatie(
+          factory.locatie({
+            naam: 'opstapplaats3',
+            soort: 'opstapplaats',
+          }),
+        );
+        // Act
+        await harness.updateDeelnemer({
+          ...deelnemer,
+          mogelijkeOpstapplaatsen: [opstapplaats1, opstapplaats3],
+        });
+        // Assert
+        const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+        expect(actualDeelnemer.mogelijkeOpstapplaatsen).deep.eq([
+          opstapplaats1,
+          opstapplaats3,
+        ]);
+      });
     });
 
     it("should be able to delete a address's busnummer", async () => {

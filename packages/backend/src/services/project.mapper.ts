@@ -36,10 +36,13 @@ import {
   vakantieVerblijfMapper,
   vakantieVervoerMapper,
 } from './enum.mapper.js';
-import { includeAdresWithPlaats, DBAdresWithPlaats } from './adres.mapper.js';
-import { toCursuslocatie } from './locatie.mapper.js';
+import {
+  DBLocatieAggregate,
+  includeAdres,
+  toLocatie,
+} from './locatie.mapper.js';
 
-const includeAggregate = {
+const includeProjectAggregate = {
   activiteiten: {
     orderBy: [
       {
@@ -49,9 +52,7 @@ const includeAggregate = {
     include: {
       deelnames: true,
       locatie: {
-        include: {
-          adres: includeAdresWithPlaats,
-        },
+        include: includeAdres,
       },
     },
   },
@@ -96,7 +97,7 @@ export class ProjectMapper {
     const [dbProjecten, projectenAndBevestigdeAanmeldingen] = await Promise.all(
       [
         this.db.project.findMany({
-          include: includeAggregate,
+          include: includeProjectAggregate,
           where: whereStatement,
           ...paging,
           orderBy,
@@ -143,7 +144,7 @@ export class ProjectMapper {
     filter.aanmeldingPersoonId = deelnemerId;
     const dbProjectenWithAanmelding = await this.db.project.findMany({
       include: {
-        ...includeAggregate,
+        ...includeProjectAggregate,
         aanmeldingen: {
           where: {
             deelnemerId,
@@ -190,7 +191,7 @@ export class ProjectMapper {
     const [dbProject, aantalBevestigdeAanmeldingen] = await Promise.all([
       this.db.project.findUnique({
         where,
-        include: includeAggregate,
+        include: includeProjectAggregate,
       }),
       this.countBevestigdeAanmeldingen(where.id),
     ]);
@@ -214,7 +215,7 @@ export class ProjectMapper {
             connect: newProject.begeleiders?.map(({ id }) => ({ id })),
           },
         },
-        include: includeAggregate,
+        include: includeProjectAggregate,
       }),
     );
     const project = toProject(
@@ -260,7 +261,7 @@ export class ProjectMapper {
             },
             begeleiders: { set: begeleiderIds },
           },
-          include: includeAggregate,
+          include: includeProjectAggregate,
         }),
       ),
       this.countBevestigdeAanmeldingen(id),
@@ -391,12 +392,7 @@ function determineYear(project: UpsertableProject) {
 
 type DBActiviteitAggregate = db.Activiteit & {
   deelnames: db.Deelname[];
-  locatie: {
-    id: number;
-    naam: string;
-    opmerking: string | null;
-    adres: DBAdresWithPlaats | null;
-  } | null;
+  locatie: DBLocatieAggregate | null;
 };
 
 interface DBProjectAggregate extends db.Project {
@@ -504,7 +500,7 @@ function toCursusActiviteit(
 ): CursusActiviteit {
   return {
     ...toBaseActiviteit(dbActiviteit, aantalBevestigdeAanmeldingen),
-    locatie: toCursuslocatie(dbActiviteit.locatie),
+    locatie: toLocatie(dbActiviteit.locatie),
   };
 }
 
@@ -573,6 +569,11 @@ function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
   if (filter.doelgroepen) {
     whereClause.doelgroep = {
       in: filter.doelgroepen.map(doelgroepMapper.toDB),
+    };
+  }
+  if (filter.ids) {
+    whereClause.id = {
+      in: filter.ids,
     };
   }
   whereClause.jaar = filter.jaar;

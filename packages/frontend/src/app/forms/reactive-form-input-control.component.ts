@@ -1,6 +1,6 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { html, nothing, TemplateResult } from 'lit';
-import { customElement, property, queryAll } from 'lit/decorators.js';
+import { customElement, property, queryAll, state } from 'lit/decorators.js';
 import {
   InputType,
   KeysOfType,
@@ -27,22 +27,34 @@ export class ReactiveFormInputControl<
   @property({ attribute: false })
   public control!: InputControl<TEntity>;
 
-  @property({ attribute: false })
+  @state()
   private validationMessage = '';
+
+  @state()
+  private show = true;
 
   private get inputId() {
     return generateInputId(this.control, this.path);
   }
 
+  override connectedCallback(): void {
+    this.show = this.control.show?.(this.entity) ?? true;
+    super.connectedCallback();
+  }
+
   override render() {
-    return html`
-      <div class="input-group has-validation">
-        ${this.renderInput(this.control)}${this.control.postfix
-          ? html`<span class="input-group-text">${this.control.postfix}</span>`
-          : ''}
-        <div class="invalid-feedback">${this.validationMessage}</div>
-      </div>
-    `;
+    if (this.show) {
+      return html`
+        <div class="input-group has-validation">
+          ${this.renderInput(this.control)}${this.control.postfix
+            ? html`<span class="input-group-text"
+                >${this.control.postfix}</span
+              >`
+            : ''}
+          <div class="invalid-feedback">${this.validationMessage}</div>
+        </div>
+      `;
+    }
   }
 
   /**
@@ -58,6 +70,10 @@ export class ReactiveFormInputControl<
     this.validate();
   }
 
+  override updateShow(): void {
+    this.show = this.control.show?.(this.entity) ?? true;
+  }
+
   override validate() {
     const errorMessage = this.control.validators?.custom?.(
       (this.entity as any)[this.control.name] as unknown as never,
@@ -70,7 +86,11 @@ export class ReactiveFormInputControl<
   }
 
   private updateValidationMessage() {
-    this.validationMessage = this.inputs.item(0).validationMessage;
+    if (this.inputs.length) {
+      this.validationMessage = this.inputs.item(0).validationMessage;
+    } else {
+      this.validationMessage = 'false';
+    }
   }
 
   private renderInput(control: InputControl<TEntity>): TemplateResult {

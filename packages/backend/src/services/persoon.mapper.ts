@@ -17,6 +17,7 @@ import {
 import { ExplicitNulls, purgeNulls } from './mapper-utils.js';
 import { toPage } from './paging.js';
 import {
+  DBAdresWithPlaats,
   includeAdresWithPlaats,
   toAdres,
   toCreateAdresInput,
@@ -33,17 +34,21 @@ import {
   werksituatieMapper,
   woonsituatieMapper,
 } from './enum.mapper.js';
+import {
+  DBLocatieAggregate,
+  includeAdres,
+  toLocatie,
+} from './locatie.mapper.js';
 
 export type DBPersonAggregate = db.Persoon & {
-  verblijfadres: DBAdresAggregate | null;
-  domicilieadres: DBAdresAggregate | null;
+  verblijfadres: DBAdresWithPlaats | null;
+  domicilieadres: DBAdresWithPlaats | null;
   foldervoorkeuren: db.Foldervoorkeur[];
   selectie: db.OverigPersoonSelectie[];
   eersteCursusAanmelding: (db.Aanmelding & { project: db.Project }) | null;
   eersteVakantieAanmelding: (db.Aanmelding & { project: db.Project }) | null;
+  mogelijkeOpstapplaatsen: DBLocatieAggregate[];
 };
-
-export type DBAdresAggregate = db.Adres & { plaats: db.Plaats };
 
 /**
  * A data mapper for persoon
@@ -116,6 +121,7 @@ export class PersoonMapper {
       werksituatie,
       voedingswens,
       selectie,
+      mogelijkeOpstapplaatsen,
       ...props
     } = fillOutAllUpsertablePersoonFields(persoon);
     const dbPersoon = await this.db.persoon.create({
@@ -146,6 +152,11 @@ export class PersoonMapper {
               })),
             }
           : undefined,
+        mogelijkeOpstapplaatsen: {
+          connect: mogelijkeOpstapplaatsen?.map((opstapplaats) => ({
+            id: opstapplaats.id,
+          })),
+        },
       },
       include: includePersoonAggregate,
     });
@@ -171,6 +182,7 @@ export class PersoonMapper {
       werksituatie,
       voedingswens,
       selectie,
+      mogelijkeOpstapplaatsen,
       geslacht,
       type,
       ...props
@@ -221,6 +233,9 @@ export class PersoonMapper {
           },
         },
         foldervoorkeuren: toFoldervoorkeurInput(persoon),
+        mogelijkeOpstapplaatsen: {
+          set: mogelijkeOpstapplaatsen.map(({ id }) => ({ id })),
+        },
       },
       include: includePersoonAggregate,
     });
@@ -290,6 +305,7 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
     werksituatie,
     voedingswens,
     geslacht,
+    mogelijkeOpstapplaatsen,
     ...person
   } = p;
   const common = {
@@ -321,6 +337,7 @@ export function toPersoon(p: DBPersonAggregate): Persoon {
       return {
         ...common,
         type,
+        mogelijkeOpstapplaatsen: mogelijkeOpstapplaatsen.map(toLocatie),
         eersteVakantie: eersteVakantieAanmelding?.project.projectnummer,
         eersteCursus: eersteCursusAanmelding?.project.projectnummer,
       };
@@ -554,6 +571,9 @@ export const includePersoonAggregate = Object.freeze({
       project: true,
     }),
   }),
+  mogelijkeOpstapplaatsen: {
+    include: includeAdres,
+  },
   selectie: true,
 } as const satisfies db.Prisma.PersoonInclude);
 
@@ -649,6 +669,7 @@ function toUpdatePersonFields(persoon: Persoon): PersoonUpdateFields {
       website: false,
     },
     contactpersoon: {},
+    mogelijkeOpstapplaatsen: [],
     ...persoon,
   };
 }
