@@ -2,7 +2,7 @@ import { Adres, Provincie, UpsertableAdres } from './adres.js';
 import { Locatie } from './locatie.js';
 import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
-import { Upsertable } from './upsertable.js';
+import { Patchable, Upsertable } from './upsertable.js';
 import {
   Labels,
   Queryfied,
@@ -41,6 +41,10 @@ export type UpsertableDeelnemer = Upsertable<
   domicilieadres?: UpsertableAdres;
   verblijfadres?: UpsertableAdres;
 };
+
+export type PatchablePersoon = PatchableDeelnemer;
+export type PatchableDeelnemer = Patchable<Deelnemer>;
+
 export type UpsertableOverigPersoon = Upsertable<
   Omit<OverigPersoon, 'domicilieadres' | 'verblijfadres'>,
   'achternaam' | 'type'

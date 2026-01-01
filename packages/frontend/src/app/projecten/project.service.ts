@@ -68,7 +68,7 @@ export class ProjectService extends RestService<'projecten'> {
   patchAanmelding(
     projectId: number | string,
     aanmeldingId: number,
-    aanmelding: Partial<Aanmelding>,
+    aanmelding: PatchableAanmelding,
   ): Promise<Aanmelding> {
     return this.restClient.patch(
       `projecten/${projectId}/aanmeldingen`,

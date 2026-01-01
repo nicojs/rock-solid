@@ -7,6 +7,8 @@ import {
   Foldervoorkeur,
   FotoToestemming,
   OverigPersoon,
+  PatchableDeelnemer,
+  PatchablePersoon,
   Persoon,
   PersoonFilter,
   PersoonType,
@@ -240,7 +242,7 @@ export class PersoonMapper {
       include: includePersoonAggregate,
     });
 
-    // Delete domicilieadres after the fact of needed (this is the only way)
+    // Delete domicilieadres after the fact if needed (this is the only way)
     if (!domicilieadres && result.domicilieadres) {
       return toPersoon(
         await this.db.persoon.update({
@@ -252,6 +254,22 @@ export class PersoonMapper {
     } else {
       return toPersoon(result);
     }
+  }
+
+  async patchPersoon(
+    persoonId: number,
+    persoon: PatchablePersoon,
+  ): Promise<Persoon> {
+    const updated = await this.db.persoon.update({
+      where: { id: persoonId },
+      data: {
+        ...persoon.mogelijkeOpstapplaatsen === undefined ? {} : {mogelijkeOpstapplaatsen: {
+          set: persoon.mogelijkeOpstapplaatsen.map(({ id }) => ({ id })) || [],
+        }}
+      },
+      include: includePersoonAggregate,
+    });
+    return toPersoon(updated) as Deelnemer;
   }
 
   async deleteUser(where: db.Prisma.PersoonWhereUniqueInput): Promise<Persoon> {

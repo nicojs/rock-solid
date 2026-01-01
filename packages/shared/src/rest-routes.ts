@@ -15,9 +15,9 @@ import {
   UpsertableLocatie,
   LocatieFilter,
 } from './index.js';
-import { Aanmelding } from './aanmelding.js';
+import { Aanmelding, PatchableAanmelding } from './aanmelding.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
-import { Persoon, UpsertablePersoon } from './persoon.js';
+import { PatchablePersoon, Persoon, UpsertablePersoon } from './persoon.js';
 import { Plaats, PlaatsFilter } from './adres.js';
 import {
   AanmeldingOf,
@@ -32,6 +32,8 @@ export type UpsertableFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['upsertableEntity'];
 export type FilterFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['filter'];
+export type PatchableFrom<TRoute extends keyof RestRoutes> =
+  RestRoutes[TRoute] extends { patchableEntity: infer P } ? P : never;
 
 export type RestRoutes = TopRoutes &
   ProjectenAanmeldingRoute &
@@ -43,6 +45,7 @@ type TopRoutes = {
   personen: {
     entity: Persoon;
     upsertableEntity: UpsertablePersoon;
+    patchableEntity: PatchablePersoon;
     filter: PersoonFilter;
   };
   projecten: {
@@ -72,6 +75,7 @@ type ProjectenAanmeldingRoute = {
     entity: Aanmelding;
     upsertableEntity: InsertableAanmelding;
     filter: Omit<ProjectFilter, 'aanmeldingPersoonId'>;
+    patchableEntity: PatchableAanmelding;
   };
 };
 

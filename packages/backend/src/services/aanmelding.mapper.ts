@@ -26,17 +26,24 @@ import {
   werksituatieMapper,
   woonsituatieMapper,
 } from './enum.mapper.js';
+import {
+  DBLocatieAggregate,
+  includeAdres,
+  toLocatie,
+} from './locatie.mapper.js';
 
 type DBAanmeldingAggregate = db.Aanmelding & {
   deelnemer: DBPersonAggregate | null;
   plaats: db.Plaats | null;
   deelnames: db.Deelname[];
+  opstapplaats: DBLocatieAggregate | null;
 };
 
 const includeAanmeldingFields = Object.freeze({
   deelnemer: Object.freeze({
     include: includePersoonAggregate,
   }),
+  opstapplaats: { include: includeAdres },
   deelnames: true,
   plaats: true,
 } satisfies db.Prisma.AanmeldingInclude);
@@ -55,8 +62,14 @@ export class AanmeldingMapper {
   }
 
   public async create(aanmelding: InsertableAanmelding): Promise<Aanmelding> {
-    const { deelnemer, plaats, status, deelnames, ...aanmeldingData } =
-      aanmelding;
+    const {
+      deelnemer,
+      plaats,
+      status,
+      opstapplaats,
+      deelnames,
+      ...aanmeldingData
+    } = aanmelding;
     const {
       verblijfadres,
       domicilieadres,
@@ -80,11 +93,18 @@ export class AanmeldingMapper {
         data: {
           ...aanmeldingData,
           status: aanmeldingsstatusMapper.toDB(status),
-          woonsituatie,
-          werksituatie,
-          geslacht,
+          woonsituatie:
+            woonsituatieMapper.toDB(aanmelding.woonsituatie) ?? woonsituatie,
+          werksituatie:
+            werksituatieMapper.toDB(aanmelding.werksituatie) ?? werksituatie,
+          geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? geslacht,
+          opstapplaatsId: opstapplaats?.id,
+
           plaatsId:
-            domicilieadres?.plaatsId ?? verblijfadres?.plaatsId ?? undefined,
+            aanmelding.plaats?.id ??
+            domicilieadres?.plaatsId ??
+            verblijfadres?.plaatsId ??
+            undefined,
         },
       }),
     );
@@ -227,6 +247,7 @@ export class AanmeldingMapper {
       rekeninguittrekselNummer,
       tijdstipVanAanmelden,
       vervoersbriefVerzondenOp,
+      opstapplaats,
       status,
       opmerking,
     } = aanmelding;
@@ -242,6 +263,7 @@ export class AanmeldingMapper {
         woonsituatie: woonsituatieMapper.toDB(woonsituatie),
         geslacht: geslachtMapper.toDB(geslacht),
         plaatsId: plaats?.id,
+        opstapplaatsId: opstapplaats === null ? null : opstapplaats?.id,
         deelnames:
           status && aanmeldingsstatussenWithoutDeelnames.includes(status)
             ? {
@@ -283,6 +305,7 @@ function toUpdateAanmeldingData(
     rekeninguittrekselNummer,
     overrideDeelnemerFields,
     deelnames,
+    opstapplaats,
     ...aanmeldingData
   } = aanmelding;
   return {
@@ -294,6 +317,9 @@ function toUpdateAanmeldingData(
     geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? null,
     opmerking: opmerking ?? null,
     plaats: plaats ? { connect: { id: plaats.id } } : { disconnect: true },
+    opstapplaats: opstapplaats
+      ? { connect: { id: opstapplaats.id } }
+      : { disconnect: true },
     deelnames:
       aanmelding.status &&
       aanmeldingsstatussenWithoutDeelnames.includes(aanmelding.status)
@@ -339,6 +365,8 @@ function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
     woonsituatie,
     geslacht,
     status,
+    opstapplaats,
+    opstapplaatsId,
     deelnames,
     ...aanmelding
   } = raw;
@@ -349,6 +377,7 @@ function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
     woonsituatie: woonsituatieMapper.toSchema(woonsituatie),
     geslacht: geslachtMapper.toSchema(geslacht),
     plaats: plaats ? toPlaats(plaats) : undefined,
+    opstapplaats: opstapplaats ? toLocatie(opstapplaats) : undefined,
     deelnames: deelnames.map(toDeelname),
     deelnemer: deelnemer ? (toPersoon(deelnemer) as Deelnemer) : undefined,
   };

@@ -124,6 +124,31 @@ describe(LocatiesController.name, () => {
         [locaties[0], locaties[2]].sort(byId),
       );
     });
+
+    it('by "geschiktVoorVakanties"', async () => {
+      // Arrange
+      const locaties = await Promise.all([
+        harness.createLocatie(
+          factory.locatie({ naam: '1', geschiktVoorVakantie: true }),
+        ),
+        harness.createLocatie(
+          factory.locatie({ naam: '2', geschiktVoorVakantie: false }),
+        ),
+        harness.createLocatie(
+          factory.locatie({ naam: '3', geschiktVoorVakantie: true }),
+        ),
+      ]);
+
+      // Act
+      const actualLocaties = await harness.getAllLocaties({
+        geschiktVoorVakantie: true,
+      });
+
+      // Assert
+      expect(actualLocaties.sort(byId)).deep.equal(
+        [locaties[0], locaties[2]].sort(byId),
+      );  
+    });
   });
 
   describe('POST /locaties', () => {

@@ -126,11 +126,12 @@ function where(
     return undefined;
   }
 
-  return {
+    return {
     naam: {
       contains: filter.naam,
     },
     soort: filter.soort ? locatiesoortMapper.toDB(filter.soort) : undefined,
+    geschiktVoorVakantie: filter.geschiktVoorVakantie,
   };
 }
 

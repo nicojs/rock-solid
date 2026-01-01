@@ -1,4 +1,5 @@
 import { Plaats } from './adres.js';
+import { Locatie } from './locatie.js';
 import { Options } from './options.js';
 import { Deelnemer, Geslacht, Werksituatie, Woonsituatie } from './persoon.js';
 import { Patchable, Upsertable } from './upsertable.js';
@@ -16,6 +17,7 @@ export interface Aanmelding {
   woonsituatie?: Woonsituatie;
   geslacht?: Geslacht;
   plaats?: Plaats;
+  opstapplaats?: Locatie;
   bevestigingsbriefVerzondenOp?: Date;
   vervoersbriefVerzondenOp?: Date;
   status: Aanmeldingsstatus;
@@ -72,6 +74,7 @@ export const aanmeldingLabels: Labels<Aanmelding> = {
   bevestigingsbriefVerzondenOp: 'Bevestigingsbrief verzonden op',
   vervoersbriefVerzondenOp: 'Vervoersbrief verzonden op',
   deelnames: 'Deelnames',
+  opstapplaats: 'Opstapplaats'
 };
 
 export interface Deelname {

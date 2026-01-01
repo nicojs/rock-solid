@@ -16,12 +16,12 @@ export class DBService
     const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
     super({
       adapter,
-      // log: [
-      //   {
-      //     emit: 'event',
-      //     level: 'query',
-      //   },
-      // ],
+      log: [
+        {
+          emit: 'event',
+          level: 'query',
+        },
+      ],
     });
     // this.$on('query', (e) => {
     //   console.log(`${e.query} ${e.params}`);
