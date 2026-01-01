@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/nicojs/rock-solid/compare/v2.1.2...v2.2.0) (2026-01-01)
+
+### Features
+
+- **opstapplaats:** opstapplaatsen toevoegen ([#298](https://github.com/nicojs/rock-solid/issues/298)) ([ede53c3](https://github.com/nicojs/rock-solid/commit/ede53c3f2159a7d885a7f9877cf4a83c90cd098a))
+- **vervoerstoer:** vervoerstoer maken ([#299](https://github.com/nicojs/rock-solid/issues/299)) ([ec1902f](https://github.com/nicojs/rock-solid/commit/ec1902f23dbf8daa13feef873260a50fa8289e2a))
+- **vervoerstoer:** vervoerstoer opslaan ([#306](https://github.com/nicojs/rock-solid/issues/306)) ([d69f74f](https://github.com/nicojs/rock-solid/commit/d69f74f32abd4b6ca8392b3aa48bbe4d7a258a40))
+
 ## [2.1.2](https://github.com/nicojs/rock-solid/compare/v2.1.1...v2.1.2) (2025-04-22)
 
 **Note:** Version bump only for package @rock-solid/shared
