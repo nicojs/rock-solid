@@ -168,7 +168,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
       }
     }
     projectService
-      .patchAanmelding(this.project.id, aanmelding.id, { status })
+      .patchAanmelding(this.project.id, aanmelding.id, { id: aanmelding.id, status })
       .then((aanmelding) => {
         this.aanmeldingen$.next(
           this.aanmeldingen!.map((a) =>
@@ -499,6 +499,14 @@ export class ProjectAanmeldingenComponent extends LitElement {
               .id}/aanmeldingen/deelnemerslijst-printen"
             ><rock-icon icon="printer"></rock-icon> Deelnemerslijst
             printen</rock-link
+          >
+          <rock-link
+            btn
+            btnOutlinePrimary
+            href="/${pluralize(this.project.type)}/vervoerstoer/${this.project
+              .id}"
+            ><rock-icon icon="busFront" size="md"></rock-icon>
+            Vervoerstoer</rock-link
           >
           <rock-link
             btn

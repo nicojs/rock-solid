@@ -6,6 +6,7 @@ import {
   type Project,
   type ProjectFilter,
   PAGE_QUERY_STRING_NAME,
+  type PatchablePersoon,
 } from '@rock-solid/shared';
 import {
   Body,
@@ -16,6 +17,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -118,5 +120,14 @@ export class PersonenController {
       where: { id: +id },
       persoon: persoon,
     });
+  }
+
+  @Patch(':id')
+  @Privileges('update:personen')
+  async patch(
+    @Param('id') id: string,
+    @Body() persoon: PatchablePersoon,
+  ): Promise<Persoon> {
+    return this.persoonMapper.patchPersoon(+id, persoon);
   }
 }

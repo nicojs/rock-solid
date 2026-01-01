@@ -4,6 +4,7 @@ import {
   PAGE_QUERY_STRING_NAME,
   parse,
   Patchable,
+  PatchableFrom,
   Query,
   RestRoutes,
   TOTAL_COUNT_HEADER,
@@ -114,7 +115,7 @@ export class RestClient {
   async patch<TRoute extends keyof RestRoutes>(
     route: TRoute,
     id: string | number,
-    patches: Partial<RestRoutes[TRoute]['entity']>,
+    patches: PatchableFrom<TRoute>,
   ): Promise<RestRoutes[TRoute]['entity']> {
     const response = await this.http.fetch(`/api/${route}/${id}`, {
       method: 'PATCH',

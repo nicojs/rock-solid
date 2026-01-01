@@ -1,7 +1,7 @@
 import { Adres, UpsertableAdres } from './adres.js';
 import { Options } from './options.js';
 import { Upsertable } from './upsertable.js';
-import { Labels, Prettify, Queryfied } from './util.js';
+import { Labels, Prettify, Queryfied, tryParseBoolean } from './util.js';
 
 export type Locatiesoort = 'cursushuis' | 'opstapplaats';
 
@@ -25,7 +25,7 @@ export type UpsertableLocatie = Prettify<
   }
 >;
 
-export type LocatieFilter = Partial<Pick<Locatie, 'naam' | 'soort'>>;
+export type LocatieFilter = Partial<Pick<Locatie, 'naam' | 'soort' | 'geschiktVoorVakantie'>>;
 
 export const locatieLabels: Labels<Locatie> = {
   id: 'id',
@@ -36,9 +36,10 @@ export const locatieLabels: Labels<Locatie> = {
   geschiktVoorVakantie: 'Geschikte opstapplaats voor vakanties',
 };
 
-export function toLocatieFilter(query: Queryfied<LocatieFilter>) {
+export function toLocatieFilter(query: Queryfied<LocatieFilter>): LocatieFilter {
   return {
     naam: query.naam,
     soort: query.soort,
+    geschiktVoorVakantie: tryParseBoolean(query.geschiktVoorVakantie),
   };
 }

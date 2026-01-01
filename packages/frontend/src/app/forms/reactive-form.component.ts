@@ -5,30 +5,32 @@ import { FormControl } from './form-control';
 import { Privilege } from '@rock-solid/shared';
 import { privilege } from '../auth/privilege.directive';
 
+export const formStyles = css`
+  .tags-input {
+    cursor: text;
+  }
+  .tags-input input {
+    display: inline-block;
+    border: none;
+    box-shadow: none;
+    outline: none;
+    background-color: transparent;
+    padding: 0 6px;
+    margin: 0;
+    width: auto;
+    max-width: inherit;
+  }
+
+  .was-validated .radio-input-invalid ~ .invalid-feedback {
+    display: block;
+  }
+`;
+
 @customElement('rock-reactive-form')
 export class ReactiveFormComponent<TEntity> extends LitElement {
   static override styles = [
     bootstrap,
-    css`
-      .tags-input {
-        cursor: text;
-      }
-      .tags-input input {
-        display: inline-block;
-        border: none;
-        box-shadow: none;
-        outline: none;
-        background-color: transparent;
-        padding: 0 6px;
-        margin: 0;
-        width: auto;
-        max-width: inherit;
-      }
-
-      .was-validated .radio-input-invalid ~ .invalid-feedback {
-        display: block;
-      }
-    `,
+    formStyles,
   ];
 
   @property({ attribute: false })

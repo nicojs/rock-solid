@@ -28,7 +28,7 @@
       "outputCapture": "std",
       "cwd": "${workspaceFolder}/packages/backend",
       "outFiles": ["${workspaceFolder}/**/*.js", "!**/node_modules/**"],
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/packages/backend/.env"
     },
     {
       "name": "🧲 Attach to backend",

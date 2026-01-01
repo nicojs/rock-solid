@@ -43,6 +43,7 @@ import {
   PAGE_QUERY_STRING_NAME,
   TOTAL_COUNT_HEADER,
   PatchableAanmelding,
+  PatchablePersoon,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -261,6 +262,14 @@ class IntegrationTestingHarness {
       `/projecten/${projectId}/activiteiten/${activiteitId}/deelnames`,
       deelnames,
     ).expect(204);
+  }
+
+  async patchPersoon(persoonId: number, persoon: PatchablePersoon): Promise<Persoon> {
+    const response = await this.patch(
+      `/personen/${persoonId}`,
+      persoon,
+    ).expect(200);
+    return response.body;
   }
 
   async createProject<TProject extends UpsertableProject>(

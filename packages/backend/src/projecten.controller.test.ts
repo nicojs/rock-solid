@@ -10,6 +10,8 @@ import {
   CursusActiviteit,
   Plaats,
   Deelname,
+  Locatie,
+  InsertableAanmelding,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
 import { harness, factory, byId } from './test-utils.test.js';
@@ -706,7 +708,9 @@ describe(ProjectenController.name, () => {
         // Assert
         expect(buso.body).deep.eq([cookCursus]);
         expect(nietBuso.body).deep.eq([cleanCursus]);
-        expect(all.body.sort(byId)).deep.eq([cookCursus, cleanCursus].sort(byId));
+        expect(all.body.sort(byId)).deep.eq(
+          [cookCursus, cleanCursus].sort(byId),
+        );
         expect(buso.totalCount).eq(1);
         expect(nietBuso.totalCount).eq(1);
         expect(all.totalCount).eq(2);
@@ -1121,6 +1125,123 @@ describe(ProjectenController.name, () => {
     });
   });
 
+  describe('POST /projecten/:id/aanmeldingen', () => {
+    let project: Project;
+    let deelnemer: Deelnemer;
+    let locatie: Locatie;
+    let plaats: Plaats;
+
+    beforeEach(async () => {
+      const woonplaats = await harness.insertPlaats(
+        factory.plaats({
+          gemeente: 'Brussel',
+          postcode: '1000',
+        }),
+      );
+
+      [project, deelnemer, locatie, plaats] = await Promise.all([
+        harness.createProject(factory.cursus()),
+        harness.createDeelnemer(
+          factory.deelnemer({
+            domicilieadres: factory.adres({ plaats: woonplaats }),
+            geslacht: 'vrouw',
+            werksituatie: 'werkzoekend',
+            woonsituatie: 'zelfstandigMetProfessioneleBegeleiding',
+          }),
+        ),
+        harness.createLocatie(factory.locatie()),
+        harness.insertPlaats(
+          factory.plaats({
+            gemeente: 'Luik',
+            postcode: '4000',
+            provincie: 'Luik',
+          }),
+        ),
+      ]);
+    });
+
+    it('should create copy provided aanmelding fields', async () => {
+      // Act
+      const expectedAanmelding: InsertableAanmelding = {
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+        opstapplaats: locatie,
+        bevestigingsbriefVerzondenOp: new Date('2024-01-01'),
+        geslacht: 'man',
+        opmerking: 'Some remark',
+        plaats,
+        rekeninguittrekselNummer: '987654321',
+        tijdstipVanAanmelden: new Date('2024-02-01T10:00:00Z'),
+        vervoersbriefVerzondenOp: new Date('2024-01-15'),
+        werksituatie: 'arbeidstrajectbegeleiding',
+        woonsituatie: 'residentieleWoonondersteuning',
+        status: 'Bevestigd',
+      };
+      const aanmelding = await harness.createAanmelding(expectedAanmelding);
+
+      // Assert
+      expect(aanmelding).deep.include(expectedAanmelding);
+    });
+
+    it('should default to deelnemer-level fields when not provided', async () => {
+      const actualAanmelding = await harness.createAanmelding({
+        deelnemerId: deelnemer.id,
+        projectId: project.id,
+      });
+      const expectedFields: Partial<Aanmelding> = {
+        geslacht: 'vrouw',
+        werksituatie: 'werkzoekend',
+        woonsituatie: 'zelfstandigMetProfessioneleBegeleiding',
+        plaats: deelnemer.domicilieadres!.plaats,
+      };
+      expect(actualAanmelding).deep.include(expectedFields);
+    });
+
+
+    it('should store "woonsituatie", "werksituatie", "geslacht" en "woonplaats" in the aanmelding', async () => {
+      // Arrange
+      const gent = await harness.insertPlaats(
+        factory.plaats({
+          gemeente: 'Gent',
+          postcode: '9000',
+        }),
+      );
+      const deelnemer = await harness.createDeelnemer(
+        factory.deelnemer({
+          woonsituatie: 'residentieleWoonondersteuning',
+          werksituatie: 'werkzoekend',
+          verblijfadres: factory.adres({ plaats: gent }),
+          geslacht: 'x',
+        }),
+      );
+      await harness.createDeelnemer(deelnemer);
+
+      // Act
+      const { id: actualAanmeldingId } = await harness.createAanmelding({
+        projectId: project.id,
+        deelnemerId: deelnemer.id,
+      });
+
+      // Assert
+      deelnemer.woonsituatie = undefined;
+      deelnemer.werksituatie = undefined;
+      deelnemer.verblijfadres = undefined;
+      deelnemer.geslacht = undefined;
+      await harness.updateDeelnemer(deelnemer);
+      const actualAanmelding = (await harness.getAanmeldingen(project.id)).find(
+        ({ id }) => id === actualAanmeldingId,
+      );
+      const expectedAanmelding: Partial<Aanmelding> = {
+        woonsituatie: 'residentieleWoonondersteuning',
+        werksituatie: 'werkzoekend',
+        geslacht: 'x',
+        plaats: gent,
+      };
+      expect(actualAanmelding).deep.include(expectedAanmelding);
+    });
+
+  });
+
   describe('PATCH /projecten/:id/aanmeldingen', () => {
     let project: Project;
     let deelnemer1: Deelnemer;
@@ -1161,6 +1282,30 @@ describe(ProjectenController.name, () => {
       expect(aanmeldingen).deep.eq(expectedAanmeldingen);
     });
 
+    it('should be able to update opstapplaats', async () => {
+      // Arrange
+      const expectedOpstapplaats = await harness.createLocatie(
+        factory.locatie({ naam: 'Locatie 1' }),
+      );
+      const expectedOpstapplaats2 = await harness.createLocatie(
+        factory.locatie({ naam: 'Locatie 2' }),
+      );
+      
+      // Act
+      const aanmeldingen = await harness.patchAanmeldingen(project.id, [
+        { id: aanmelding1.id, opstapplaats: expectedOpstapplaats },
+        { id: aanmelding2.id, opstapplaats: expectedOpstapplaats2 },
+      ]);
+
+
+      // Assert
+      const expectedAanmeldingen: Aanmelding[] = [
+        { ...aanmelding1, opstapplaats: expectedOpstapplaats },
+        { ...aanmelding2, opstapplaats: expectedOpstapplaats2 },
+      ];
+      expect(aanmeldingen).deep.eq(expectedAanmeldingen);
+    });
+
     it('should be able to clear the rekeninguittreksel nummers', async () => {
       // Arrange
       await harness.patchAanmeldingen(project.id, [
@@ -1183,56 +1328,16 @@ describe(ProjectenController.name, () => {
       expect(aanmeldingen).deep.eq(expectedAanmeldingen);
     });
 
-    it('should store "woonsituatie", "werksituatie", "geslacht" en "woonplaats" in the aanmelding', async () => {
-      // Arrange
-      const luik = await harness.insertPlaats(
-        factory.plaats({
-          gemeente: 'Luik',
-          postcode: '4000',
-          provincie: 'Luik',
-        }),
-      );
-      const deelnemer = await harness.createDeelnemer(
-        factory.deelnemer({
-          woonsituatie: 'residentieleWoonondersteuning',
-          werksituatie: 'werkzoekend',
-          verblijfadres: factory.adres({ plaats: luik }),
-          geslacht: 'x',
-        }),
-      );
-      await harness.createDeelnemer(deelnemer);
-
-      // Act
-      const { id: actualAanmeldingId } = await harness.createAanmelding({
-        projectId: project.id,
-        deelnemerId: deelnemer.id,
-      });
-
-      // Assert
-      deelnemer.woonsituatie = undefined;
-      deelnemer.werksituatie = undefined;
-      deelnemer.verblijfadres = undefined;
-      deelnemer.geslacht = undefined;
-      await harness.updateDeelnemer(deelnemer);
-      const actualAanmelding = (await harness.getAanmeldingen(project.id)).find(
-        ({ id }) => id === actualAanmeldingId,
-      );
-      const expectedAanmelding: Partial<Aanmelding> = {
-        woonsituatie: 'residentieleWoonondersteuning',
-        werksituatie: 'werkzoekend',
-        geslacht: 'x',
-        plaats: luik,
-      };
-      expect(actualAanmelding).deep.include(expectedAanmelding);
-    });
-
-    it('should not delete "status", "werksituatie", "woonsituatie", "geslacht", "plaats" and "opmerking" when not provided', async () => {
+    it('should not delete "status", "werksituatie", "woonsituatie", "geslacht", "plaats", "opstapplaats" and "opmerking" when not provided', async () => {
       // Arrange
       const deelnemer = await harness.createDeelnemer(factory.deelnemer());
       const aanmelding = await harness.createAanmelding({
         projectId: project.id,
         deelnemerId: deelnemer.id,
       });
+      const opstapplaats = await harness.createLocatie(
+        factory.locatie({ naam: 'Locatie 1' }),
+      );
 
       await harness.updateAanmelding({
         ...aanmelding,
@@ -1240,6 +1345,7 @@ describe(ProjectenController.name, () => {
         woonsituatie: 'residentieleWoonondersteuning',
         geslacht: 'x',
         opmerking: 'Foo',
+        opstapplaats
       });
 
       // Act
@@ -1253,6 +1359,7 @@ describe(ProjectenController.name, () => {
       expect(actualAanmelding.woonsituatie).eq('residentieleWoonondersteuning');
       expect(actualAanmelding.geslacht).eq('x');
       expect(actualAanmelding.opmerking).eq('Foo');
+      expect(actualAanmelding.opstapplaats).deep.eq(opstapplaats);
     });
 
     it('should also delete existing deelnames when the status is not "Bevestigd"', async () => {
@@ -1342,7 +1449,7 @@ describe(ProjectenController.name, () => {
       ]);
     });
 
-    it('should be able to update "werksituatie", "woonsituatie", "geslacht", "plaats", "status", and "opmerking"', async () => {
+    it('should be able to update "werksituatie", "woonsituatie", "geslacht", "plaats", "status", "opstapplaats" and "opmerking"', async () => {
       // Arrange
       const aanmelding = await harness.createAanmelding({
         projectId: project.id,
@@ -1350,11 +1457,15 @@ describe(ProjectenController.name, () => {
       });
 
       // Act
+      const opstapplaats = await harness.createLocatie(
+        factory.locatie({ naam: 'Locatie 1' })
+      );
       aanmelding.werksituatie = 'arbeidstrajectbegeleiding';
       aanmelding.woonsituatie = 'residentieleWoonondersteuning';
       aanmelding.geslacht = 'x';
       aanmelding.plaats = plaats;
       aanmelding.status = 'Bevestigd';
+      aanmelding.opstapplaats = opstapplaats;
       aanmelding.opmerking = 'Foo';
       const actualAanmelding = await harness.updateAanmelding(aanmelding);
 
@@ -1366,6 +1477,7 @@ describe(ProjectenController.name, () => {
         plaats,
         status: 'Bevestigd',
         opmerking: 'Foo',
+        opstapplaats,
       };
       expect(actualAanmelding).deep.include(expectedAanmelding);
     });

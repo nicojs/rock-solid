@@ -153,7 +153,9 @@ describe(PersonenController.name, () => {
       expect(bazQu.body).deep.eq([bazQux]);
       expect(ond.body).deep.eq([bond]);
       expect(fooBaz.body).deep.eq([]);
-      expect(noFilter.body.sort(byId)).deep.eq([fooBar, bazQux, bond].sort(byId));
+      expect(noFilter.body.sort(byId)).deep.eq(
+        [fooBar, bazQux, bond].sort(byId),
+      );
       expect(noFilter.totalCount).eq(3);
       expect(oo.totalCount).eq(1);
       expect(ba.totalCount).eq(2);
@@ -607,7 +609,9 @@ describe(PersonenController.name, () => {
       expect(nietZonderAanmeldingen.body).lengthOf(5);
       expect(noFilter.body).lengthOf(5);
       // zonderAanmeldingen false or undefined should be the same (it's a checkbox)
-      expect(noFilter.body.sort(byId)).deep.eq(nietZonderAanmeldingen.body.sort(byId));
+      expect(noFilter.body.sort(byId)).deep.eq(
+        nietZonderAanmeldingen.body.sort(byId),
+      );
       expect(zonderAanmeldingen.totalCount).eq(1);
       expect(nietZonderAanmeldingen.totalCount).eq(5);
       expect(noFilter.totalCount).eq(5);
@@ -989,6 +993,38 @@ describe(PersonenController.name, () => {
           opstapplaats1,
         ]);
       });
+
+      it('should not delete opstapplaatsen from others when adding one', async () => {
+        // Arrange
+        const deelnemer2 = await harness.createDeelnemer(
+          factory.deelnemer({
+            mogelijkeOpstapplaatsen: [opstapplaats1],
+          }),
+        );
+        // Act
+        const opstapplaats3 = await harness.createLocatie(
+          factory.locatie({
+            naam: 'opstapplaats3',
+            soort: 'opstapplaats',
+          }),
+        );
+        await harness.updateDeelnemer({
+          ...deelnemer2,
+          mogelijkeOpstapplaatsen: [
+            opstapplaats1,
+            opstapplaats2,
+            opstapplaats3,
+          ],
+        });
+
+        // Assert
+        const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+        expect(actualDeelnemer.mogelijkeOpstapplaatsen).deep.eq([
+          opstapplaats1,
+          opstapplaats2,
+        ]);
+      });
+
       it('should be able to delete all', async () => {
         // Act
         await harness.updateDeelnemer({
@@ -1206,6 +1242,79 @@ describe(PersonenController.name, () => {
       // Assert
       const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
       expect(actualDeelnemer.fotoToestemming).deep.eq(fotoToestemming);
+    });
+  });
+
+  describe('PATCH /personen/:id', () => {
+    let deelnemer: Deelnemer;
+    beforeEach(async () => {
+      deelnemer = await harness.createDeelnemer(factory.deelnemer());
+    });
+
+    it('should be able to add mogelijkeOpstapplaatsen', async () => {
+      // Arrange
+      const opstapplaats = await harness.createLocatie(
+        factory.locatie({ naam: 'opstapplaats', soort: 'opstapplaats' }),
+      );
+
+      // Act
+      await harness.patchPersoon(deelnemer.id, {
+        id: deelnemer.id,
+        mogelijkeOpstapplaatsen: [opstapplaats],
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.mogelijkeOpstapplaatsen).deep.eq([opstapplaats]);
+    });
+
+    it('should be able to delete mogelijkeOpstapplaatsen', async () => {
+      // Arrange
+      const opstapplaats = await harness.createLocatie(
+        factory.locatie({ naam: 'opstapplaats', soort: 'opstapplaats' }),
+      );
+      deelnemer = await harness.createDeelnemer(
+        factory.deelnemer({
+          mogelijkeOpstapplaatsen: [opstapplaats],
+        }),
+      );
+      
+      // Act
+      await harness.patchPersoon(deelnemer.id, {
+        id: deelnemer.id,
+        mogelijkeOpstapplaatsen: [],
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.mogelijkeOpstapplaatsen).empty;
+    });
+
+    it('should be able to update mogelijkeOpstapplaatsen', async () => {
+      // Arrange
+      const [opstapplaats1, opstapplaats2] = await Promise.all([
+        harness.createLocatie(
+          factory.locatie({ naam: 'opstapplaats1', soort: 'opstapplaats' }),
+        ),
+        harness.createLocatie(
+          factory.locatie({ naam: 'opstapplaats2', soort: 'opstapplaats' }),
+        ),
+      ]);
+      deelnemer = await harness.createDeelnemer(
+        factory.deelnemer({
+          mogelijkeOpstapplaatsen: [opstapplaats1],
+        }),
+      );
+
+      // Act
+      await harness.patchPersoon(deelnemer.id, {
+        id: deelnemer.id,
+        mogelijkeOpstapplaatsen: [opstapplaats2],
+      });
+
+      // Assert
+      const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+      expect(actualDeelnemer.mogelijkeOpstapplaatsen).deep.eq([opstapplaats2]);
     });
   });
 

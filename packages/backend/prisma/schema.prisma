@@ -57,11 +57,13 @@ model Persoon {
   toestemmingFotosSocialeMedia Boolean      @default(false)
   toestemmingFotosNieuwsbrief  Boolean      @default(false)
   toestemmingFotosInfoboekje   Boolean      @default(false)
-  mogelijkeOpstapplaatsen      Locatie[]
+  mogelijkeOpstapplaatsen      Locatie[]    @relation("mogelijkeOpstapplaatsen")
 
   // OverigePersonen
   selectie           OverigPersoonSelectie[]
   begeleidtProjecten Project[]
+  locatie            Locatie?                @relation("persoonLocatie", fields: [locatieId], references: [id])
+  locatieId          Int?
 }
 
 model OverigPersoonSelectie {
@@ -140,6 +142,8 @@ model Aanmelding {
   opmerking                    String?
   bevestigingsbriefVerzondenOp DateTime?
   vervoersbriefVerzondenOp     DateTime?
+  opstapplaatsId               Int?
+  opstapplaats                 Locatie?   @relation(fields: [opstapplaatsId], references: [id])
 
   // Fields copied from deelnemer when created
   plaats                     Plaats?   @relation(fields: [plaatsId], references: [id])
@@ -183,9 +187,10 @@ model Locatie {
   // Opstapplaats
   geschiktVoorVakantie Boolean?
 
-  Activiteit Activiteit[]
-  Persoon    Persoon?     @relation(fields: [persoonId], references: [id])
-  persoonId  Int?
+  activiteiten                 Activiteit[]
+  opstapplaatsVoor             Persoon[]    @relation("mogelijkeOpstapplaatsen")
+  persoonLocaties              Persoon[]    @relation("persoonLocatie")
+  opstapplaatsVoorAanmeldingen Aanmelding[]
 }
 
 model Deelname {
