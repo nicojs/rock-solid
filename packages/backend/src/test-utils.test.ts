@@ -43,7 +43,6 @@ import {
   PAGE_QUERY_STRING_NAME,
   TOTAL_COUNT_HEADER,
   PatchableAanmelding,
-  PatchableDeelnemer,
   PatchablePersoon,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';

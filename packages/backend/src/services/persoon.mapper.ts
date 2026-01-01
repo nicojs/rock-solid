@@ -7,7 +7,6 @@ import {
   Foldervoorkeur,
   FotoToestemming,
   OverigPersoon,
-  PatchableDeelnemer,
   PatchablePersoon,
   Persoon,
   PersoonFilter,
