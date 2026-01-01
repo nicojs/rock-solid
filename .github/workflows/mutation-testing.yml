@@ -5,17 +5,18 @@ on:
   push:
     branches:
       - main
-      
-jobs:
 
+jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - run: npm ci
-    - run: cp .env.template .env
-    - name: '👽 Run Stryker'
-      run: npm run test:mutation
-      env:
-        STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: cp .env.template .env
+      - name: '👽 Run Stryker'
+        run: npm run test:mutation
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
