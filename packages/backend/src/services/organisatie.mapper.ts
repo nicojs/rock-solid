@@ -56,7 +56,6 @@ export class OrganisatieMapper {
         where: where(filter),
         orderBy: { naam: 'asc' },
         include: includeOrganisatie(filter),
-        distinct: ['id'], // TODO: Remove when https://github.com/prisma/prisma/issues/28968 is fixed
         ...toPage(pageNumber),
       });
 
@@ -64,16 +63,10 @@ export class OrganisatieMapper {
   }
 
   public async count(filter: OrganisatieFilter): Promise<number> {
-    // TODO: Change back when https://github.com/prisma/prisma/issues/28968 is fixed
-    // const result = await this.db.organisatie.count({
-    //   where: where(filter),
-    // });
-    // return result;
-    const result = await this.db.organisatie.groupBy({
-      by: ['id'],
+    const result = await this.db.organisatie.count({
       where: where(filter),
     });
-    return result.length;
+    return result;
   }
 
   async getOne(
