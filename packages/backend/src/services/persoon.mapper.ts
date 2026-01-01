@@ -81,7 +81,6 @@ export class PersoonMapper {
         },
         { voornaam: 'asc' },
       ],
-      distinct: ['id'],
       include: includePersoonAggregate,
       ...toPage(pageNumber),
     });
@@ -93,17 +92,10 @@ export class PersoonMapper {
   }
 
   async count(filter: PersoonFilter): Promise<number> {
-    // TODO: Reset when https://github.com/prisma/prisma/issues/28968 is fixed
-    const people = await this.db.persoon.findMany({
+    const count = await this.db.persoon.count({
       where: where(filter),
-      select: { id: true },
-      distinct: ['id'],
     });
-    return people.length;
-    // const count = await this.db.persoon.count({
-    //   where: where(filter),
-    // });
-    // return count;
+    return count;
   }
 
   async createPersoon(persoon: UpsertablePersoon): Promise<Persoon> {
