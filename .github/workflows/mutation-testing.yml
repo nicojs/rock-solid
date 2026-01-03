@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 24
       - run: npm ci
-      - run: cp .env.template .env
+      - run: cp packages/backend/.env.template packages/backend/.env
       - name: '👽 Run Stryker'
         run: npm run test:mutation
         env:
