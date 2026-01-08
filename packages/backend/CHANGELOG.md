@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/nicojs/rock-solid/compare/v2.2.0...v2.2.1) (2026-01-08)
+
+### Bug Fixes
+
+- **auth:** projectverantwoordelijke toestaan om locaties te maken en wijzigen. ([#309](https://github.com/nicojs/rock-solid/issues/309)) ([ae12ef3](https://github.com/nicojs/rock-solid/commit/ae12ef3e5906e297f60133f653a3ad1bbdad8746))
+
 # [2.2.0](https://github.com/nicojs/rock-solid/compare/v2.1.2...v2.2.0) (2026-01-01)
 
 ### Features
