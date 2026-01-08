@@ -72,6 +72,8 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'update:projecten',
     'update:locaties',
     'update:personen',
+    'create:locaties',
+    'update:locaties',
     'write:deelnames',
     'create:aanmeldingen',
     'update:aanmeldingen',
