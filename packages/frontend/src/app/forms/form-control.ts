@@ -91,8 +91,10 @@ export interface FormArray<TEntity, TKey extends KeysOfType<TEntity, any[]>> {
   controls: readonly FormControl<ArrayItem<TEntity[TKey]>>[];
 }
 
-export interface TagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>
-  extends BaseInputControl<TEntity, ArrayItem<TEntity[TKey]>[]> {
+export interface TagsControl<
+  TEntity,
+  TKey extends KeysOfType<TEntity, any[]>,
+> extends BaseInputControl<TEntity, ArrayItem<TEntity[TKey]>[]> {
   name: TKey;
   searchAction: (
     text: string,
@@ -233,8 +235,10 @@ export interface FormGroup<TEntity, TKey extends keyof TEntity> {
   requiredLabel?: string;
 }
 
-export interface AutocompleteControl<TEntity, TValue>
-  extends BaseInputControl<TEntity, TValue> {
+export interface AutocompleteControl<TEntity, TValue> extends BaseInputControl<
+  TEntity,
+  TValue
+> {
   name: KeysOfType<TEntity, TValue>;
   type: InputType.autocomplete;
   searchAction: (text: string) => Promise<TValue[]>;
@@ -277,8 +281,10 @@ export type KeysOfType<TEntity, TValue> = keyof {
 } &
   string;
 
-export interface StringInputControl<TEntity>
-  extends BaseInputControl<TEntity, string> {
+export interface StringInputControl<TEntity> extends BaseInputControl<
+  TEntity,
+  string
+> {
   name: KeysOfType<TEntity, string>;
   type: InputType.text | InputType.email | InputType.tel | InputType.url;
 }
@@ -286,8 +292,9 @@ export interface StringInputControl<TEntity>
 export interface TextInputControl<TEntity> extends StringInputControl<TEntity> {
   type: InputType.text;
 }
-export interface EmailInputControl<TEntity>
-  extends StringInputControl<TEntity> {
+export interface EmailInputControl<
+  TEntity,
+> extends StringInputControl<TEntity> {
   type: InputType.email;
 }
 export interface TelInputControl<TEntity> extends StringInputControl<TEntity> {
@@ -297,8 +304,10 @@ export interface UrlInputControl<TEntity> extends StringInputControl<TEntity> {
   type: InputType.url;
 }
 
-export interface NumberInputControl<TEntity>
-  extends BaseInputControl<TEntity, number | Decimal> {
+export interface NumberInputControl<TEntity> extends BaseInputControl<
+  TEntity,
+  number | Decimal
+> {
   name: KeysOfType<TEntity, number | Decimal>;
   type: InputType.number | InputType.currency;
   step?: number;
@@ -312,8 +321,10 @@ export interface DateControl<TEntity> extends BaseInputControl<TEntity, Date> {
   name: KeysOfType<TEntity, Date>;
   type: InputType.date;
 }
-export interface DateTimeLocalControl<TEntity>
-  extends BaseInputControl<TEntity, Date> {
+export interface DateTimeLocalControl<TEntity> extends BaseInputControl<
+  TEntity,
+  Date
+> {
   name: KeysOfType<TEntity, Date>;
   /**
    * Value in seconds, with a scaling factor of 1000 (since the underlying numeric value is in milliseconds). The default value of step is 60, indicating 60 seconds (or 1 minute, or 60,000 milliseconds).
@@ -322,8 +333,10 @@ export interface DateTimeLocalControl<TEntity>
   type: InputType.dateTimeLocal;
 }
 
-export interface CheckboxInputControl<TEntity>
-  extends BaseInputControl<TEntity, boolean> {
+export interface CheckboxInputControl<TEntity> extends BaseInputControl<
+  TEntity,
+  boolean
+> {
   name: KeysOfType<TEntity, boolean>;
   type: InputType.checkbox;
 }
@@ -353,6 +366,7 @@ export function radioControl<
     type: InputType.radio,
     name,
     items,
+    allowDeselect: true,
     ...additionalOptions,
   };
 }
