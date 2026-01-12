@@ -44,6 +44,7 @@ import {
   capitalize,
   unknown,
   entities,
+  showProvincie,
 } from '../shared';
 import { router } from '../router';
 import { privilege } from '../auth/privilege.directive';
@@ -168,7 +169,10 @@ export class ProjectAanmeldingenComponent extends LitElement {
       }
     }
     projectService
-      .patchAanmelding(this.project.id, aanmelding.id, { id: aanmelding.id, status })
+      .patchAanmelding(this.project.id, aanmelding.id, {
+        id: aanmelding.id,
+        status,
+      })
       .then((aanmelding) => {
         this.aanmeldingen$.next(
           this.aanmeldingen!.map((a) =>
@@ -425,7 +429,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                   Geboortedatum<br />
                   <small>(leeftijd op startdatum)</small>
                 </th>
-                <th class="align-middle">Rekeninguittreksel</th>
+                <th class="align-middle">Betaald</th>
                 <th class="align-middle">Opmerkingen</th>
                 <th class="align-middle text-center">Acties</th>
               </tr>
@@ -441,7 +445,9 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     </td>
                     <td>${showDatum(aanmelding.vervoersbriefVerzondenOp)}</td>
                     <td>${this.renderGeboortedatumWithAge(aanmelding)}</td>
-                    <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
+                    <td>
+                      ${renderBetaald(aanmelding.rekeninguittrekselNummer)}
+                    </td>
                     <td>${show(aanmelding.opmerking, '')}</td>
                     <td class="text-center">
                       <button
@@ -519,15 +525,34 @@ export class ProjectAanmeldingenComponent extends LitElement {
             <thead>
               <tr>
                 <th
+                  rowspan="2"
                   class="align-middle text-end text-muted"
                   title="Nr"
                   width="10px"
                 >
                   #
                 </th>
-                <th class="align-middle" title="Status" width="10px"></th>
-                <th class="align-middle">Naam</th>
                 <th
+                  rowspan="2"
+                  class="align-middle"
+                  title="Status"
+                  width="10px"
+                ></th>
+                <th rowspan="2" class="align-middle">Naam</th>
+                <th rowspan="2" class="align-middle">Provincie</th>
+                <th rowspan="2" class="align-middle">
+                  Geboortedatum<br />
+                  <small>(leeftijd op startdatum)</small>
+                </th>
+                <th rowspan="2" class="align-middle">Opmerkingen</th>
+                <th
+                  ${privilege('custom:statusverandering')}
+                  class="align-middle"
+                >
+                  ${this.renderActiesButton(aanmeldingen)} Status
+                </th>
+                <th
+                  rowspan="2"
                   class="text-center align-middle"
                   title="Toestemming foto's"
                   width="100px"
@@ -535,6 +560,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                   📷
                 </th>
                 <th
+                  rowspan="2"
                   class="text-center align-middle"
                   title="Geslacht"
                   width="10px"
@@ -542,39 +568,39 @@ export class ProjectAanmeldingenComponent extends LitElement {
                   <rock-icon icon="genderNeuter"></rock-icon>
                 </th>
                 <th
+                  rowspan="2"
                   class="text-center align-middle"
                   title="Voedingswens"
                   width="10px"
                 >
                   🥪
                 </th>
-                <th class="align-middle">
-                  ${aanmeldingLabels.tijdstipVanAanmelden}
-                </th>
-                <th class="align-middle">Bevestigingsbrief</th>
-                <th class="align-middle">Vervoersbrief</th>
-                <th class="align-middle">
-                  Geboortedatum<br />
-                  <small>(leeftijd op startdatum)</small>
-                </th>
-                <th class="align-middle">Rekeninguittreksel</th>
-                <th class="align-middle">Opmerkingen</th>
+                <th title="betaald" rowspan="2" class="align-middle">💶</th>
+                <th class="text-center" colspan="3">Belangrijke data</th>
+                <th rowspan="2" class="align-middle text-center">Acties</th>
+              </tr>
+              <tr>
                 <th
-                  ${privilege('custom:statusverandering')}
+                  title="${aanmeldingLabels.tijdstipVanAanmelden}"
                   class="align-middle"
                 >
-                  ${this.renderActiesButton(aanmeldingen)} Status
+                  Aanm.
                 </th>
-                <th class="align-middle text-center">Acties</th>
+                <th title="Bevestigingsbrief" class="align-middle">Bev.</th>
+                <th title="Vervoersbrief" class="align-middle">Verv.</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="table-group-divider">
               ${aanmeldingen.map(
                 (aanmelding, i) =>
                   html`<tr>
                     <td class="text-end text-muted">${i + 1}</td>
                     <td>${statusIcon(aanmelding)}</td>
                     <td>${this.renderDeelnemerTableData(aanmelding)}</td>
+
+                    <td>${showProvincie(aanmelding.plaats?.provincie)}</td>
+                    <td>${this.renderGeboortedatumWithAge(aanmelding)}</td>
+                    <td>${show(aanmelding.opmerking, '')}</td>
                     <td class="text-center">
                       ${renderToestemmingFotos(aanmelding)}
                     </td>
@@ -582,14 +608,17 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     <td class=" text-center">
                       ${renderVoedingswens(aanmelding.deelnemer)}
                     </td>
+                    <td
+                      title="Rekeninguittreksel: ${aanmelding.rekeninguittrekselNummer ??
+                      'geen'}"
+                    >
+                      ${renderBetaald(aanmelding.rekeninguittrekselNummer)}
+                    </td>
                     <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
                     <td>
                       ${showDatum(aanmelding.bevestigingsbriefVerzondenOp)}
                     </td>
                     <td>${showDatum(aanmelding.vervoersbriefVerzondenOp)}</td>
-                    <td>${this.renderGeboortedatumWithAge(aanmelding)}</td>
-                    <td>${show(aanmelding.rekeninguittrekselNummer, none)}</td>
-                    <td>${show(aanmelding.opmerking, '')}</td>
                     <td ${privilege('custom:statusverandering')} class="">
                       ${aanmelding.status === 'Aangemeld'
                         ? html`<button
@@ -822,6 +851,12 @@ function renderGeslacht(aanmelding: Aanmelding) {
     title="${title}"
     icon="${iconForGeslacht(aanmelding.geslacht)}"
   ></rock-icon>`;
+}
+
+function renderBetaald(rekeninguittrekselNummer: string | undefined) {
+  return rekeninguittrekselNummer
+    ? html`<rock-icon icon="check"></rock-icon>`
+    : '';
 }
 
 function renderVoedingswens({
