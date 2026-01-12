@@ -38,7 +38,6 @@ import {
   pluralize,
   UniquenessFailedError,
   show,
-  none,
   downloadCsv,
   toAanmeldingenCsv,
   capitalize,
