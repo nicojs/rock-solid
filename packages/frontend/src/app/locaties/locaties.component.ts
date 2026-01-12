@@ -11,12 +11,13 @@ import {
   toLocatieFilter,
   tryParseInt,
   Privilege,
+  locatiesoorten,
 } from '@rock-solid/shared';
 import { locatieStore } from './locatie.store';
 import { PropertyValues, html } from 'lit';
 import { handleUniquenessError, toQuery } from '../shared';
 import { router } from '../router';
-import { InputControl, InputType } from '../forms';
+import { InputControl, InputType, radioControl } from '../forms';
 
 @customElement('rock-locaties')
 export class LocatiesComponent extends RockElement {
@@ -146,6 +147,7 @@ export class LocatiesComponent extends RockElement {
           </div>
           <rock-search
             .mainControl=${mainSearchControl}
+            .advancedControls=${advancedSearchControls}
             .filter=${this.filter}
             @search-submitted=${() => router.setQuery(toQuery(this.filter))}
           ></rock-search>
@@ -192,6 +194,13 @@ const mainSearchControl: InputControl<LocatieFilter> = {
   label: 'Naam',
   placeholder: 'Zoek op naam',
 };
+
+const advancedSearchControls: InputControl<LocatieFilter>[] = [
+  radioControl('soort', locatiesoorten, {
+    label: 'Soort',
+    placeholder: 'Zoek op soort',
+  }),
+];
 
 function newLocatie(): DeepPartial<Locatie> {
   return {};
