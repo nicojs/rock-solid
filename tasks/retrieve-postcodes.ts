@@ -1,56 +1,83 @@
-// @ts-check
-
 import fs from 'fs/promises';
+import { z } from 'zod';
 
 /**
  * @see https://docs.basisregisters.vlaanderen.be/docs/api-documentation.html#operation/ListMunicipalities
  * @see https://nl.wikipedia.org/wiki/Postcode#Postnummers_in_Belgi%C3%AB
  */
 
-/**
- * @typedef PostcodeInfo
- * @property {string} deelgemeente
- * @property {string} postcode
- */
+const PostcodeInfo = z.object({
+  deelgemeente: z.string(),
+  postcode: z.string(),
+});
 
-/**
- * @typedef Gemeente
- * @property {string} naam
- */
+const Gemeente = z.object({
+  naam: z.string(),
+});
 
-/**
- * @typedef Plaats
- * @property {string} volledigeNaam
- * @property {string} deelgemeente
- * @property {string} gemeente
- * @property {string} postcode
- * @property {number} provincieId
- */
+const Plaats = z.object({
+  volledigeNaam: z.string(),
+  deelgemeente: z.string(),
+  gemeente: z.string(),
+  postcode: z.string(),
+  provincieId: z.number(),
+});
 
-/**
- * @typedef PostcodePage
- * @property {PostcodeInfo[]} postcodes
- * @property {string?} volgende
- */
+const PostcodePage = z.object({
+  postcodes: z.array(PostcodeInfo),
+  volgende: z.string().nullable(),
+});
 
-/**
- * @typedef GemeentePage
- * @property {Gemeente[]} gemeenten
- * @property {string?} volgende
- */
+const GemeentePage = z.object({
+  gemeenten: z.array(Gemeente),
+  volgende: z.string().nullable(),
+});
 
-/**
- * @typedef GeografischeNaamContainer
- * @property {} geografischeNaam
- * @property {string?} volgende
- */
+const PostInfoObject = z.object({
+  identificator: z.object({
+    objectId: z.string(),
+  }),
+  postnamen: z.array(
+    z.object({
+      geografischeNaam: z.object({
+        spelling: z.string(),
+      }),
+    }),
+  ),
+});
 
-async function get(url) {
+const PostInfoResponse = z.object({
+  postInfoObjecten: z.array(PostInfoObject),
+  volgende: z.string().optional(),
+});
+
+const GemeenteInfo = z.object({
+  gemeentenaam: z.object({
+    geografischeNaam: z.object({
+      spelling: z.string(),
+    }),
+  }),
+});
+
+const GemeenteResponse = z.object({
+  gemeenten: z.array(GemeenteInfo),
+  volgende: z.string().optional(),
+});
+
+type PostcodeInfo = z.infer<typeof PostcodeInfo>;
+type Gemeente = z.infer<typeof Gemeente>;
+type Plaats = z.infer<typeof Plaats>;
+type PostcodePage = z.infer<typeof PostcodePage>;
+type GemeentePage = z.infer<typeof GemeentePage>;
+type PostInfoResponse = z.infer<typeof PostInfoResponse>;
+type GemeenteResponse = z.infer<typeof GemeenteResponse>;
+
+async function get<T>(url: string, schema: z.ZodSchema<T>): Promise<T> {
   const response = await fetch(url, {
-    headers: { ['Content-Type']: 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
   });
   const body = await response.json();
-  return body;
+  return schema.parse(body);
 }
 
 /**
@@ -69,46 +96,38 @@ const blacklist = [
     postcode: '9112',
     gemeente: 'Saint-Nicolas',
   },
-];
+] as const;
 
-/**
- * @param {string} url
- * @returns {Promise<PostcodePage>}
- */
-async function retrievePostcodePage(url) {
-  const body = await get(url);
+async function retrievePostcodePage(url: string): Promise<PostcodePage> {
+  const body = await get(url, PostInfoResponse);
   return {
-    postcodes: body.postInfoObjecten.flatMap((postInfo) => postInfo.postnamen.map((postnaam) => (
-      {
+    postcodes: body.postInfoObjecten.flatMap((postInfo) =>
+      postInfo.postnamen.map((postnaam) => ({
         postcode: postInfo.identificator.objectId,
         deelgemeente: postnaam.geografischeNaam.spelling,
-      }
-    ))),
-    volgende: body.volgende,
+      })),
+    ),
+    volgende: body.volgende ?? null,
   };
 }
 
-/**
- * @param {string} url
- * @returns {Promise<GemeentePage>}
- */
-async function retrieveGemeentePage(url) {
-  const { gemeenten, volgende } = await get(url);
+async function retrieveGemeentePage(url: string): Promise<GemeentePage> {
+  const body = await get(url, GemeenteResponse);
   return {
-    gemeenten: gemeenten.map((gemeenteInfo) => ({
+    gemeenten: body.gemeenten.map((gemeenteInfo) => ({
       naam: gemeenteInfo.gemeentenaam.geografischeNaam.spelling,
     })),
-    volgende,
+    volgende: body.volgende ?? null,
   };
 }
 
 /**
  * Gets the provincie id based on the postcode
- * @param {string} postCode
- * @returns {number}
+ * @param postCode
+ * @returns provincie id
  * @see https://nl.wikipedia.org/wiki/Postcode#Postnummers_in_Belgi%C3%AB
  */
-function getProvincieId(postCode) {
+function getProvincieId(postCode: string): number {
   const postnr = parseInt(postCode);
 
   if (postnr >= 1000 && postnr <= 1299) {
@@ -176,30 +195,25 @@ const provincies = {
   Luxemburg: 9,
   'West-Vlaanderen': 10,
   'Oost-Vlaanderen': 11,
-};
+} as const;
 
-/**
- * @param {string} gemeente
- * @returns {Promise<Plaats[]>}
- */
-async function retrievePlaatsen(gemeente) {
-  let url = `https://api.basisregisters.vlaanderen.be/v2/postinfo?gemeentenaam=${gemeente}`;
-  /** @type {Plaats[]} */
-  let plaatsen = [];
+async function retrievePlaatsen(gemeente: string): Promise<Plaats[]> {
+  let url: string | null =
+    `https://api.basisregisters.vlaanderen.be/v2/postinfo?gemeentenaam=${gemeente}`;
+  const plaatsen: Plaats[] = [];
   while (url) {
     const { postcodes, volgende } = await retrievePostcodePage(url);
     plaatsen.push(
       ...postcodes.map(({ postcode, ...info }) => {
+        // Whenever the deelgemeente is equal to the gemeente, it will be all uppercase 🤷‍♂️. Let's correct for that
         const deelgemeente =
           info.deelgemeente === gemeente.toUpperCase()
             ? gemeente
             : info.deelgemeente;
         return {
           postcode: postcode,
-          // Whenever the deelgemeente is equal to the gemeente, it will be all uppercase 🤷‍♂️. Let's correct for that
           deelgemeente,
           gemeente,
-          // Keep in sync with plaatsName pipe
           volledigeNaam: `${postcode} ${deelgemeente} (${gemeente})`,
           provincieId: getProvincieId(postcode),
         };
@@ -213,13 +227,8 @@ async function retrievePlaatsen(gemeente) {
   return plaatsen;
 }
 
-/**
- * @param {Plaats[]} allPlaatsen
- * @return {Plaats[]}
- */
-function removeDuplicates(allPlaatsen) {
-  /** @type {Map<string, Plaats[]>} */
-  const plaatsenPerPostcode = new Map();
+function removeDuplicates(allPlaatsen: Plaats[]): Plaats[] {
+  const plaatsenPerPostcode = new Map<string, Plaats[]>();
   allPlaatsen.forEach((plaats) => {
     let plaatsen = plaatsenPerPostcode.get(plaats.postcode);
     if (plaatsen) {
@@ -248,36 +257,28 @@ function removeDuplicates(allPlaatsen) {
   return [...plaatsenPerPostcode.values()].flat();
 }
 
-async function main() {
-  let gemeenteUrl = 'https://api.basisregisters.vlaanderen.be/v2/gemeenten';
-  /** @type {Plaats[]} */
-  const allPlaatsen = [];
-  /** @type {Set<string>} */
-  const gemeentenSet = new Set();
-  while (gemeenteUrl) {
-    const { gemeenten, volgende } = await retrieveGemeentePage(gemeenteUrl);
-    for (const gemeente of gemeenten) {
-      if (gemeentenSet.has(gemeente.naam)) {
-        console.log('Detected duplicate gemeente', gemeente);
-      } else {
-        gemeentenSet.add(gemeente.naam);
-        const plaatsen = await retrievePlaatsen(gemeente.naam);
-        allPlaatsen.push(...plaatsen);
-      }
+let gemeenteUrl: string | null =
+  'https://api.basisregisters.vlaanderen.be/v2/gemeenten';
+const allPlaatsen: Plaats[] = [];
+const gemeentenSet = new Set<string>();
+while (gemeenteUrl) {
+  const { gemeenten, volgende } = await retrieveGemeentePage(gemeenteUrl);
+  for (const gemeente of gemeenten) {
+    if (gemeentenSet.has(gemeente.naam)) {
+      console.log('Detected duplicate gemeente', gemeente);
+    } else {
+      gemeentenSet.add(gemeente.naam);
+      const plaatsen = await retrievePlaatsen(gemeente.naam);
+      allPlaatsen.push(...plaatsen);
     }
-    gemeenteUrl = volgende;
-    console.log(allPlaatsen.length);
   }
-
-  const result = allPlaatsen;
-  // const result = removeDuplicates(allPlaatsen).sort((a, b) =>
-  //   a.postcode < b.postcode ? -1 : 1,
-  // );
-  console.log('All plaatsen', result.length);
-  await fs.writeFile('plaatsen.json', JSON.stringify(result, null, 2), 'utf-8');
+  gemeenteUrl = volgende;
+  console.log(allPlaatsen.length);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exitCode = 1;
-});
+const result = allPlaatsen;
+// const result = removeDuplicates(allPlaatsen).sort((a, b) =>
+//   a.postcode < b.postcode ? -1 : 1,
+// );
+console.log('All plaatsen', result.length);
+await fs.writeFile('plaatsen.json', JSON.stringify(result, null, 2), 'utf-8');
