@@ -1,7 +1,8 @@
-import { Adres, Provincie, UpsertableAdres } from './adres.js';
+import { Adres, UpsertableAdres } from './adres.js';
 import { Locatie } from './locatie.js';
 import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
+import { Provincie } from './plaats.js';
 import { Patchable, Upsertable } from './upsertable.js';
 import {
   Labels,

@@ -1,7 +1,7 @@
-import { Plaats } from './adres.js';
 import { Locatie } from './locatie.js';
 import { Options } from './options.js';
 import { Deelnemer, Geslacht, Werksituatie, Woonsituatie } from './persoon.js';
+import { Plaats } from './plaats.js';
 import { Patchable, Upsertable } from './upsertable.js';
 import { Labels } from './util.js';
 

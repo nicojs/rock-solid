@@ -18,7 +18,7 @@ export interface Page<TRoute extends keyof RestRoutes> {
 }
 
 export class RestClient {
-  constructor(private http: HttpClient = httpClient) {}
+  constructor(public http: HttpClient = httpClient) {}
 
   async getAll<TRoute extends keyof RestRoutes>(
     route: TRoute,

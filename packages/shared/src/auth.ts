@@ -28,6 +28,7 @@ export type Privilege =
   | 'update:locaties'
   | 'delete:locaties'
   // Usability privileges
+  | 'custom:manage-plaatsen'
   | 'custom:statusverandering'
   | 'custom:rekeninguittreksels'
   | 'custom:brieven';
@@ -66,6 +67,7 @@ export const privileges: Record<UserRole, Privilege[]> = {
     'custom:statusverandering',
     'custom:rekeninguittreksels',
     'custom:brieven',
+    'custom:manage-plaatsen'
   ],
   projectverantwoordelijke: [
     'read',
