@@ -44,6 +44,7 @@ import {
   TOTAL_COUNT_HEADER,
   PatchableAanmelding,
   PatchablePersoon,
+  PlaatsFilter,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -233,6 +234,12 @@ class IntegrationTestingHarness {
     filter: ProjectFilter,
   ): Promise<GetAllResult<Project>> {
     return this.getAll(`/projecten${toQueryString(filter)}`);
+  }
+
+  public getPlaatsen(
+    filter?: PlaatsFilter,
+  ): Promise<GetAllResult<Plaats>> {
+    return this.getAll(`/plaatsen${toQueryString(filter)}`);
   }
 
   async createAanmelding(

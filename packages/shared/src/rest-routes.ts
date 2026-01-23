@@ -14,11 +14,12 @@ import {
   Locatie,
   UpsertableLocatie,
   LocatieFilter,
+  Plaats,
+  PlaatsFilter,
 } from './index.js';
 import { Aanmelding, PatchableAanmelding } from './aanmelding.js';
 import { Organisatie, UpsertableOrganisatie } from './organisatie.js';
 import { PatchablePersoon, Persoon, UpsertablePersoon } from './persoon.js';
-import { Plaats, PlaatsFilter } from './adres.js';
 import {
   AanmeldingOf,
   Project,

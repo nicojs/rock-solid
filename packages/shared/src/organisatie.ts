@@ -1,7 +1,8 @@
 import { Upsertable } from './upsertable.js';
 import { Options, groupOptions } from './options.js';
-import { Adres, Provincie, UpsertableAdres } from './adres.js';
+import { Adres, UpsertableAdres } from './adres.js';
 import { Labels, Queryfied, filterMetaQuery, tryParseBoolean } from './util.js';
+import { Provincie } from './plaats.js';
 
 export interface Organisatie {
   id: number;

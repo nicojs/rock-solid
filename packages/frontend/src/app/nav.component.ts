@@ -4,6 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../styles';
 import { routesByPersoonType } from './personen';
 import { router } from './router';
+import { privilege } from './auth/privilege.directive';
 
 @customElement('rock-nav')
 export class NavComponent extends LitElement {
@@ -69,12 +70,20 @@ export class NavComponent extends LitElement {
           >Organisaties</a
         >
       </li>
-      <li class="nav-item">
+      <li class="nav-item" ${privilege('custom:manage-plaatsen')}>
         <a
           class="nav-link ${this.activeClass('locaties')}"
           @click="${router.linkClick}"
           href="/locaties"
           >Locaties</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link ${this.activeClass('plaatsen')}"
+          @click="${router.linkClick}"
+          href="/plaatsen"
+          >Plaatsen</a
         >
       </li>
       <li class="nav-item">

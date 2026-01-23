@@ -2,7 +2,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { html, LitElement, nothing } from 'lit';
 import { bootstrap } from '../../styles';
 
-export type AlertEmphasis = 'danger' | 'warning' | 'primary';
+export type AlertEmphasis = 'danger' | 'warning' | 'primary' | 'success';
 
 /**
  * @see https://loading.io/css/
