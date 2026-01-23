@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/nicojs/rock-solid/compare/v2.2.1...v2.3.0) (2026-01-23)
+
+### Features
+
+- **aanmeldingen:** provincie op aanmeldingen scherm ([#312](https://github.com/nicojs/rock-solid/issues/312)) ([e92b192](https://github.com/nicojs/rock-solid/commit/e92b1920bf8d131804cb624f3536275042684334))
+- **locatie:** maak zoeken op soort mogelijk ([#310](https://github.com/nicojs/rock-solid/issues/310)) ([933f9ab](https://github.com/nicojs/rock-solid/commit/933f9ab609e0278ea74bcde3926b481eab54b221))
+
 ## [2.2.1](https://github.com/nicojs/rock-solid/compare/v2.2.0...v2.2.1) (2026-01-08)
 
 ### Bug Fixes
