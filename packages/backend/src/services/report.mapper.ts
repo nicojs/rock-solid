@@ -179,12 +179,12 @@ function filterWhere(filter: AanmeldingReportFilter): string {
       `Project.doelgroep IN (${filter.doelgroepen.map((doelgroep) => doelgroepMapper.toDB(doelgroep)).join(',')})`,
     );
   }
-  if (filter.categorieen && filter.categorieen.length) {
+  if (filter.categorieen?.length) {
     whereClauses.push(
       `Project.categorie IN (${filter.categorieen.map((categorie) => cursusCategorieMapper.toDB(categorie)).join(',')})`,
     );
   }
-  if(filter.provincies && filter.provincies.length) {
+  if (filter.provincies?.length) {
     whereClauses.push(
       `Plaats.provincieId IN (${filter.provincies.map((provincie) => provincieMapper.toDB(provincie)).join(',')})`,
     );

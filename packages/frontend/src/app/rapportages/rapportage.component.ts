@@ -29,7 +29,6 @@ import {
   doelgroepen,
   cursusCategorieën,
   CursusCategorie,
-  provincies,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, nothing, PropertyValues } from 'lit';

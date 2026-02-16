@@ -1,4 +1,4 @@
-import { notEmpty, Report } from '@rock-solid/shared';
+import { Report } from '@rock-solid/shared';
 import { ReportsController } from './reports.controller.js';
 import { harness, factory } from './test-utils.test.js';
 import { expect } from 'chai';

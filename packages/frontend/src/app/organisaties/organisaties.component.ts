@@ -7,7 +7,6 @@ import {
   foldersoorten,
   groupedOrganisatieSoorten,
   organisatieLabels,
-  provincies,
   toOrganisatieFilter,
   tryParseInt,
 } from '@rock-solid/shared';
@@ -16,7 +15,12 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
 import { router } from '../router';
-import { handleUniquenessError, provinciesTypeAheadHints, toOrganisatiesCsv, toQuery } from '../shared';
+import {
+  handleUniquenessError,
+  provinciesTypeAheadHints,
+  toOrganisatiesCsv,
+  toQuery,
+} from '../shared';
 import { organisatieStore } from './organisatie.store';
 import {
   FormControl,
@@ -24,7 +28,6 @@ import {
   InputType,
   checkboxesGroupedItemsControl,
   checkboxesItemsControl,
-  selectControl,
   tagsControl,
 } from '../forms';
 

@@ -14,8 +14,6 @@ import {
   PersoonType,
   persoonTypes,
   Privilege,
-  Provincie,
-  provincies,
   Queryfied,
   toPersoonFilter,
   tryParseInt,
@@ -244,12 +242,9 @@ const mainSearchControl: InputControl<PersoonFilter> = {
 };
 
 const basePersoonFilers: FormControl<PersoonFilter>[] = [
-  tagsControl(
-    'provincies',
-    (prov) => prov,
-    provinciesTypeAheadHints,
-    { minCharacters: 0 },
-  ),
+  tagsControl('provincies', (prov) => prov, provinciesTypeAheadHints, {
+    minCharacters: 0,
+  }),
   {
     type: InputType.checkbox,
     label: 'Met adres',
