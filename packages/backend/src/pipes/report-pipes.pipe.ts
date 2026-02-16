@@ -15,6 +15,7 @@ import {
   isDoelgroep,
   isOrganisatieonderdeel,
   isProjectType,
+  isProvincie,
 } from '@rock-solid/shared';
 
 @Injectable()
@@ -108,7 +109,10 @@ export class ActiviteitReportFilterPipe
     if (categorieen) {
       filter.categorieen = categorieen.split(',').filter(isCursusCategorie);
     }
-
+    const provincies = value[key('provincies')];
+    if (provincies) {
+      filter.provincies = provincies.split(',').filter(isProvincie);
+    }
     return filter;
   }
 }

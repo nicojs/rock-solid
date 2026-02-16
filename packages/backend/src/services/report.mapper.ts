@@ -184,6 +184,11 @@ function filterWhere(filter: AanmeldingReportFilter): string {
       `Project.categorie IN (${filter.categorieen.map((categorie) => cursusCategorieMapper.toDB(categorie)).join(',')})`,
     );
   }
+  if(filter.provincies && filter.provincies.length) {
+    whereClauses.push(
+      `Plaats.provincieId IN (${filter.provincies.map((provincie) => provincieMapper.toDB(provincie)).join(',')})`,
+    );
+  }
   if (whereClauses.length) {
     return `WHERE ${whereClauses.join(' AND ')}`;
   }

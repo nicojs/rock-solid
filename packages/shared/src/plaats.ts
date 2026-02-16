@@ -45,4 +45,8 @@ export const provincies: Record<Provincie, string> = {
   'Waals-Brabant': 'Waals-Brabant',
 };
 
+export function isProvincie(maybe: string): maybe is Provincie {
+  return Object.hasOwn(provincies, maybe);
+}
+
 

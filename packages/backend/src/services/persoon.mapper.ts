@@ -384,15 +384,14 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
     zonderAanmeldingen,
     minLeeftijd,
     maxLeeftijd,
-    contactpersoon,
     volledigeNaamLike,
     type,
-    geslacht,
-    woonsituatie,
     werksituatie,
-    voedingswens,
+    woonsituatie,
     metVerblijfadres,
-    provincie,
+    voedingswens,
+    geslacht,
+    provincies,
     ...where
   } = filter;
   return {
@@ -425,17 +424,20 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
     woonsituatie: woonsituatieMapper.toDB(woonsituatie),
     werksituatie: werksituatieMapper.toDB(werksituatie),
     verblijfadresId: metVerblijfadres ? { not: null } : undefined,
-    ...(provincie
+    ...(provincies?.length
       ? {
           OR: [
             {
               verblijfadres: {
-                plaats: { provincieId: provincieMapper.toDB(provincie) },
+                plaats: { provincieId: { in: provincies.map(provincieMapper.toDB) } },
+              },
+              AND: {
+                domicilieadresId: null,
               },
             },
             {
               domicilieadres: {
-                plaats: { provincieId: provincieMapper.toDB(provincie) },
+                plaats: { provincieId: { in: provincies.map(provincieMapper.toDB) } },
               },
             },
           ],

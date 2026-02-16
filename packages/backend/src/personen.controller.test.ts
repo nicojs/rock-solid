@@ -657,7 +657,7 @@ describe(PersonenController.name, () => {
       expect(noFilter.totalCount).eq(2);
     });
 
-    it('by provincie', async () => {
+    it('by provincies', async () => {
       // Arrange
       const [antwerpen, gent] = await Promise.all([
         harness.insertPlaats(
@@ -675,7 +675,7 @@ describe(PersonenController.name, () => {
           }),
         ),
       ]);
-      const [deelnemerAntwerpen, deelnemerGent] = await Promise.all([
+      const [deelnemerAntwerpen, deelnemerGent, deelnemerDomicilieAntwerpen ] = await Promise.all([
         harness.createDeelnemer(
           factory.deelnemer({
             verblijfadres: factory.adres({ plaats: antwerpen }),
@@ -686,24 +686,48 @@ describe(PersonenController.name, () => {
             domicilieadres: factory.adres({ plaats: gent }),
           }),
         ),
+        harness.createDeelnemer(
+          factory.deelnemer({
+            verblijfadres: factory.adres({ plaats: gent }),
+            domicilieadres: factory.adres({ plaats: antwerpen }), // Domicilieadres heeft voorrang op verblijfadres
+          }),
+        ),
       ]);
 
       // Act
-      const [antwerpenResult, gentResult, noFilter] = await Promise.all([
-        harness.getAllPersonen({ provincie: 'Antwerpen' }),
-        harness.getAllPersonen({ provincie: 'West-Vlaanderen' }),
-        harness.getAllPersonen({ provincie: undefined }),
-      ]);
+      const [antwerpenResult, gentResult, antwerpenAndGentResult, noFilter] =
+        await Promise.all([
+          harness.getAllPersonen({ provincies: ['Antwerpen'] }),
+          harness.getAllPersonen({ provincies: ['West-Vlaanderen'] }),
+          harness.getAllPersonen({
+            provincies: ['West-Vlaanderen', 'Antwerpen'],
+          }),
+          harness.getAllPersonen({ provincies: undefined }),
+        ]);
 
       // Assert
-      expect(antwerpenResult.body).deep.eq([deelnemerAntwerpen]);
-      expect(gentResult.body).deep.eq([deelnemerGent]);
-      expect(noFilter.body.sort(byId)).deep.eq(
-        [deelnemerAntwerpen, deelnemerGent].sort(byId),
-      );
-      expect(antwerpenResult.totalCount).eq(1);
-      expect(gentResult.totalCount).eq(1);
-      expect(noFilter.totalCount).eq(2);
+      const actual = {
+        antwerpenResult,
+        gentResult,
+        antwerpenAndGentResult,
+        noFilter,
+      };
+      const expected: typeof actual = {
+        antwerpenResult: {
+          body: [deelnemerAntwerpen, deelnemerDomicilieAntwerpen].sort(byId),
+          totalCount: 2,
+        },
+        gentResult: { body: [deelnemerGent], totalCount: 1 },
+        antwerpenAndGentResult: {
+          body: [deelnemerAntwerpen, deelnemerGent, deelnemerDomicilieAntwerpen].sort(byId),
+          totalCount: 3,
+        },
+        noFilter: {
+          body: [deelnemerAntwerpen, deelnemerGent, deelnemerDomicilieAntwerpen].sort(byId),
+          totalCount: 3,
+        },
+      };
+      expect(actual).deep.eq(expected);
     });
 
     async function arrangeJaarGeledenDeelnemers() {
@@ -1278,7 +1302,7 @@ describe(PersonenController.name, () => {
           mogelijkeOpstapplaatsen: [opstapplaats],
         }),
       );
-      
+
       // Act
       await harness.patchPersoon(deelnemer.id, {
         id: deelnemer.id,

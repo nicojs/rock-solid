@@ -2,7 +2,7 @@ import { Adres, UpsertableAdres } from './adres.js';
 import { Locatie } from './locatie.js';
 import { Options } from './options.js';
 import { Foldersoort, Foldervoorkeur } from './organisatie.js';
-import { Provincie } from './plaats.js';
+import { isProvincie, Provincie } from './plaats.js';
 import { Patchable, Upsertable } from './upsertable.js';
 import {
   Labels,
@@ -55,31 +55,21 @@ export type UpsertableOverigPersoon = Upsertable<
 };
 export type Persoon = Deelnemer | OverigPersoon;
 
-export type PersoonFilter = Partial<
-  Omit<OverigPersoon, 'type' | 'foldervoorkeuren'> &
-    Omit<
-      Deelnemer,
-      | 'type'
-      | 'eersteCursus'
-      | 'eersteVakantie'
-      | 'foldervoorkeuren'
-      | 'mogelijkeOpstapplaatsen'
-    > & {
-      type: PersoonType;
-    }
-> & {
-  foldersoorten?: Foldersoort[];
-  laatsteAanmeldingMinimaalJaarGeleden?: number;
-  laatsteAanmeldingMaximaalJaarGeleden?: number;
-  laatsteBegeleiddeProjectMinimaalJaarGeleden?: number;
-  laatsteBegeleiddeProjectMaximaalJaarGeleden?: number;
-  zonderAanmeldingen?: boolean;
-  minLeeftijd?: number;
-  maxLeeftijd?: number;
-  volledigeNaamLike?: string;
-  metVerblijfadres?: boolean;
-  provincie?: Provincie;
-};
+export type PersoonFilter = Partial<Pick<OverigPersoon, 'selectie'>> &
+  Partial<Pick<Deelnemer, 'woonsituatie' | 'werksituatie' | 'geslacht' | 'voedingswens'>> & {
+    type?: PersoonType;
+    foldersoorten?: Foldersoort[];
+    laatsteAanmeldingMinimaalJaarGeleden?: number;
+    laatsteAanmeldingMaximaalJaarGeleden?: number;
+    laatsteBegeleiddeProjectMinimaalJaarGeleden?: number;
+    laatsteBegeleiddeProjectMaximaalJaarGeleden?: number;
+    zonderAanmeldingen?: boolean;
+    minLeeftijd?: number;
+    maxLeeftijd?: number;
+    volledigeNaamLike?: string;
+    metVerblijfadres?: boolean;
+    provincies?: Provincie[];
+  };
 
 export interface Contactpersoon {
   naam?: string;
@@ -273,12 +263,14 @@ export function toPersoonFilter(
     metVerblijfadres,
     minLeeftijd,
     maxLeeftijd,
+    provincies,
     ...filter
   } = query;
   return {
     ...filterMetaQuery(filter),
     selectie: selectie?.split(',') as OverigPersoonSelectie[],
     foldersoorten: foldersoorten?.split(',') as Foldersoort[],
+    provincies: provincies?.split(',').filter(isProvincie),
     laatsteAanmeldingMinimaalJaarGeleden: tryParseInt(
       laatsteAanmeldingMinimaalJaarGeleden,
     ),
@@ -295,5 +287,5 @@ export function toPersoonFilter(
     maxLeeftijd: tryParseInt(maxLeeftijd),
     zonderAanmeldingen: tryParseBoolean(zonderAanmeldingen),
     metVerblijfadres: tryParseBoolean(metVerblijfadres),
-  } as PersoonFilter;
+  };
 }

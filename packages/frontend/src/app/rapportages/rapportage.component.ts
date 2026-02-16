@@ -29,6 +29,7 @@ import {
   doelgroepen,
   cursusCategorieën,
   CursusCategorie,
+  provincies,
 } from '@rock-solid/shared';
 import { reportsClient } from './reports-client';
 import { html, nothing, PropertyValues } from 'lit';
@@ -38,21 +39,24 @@ import {
   NumberInputControl,
   checkboxesItemsControl,
   selectControl,
+  tagsControl,
 } from '../forms';
 import {
   downloadCsv,
+  provinciesTypeAheadHints,
   show,
   showOrganisatieonderdeel,
   showProvincie,
   unknown,
 } from '../shared';
+import { formStyles } from '../forms/reactive-form.component';
 
 const GROUP1_TITLE = 'Totaal';
 const GROUP2_TITLE = 'Aantal';
 
 @customElement('rock-rapportage')
 export class RapportageComponent extends RockElement {
-  static override styles = [bootstrap];
+  static override styles = [bootstrap, formStyles];
 
   @property()
   public reportType!: AanmeldingReportType | ActiviteitReportType;
@@ -88,6 +92,9 @@ export class RapportageComponent extends RockElement {
   public aanmeldingsstatus?: Aanmeldingsstatus;
 
   @state()
+  public provincies?: Provincie[];
+
+  @state()
   public isLoading = false;
 
   public override update(props: PropertyValues<RapportageComponent>) {
@@ -101,7 +108,8 @@ export class RapportageComponent extends RockElement {
       props.has('organisatieonderdeel') ||
       props.has('doelgroepen') ||
       props.has('aanmeldingsstatus') ||
-      props.has('categorieen')
+      props.has('categorieen') ||
+      props.has('provincies')
     ) {
       if (isActiviteitReportType(this.reportType)) {
         if (this.group1 && !isActiviteitGroupingField(this.group1)) {
@@ -130,6 +138,7 @@ export class RapportageComponent extends RockElement {
                 categorieen: this.categorieen,
                 aanmeldingsstatus: this.aanmeldingsstatus,
                 doelgroepen: this.doelgroepen,
+                provincies: this.provincies,
               },
             );
             break;
@@ -145,6 +154,7 @@ export class RapportageComponent extends RockElement {
                 jaar: this.enkelJaar,
                 categorieen: this.categorieen,
                 doelgroepen: this.doelgroepen,
+                provincies: this.provincies,
               },
             );
             break;
@@ -248,6 +258,18 @@ export class RapportageComponent extends RockElement {
                   .entity=${this}
                 ></rock-reactive-form-input-control>`
             : nothing}
+        </div>
+        <div class="row p-3 pb-0">
+          <rock-reactive-form-tags
+            class="col-8 col-sm-12"
+            .control=${tagsControl<RapportageComponent, 'provincies'>(
+              'provincies',
+              (p) => p,
+              provinciesTypeAheadHints,
+              { minCharacters: 0 },
+            )}
+            .entity=${this}
+          ></rock-reactive-form-tags>
         </div>
         <div class="row p-3">
           <rock-reactive-checkboxes

@@ -214,11 +214,11 @@ function where(filter: OrganisatieFilter): db.Prisma.OrganisatieWhereInput {
 function whereOrganisatieContacten({
   folders,
   metAdres,
-  provincie,
+  provincies,
   emailadres,
 }: Pick<
   OrganisatieFilter,
-  'folders' | 'metAdres' | 'provincie' | 'emailadres'
+  'folders' | 'metAdres' | 'provincies' | 'emailadres'
 >): db.Prisma.OrganisatieContactWhereInput {
   const whereContacten: db.Prisma.OrganisatieContactWhereInput = {};
 
@@ -234,10 +234,10 @@ function whereOrganisatieContacten({
   if (metAdres) {
     whereContacten.adres = { isNot: null };
   }
-  if (provincie !== undefined) {
+  if (provincies !== undefined && provincies.length > 0) {
     whereContacten.adres = {
       plaats: {
-        provincieId: provincieMapper.toDB(provincie),
+        provincieId: { in: provincies.map(provincieMapper.toDB) },
       },
     };
   }

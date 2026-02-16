@@ -1,5 +1,6 @@
 import { Aanmeldingsstatus } from './aanmelding.js';
 import { Options } from './options.js';
+import { Provincie } from './plaats.js';
 import {
   CursusCategorie,
   Doelgroep,
@@ -94,4 +95,5 @@ export interface ActiviteitReportFilter {
   jaar?: number;
   doelgroepen?: Doelgroep[];
   categorieen?: CursusCategorie[];
+  provincies?: Provincie[];
 }

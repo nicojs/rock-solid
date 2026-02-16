@@ -207,7 +207,7 @@ export class VervoerstoerComponent extends RockElement {
         </ol>
       </details>
       <div class="row mb-3 z-index-9999">
-        <div class="col">
+        <div class="col mb-3">
           <rock-reactive-form-tags
             .entity=${this}
             .control=${tagsControl<VervoerstoerComponent, 'opstapplaatsen'>(

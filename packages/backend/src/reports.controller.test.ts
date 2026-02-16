@@ -1,4 +1,4 @@
-import { Report } from '@rock-solid/shared';
+import { notEmpty, Report } from '@rock-solid/shared';
 import { ReportsController } from './reports.controller.js';
 import { harness, factory } from './test-utils.test.js';
 import { expect } from 'chai';
@@ -464,64 +464,107 @@ describe(ReportsController.name, () => {
           expect(zonder).deep.eq(expectedZonder);
         });
       });
-    });
-  });
-  describe('activiteiten report', () => {
-    it('should be allowed for projectverantwoordelijke', async () => {
-      harness.login({ role: 'projectverantwoordelijke' });
-      await harness.getReport('reports/activiteiten/vormingsuren', 'jaar');
-    });
 
-    describe('grouping', () => {
-      it('should support grouping by year', async () => {
-        await arrangeCursussenTestSet();
-        await arrangeVakantiesTestSet();
-        const report = await harness.getReport(
-          'reports/activiteiten/vormingsuren',
-          'jaar',
-        );
-        const expectedReport: Report = [
-          { key: '2021', total: 100 },
-          { key: '2020', total: 10 },
-          { key: '2019', total: 90 },
-        ];
-        expect(report).deep.eq(expectedReport);
-      });
+      describe('provincies', () => {
+        it('should support filtering on "provincies"', async () => {
+          // Arrange
+          const { project2021 } = await arrangeCursussenTestSet();
+          const plaatsInWestVlaanderen = await harness.insertPlaats({
+            deelgemeente: 'Test',
+            gemeente: 'Test',
+            postcode: '5678',
+            provincie: 'West-Vlaanderen',
+          });
 
-      it('should support grouping by year and project', async () => {
-        await arrangeCursussenTestSet();
-        const report = await harness.getReport(
-          'reports/activiteiten/vormingsuren',
-          'jaar',
-          'project',
-        );
-        const expectedReport: Report = [
-          {
-            key: '2021',
-            total: 40,
-            rows: [
+          const deelnemerC = await harness.createDeelnemer(
+            factory.deelnemer({
+              achternaam: 'C',
+              verblijfadres: {
+                huisnummer: '1',
+                straatnaam: 'str',
+                plaats: plaatsInWestVlaanderen,
+              },
+            }),
+          );
+          await harness.createAanmelding({
+            deelnemerId: deelnemerC.id,
+            projectId: project2021.id,
+            status: 'Bevestigd',
+            plaats: plaatsInWestVlaanderen,
+          });
+
+          // Act
+          const [
+            aanmeldingenAntwerpen,
+            aanmeldingenWestVlaanderenEnAntwerpen,
+            aanmeldingenBrussel,
+            aanmeldingenControl,
+          ] = await Promise.all([
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { provincies: ['Antwerpen'] },
+            ),
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { provincies: ['Antwerpen', 'West-Vlaanderen'] },
+            ),
+            harness.getReport(
+              'reports/aanmeldingen/aanmeldingen',
+              'jaar',
+              undefined,
+              { provincies: ['Brussels Hoofdstedelijk Gewest'] },
+            ),
+            harness.getReport('reports/aanmeldingen/aanmeldingen', 'jaar'),
+          ]);
+
+          // Assert
+          const actual = {
+            aanmeldingenAntwerpen,
+            aanmeldingenWestVlaanderenEnAntwerpen,
+            aanmeldingenBrussel,
+            aanmeldingenControl,
+          };
+          const expected: typeof actual = {
+            aanmeldingenAntwerpen: [
               {
-                count: 40,
-                key: '001 A',
+                key: '2021',
+                total: 1,
+              },
+              {
+                key: '2020',
+                total: 1,
               },
             ],
-          },
-          {
-            key: '2020',
-            total: 10,
-            rows: [
+            aanmeldingenBrussel: [],
+            aanmeldingenControl: [
               {
-                count: 10,
-                key: '002 B',
+                key: '2021',
+                total: 3,
+              },
+              {
+                key: '2020',
+                total: 1,
               },
             ],
-          },
-        ];
-        expect(report).deep.eq(expectedReport);
+            aanmeldingenWestVlaanderenEnAntwerpen: [
+              {
+                key: '2021',
+                total: 2,
+              },
+              {
+                key: '2020',
+                total: 1,
+              },
+            ],
+          };
+          expect(actual).deep.eq(expected);
+        });
       });
-    });
 
-    describe('filter', () => {
       describe('doelgroepen', () => {
         it('should be able to filter on "doelgroepen', async () => {
           await Promise.all([
@@ -586,6 +629,61 @@ describe(ReportsController.name, () => {
       });
     });
   });
+  describe('activiteiten report', () => {
+    it('should be allowed for projectverantwoordelijke', async () => {
+      harness.login({ role: 'projectverantwoordelijke' });
+      await harness.getReport('reports/activiteiten/vormingsuren', 'jaar');
+    });
+
+    describe('grouping', () => {
+      it('should support grouping by year', async () => {
+        await arrangeCursussenTestSet();
+        await arrangeVakantiesTestSet();
+        const report = await harness.getReport(
+          'reports/activiteiten/vormingsuren',
+          'jaar',
+        );
+        const expectedReport: Report = [
+          { key: '2021', total: 100 },
+          { key: '2020', total: 10 },
+          { key: '2019', total: 90 },
+        ];
+        expect(report).deep.eq(expectedReport);
+      });
+
+      it('should support grouping by year and project', async () => {
+        await arrangeCursussenTestSet();
+        const report = await harness.getReport(
+          'reports/activiteiten/vormingsuren',
+          'jaar',
+          'project',
+        );
+        const expectedReport: Report = [
+          {
+            key: '2021',
+            total: 40,
+            rows: [
+              {
+                count: 40,
+                key: '001 A',
+              },
+            ],
+          },
+          {
+            key: '2020',
+            total: 10,
+            rows: [
+              {
+                count: 10,
+                key: '002 B',
+              },
+            ],
+          },
+        ];
+        expect(report).deep.eq(expectedReport);
+      });
+    });
+  });
 
   async function arrangeCursussenTestSet() {
     const [deelnemerA, deelnemerB] = await Promise.all([
@@ -620,6 +718,12 @@ describe(ReportsController.name, () => {
         }),
       ),
     ]);
+    const plaatsInAntwerpen = await harness.insertPlaats({
+      deelgemeente: 'Test',
+      gemeente: 'Test',
+      postcode: '1234',
+      provincie: 'Antwerpen',
+    });
 
     const aanmelding1 = await harness.createAanmelding({
       deelnemerId: deelnemerA.id,
@@ -634,8 +738,8 @@ describe(ReportsController.name, () => {
       projectId: project2021.id,
     });
     const aanmeldingen = await harness.patchAanmeldingen(project2021.id, [
-      { id: aanmelding1.id, status: 'Aangemeld' },
-      { id: aanmelding2.id, status: 'Aangemeld' },
+      { id: aanmelding1.id, status: 'Aangemeld', plaats: plaatsInAntwerpen },
+      { id: aanmelding2.id, status: 'Aangemeld', plaats: plaatsInAntwerpen },
       { id: aanmelding3.id, status: 'Bevestigd' },
     ]);
     await harness.updateDeelnames(
@@ -662,7 +766,16 @@ describe(ReportsController.name, () => {
       [{ aanmeldingId: aanmelding2.id, effectieveDeelnamePerunage: 1 }], // 10 * 1 = 10 deelnemersuren
     );
 
-    return { deelnemerA, deelnemerB, project2021, project2020, aanmeldingen };
+    return {
+      deelnemerA,
+      deelnemerB,
+      project2021,
+      project2020,
+      aanmeldingen,
+      aanmelding1,
+      aanmelding2,
+      aanmelding3,
+    };
   }
 
   async function arrangeVakantiesTestSet() {
