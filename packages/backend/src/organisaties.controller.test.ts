@@ -271,13 +271,14 @@ describe(OrganisatiesController.name, () => {
         expect(zonderAdresOrgs.totalCount).eq(3);
       });
 
-      it('by provincie', async () => {
+      it('by provincies', async () => {
         // Act
-        const [antwerpenOrgs, gentOrgs, noFilter] = await Promise.all([
-          harness.getAllOrganisaties({ provincie: 'Antwerpen' }),
+        const [antwerpenOrgs, gentOrgs, antwerpenAndGentOrgs, noFilter] = await Promise.all([
+          harness.getAllOrganisaties({ provincies: ['Antwerpen'] }),
           harness.getAllOrganisaties({
-            provincie: 'West-Vlaanderen',
+            provincies: ['West-Vlaanderen'],
           }),
+          harness.getAllOrganisaties({ provincies: ['Antwerpen', 'West-Vlaanderen'] }),
           harness.getAllOrganisaties({}),
         ]);
 
@@ -293,9 +294,11 @@ describe(OrganisatiesController.name, () => {
           disney.id,
           nintendo.id,
         ]);
+        expect(antwerpenAndGentOrgs.body.map(({ id }) => id)).deep.eq([acme.id, nintendo.id]);
         expect(noFilter.totalCount).eq(3);
         expect(antwerpenOrgs.totalCount).eq(1);
         expect(gentOrgs.totalCount).eq(1);
+        expect(antwerpenAndGentOrgs.totalCount).eq(2);
       });
 
       it('by soorten', async () => {

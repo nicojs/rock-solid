@@ -1,5 +1,5 @@
 import { Organisatie, OrganisatieContact } from '@rock-solid/shared';
-import { html, LitElement } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import {
@@ -12,7 +12,14 @@ import { ModalComponent } from '../shared/modal.component';
 
 @customElement('rock-organisaties-list')
 export class OrganisatiesListComponent extends LitElement {
-  static override styles = [bootstrap];
+  static override styles = [
+    bootstrap,
+    css`
+      .z-index-900 {
+        z-index: 900;
+      }
+    `,
+  ];
 
   @property({ attribute: false })
   private organisaties: Organisatie[] | undefined;
@@ -51,7 +58,7 @@ export class OrganisatiesListComponent extends LitElement {
   private renderTable() {
     return html`<div class="row">
       <table class="table table-hover">
-        <thead class="sticky-top">
+        <thead class="sticky-top z-index-900">
           <tr>
             <th>Naam</th>
             <th>TAV</th>

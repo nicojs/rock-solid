@@ -37,7 +37,9 @@ export class ReactiveFormTags<
     this.tags = this.tags.filter((item) => item !== tag);
   }
   private addTag(tag: ArrayItem<TEntity[TKey]>) {
-    this.tags = [...this.tags, tag];
+    if (!this.tags.includes(tag)) {
+      this.tags = [...this.tags, tag];
+    }
   }
 
   override firstUpdated() {
@@ -59,7 +61,7 @@ export class ReactiveFormTags<
   }
 
   public override render() {
-    return html`<div class="row mb-3">
+    return html`<div class="row">
       <div class="col-lg-2 col-md-4">
         <label for="${this.name}" class="col-form-label"
           >${this.control.label ?? capitalize(this.control.name)}</label

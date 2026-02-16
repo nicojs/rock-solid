@@ -7,7 +7,6 @@ import {
   foldersoorten,
   groupedOrganisatieSoorten,
   organisatieLabels,
-  provincies,
   toOrganisatieFilter,
   tryParseInt,
 } from '@rock-solid/shared';
@@ -16,7 +15,12 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { RockElement } from '../rock-element';
 import { router } from '../router';
-import { handleUniquenessError, toOrganisatiesCsv, toQuery } from '../shared';
+import {
+  handleUniquenessError,
+  provinciesTypeAheadHints,
+  toOrganisatiesCsv,
+  toQuery,
+} from '../shared';
 import { organisatieStore } from './organisatie.store';
 import {
   FormControl,
@@ -24,7 +28,7 @@ import {
   InputType,
   checkboxesGroupedItemsControl,
   checkboxesItemsControl,
-  selectControl,
+  tagsControl,
 } from '../forms';
 
 @customElement('rock-organisaties')
@@ -226,16 +230,18 @@ const advancedSearchControls: FormControl<OrganisatieFilter>[] = [
     label: 'Soorten',
   }),
   checkboxesItemsControl('folders', foldersoorten, { label: 'Folders' }),
-  {
-    name: 'metAdres',
-    label: 'Met adres',
-    type: InputType.checkbox,
-  },
-  selectControl('provincie', provincies, { placeholder: '' }),
+  tagsControl('provincies', (prov) => prov, provinciesTypeAheadHints, {
+    minCharacters: 0,
+  }),
   {
     type: InputType.text,
     name: 'emailadres',
     label: 'Emailadres',
     placeholder: 'Zoek op emailadres',
+  },
+  {
+    name: 'metAdres',
+    label: 'Met adres',
+    type: InputType.checkbox,
   },
 ];

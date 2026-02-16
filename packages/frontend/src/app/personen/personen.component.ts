@@ -14,7 +14,6 @@ import {
   PersoonType,
   persoonTypes,
   Privilege,
-  provincies,
   Queryfied,
   toPersoonFilter,
   tryParseInt,
@@ -27,6 +26,7 @@ import { router } from '../router';
 import {
   capitalize,
   pluralize,
+  provinciesTypeAheadHints,
   toDeelnemersCsv,
   toOverigePersonenCsv,
   toQuery,
@@ -41,6 +41,7 @@ import {
   InputControl,
   InputType,
   selectControl,
+  tagsControl,
 } from '../forms';
 
 @customElement('rock-personen')
@@ -196,7 +197,8 @@ export class PersonenComponent extends RockElement {
             : html`<rock-edit-persoon
                 .persoon="${persoon}"
                 privilege="${'create:personen' satisfies Privilege}"
-                @persoon-submitted=${(event: CustomEvent<Persoon>) => this.createNewPersoon(event)}
+                @persoon-submitted=${(event: CustomEvent<Persoon>) =>
+                  this.createNewPersoon(event)}
               ></rock-edit-persoon>`}`;
       }
       case 'edit':
@@ -240,12 +242,14 @@ const mainSearchControl: InputControl<PersoonFilter> = {
 };
 
 const basePersoonFilers: FormControl<PersoonFilter>[] = [
+  tagsControl('provincies', (prov) => prov, provinciesTypeAheadHints, {
+    minCharacters: 0,
+  }),
   {
     type: InputType.checkbox,
     label: 'Met adres',
     name: 'metVerblijfadres',
   },
-  selectControl('provincie', provincies, { placeholder: '' }),
 ];
 
 const overigPersoonSearchControls: FormControl<PersoonFilter>[] = [

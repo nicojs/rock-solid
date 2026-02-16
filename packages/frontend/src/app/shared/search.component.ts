@@ -3,12 +3,13 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import { FormControl, InputControl } from '../forms';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { formStyles } from '../forms/reactive-form.component';
 
 @customElement('rock-search')
 export class SearchComponent<
   TFilter extends Record<string, unknown>,
 > extends LitElement {
-  static override styles = [bootstrap];
+  static override styles = [bootstrap, formStyles];
 
   @property()
   public mainControl!: InputControl<TFilter>;

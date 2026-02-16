@@ -17,6 +17,7 @@ import {
   provincies,
 } from '@rock-solid/shared';
 import { html } from 'lit';
+import { TypeAheadHint } from './autocomplete.component';
 
 export const unknown = 'onbekend';
 export const notAvailable = 'n/a';
@@ -201,3 +202,8 @@ export function foldervoorkeurenCsv(
 export function optionsCsv<T extends string>(options: Options<T>) {
   return (values: T[]) => values.map((value) => options[value]).join(', ');
 }
+
+export const provinciesTypeAheadHints: readonly TypeAheadHint<Provincie>[] =
+  Object.freeze(
+    Object.keys(provincies).map((text) => ({ text, value: text as Provincie })),
+  );

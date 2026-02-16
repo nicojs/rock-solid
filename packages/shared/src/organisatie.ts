@@ -2,7 +2,7 @@ import { Upsertable } from './upsertable.js';
 import { Options, groupOptions } from './options.js';
 import { Adres, UpsertableAdres } from './adres.js';
 import { Labels, Queryfied, filterMetaQuery, tryParseBoolean } from './util.js';
-import { Provincie } from './plaats.js';
+import { isProvincie, Provincie } from './plaats.js';
 
 export interface Organisatie {
   id: number;
@@ -59,7 +59,7 @@ export type OrganisatieFilter = {
   naam?: string;
   folders?: Foldersoort[];
   metAdres?: boolean;
-  provincie?: Provincie;
+  provincies?: Provincie[];
   soorten?: Organisatiesoort[];
   emailadres?: string;
 };
@@ -206,5 +206,6 @@ export function toOrganisatieFilter(
     folders: query.folders?.split(',') as Foldersoort[],
     metAdres: tryParseBoolean(query.metAdres),
     soorten: query.soorten?.split(',') as Organisatiesoort[],
+    provincies: query.provincies?.split(',').filter(isProvincie),
   };
 }

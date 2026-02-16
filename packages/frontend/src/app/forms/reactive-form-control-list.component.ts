@@ -32,11 +32,13 @@ export class ReactiveFormControlList<TEntity> extends FormElement<TEntity> {
   public override render() {
     return this.controls.map(
       (control) =>
-        html`<rock-reactive-form-control
-          .control=${control}
-          .entity=${this.entity}
-          .path=${this.path}
-        ></rock-reactive-form-control>`,
+        html`<div class="mb-3">
+          <rock-reactive-form-control
+            .control=${control}
+            .entity=${this.entity}
+            .path=${this.path}
+          ></rock-reactive-form-control>
+        </div>`,
     );
   }
 }

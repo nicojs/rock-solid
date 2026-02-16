@@ -96,9 +96,9 @@ export interface TagsControl<
   TKey extends KeysOfType<TEntity, any[]>,
 > extends BaseInputControl<TEntity, ArrayItem<TEntity[TKey]>[]> {
   name: TKey;
-  searchAction: (
-    text: string,
-  ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>;
+  searchAction:
+    | ((text: string) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>)
+    | readonly TypeAheadHint<ArrayItem<TEntity[TKey]>>[];
   tagText: (tag: ArrayItem<TEntity[TKey]>) => string;
   /**
    * The minimal number of characters to type before showing hints
@@ -110,9 +110,9 @@ export interface TagsControl<
 export function tagsControl<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   name: TKey,
   tagText: (tag: ArrayItem<TEntity[TKey]>) => string,
-  searchAction: (
-    text: string,
-  ) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>,
+  searchAction:
+    | ((text: string) => Promise<TypeAheadHint<ArrayItem<TEntity[TKey]>>[]>)
+    | readonly TypeAheadHint<ArrayItem<TEntity[TKey]>>[],
   additionalOptions?: Pick<
     TagsControl<TEntity, TKey>,
     'minCharacters' | 'label'

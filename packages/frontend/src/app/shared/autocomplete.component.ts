@@ -48,13 +48,24 @@ export class AutocompleteComponent extends LitElement {
   private hints: TypeAheadHint[] | undefined;
 
   @property({ attribute: false })
-  public searchAction!: (text: string) => Promise<TypeAheadHint[]>;
+  public searchAction!: ((text: string) => Promise<TypeAheadHint[]>) | TypeAheadHint[];
 
   @property({ type: Number })
   public minCharacters = 2;
 
   @property()
   public entityName?: string;
+
+  public search(text: string): Promise<TypeAheadHint[]> {
+    if (Array.isArray(this.searchAction)) {
+      return Promise.resolve(
+        this.searchAction.filter((hint) =>
+          hint.text.toLowerCase().includes(text.toLowerCase()),
+        ),
+      );
+    }
+    return this.searchAction(text);
+  }
 
   private transitionState(transition: FocusStateTransition) {
     let newState: FocusState;
@@ -189,7 +200,7 @@ export class AutocompleteComponent extends LitElement {
           debounceTime(200),
           switchMap(async (val) =>
             val.length >= this.minCharacters
-              ? this.searchAction(val)
+              ? this.search(val)
               : undefined,
           ),
           tap(() => (this.isLoading = false)),

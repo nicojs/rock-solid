@@ -1,4 +1,4 @@
-import { html, LitElement, nothing } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { Persoon, PersoonType } from '@rock-solid/shared';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -16,7 +16,14 @@ import { routesByPersoonType } from './routing-helper';
 
 @customElement('rock-personen-list')
 export class PersonenComponent extends LitElement {
-  static override styles = [bootstrap];
+  static override styles = [
+    bootstrap,
+    css`
+      .z-index-900 {
+        z-index: 900;
+      }
+    `,
+  ];
 
   @property({ attribute: false })
   private personen: Persoon[] | undefined;
@@ -54,7 +61,7 @@ export class PersonenComponent extends LitElement {
 
   private renderTable(): unknown {
     return html`<table class="table table-hover">
-      <thead class="sticky-top">
+      <thead class="sticky-top z-index-900">
         <tr>
           <th>Naam (leeftijd)</th>
           ${this.type === 'overigPersoon' ? html`<th>Selectie</th>` : nothing}
