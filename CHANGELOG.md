@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/nicojs/rock-solid/compare/v2.3.0...v2.4.0) (2026-02-16)
+
+### Features
+
+- zoeken op provincies in rapportage, personen en organisaties ([#317](https://github.com/nicojs/rock-solid/issues/317)) ([a12258f](https://github.com/nicojs/rock-solid/commit/a12258f37f6a561b61537e8c16d35cf8ac879a12))
+
 # [2.3.0](https://github.com/nicojs/rock-solid/compare/v2.2.1...v2.3.0) (2026-01-23)
 
 ### Features
