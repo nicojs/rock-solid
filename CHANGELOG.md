@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.1](https://github.com/nicojs/rock-solid/compare/v2.4.0...v2.4.1) (2026-03-03)
+
+### Bug Fixes
+
+- **aanmeldingscherm:** maak kolom headers kloppend ([#319](https://github.com/nicojs/rock-solid/issues/319)) ([0f92ddb](https://github.com/nicojs/rock-solid/commit/0f92ddb41d13a89facbe716f1a94feb4466f8818))
+
 # [2.4.0](https://github.com/nicojs/rock-solid/compare/v2.3.0...v2.4.0) (2026-02-16)
 
 ### Features
