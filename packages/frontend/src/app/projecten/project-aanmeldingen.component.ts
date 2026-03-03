@@ -545,12 +545,6 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 </th>
                 <th rowspan="2" class="align-middle">Opmerkingen</th>
                 <th
-                  ${privilege('custom:statusverandering')}
-                  class="align-middle"
-                >
-                  ${this.renderActiesButton(aanmeldingen)} Status
-                </th>
-                <th
                   rowspan="2"
                   class="text-center align-middle"
                   title="Toestemming foto's"
@@ -576,6 +570,13 @@ export class ProjectAanmeldingenComponent extends LitElement {
                 </th>
                 <th title="betaald" rowspan="2" class="align-middle">💶</th>
                 <th class="text-center" colspan="3">Belangrijke data</th>
+                <th
+                  ${privilege('custom:statusverandering')}
+                  class="align-middle"
+                  rowspan="2"
+                >
+                  ${this.renderActiesButton(aanmeldingen)} Status
+                </th>
                 <th rowspan="2" class="align-middle text-center">Acties</th>
               </tr>
               <tr>
