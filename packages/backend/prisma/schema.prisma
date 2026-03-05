@@ -6,9 +6,8 @@ datasource db {
 }
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
-  output        = "../generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 model Persoon {
@@ -177,12 +176,13 @@ model Activiteit {
 }
 
 model Locatie {
-  id        Int     @id @default(autoincrement())
-  naam      String  @unique
-  adresId   Int?
-  adres     Adres?  @relation(fields: [adresId], references: [id])
-  opmerking String?
-  soort     Int     @default(0)
+  id          Int     @id @default(autoincrement())
+  naam        String  @unique
+  adresId     Int?
+  adres       Adres?  @relation(fields: [adresId], references: [id])
+  gpsZoekterm String?
+  opmerking   String?
+  soort       Int     @default(0)
 
   // Opstapplaats
   geschiktVoorVakantie Boolean?

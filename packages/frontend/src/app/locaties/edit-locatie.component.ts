@@ -37,7 +37,10 @@ export class EditLocatieComponent extends LitElement {
         privilege="${this.privilege}"
         .controls=${locatieControls}
         .entity="${this.locatie}"
-      ></rock-reactive-form>`;
+      ></rock-reactive-form>
+
+      `;
+
   }
 
   private async save() {
@@ -80,4 +83,9 @@ const locatieControls: FormControl<Locatie>[] = [
     required: false,
     requiredLabel: 'Met adres',
   }),
+  {
+    name: 'gpsZoekterm',
+    label: locatieLabels.gpsZoekterm,
+    type: InputType.text,
+  }
 ];

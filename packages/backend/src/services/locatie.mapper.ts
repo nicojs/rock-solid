@@ -115,6 +115,7 @@ export function toLocatie<T extends DBLocatieAggregate | undefined | null>(
     naam: dbLocatie.naam,
     adres: toNullableAdres(dbLocatie.adres),
     opmerking: dbLocatie.opmerking ?? undefined,
+    gpsZoekterm: dbLocatie.gpsZoekterm ?? undefined,
     soort: locatiesoortMapper.toSchema(dbLocatie.soort),
     geschiktVoorVakantie: dbLocatie.geschiktVoorVakantie ?? undefined,
   } as T extends undefined | null ? undefined : Locatie;
@@ -139,10 +140,12 @@ type LocatieFields = ExplicitNulls<UpsertableLocatie>;
 
 function toUpdateLocatieFields(locatie: UpsertableLocatie): LocatieFields {
   return {
-    ...locatie,
+    naam: locatie.naam,
+    soort: locatie.soort,
     opmerking: locatie.opmerking ?? null,
     adres: locatie.adres ?? null,
     id: locatie.id ?? null,
+    gpsZoekterm: locatie.gpsZoekterm ?? null,
     geschiktVoorVakantie: locatie.geschiktVoorVakantie ?? null,
   };
 }

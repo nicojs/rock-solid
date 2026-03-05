@@ -13,8 +13,12 @@ async function bootstrap() {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          scriptSrc: ["'self'", 'http://localhost:35729'],
+          scriptSrc: [
+            "'self'",
+            'http://localhost:35729',
+          ],
           connectSrc: ["'self'", 'ws://localhost:35729'],
+          frameSrc: ['https://www.openstreetmap.org'],
         },
       },
     }),

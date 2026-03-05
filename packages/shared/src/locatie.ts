@@ -9,6 +9,7 @@ export interface Locatie {
   id: number;
   naam: string;
   adres?: Adres;
+  gpsZoekterm?: string;
   opmerking?: string;
   soort: Locatiesoort;
   geschiktVoorVakantie?: boolean;
@@ -31,6 +32,7 @@ export const locatieLabels: Labels<Locatie> = {
   id: 'id',
   naam: 'Naam',
   adres: 'Adres',
+  gpsZoekterm: 'GPS-zoekterm',
   opmerking: 'Opmerking',
   soort: 'Soort',
   geschiktVoorVakantie: 'Geschikte opstapplaats voor vakanties',
