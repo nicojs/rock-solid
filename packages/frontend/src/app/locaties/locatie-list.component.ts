@@ -1,4 +1,4 @@
-import { Locatie } from '@rock-solid/shared';
+import { Locatie, locatieLabels } from '@rock-solid/shared';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
@@ -45,6 +45,7 @@ export class LocatieListComponent extends LitElement {
             <th>Naam</th>
             <th>Soort</th>
             <th>Adres</th>
+            <th>${locatieLabels.gpsZoekterm}</th>
             <th>Opmerking</th>
             <th style="width: 190px">Acties</th>
           </tr>
@@ -61,6 +62,7 @@ export class LocatieListComponent extends LitElement {
                     : ''}
                 </td>
                 <td>${showAdres(loc.adres)}</td>
+                <td>${show(loc.gpsZoekterm)}</td>
                 <td>${show(loc.opmerking)}</td>
                 <td>
                   <rock-link
