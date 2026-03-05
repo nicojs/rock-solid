@@ -122,10 +122,11 @@ model Project {
   categorie            Int?
 
   // Vakantie. Total price is saldo + voorschot
-  bestemming String?
-  land       String?
-  seizoen    Int?
-  voorschot  Decimal?
+  vakantiesoort Int?
+  bestemming    String?
+  land          String?
+  seizoen       Int?
+  voorschot     Decimal?
 }
 
 model Aanmelding {

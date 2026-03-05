@@ -48,8 +48,9 @@ export interface Vakantie extends BaseProject {
   type: 'vakantie';
   bestemming: string;
   land: string;
+  vakantiesoort: Vakantiesoort;
   activiteiten: VakantieActiviteit[];
-  seizoen?: VakantieSeizoen;
+  seizoen: VakantieSeizoen;
 }
 
 export type AanmeldingOf<T extends Project> = {
@@ -83,6 +84,7 @@ export const vakantieLabels: Labels<Vakantie> = {
   land: 'Land',
   activiteiten: 'Activiteiten',
   seizoen: 'Seizoen',
+  vakantiesoort: 'Soort',
 };
 
 export const allProjectLabels: Readonly<Labels<Project>> = Object.freeze({
@@ -127,9 +129,15 @@ export interface VakantieActiviteit extends BaseActiviteit {
 }
 
 export type VakantieSeizoen = 'zomer' | 'winter';
+export type Vakantiesoort = 'vakantie' | 'voorbereidingsdag' | 'heimweedag';
 export const vakantieSeizoenen: Options<VakantieSeizoen> = Object.freeze({
   zomer: 'Zomer',
   winter: 'Winter',
+});
+export const vakantiesoorten: Options<Vakantiesoort> = Object.freeze({
+  vakantie: 'Vakantie',
+  voorbereidingsdag: 'Voorbereidingsdag',
+  heimweedag: 'Heimweedag',
 });
 export type VakantieVerblijf = 'hotelOfPension' | 'vakantiehuis' | 'boot';
 export type VakantieVervoer =
@@ -211,7 +219,7 @@ export type UpsertableCursus = Upsertable<
 };
 export type UpsertableVakantie = Upsertable<
   Omit<Vakantie, 'activiteiten'>,
-  'projectnummer' | 'bestemming' | 'land' | 'type'
+  'projectnummer' | 'type' | 'vakantiesoort' | 'seizoen'
 > & {
   type: 'vakantie';
   activiteiten: UpsertableActiviteit[];

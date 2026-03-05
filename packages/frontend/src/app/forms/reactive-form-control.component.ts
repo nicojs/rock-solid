@@ -1,5 +1,5 @@
-import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, nothing } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { capitalize } from '../shared';
 import { FormControl, InputControl, InputType } from './form-control';
 import { FormControlElement } from './form-element';
@@ -15,13 +15,24 @@ export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
     this.inputRef.value?.validate();
   }
 
-  public override updateShow() {
-    this.inputRef.value?.updateShow();
+  public updateShow() {
+    this.show = this.control.show?.(this.entity) ?? true;
   }
+
+  @state()
+  private show = true;
 
   inputRef = createRef<FormControlElement<unknown>>();
 
+  override connectedCallback(): void {
+    this.updateShow();
+    super.connectedCallback();
+  }
+
   override render() {
+    if (!this.show) {
+      return nothing;
+    }
     switch (this.control.type) {
       case InputType.array:
         return html`<rock-reactive-form-array

@@ -101,6 +101,7 @@ export class ProjectenComponent extends RockElement {
           type: this.type,
           activiteiten: [newActiviteit()],
           begeleiders: [],
+          ...(this.type === 'vakantie' ? { vakantiesoort: 'vakantie', seizoen: 'zomer' } : {}),
         };
         this.newProject = project;
       }

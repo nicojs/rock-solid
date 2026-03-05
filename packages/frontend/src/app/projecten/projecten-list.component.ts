@@ -157,23 +157,20 @@ export class ProjectenListComponent extends LitElement {
             : ''}
           ${hasStatus ? html`<th>Status</th>` : ''}
           <th>Projectnummer</th>
+          <th>Naam</th>
           ${isCursus
             ? html`<th>Naam</th>
                 ${showDoelgroepen
                   ? html`<th>${cursusLabels.doelgroep}</th>`
                   : ''}`
-            : html`<th>Bestemming</th>
-                <th>Land</th>`}
+            : nothing}
           ${isCursus
             ? html`
                 <th>Locatie(s)</th>
                 ${showDeelnemersuren ? html`<th>Deelnemersuren</th>` : ''}
                 ${showVormingsuren ? html`<th>Vormingsuren</th>` : ''}
               `
-            : html`
-                <th class="text-end">Voorschot</th>
-                <th class="text-center">Seizoen</th>
-              `}
+            : html` <th class="text-center">Seizoen</th> `}
           <th class="text-end">Prijs</th>
           <th>Activiteiten</th>
           <th style="width: 230px">Acties</th>
@@ -224,17 +221,12 @@ export class ProjectenListComponent extends LitElement {
                 </td>`
               : nothing}
             <td>${project.projectnummer}</td>
+            <td>${project.naam}</td>
             ${project.type === 'cursus'
-              ? html`<td>${project.naam}</td>
-                  ${showDoelgroepen
+              ? html`${showDoelgroepen
                     ? html`<td>${showDoelgroep(project.doelgroep)}</td>`
-                    : nothing} `
-              : html`
-                  <td>${project.bestemming}</td>
-                  <td>${project.land}</td>
-                `}
-            ${project.type === 'cursus'
-              ? html`<td>${renderLocaties(project)}</td>
+                    : nothing}
+                  <td>${renderLocaties(project)}</td>
 
                   ${showDeelnemersuren
                     ? html`<td>
@@ -265,7 +257,6 @@ export class ProjectenListComponent extends LitElement {
                       </td>`
                     : ''}`
               : html`
-                  <td class="text-end">${showMoney(project.voorschot)}</td>
                   <td class="text-center">
                     ${project.seizoen
                       ? vakantieSeizoenen[project.seizoen]

@@ -12,6 +12,7 @@ import {
   ProjectFilter,
   UpsertableActiviteit,
   UpsertableProject,
+  UpsertableVakantie,
   VakantieActiviteit,
 } from '@rock-solid/shared';
 import { Injectable } from '@nestjs/common';
@@ -33,6 +34,7 @@ import {
   organisatieonderdeelMapper,
   projectTypeMapper,
   vakantieseizoenMapper,
+  vakantiesoortMapper,
   vakantieVerblijfMapper,
   vakantieVervoerMapper,
 } from './enum.mapper.js';
@@ -302,7 +304,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
     ...projectData
   } = project;
   if (project.type === 'vakantie') {
-    const naam = `${project.bestemming} - ${project.land}`;
+    const naam = toNaam(project, jaar);
     return {
       ...projectData,
       organisatieonderdeel: undefined,
@@ -310,6 +312,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
       saldo: saldo ?? null,
       seizoen: vakantieseizoenMapper.toDB(project.seizoen),
       titel: toTitel(projectData.projectnummer, naam),
+      vakantiesoort: vakantiesoortMapper.toDB(project.vakantiesoort),
       type: projectTypeMapper.toDB('vakantie'),
       doelgroep: undefined,
       categorie: undefined,
@@ -330,6 +333,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
       doelgroep: doelgroepMapper.toDB(project.doelgroep),
       categorie: cursusCategorieMapper.toDB(project.categorie),
       jaar,
+      vakantiesoort: undefined,
       naam: project.naam,
     };
   }
@@ -467,7 +471,8 @@ function toProject(
         saldo,
         voorschot,
         prijs,
-        seizoen: vakantieseizoenMapper.toSchema(projectProperties.seizoen),
+        seizoen: vakantieseizoenMapper.toSchema(projectProperties.seizoen)!,
+        vakantiesoort: vakantiesoortMapper.toSchema(projectProperties.vakantiesoort)!,
         type: 'vakantie',
         bestemming: bestemming!,
         land: land!,
@@ -582,4 +587,15 @@ function where(filter: ProjectFilter): db.Prisma.ProjectWhereInput {
 
 export function toTitel(projectnummer: string, projectNaam: string): string {
   return `${projectnummer} ${projectNaam}`;
+}
+
+function toNaam(project: UpsertableVakantie, jaar: number): string {
+  switch (project.vakantiesoort) {
+    case 'vakantie':
+      return `${project.bestemming} - ${project.land}`;
+    case 'voorbereidingsdag':
+      return `Voorbereidingsdag ${project.seizoen} ${jaar}`;
+    case 'heimweedag':
+      return `Heimweedag ${project.seizoen} ${jaar}`;
+  }
 }

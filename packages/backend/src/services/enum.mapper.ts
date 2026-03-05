@@ -13,6 +13,7 @@ import {
   ProjectType,
   Provincie,
   VakantieSeizoen,
+  Vakantiesoort,
   VakantieVerblijf,
   VakantieVervoer,
   Voedingswens,
@@ -169,6 +170,12 @@ export const overigPersoonSelectieMapper =
     raadVanBestuurKeiJong: 6,
     vakantieVrijwilliger: 7,
   });
+
+export const vakantiesoortMapper = createEnumMapper<Vakantiesoort>('vakantiesoort', {
+  vakantie: 1,
+  voorbereidingsdag: 2,
+  heimweedag: 3,
+});
 
 export const vakantieseizoenMapper = createEnumMapper<VakantieSeizoen>(
   'vakantieseizoen',
