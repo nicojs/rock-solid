@@ -14,7 +14,7 @@ import {
   InsertableAanmelding,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
-import { harness, factory, byId } from './test-utils.test.js';
+import { harness, factory, byId, expectVakantie } from './test-utils.test.js';
 import { expect } from 'chai';
 import assert from 'assert/strict';
 
@@ -784,6 +784,7 @@ describe(ProjectenController.name, () => {
         aantalInschrijvingen: 0,
         begeleiders: [],
         jaar: 2011,
+        vakantiesoort: "vakantie",
         seizoen: 'winter',
         activiteiten: [
           {
@@ -995,6 +996,54 @@ describe(ProjectenController.name, () => {
         loc,
       );
     });
+
+    it('should fill in vakantiesoort "heimweedag" correctly', async () => {
+      // Arrange
+      const project = await harness.createProject(
+        factory.vakantie({
+          seizoen: 'zomer',
+          vakantiesoort: 'heimweedag',
+          activiteiten: [
+            factory.activiteit({
+              van: new Date(2026, 5, 20),
+              totEnMet: new Date(2026, 5, 21),
+            }),
+          ],
+        }),
+      );
+
+      // Act
+      const actualProject = await harness.getProject(project.id);
+
+      // Assert
+      expectVakantie(actualProject);
+      expect(actualProject.naam).eq('Heimweedag zomer 2026');
+      expect(actualProject.vakantiesoort).eq('heimweedag');
+    });
+
+    it('should fill in vakantiesoort "voorbereidingsdag" correctly', async () => {
+      // Arrange
+      const project = await harness.createProject(
+        factory.vakantie({
+          seizoen: 'winter',
+          vakantiesoort: 'voorbereidingsdag',
+          activiteiten: [
+            factory.activiteit({
+              van: new Date(2024, 5, 20),
+              totEnMet: new Date(2024, 5, 21),
+            }),
+          ],
+        }),
+      );
+
+      // Act
+      const actualProject = await harness.getProject(project.id);
+
+      // Assert
+      expectVakantie(actualProject);
+      expect(actualProject.naam).eq('Voorbereidingsdag winter 2024');
+      expect(actualProject.vakantiesoort).eq('voorbereidingsdag');
+    });
   });
 
   describe('GET /projecten/:id/aanmeldingen', () => {
@@ -1197,7 +1246,6 @@ describe(ProjectenController.name, () => {
       expect(actualAanmelding).deep.include(expectedFields);
     });
 
-
     it('should store "woonsituatie", "werksituatie", "geslacht" en "woonplaats" in the aanmelding', async () => {
       // Arrange
       const gent = await harness.insertPlaats(
@@ -1239,7 +1287,6 @@ describe(ProjectenController.name, () => {
       };
       expect(actualAanmelding).deep.include(expectedAanmelding);
     });
-
   });
 
   describe('PATCH /projecten/:id/aanmeldingen', () => {
@@ -1290,13 +1337,12 @@ describe(ProjectenController.name, () => {
       const expectedOpstapplaats2 = await harness.createLocatie(
         factory.locatie({ naam: 'Locatie 2' }),
       );
-      
+
       // Act
       const aanmeldingen = await harness.patchAanmeldingen(project.id, [
         { id: aanmelding1.id, opstapplaats: expectedOpstapplaats },
         { id: aanmelding2.id, opstapplaats: expectedOpstapplaats2 },
       ]);
-
 
       // Assert
       const expectedAanmeldingen: Aanmelding[] = [
@@ -1345,7 +1391,7 @@ describe(ProjectenController.name, () => {
         woonsituatie: 'residentieleWoonondersteuning',
         geslacht: 'x',
         opmerking: 'Foo',
-        opstapplaats
+        opstapplaats,
       });
 
       // Act
@@ -1458,7 +1504,7 @@ describe(ProjectenController.name, () => {
 
       // Act
       const opstapplaats = await harness.createLocatie(
-        factory.locatie({ naam: 'Locatie 1' })
+        factory.locatie({ naam: 'Locatie 1' }),
       );
       aanmelding.werksituatie = 'arbeidstrajectbegeleiding';
       aanmelding.woonsituatie = 'residentieleWoonondersteuning';

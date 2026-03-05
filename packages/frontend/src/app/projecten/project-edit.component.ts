@@ -19,6 +19,7 @@ import {
   activiteitLabels,
   doelgroepen,
   cursusCategorieën,
+  vakantiesoorten,
 } from '@rock-solid/shared';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -29,6 +30,7 @@ import {
   InputType,
   radioControl,
   tagsControl,
+  selectControl,
 } from '../forms';
 import { fullName } from '../personen/persoon.pipe';
 import { persoonService } from '../personen/persoon.service';
@@ -139,12 +141,8 @@ const cursusActiviteitenControls: FormControl<CursusActiviteit>[] = [
 ];
 const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
   ...baseActiviteitenControls,
-  radioControl('verblijf', vakantieVerblijven, {
-    validators: { required: true },
-  }),
-  radioControl('vervoer', vakantieVervoerOptions, {
-    validators: { required: true },
-  }),
+  radioControl('verblijf', vakantieVerblijven),
+  radioControl('vervoer', vakantieVervoerOptions),
 ];
 
 const cursusProjectControls: FormControl<Cursus>[] = [
@@ -188,12 +186,19 @@ const cursusProjectControls: FormControl<Cursus>[] = [
 ];
 
 const vakantieProjectControls: FormControl<Vakantie>[] = [
+  selectControl('vakantiesoort', vakantiesoorten, {
+    validators: { required: true },
+  }),
   {
     name: 'bestemming',
     type: InputType.text,
     validators: {
       minLength: 3,
       required: true,
+    },
+    dependsOn: ['vakantiesoort'],
+    show(entity) {
+      return entity.vakantiesoort === 'vakantie';
     },
   },
   {
@@ -202,6 +207,10 @@ const vakantieProjectControls: FormControl<Vakantie>[] = [
     validators: {
       minLength: 3,
       required: true,
+    },
+    dependsOn: ['vakantiesoort'],
+    show(entity) {
+      return entity.vakantiesoort === 'vakantie';
     },
   },
   ...baseProjectControls,

@@ -30,31 +30,19 @@ export class ReactiveFormInputControl<
   @state()
   private validationMessage = '';
 
-  @state()
-  private show = true;
-
   private get inputId() {
     return generateInputId(this.control, this.path);
   }
 
-  override connectedCallback(): void {
-    this.show = this.control.show?.(this.entity) ?? true;
-    super.connectedCallback();
-  }
-
   override render() {
-    if (this.show) {
-      return html`
-        <div class="input-group has-validation">
-          ${this.renderInput(this.control)}${this.control.postfix
-            ? html`<span class="input-group-text"
-                >${this.control.postfix}</span
-              >`
-            : ''}
-          <div class="invalid-feedback">${this.validationMessage}</div>
-        </div>
-      `;
-    }
+    return html`
+      <div class="input-group has-validation">
+        ${this.renderInput(this.control)}${this.control.postfix
+          ? html`<span class="input-group-text">${this.control.postfix}</span>`
+          : ''}
+        <div class="invalid-feedback">${this.validationMessage}</div>
+      </div>
+    `;
   }
 
   /**
@@ -68,10 +56,6 @@ export class ReactiveFormInputControl<
 
   override updated() {
     this.validate();
-  }
-
-  override updateShow(): void {
-    this.show = this.control.show?.(this.entity) ?? true;
   }
 
   override validate() {

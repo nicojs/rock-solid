@@ -84,7 +84,7 @@ export function formArray<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   };
 }
 
-export interface FormArray<TEntity, TKey extends KeysOfType<TEntity, any[]>> {
+export interface FormArray<TEntity, TKey extends KeysOfType<TEntity, any[]>> extends BaseControl<TEntity> {
   type: InputType.array;
   name: TKey;
   factory: () => DeepPartial<ArrayItem<TEntity[TKey]>>;
@@ -227,7 +227,7 @@ export function checkboxesGroupedItemsControl<
   };
 }
 
-export interface FormGroup<TEntity, TKey extends keyof TEntity> {
+export interface FormGroup<TEntity, TKey extends keyof TEntity> extends BaseControl<TEntity> {
   type: InputType.group;
   name: TKey;
   controls: readonly FormControl<NonNullable<TEntity[TKey]>>[];
@@ -260,18 +260,21 @@ export type InputControl<TEntity> =
   | RadioInputControl<TEntity, any>
   | TemporalInput<TEntity>;
 
-export interface BaseInputControl<TEntity, TValue> {
+export interface BaseControl<TEntity> {
+  /** Run custom validation when one of these fields changes */
+  dependsOn?: (keyof TEntity & string)[];
+  /** When should this control be shown? */
+  show?: (entity: TEntity) => boolean;
+}
+
+export interface BaseInputControl<TEntity, TValue> extends BaseControl<TEntity> {
   id?: string;
   label?: string | false;
   validators?: Validators<TEntity, TValue>;
   placeholder?: string;
   postfix?: string;
-  /** Run custom validation when one of these fields changes */
-  dependsOn?: (keyof TEntity & string)[];
   /** When updated with empty text, should the underlying field be set to null? */
   nullable?: boolean;
-  /** When should this control be shown? */
-  show?: (entity: TEntity) => boolean;
 }
 
 export type KeysOfType<TEntity, TValue> = keyof {

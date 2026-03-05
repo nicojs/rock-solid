@@ -236,9 +236,7 @@ class IntegrationTestingHarness {
     return this.getAll(`/projecten${toQueryString(filter)}`);
   }
 
-  public getPlaatsen(
-    filter?: PlaatsFilter,
-  ): Promise<GetAllResult<Plaats>> {
+  public getPlaatsen(filter?: PlaatsFilter): Promise<GetAllResult<Plaats>> {
     return this.getAll(`/plaatsen${toQueryString(filter)}`);
   }
 
@@ -271,11 +269,13 @@ class IntegrationTestingHarness {
     ).expect(204);
   }
 
-  async patchPersoon(persoonId: number, persoon: PatchablePersoon): Promise<Persoon> {
-    const response = await this.patch(
-      `/personen/${persoonId}`,
-      persoon,
-    ).expect(200);
+  async patchPersoon(
+    persoonId: number,
+    persoon: PatchablePersoon,
+  ): Promise<Persoon> {
+    const response = await this.patch(`/personen/${persoonId}`, persoon).expect(
+      200,
+    );
     return response.body;
   }
 
@@ -519,6 +519,8 @@ export const factory = {
       type: 'vakantie',
       bestemming: 'Beach',
       land: 'Spain',
+      seizoen: 'zomer',
+      vakantiesoort: 'vakantie',
       activiteiten: [this.activiteit()],
       ...overrides,
     };
@@ -625,4 +627,18 @@ export function byId(
     return 1;
   }
   return a.id - b.id;
+}
+
+export function expectVakantie(actual: Project): asserts actual is Vakantie {
+  if (actual.type !== 'vakantie') {
+    throw new Error(
+      `Expected project to be a vakantie, but got ${actual.type}`,
+    );
+  }
+}
+
+export function expectCursus(actual: Project): asserts actual is Cursus {
+  if (actual.type !== 'cursus') {
+    throw new Error(`Expected project to be a cursus, but got ${actual.type}`);
+  }
 }
