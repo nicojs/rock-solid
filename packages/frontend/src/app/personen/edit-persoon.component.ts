@@ -220,7 +220,6 @@ function controlsFor<TType extends PersoonType>(
         (loc) => loc.naam,
         async (text) => {
           const locaties = await locatieService.getAll({
-            soort: 'opstapplaats',
             naam: text,
           });
           return locaties.map((loc) => ({
