@@ -1,5 +1,5 @@
 import { Aanmelding, PatchableAanmelding, Project } from '@rock-solid/shared';
-import { LitElement, PropertyValues, html } from 'lit';
+import { LitElement, PropertyValues, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { FormControl, InputType } from '../forms';
 import { fullNameWithAge } from '../personen/persoon.pipe';
@@ -25,6 +25,8 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
       this.patchableAanmeldingen = this.aanmeldingen.map((aanmelding) => ({
         id: aanmelding.id,
         rekeninguittrekselNummer: aanmelding.rekeninguittrekselNummer,
+        rekeninguittrekselNummerVoorschot:
+          aanmelding.rekeninguittrekselNummerVoorschot,
         deelnemer: aanmelding.deelnemer,
       }));
     }
@@ -49,10 +51,23 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
       <form @submit=${(e: SubmitEvent) => this.submit(e)}>
         ${this.patchableAanmeldingen.map(
           (aanmelding, index) =>
-            html` <rock-reactive-form-control
-              .entity=${aanmelding}
-              .control=${rekeninguittrekselNummerControlFor(aanmelding, index)}
-            ></rock-reactive-form-control>`,
+            html`${this.project.voorschot
+                ? html`<rock-reactive-form-control
+                    .entity=${aanmelding}
+                    .control=${rekeninguittrekselNummerControlFor(
+                      aanmelding,
+                      index,
+                      'voorschot',
+                    )}
+                  ></rock-reactive-form-control>`
+                : nothing}
+              <rock-reactive-form-control
+                .entity=${aanmelding}
+                .control=${rekeninguittrekselNummerControlFor(
+                  aanmelding,
+                  index,
+                )}
+              ></rock-reactive-form-control>`,
         )}
         <button
           ${privilege('update:aanmeldingen')}
@@ -68,11 +83,16 @@ export class ProjectRekeninguittrekselsComponent extends LitElement {
 function rekeninguittrekselNummerControlFor(
   { deelnemer }: PatchableAanmelding,
   index: number,
+  voorschot: 'voorschot' | false = false,
 ): FormControl<PatchableAanmelding> {
   return {
-    id: `reknr_${index}`,
-    name: 'rekeninguittrekselNummer',
-    label: deelnemer ? fullNameWithAge(deelnemer) : 'Deelnemer is verwijderd',
+    id: `reknr_${index}_${voorschot ? 'voorschot' : 'normaal'}`,
+    name: voorschot
+      ? 'rekeninguittrekselNummerVoorschot'
+      : 'rekeninguittrekselNummer',
+    label: deelnemer
+      ? `${fullNameWithAge(deelnemer)}${voorschot ? ' (voorschot)' : ''}`
+      : 'Deelnemer is verwijderd',
     type: InputType.text,
     nullable: true,
   };

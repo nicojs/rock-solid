@@ -11,6 +11,7 @@ export interface Aanmelding {
   deelnemerId?: number;
   tijdstipVanAanmelden: Date;
   rekeninguittrekselNummer?: string;
+  rekeninguittrekselNummerVoorschot?: string;
   opmerking?: string;
   deelnemer?: Deelnemer;
   werksituatie?: Werksituatie;
@@ -64,6 +65,7 @@ export const aanmeldingLabels: Labels<Aanmelding> = {
   deelnemerId: 'deelnemerId',
   tijdstipVanAanmelden: 'Aanmeldingsdatum',
   rekeninguittrekselNummer: 'Rekeninguittreksel nummer',
+  rekeninguittrekselNummerVoorschot: 'Rekeninguittreksel nummer voorschot',
   opmerking: 'Opmerking',
   deelnemer: 'Deelnemer',
   plaats: 'Plaats',
