@@ -18,7 +18,7 @@ import { harness, factory, byId, expectVakantie } from './test-utils.test.js';
 import { expect } from 'chai';
 import assert from 'assert/strict';
 
-describe.only(ProjectenController.name, () => {
+describe(ProjectenController.name, () => {
   beforeEach(() => {
     harness.login();
   });
