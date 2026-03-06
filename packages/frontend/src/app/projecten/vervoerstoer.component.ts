@@ -92,7 +92,11 @@ export class VervoerstoerComponent extends RockElement {
     ) {
       this.#loadProjecten();
     }
-    if (changedProperties.has('aanmeldingen') && this.aanmeldingen) {
+    if (
+      (changedProperties.has('aanmeldingen') ||
+        changedProperties.has('projecten')) &&
+      this.aanmeldingen
+    ) {
       this.opstapplaatsen = this.aanmeldingen
         .flatMap(
           (aanmelding) => aanmelding.deelnemer?.mogelijkeOpstapplaatsen || [],
@@ -101,11 +105,25 @@ export class VervoerstoerComponent extends RockElement {
           (value, index, self) =>
             self.findIndex((val) => val.id === value.id) === index,
         )
+        .filter((plaats) => plaats.soort === 'opstapplaats')
         .filter(
           (opstapplaats) =>
             opstapplaats.geschiktVoorVakantie || !this.enkelVakanties,
         )
         .sort((a, b) => a.naam.localeCompare(b.naam));
+
+      const cursussen = this.projecten?.filter(
+        (project) => project.type === 'cursus',
+      );
+      if (cursussen) {
+        // Voor deelnemers die rechtstreeks gaan
+        this.opstapplaatsen.push(
+          ...cursussen
+            .flatMap((cursus) => cursus.activiteiten.map((act) => act.locatie))
+            .filter(notEmpty),
+        );
+      }
+
       this.deelnemers = this.aanmeldingen
         .map((aanmelding) => aanmelding.deelnemer)
         .filter(notEmpty)
@@ -205,7 +223,8 @@ export class VervoerstoerComponent extends RockElement {
             <a href="/locaties">Locaties beheren</a>
           </li>
           <li>
-            Voor elke deelnemer in de tabel kun je de opstapplaatsen beheren door op de icoontjes te klikken.
+            Voor elke deelnemer in de tabel kun je de opstapplaatsen beheren
+            door op de icoontjes te klikken.
             <ul>
               <li>
                 <rock-icon icon="dashCircle"></rock-icon> Geen mogelijke
@@ -292,8 +311,19 @@ export class VervoerstoerComponent extends RockElement {
                   </th>
                   ${this.opstapplaatsen?.map(
                     (opstapplaats) =>
-                      html`<th title="${opstapplaats.naam}" style="width: 40px" class="text-vertical">
-                        <span class="text-vertical-label">${opstapplaats.naam}</span>
+                      html`<th
+                        title="${opstapplaats.soort === 'cursushuis'
+                          ? `Rechtstreeks naar ${opstapplaats.naam}`
+                          : opstapplaats.naam}"
+                        style="width: 40px"
+                        class="text-vertical ${opstapplaats.soort ===
+                        'cursushuis'
+                          ? 'bg-dark-subtle'
+                          : ''}"
+                      >
+                        <span class="text-vertical-label"
+                          >${opstapplaats.naam}</span
+                        >
                       </th>`,
                   )}
                   <th>Gekozen opstapplaats</th>
@@ -339,7 +369,9 @@ export class VervoerstoerComponent extends RockElement {
                                   deelnemer.id,
                                 )?.[0]?.opstapplaats?.id === locatie.id}
                               >
-                                ${showLocatie(locatie)}
+                                ${locatie.soort === 'cursushuis'
+                                  ? `👉 Rechtstreeks naar `
+                                  : ''}${showLocatie(locatie)}
                               </option>`,
                           )}
                         </select>
@@ -380,7 +412,9 @@ export class VervoerstoerComponent extends RockElement {
       title="${isOpstapplaats
         ? `${naam} heeft ${showLocatie(opstapplaats)} als mogelijke opstapplaats`
         : `Click om ${showLocatie(opstapplaats)} als mogelijke opstapplaats toe te voegen voor ${naam}`}"
-      class="text-center"
+      class="text-center ${opstapplaats.soort === 'cursushuis'
+        ? 'bg-dark-subtle'
+        : ''}"
     >
       ${isOpstapplaats
         ? html`<button
