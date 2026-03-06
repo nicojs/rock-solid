@@ -1220,6 +1220,7 @@ describe(ProjectenController.name, () => {
         opmerking: 'Some remark',
         plaats,
         rekeninguittrekselNummer: '987654321',
+        rekeninguittrekselNummerVoorschot: '123456789',
         tijdstipVanAanmelden: new Date('2024-02-01T10:00:00Z'),
         vervoersbriefVerzondenOp: new Date('2024-01-15'),
         werksituatie: 'arbeidstrajectbegeleiding',
@@ -1329,6 +1330,21 @@ describe(ProjectenController.name, () => {
       expect(aanmeldingen).deep.eq(expectedAanmeldingen);
     });
 
+    it('should be able to update rekeninguittreksel nummers voor voorschot', async () => {
+      // Act
+      const aanmeldingen = await harness.patchAanmeldingen(project.id, [
+        { id: aanmelding1.id, rekeninguittrekselNummerVoorschot: '123' },
+        { id: aanmelding2.id, rekeninguittrekselNummerVoorschot: '456' },
+      ]);
+
+      // Assert
+      const expectedAanmeldingen: Aanmelding[] = [
+        { ...aanmelding1, rekeninguittrekselNummerVoorschot: '123' },
+        { ...aanmelding2, rekeninguittrekselNummerVoorschot: '456' },
+      ];
+      expect(aanmeldingen).deep.eq(expectedAanmeldingen);
+    });
+
     it('should be able to update opstapplaats', async () => {
       // Arrange
       const expectedOpstapplaats = await harness.createLocatie(
@@ -1369,6 +1385,28 @@ describe(ProjectenController.name, () => {
       const { rekeninguittrekselNummer, ...aanmelding2Data } = aanmelding2;
       const expectedAanmeldingen: Aanmelding[] = [
         { ...aanmelding1, rekeninguittrekselNummer: '123' },
+        aanmelding2Data,
+      ];
+      expect(aanmeldingen).deep.eq(expectedAanmeldingen);
+    });
+
+    it('should be able to clear the rekeninguittreksel nummers voor voorschot', async () => {
+      // Arrange
+      await harness.patchAanmeldingen(project.id, [
+        { id: aanmelding1.id, rekeninguittrekselNummerVoorschot: '123' },
+        { id: aanmelding2.id, rekeninguittrekselNummerVoorschot: '456' },
+      ]);
+
+      // Act
+      const aanmeldingen = await harness.patchAanmeldingen(project.id, [
+        { id: aanmelding1.id, rekeninguittrekselNummerVoorschot: undefined }, // Should be ignored
+        { id: aanmelding2.id, rekeninguittrekselNummerVoorschot: null }, // Should clear the rekeninguittreksel nummer
+      ]);
+
+      // Assert
+      const { rekeninguittrekselNummerVoorschot, ...aanmelding2Data } = aanmelding2;
+      const expectedAanmeldingen: Aanmelding[] = [
+        { ...aanmelding1, rekeninguittrekselNummerVoorschot: '123' },
         aanmelding2Data,
       ];
       expect(aanmeldingen).deep.eq(expectedAanmeldingen);

@@ -1,6 +1,7 @@
 import {
   aanmeldingLabels,
   aanmeldingsstatussen,
+  Decimal,
   geslachten,
   Privilege,
   Project,
@@ -48,7 +49,7 @@ export class ProjectAanmeldingEditComponent extends LitElement {
       <rock-reactive-form
         @rock-submit="${() => this.save()}"
         privilege="${'update:aanmeldingen' satisfies Privilege}"
-        .controls=${aanmeldingControls}
+        .controls=${getAanmeldingControls(this.project)}
         .entity=${this.aanmelding}
       ></rock-reactive-form>`;
   }
@@ -77,66 +78,76 @@ export class ProjectAanmeldingEditComponent extends LitElement {
   }
 }
 
-const aanmeldingControls: FormControl<UpdatableAanmelding>[] = [
-  {
-    name: 'status',
-    label: aanmeldingLabels.status,
-    type: InputType.select,
-    grouped: false,
-    items: aanmeldingsstatussen,
-  },
-  plaatsControl('plaats', { label: aanmeldingLabels.plaats }),
-  {
-    name: 'woonsituatie',
-    label: aanmeldingLabels.woonsituatie,
-    type: InputType.radio,
-    items: woonsituaties,
-  },
-  {
-    name: 'werksituatie',
-    label: aanmeldingLabels.werksituatie,
-    type: InputType.radio,
-    items: werksituaties,
-  },
-  {
-    name: 'geslacht',
-    label: aanmeldingLabels.geslacht,
-    type: InputType.radio,
-    items: geslachten,
-    allowDeselect: true,
-  },
-  {
-    name: 'tijdstipVanAanmelden',
-    label: aanmeldingLabels.tijdstipVanAanmelden,
-    type: InputType.date,
-  },
-  {
-    name: 'bevestigingsbriefVerzondenOp',
-    label: aanmeldingLabels.bevestigingsbriefVerzondenOp,
-    type: InputType.date,
-  },
-  {
-    name: 'vervoersbriefVerzondenOp',
-    label: aanmeldingLabels.vervoersbriefVerzondenOp,
-    type: InputType.date,
-  },
-  {
-    name: 'rekeninguittrekselNummer',
-    label: 'Rekeninguittreksel nummer',
-    type: InputType.text,
-  },
-  {
-    name: 'opmerking',
-    label: aanmeldingLabels.opmerking,
-    type: InputType.text,
-  },
-  {
-    name: 'overrideDeelnemerFields',
-    type: InputType.checkbox,
-    label: `Update ook de '${
-      'woonsituatie' satisfies keyof UpdatableAanmelding
-    }', '${'werksituatie' satisfies keyof UpdatableAanmelding}' en '${
-      'geslacht' satisfies keyof UpdatableAanmelding
-    }' bij de deelnemer`,
-  },
-];
+function getAanmeldingControls(project: Project) {
+  const aanmeldingControls: FormControl<UpdatableAanmelding>[] = [
+    {
+      name: 'status',
+      label: aanmeldingLabels.status,
+      type: InputType.select,
+      grouped: false,
+      items: aanmeldingsstatussen,
+    },
+    plaatsControl('plaats', { label: aanmeldingLabels.plaats }),
+    {
+      name: 'woonsituatie',
+      label: aanmeldingLabels.woonsituatie,
+      type: InputType.radio,
+      items: woonsituaties,
+    },
+    {
+      name: 'werksituatie',
+      label: aanmeldingLabels.werksituatie,
+      type: InputType.radio,
+      items: werksituaties,
+    },
+    {
+      name: 'geslacht',
+      label: aanmeldingLabels.geslacht,
+      type: InputType.radio,
+      items: geslachten,
+      allowDeselect: true,
+    },
+    {
+      name: 'tijdstipVanAanmelden',
+      label: aanmeldingLabels.tijdstipVanAanmelden,
+      type: InputType.date,
+    },
+    {
+      name: 'bevestigingsbriefVerzondenOp',
+      label: aanmeldingLabels.bevestigingsbriefVerzondenOp,
+      type: InputType.date,
+    },
+    {
+      name: 'vervoersbriefVerzondenOp',
+      label: aanmeldingLabels.vervoersbriefVerzondenOp,
+      type: InputType.date,
+    },
+    {
+      name: 'rekeninguittrekselNummerVoorschot',
+      label: aanmeldingLabels.rekeninguittrekselNummerVoorschot,
+      type: InputType.text,
+      show: () => project.voorschot?.greaterThan(new Decimal(0)) ?? false,
+    },
+    {
+      name: 'rekeninguittrekselNummer',
+      label: aanmeldingLabels.rekeninguittrekselNummer,
+      type: InputType.text,
+      show: () => project.saldo?.greaterThan(new Decimal(0)) ?? false,
+    },
+    {
+      name: 'opmerking',
+      label: aanmeldingLabels.opmerking,
+      type: InputType.text,
+    },
+    {
+      name: 'overrideDeelnemerFields',
+      type: InputType.checkbox,
+      label: `Update ook de '${
+        'woonsituatie' satisfies keyof UpdatableAanmelding
+      }', '${'werksituatie' satisfies keyof UpdatableAanmelding}' en '${
+        'geslacht' satisfies keyof UpdatableAanmelding
+      }' bij de deelnemer`,
+    },
+  ];
+  return aanmeldingControls;
+}

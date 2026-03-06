@@ -445,7 +445,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                     <td>${showDatum(aanmelding.vervoersbriefVerzondenOp)}</td>
                     <td>${this.renderGeboortedatumWithAge(aanmelding)}</td>
                     <td>
-                      ${renderBetaald(aanmelding.rekeninguittrekselNummer)}
+                      ${renderBetaald(aanmelding)}
                     </td>
                     <td>${show(aanmelding.opmerking, '')}</td>
                     <td class="text-center">
@@ -612,7 +612,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
                       title="Rekeninguittreksel: ${aanmelding.rekeninguittrekselNummer ??
                       'geen'}"
                     >
-                      ${renderBetaald(aanmelding.rekeninguittrekselNummer)}
+                      ${renderBetaald(aanmelding)}
                     </td>
                     <td>${showDatum(aanmelding.tijdstipVanAanmelden)}</td>
                     <td>
@@ -853,10 +853,24 @@ function renderGeslacht(aanmelding: Aanmelding) {
   ></rock-icon>`;
 }
 
-function renderBetaald(rekeninguittrekselNummer: string | undefined) {
+function renderBetaald({
+  rekeninguittrekselNummer,
+  rekeninguittrekselNummerVoorschot,
+}: {
+  rekeninguittrekselNummer?: string;
+  rekeninguittrekselNummerVoorschot?: string;
+}) {
+  if (rekeninguittrekselNummerVoorschot && rekeninguittrekselNummer) {
+    return html`<rock-icon
+      title="Voorschot betaald (${rekeninguittrekselNummerVoorschot}), saldo betaald (${rekeninguittrekselNummer})"
+      icon="checkAll"
+    ></rock-icon>`;
+  }
   return rekeninguittrekselNummer
-    ? html`<rock-icon icon="check"></rock-icon>`
-    : '';
+    ? html`<rock-icon title="Saldo betaald (${rekeninguittrekselNummer})" icon="check"></rock-icon>`
+    : rekeninguittrekselNummerVoorschot
+    ? html`<rock-icon title="Voorschot betaald (${rekeninguittrekselNummerVoorschot})" icon="check"></rock-icon>`
+    : nothing;
 }
 
 function renderVoedingswens({
