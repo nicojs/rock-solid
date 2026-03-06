@@ -29,13 +29,30 @@ export class VervoerstoerComponent extends RockElement {
 
     css`
       .text-vertical {
+        padding: 0.25rem;
+      }
+      .text-vertical-label {
+        display: block;
         writing-mode: vertical-rl;
         transform: rotate(180deg);
-        text-align: center;
-        vertical-align: middle;
+        max-height: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       .z-index-900 {
         z-index: 900;
+      }
+      .sticky-first-column {
+        position: sticky;
+        left: 0;
+        background-color: var(--bs-body-bg);
+      }
+      .sticky-first-column-header {
+        z-index: 901;
+      }
+      .table-hover tbody tr:hover > .sticky-first-column {
+        background-color: var(--bs-table-hover-bg);
       }
       table {
         table-layout: fixed;
@@ -263,15 +280,20 @@ export class VervoerstoerComponent extends RockElement {
                 </p>`
               : nothing}
 
-          <div class="col-12 table-responsive">
+          <div class="col-12">
             <table class="table table-hover table-sm">
               <thead class="sticky-top z-index-900">
                 <tr>
-                  <th style="width: 200px">Deelnemer</th>
+                  <th
+                    style="width: 200px"
+                    class="sticky-first-column sticky-first-column-header"
+                  >
+                    Deelnemer
+                  </th>
                   ${this.opstapplaatsen?.map(
                     (opstapplaats) =>
-                      html`<th style="width: 40px" class="text-vertical">
-                        ${opstapplaats.naam}
+                      html`<th title="${opstapplaats.naam}" style="width: 40px" class="text-vertical">
+                        <span class="text-vertical-label">${opstapplaats.naam}</span>
                       </th>`,
                   )}
                   <th>Gekozen opstapplaats</th>
@@ -282,7 +304,9 @@ export class VervoerstoerComponent extends RockElement {
                   if (!deelnemer) return nothing;
                   return html`
                     <tr>
-                      <th class="fw-normal">${deelnemerLink(deelnemer)}</th>
+                      <th class="fw-normal sticky-first-column">
+                        ${deelnemerLink(deelnemer)}
+                      </th>
                       ${this.opstapplaatsen.map((opstapplaats) =>
                         this.renderOpstapplaatsCell(deelnemer, opstapplaats),
                       )}
