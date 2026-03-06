@@ -103,7 +103,6 @@ export class DisplayPersoonComponent extends RockElement {
               ? showEmail(this.persoon.emailadres2, { empty: '' })
               : nothing}
           </dd>
-          ${this.renderDefinition('geboortedatum', showDatumWithAge)}
           <dt>${persoonLabels.geslacht}</dt>
           <dd>
             ${show(this.persoon.geslacht)}${this.persoon.geslachtOpmerking
@@ -115,6 +114,7 @@ export class DisplayPersoonComponent extends RockElement {
             : this.renderOverigPersoonProperties(this.persoon)}
         </dl>
         <dl class="col-sm-6">
+          ${this.renderDefinition('geboortedatum', showDatumWithAge)}
           ${this.renderDefinition('rijksregisternummer')}
           ${this.renderDefinition('telefoonnummer', showPhoneNumber)}
           ${this.renderDefinition('gsmNummer', showPhoneNumber)}
@@ -179,8 +179,14 @@ export class DisplayPersoonComponent extends RockElement {
       <dt>Woonsituatie</dt>
       <dd>${show(deelnemer.woonsituatie)}</dd>
       ${deelnemer.woonsituatieOpmerking
-        ? html`<dt>Opmerking</dt>
+        ? html`<dt>Woonsituatie opmerking</dt>
             <dd>${show(deelnemer.woonsituatieOpmerking)}</dd>`
+        : nothing}
+      <dt>Werksituatie</dt>
+      <dd>${show(deelnemer.werksituatie)}</dd>
+      ${deelnemer.werksituatieOpmerking
+        ? html`<dt>Werksituatie opmerking</dt>
+            <dd>${show(deelnemer.werksituatieOpmerking)}</dd>`
         : nothing}
       <dt>Contactpersoon</dt>
       <dd>${showContactpersoon(deelnemer.contactpersoon)}</dd>
