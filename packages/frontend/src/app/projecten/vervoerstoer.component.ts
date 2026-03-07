@@ -101,10 +101,6 @@ export class VervoerstoerComponent extends RockElement {
         .flatMap(
           (aanmelding) => aanmelding.deelnemer?.mogelijkeOpstapplaatsen || [],
         )
-        .filter(
-          (value, index, self) =>
-            self.findIndex((val) => val.id === value.id) === index,
-        )
         .filter((plaats) => plaats.soort === 'opstapplaats')
         .filter(
           (opstapplaats) =>
@@ -123,6 +119,10 @@ export class VervoerstoerComponent extends RockElement {
             .filter(notEmpty),
         );
       }
+      this.opstapplaatsen = this.opstapplaatsen.filter(
+        (value, index, self) =>
+          self.findIndex((val) => val.id === value.id) === index,
+      );
 
       this.deelnemers = this.aanmeldingen
         .map((aanmelding) => aanmelding.deelnemer)
