@@ -159,8 +159,7 @@ export class ProjectenListComponent extends LitElement {
           <th>Projectnummer</th>
           <th>Naam</th>
           ${isCursus
-            ? html`<th>Naam</th>
-                ${showDoelgroepen
+            ? html`${showDoelgroepen
                   ? html`<th>${cursusLabels.doelgroep}</th>`
                   : ''}`
             : nothing}
