@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.1](https://github.com/nicojs/rock-solid/compare/v2.5.0...v2.5.1) (2026-03-07)
+
+**Note:** Version bump only for package @rock-solid/backend
+
 # [2.5.0](https://github.com/nicojs/rock-solid/compare/v2.4.1...v2.5.0) (2026-03-07)
 
 ### Features

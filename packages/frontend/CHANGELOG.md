@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.1](https://github.com/nicojs/rock-solid/compare/v2.5.0...v2.5.1) (2026-03-07)
+
+### Bug Fixes
+
+- **vervoerstoer:** ontdubbel cursuslocatie ([#337](https://github.com/nicojs/rock-solid/issues/337)) ([00466a8](https://github.com/nicojs/rock-solid/commit/00466a8c55e1b6522e0fd698813fc8f0a937353a))
+
 # [2.5.0](https://github.com/nicojs/rock-solid/compare/v2.4.1...v2.5.0) (2026-03-07)
 
 ### Bug Fixes
