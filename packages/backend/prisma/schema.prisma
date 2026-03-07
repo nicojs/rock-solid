@@ -182,7 +182,7 @@ model Locatie {
   naam        String  @unique
   adresId     Int?
   adres       Adres?  @relation(fields: [adresId], references: [id])
-  gpsZoekterm String?
+  gpsBeschrijving String?
   opmerking   String?
   soort       Int     @default(0)
 

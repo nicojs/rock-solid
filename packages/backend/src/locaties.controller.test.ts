@@ -159,7 +159,7 @@ describe(LocatiesController.name, () => {
         naam: 'locatie 1',
         adres: factory.adres({ straatnaam: 'straat 1' }),
         opmerking: 'Modder op de oprit',
-        gpsZoekterm: 'Oprit',
+        gpsBeschrijving: 'Oprit',
         soort: 'opstapplaats',
       });
 
