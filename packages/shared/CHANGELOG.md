@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.5.0](https://github.com/nicojs/rock-solid/compare/v2.4.1...v2.5.0) (2026-03-07)
+
+### Features
+
+- **gps:** voeg gps zoekterm toe aan locatie ([#328](https://github.com/nicojs/rock-solid/issues/328)) ([15052b7](https://github.com/nicojs/rock-solid/commit/15052b71d5df66b0cc774a1ed8f4865b531b094b))
+- **locatie:** rename 'GPS-zoekterm' naar 'GPS-beschrijving' ([#336](https://github.com/nicojs/rock-solid/issues/336)) ([f296c51](https://github.com/nicojs/rock-solid/commit/f296c515365f83513305f01eabe46d9791a8087f))
+- **vakantiesoort:** voeg vakantiesoort ([#329](https://github.com/nicojs/rock-solid/issues/329)) ([7f32365](https://github.com/nicojs/rock-solid/commit/7f3236527e21f82a98b4a73c09675b1f9c1c42ef))
+- **voorschot:** voorschot betalen ([#330](https://github.com/nicojs/rock-solid/issues/330)) ([5a11d1f](https://github.com/nicojs/rock-solid/commit/5a11d1f85f63e279523912843853b1c1fdb3bb19))
+
 ## [2.4.1](https://github.com/nicojs/rock-solid/compare/v2.4.0...v2.4.1) (2026-03-03)
 
 **Note:** Version bump only for package @rock-solid/shared
