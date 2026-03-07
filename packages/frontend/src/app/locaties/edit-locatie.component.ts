@@ -84,8 +84,8 @@ const locatieControls: FormControl<Locatie>[] = [
     requiredLabel: 'Met adres',
   }),
   {
-    name: 'gpsZoekterm',
-    label: locatieLabels.gpsZoekterm,
+    name: 'gpsBeschrijving',
+    label: locatieLabels.gpsBeschrijving,
     type: InputType.text,
   }
 ];
