@@ -155,6 +155,7 @@ class IntegrationTestingHarness {
     await this.db.$queryRaw`DELETE FROM OverigPersoonSelectie`;
     await this.db.$queryRaw`DELETE FROM Persoon`;
     await this.db.$queryRaw`DELETE FROM Project`;
+    await this.db.$queryRaw`DELETE FROM Vervoerstoer`;
     await this.db.$queryRaw`DELETE FROM Locatie`;
     await this.db.$queryRaw`DELETE FROM Adres`;
     await this.db.$queryRaw`DELETE FROM Plaats`;

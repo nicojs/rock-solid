@@ -22,6 +22,8 @@ import { BackupController } from './backup.controller.js';
 import { BackupService } from './services/backup.service.js';
 import { LocatiesController } from './locaties.controller.js';
 import { LocatieMapper } from './services/locatie.mapper.js';
+import { VervoerstoerenController } from './vervoerstoeren.controller.js';
+import { VervoerstoerMapper } from './services/vervoerstoer.mapper.js';
 
 const rootPath = fileURLToPath(
   new URL('../../../node_modules/@rock-solid/frontend/dist', import.meta.url),
@@ -43,6 +45,7 @@ const rootPath = fileURLToPath(
     AuthController,
     ReportsController,
     BackupController,
+    VervoerstoerenController,
   ],
   providers: [
     PersoonMapper,
@@ -51,6 +54,7 @@ const rootPath = fileURLToPath(
     PlaatsMapper,
     OrganisatieMapper,
     LocatieMapper,
+    VervoerstoerMapper,
     ReportMapper,
     BackupService,
     { provide: 'DatabaseUrl', useValue: process.env['DATABASE_URL'] },

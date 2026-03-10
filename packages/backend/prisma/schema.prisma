@@ -63,6 +63,7 @@ model Persoon {
   begeleidtProjecten Project[]
   locatie            Locatie?                @relation("persoonLocatie", fields: [locatieId], references: [id])
   locatieId          Int?
+  vervoerstoerRoutes VervoerstoerRoute[]
 }
 
 model OverigPersoonSelectie {
@@ -105,16 +106,18 @@ model Plaats {
 }
 
 model Project {
-  id            Int          @id @default(autoincrement())
-  projectnummer String       @unique
-  naam          String
-  titel         String
-  type          Int
-  activiteiten  Activiteit[]
-  aanmeldingen  Aanmelding[]
-  begeleiders   Persoon[]
-  jaar          Int
-  saldo         Decimal?
+  id             Int           @id @default(autoincrement())
+  projectnummer  String        @unique
+  naam           String
+  titel          String
+  type           Int
+  activiteiten   Activiteit[]
+  aanmeldingen   Aanmelding[]
+  begeleiders    Persoon[]
+  jaar           Int
+  saldo          Decimal?
+  vervoerstoerId Int?
+  vervoerstoer   Vervoerstoer? @relation(fields: [vervoerstoerId], references: [id], onDelete: SetNull)
 
   // Cursus
   organisatieonderdeel Int?
@@ -130,21 +133,21 @@ model Project {
 }
 
 model Aanmelding {
-  id                               Int        @id @default(autoincrement())
-  projectId                        Int
-  project                          Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  deelnemerId                      Int?
-  deelnemer                        Persoon?   @relation(fields: [deelnemerId], references: [id])
-  deelnames                        Deelname[]
-  rekeninguittrekselNummer         String?
+  id                                Int        @id @default(autoincrement())
+  projectId                         Int
+  project                           Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deelnemerId                       Int?
+  deelnemer                         Persoon?   @relation(fields: [deelnemerId], references: [id])
+  deelnames                         Deelname[]
+  rekeninguittrekselNummer          String?
   rekeninguittrekselNummerVoorschot String?
-  tijdstipVanAanmelden             DateTime   @default(now())
-  status                           Int        @default(0)
-  opmerking                        String?
-  bevestigingsbriefVerzondenOp     DateTime?
-  vervoersbriefVerzondenOp         DateTime?
-  opstapplaatsId                   Int?
-  opstapplaats                     Locatie?   @relation(fields: [opstapplaatsId], references: [id])
+  tijdstipVanAanmelden              DateTime   @default(now())
+  status                            Int        @default(0)
+  opmerking                         String?
+  bevestigingsbriefVerzondenOp      DateTime?
+  vervoersbriefVerzondenOp          DateTime?
+  opstapplaatsId                    Int?
+  opstapplaats                      Locatie?   @relation(fields: [opstapplaatsId], references: [id])
 
   // Fields copied from deelnemer when created
   plaats                     Plaats?   @relation(fields: [plaatsId], references: [id])
@@ -177,22 +180,49 @@ model Activiteit {
   vervoer  Int?
 }
 
+model Vervoerstoer {
+  id                 Int                 @id @default(autoincrement())
+  projects           Project[]
+  vervoerstoerRoutes VervoerstoerRoute[]
+}
+
+model VervoerstoerRoute {
+  id             Int                @id @default(autoincrement())
+  vervoerstoer   Vervoerstoer       @relation(fields: [vervoerstoerId], references: [id], onDelete: Cascade)
+  vervoerstoerId Int
+  chauffeurId    Int?
+  chauffeur      Persoon?           @relation(fields: [chauffeurId], references: [id], onDelete: SetNull)
+  stops          VervoerstoerStop[]
+}
+
+model VervoerstoerStop {
+  id         Int               @id @default(autoincrement())
+  route      VervoerstoerRoute @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  routeId    Int
+  locatieId  Int
+  locatie    Locatie           @relation(fields: [locatieId], references: [id])
+  volgnummer Int
+
+  @@unique([routeId, volgnummer])
+}
+
 model Locatie {
-  id          Int     @id @default(autoincrement())
-  naam        String  @unique
-  adresId     Int?
-  adres       Adres?  @relation(fields: [adresId], references: [id])
+  id              Int     @id @default(autoincrement())
+  naam            String  @unique
+  adresId         Int?
+  adres           Adres?  @relation(fields: [adresId], references: [id])
   gpsBeschrijving String?
-  opmerking   String?
-  soort       Int     @default(0)
+  opmerking       String?
+  soort           Int     @default(0)
 
   // Opstapplaats
   geschiktVoorVakantie Boolean?
 
   activiteiten                 Activiteit[]
-  opstapplaatsVoor             Persoon[]    @relation("mogelijkeOpstapplaatsen")
-  persoonLocaties              Persoon[]    @relation("persoonLocatie")
+  opstapplaatsVoor             Persoon[]          @relation("mogelijkeOpstapplaatsen")
+  persoonLocaties              Persoon[]          @relation("persoonLocatie")
   opstapplaatsVoorAanmeldingen Aanmelding[]
+  vervoerstoerStops            VervoerstoerStop[]
 }
 
 model Deelname {

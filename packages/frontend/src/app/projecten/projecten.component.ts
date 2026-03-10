@@ -279,10 +279,30 @@ export class ProjectenComponent extends RockElement {
           return this.navigateToProjectenPage();
         }
 
+        const routePrefix = `/${routesByProjectType[this.type]}/vervoerstoer/${projectIds.join('+')}`;
+        const step = this.path[2];
+        if (!step) {
+          router.navigate(`${routePrefix}/opstapplaatsen-kiezen`, {
+            keepQuery: true,
+          });
+          return html``;
+        }
+        if (
+          step !== 'opstapplaatsen-kiezen' &&
+          step !== 'routes-selecteren'
+        ) {
+          router.navigate(`${routePrefix}/opstapplaatsen-kiezen`, {
+            keepQuery: true,
+          });
+          return html``;
+        }
+
         return html`<rock-vervoerstoer
           .type=${this.type}
           .enkelVakanties=${this.type === 'vakantie'}
           .projectIds=${projectIds}
+          .routePrefix=${routePrefix}
+          .step=${step}
         ></rock-vervoerstoer>`;
       }
       default:
