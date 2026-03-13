@@ -14,12 +14,20 @@ import {
   includePersoonAggregate,
   toPersoon,
 } from './persoon.mapper.js';
+import {
+  DBAanmeldingAggregate,
+  includeAanmeldingFields,
+  toAanmelding,
+} from './aanmelding.mapper.js';
 
 type DBVervoerstoerAggregate = db.Vervoerstoer & {
   projects: db.Project[];
   vervoerstoerRoutes: (db.VervoerstoerRoute & {
-    chauffeur: DBPersonAggregate;
-    stops: (db.VervoerstoerStop & { locatie: DBLocatieAggregate })[];
+    chauffeur: DBPersonAggregate | null;
+    stops: (db.VervoerstoerStop & {
+      locatie: DBLocatieAggregate;
+      aanmeldersToPickup: DBAanmeldingAggregate[];
+    })[];
   })[];
 };
 
@@ -44,6 +52,9 @@ const includeVervoerstoerAggregate = {
         include: {
           locatie: {
             include: includeAdres,
+          },
+          aanmeldersToPickup: {
+            include: includeAanmeldingFields,
           },
         },
       },
@@ -131,6 +142,10 @@ function toRouteCreateInput(vervoerstoer: Vervoerstoer) {
             id: stop.locatie.id,
           },
         },
+        aanmeldersToPickup: {
+          connect: stop.aanmeldersOpTePikken.map((a) => ({ id: a.id })),
+        },
+        geplandeAankomst: stop.geplandeAankomst ?? null,
       })),
     },
   }));
@@ -141,15 +156,22 @@ function toVervoerstoer(dbVervoerstoer: DBVervoerstoerAggregate): Vervoerstoer {
     id: dbVervoerstoer.id,
     naam: toNaam(dbVervoerstoer),
     projectIds: dbVervoerstoer.projects.map((project) => project.id),
-    routes: dbVervoerstoer.vervoerstoerRoutes.map((route) => ({
-      id: route.id,
-      chauffeur: toOverigPersoon(route.chauffeur),
-      stops: route.stops.map((stop) => ({
-        id: stop.id,
-        volgnummer: stop.volgnummer,
-        locatie: toLocatie(stop.locatie),
-      })),
-    })),
+    routes: dbVervoerstoer.vervoerstoerRoutes.flatMap((route) => {
+      if (!route.chauffeur) return [];
+      return [
+        {
+          id: route.id,
+          chauffeur: toOverigPersoon(route.chauffeur),
+          stops: route.stops.map((stop) => ({
+            id: stop.id,
+            volgnummer: stop.volgnummer,
+            locatie: toLocatie(stop.locatie),
+            aanmeldersOpTePikken: stop.aanmeldersToPickup.map(toAanmelding),
+            geplandeAankomst: stop.geplandeAankomst ?? undefined,
+          })),
+        },
+      ];
+    }),
   };
 }
 

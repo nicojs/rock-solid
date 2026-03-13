@@ -32,14 +32,14 @@ import {
   toLocatie,
 } from './locatie.mapper.js';
 
-type DBAanmeldingAggregate = db.Aanmelding & {
+export type DBAanmeldingAggregate = db.Aanmelding & {
   deelnemer: DBPersonAggregate | null;
   plaats: db.Plaats | null;
   deelnames: db.Deelname[];
   opstapplaats: DBLocatieAggregate | null;
 };
 
-const includeAanmeldingFields = Object.freeze({
+export const includeAanmeldingFields = Object.freeze({
   deelnemer: Object.freeze({
     include: includePersoonAggregate,
   }),
@@ -358,7 +358,7 @@ function toDBDeelname(
   };
 }
 
-function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
+export function toAanmelding(raw: DBAanmeldingAggregate): Aanmelding {
   const {
     plaatsId,
     plaats,

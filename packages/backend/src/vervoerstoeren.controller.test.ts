@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { VervoerstoerenController } from './vervoerstoeren.controller.js';
 import { factory, harness } from './test-utils.test.js';
 
-describe.only(VervoerstoerenController.name, () => {
+describe(VervoerstoerenController.name, () => {
   beforeEach(() => {
     harness.login();
   });
@@ -38,7 +38,7 @@ describe.only(VervoerstoerenController.name, () => {
           {
             id: vervoerstoer.routes[0]!.id,
             chauffeur,
-            stops: vervoerstoer.routes[0]!.stops,
+            stops: vervoerstoer.routes[0]!.stops ?? [],
           },
         ],
       };
@@ -99,6 +99,7 @@ describe.only(VervoerstoerenController.name, () => {
                 id: created.routes[0]!.stops[0]!.id,
                 volgnummer: 10,
                 locatie: nieuweLocatie,
+                aanmeldersOpTePikken: [],
               },
             ],
           },
@@ -119,6 +120,7 @@ describe.only(VervoerstoerenController.name, () => {
           id: updated.routes[0]!.stops[0]!.id,
           volgnummer: 10,
           locatie: nieuweLocatie,
+          aanmeldersOpTePikken: [],
         },
       ]);
 
@@ -150,11 +152,13 @@ async function arrangeVervoerstoer(): Promise<Vervoerstoer> {
             id: 0,
             volgnummer: 1,
             locatie: stopA,
+            aanmeldersOpTePikken: [],
           },
           {
             id: 0,
             volgnummer: 2,
             locatie: stopB,
+            aanmeldersOpTePikken: [],
           },
         ],
       },

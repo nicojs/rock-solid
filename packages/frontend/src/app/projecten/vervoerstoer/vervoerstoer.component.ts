@@ -1,6 +1,6 @@
 import { customElement, property, state } from 'lit/decorators.js';
 import { RockElement } from '../../rock-element';
-import { css, html, PropertyValues } from 'lit';
+import { html, PropertyValues } from 'lit';
 import {
   Aanmelding,
   Deelnemer,
@@ -9,6 +9,9 @@ import {
   OverigPersoon,
   Project,
   ProjectType,
+  UpsertableVervoerstoer,
+  Vervoerstoer,
+  VervoerstoerRoute,
 } from '@rock-solid/shared';
 import { projectService } from '../project.service';
 import { printProject } from '../project.pipes';
@@ -17,9 +20,18 @@ import { persoonService } from '../../personen/persoon.service';
 import { router } from '../../router';
 import './opstapplaatsen-kiezen.component';
 import './routes-selecteren.component';
+import './tijdsplanning.component';
+import { vervoerstoerService } from './vervoerstoer.service';
+import type { TijdsplanningEntry } from './tijdsplanning.component';
 
 const ACTIVE_STATUSSEN = Object.freeze(['Bevestigd', 'Aangemeld']);
-type VervoerstoerStep = 'opstapplaatsen-kiezen' | 'routes-selecteren';
+type VervoerstoerStep =
+  | 'opstapplaatsen-kiezen'
+  | 'routes-selecteren'
+  | 'tijdsplanning';
+
+type LocalStop = { locatie: Locatie; aanmeldingen: Aanmelding[] };
+type LocalRoute = { chauffeur: OverigPersoon; stops: LocalStop[] };
 
 @customElement('rock-vervoerstoer')
 export class VervoerstoerComponent extends RockElement {
@@ -55,6 +67,9 @@ export class VervoerstoerComponent extends RockElement {
   @state()
   begeleiders: OverigPersoon[] = [];
 
+  @state()
+  private vervoerstoer?: Vervoerstoer;
+
   aanmeldingenPerDeelnemerId: Map<number, Aanmelding[]> = new Map();
 
   get step2Enabled(): boolean {
@@ -63,6 +78,10 @@ export class VervoerstoerComponent extends RockElement {
         Boolean(aanmelding.opstapplaats),
       ) ?? false
     );
+  }
+
+  get step3Enabled(): boolean {
+    return this.vervoerstoer !== undefined;
   }
 
   protected override update(
@@ -130,6 +149,7 @@ export class VervoerstoerComponent extends RockElement {
   async #loadProjecten() {
     this.projecten = undefined;
     this.aanmeldingen = undefined;
+    this.vervoerstoer = undefined;
     [this.projecten, this.aanmeldingen] = await Promise.all([
       projectService.getAll({
         ids: this.projectIds,
@@ -149,6 +169,16 @@ export class VervoerstoerComponent extends RockElement {
         (value, index, self) =>
           value && self.findIndex((val) => val.id === value.id) === index,
       );
+
+    // Load existing vervoerstoer
+    try {
+      const alle = await vervoerstoerService.getAll();
+      this.vervoerstoer = alle.find((v) =>
+        v.projectIds.some((id) => this.projectIds.includes(id)),
+      );
+    } catch {
+      // Ignore - vervoerstoer is optional
+    }
   }
 
   @state()
@@ -189,13 +219,69 @@ export class VervoerstoerComponent extends RockElement {
     this.navigateToStep('routes-selecteren');
   }
 
+  async handleRoutesSaved(routes: LocalRoute[]) {
+    const upsertable: UpsertableVervoerstoer = {
+      id: this.vervoerstoer?.id,
+      projectIds: this.projectIds,
+      routes: routes.map((route, routeIdx) => ({
+        id: this.vervoerstoer?.routes[routeIdx]?.id ?? 0,
+        chauffeur: route.chauffeur,
+        stops: route.stops.map((stop, stopIdx) => ({
+          id: 0,
+          locatie: stop.locatie,
+          volgnummer: stopIdx + 1,
+          aanmeldersOpTePikken: stop.aanmeldingen,
+        })),
+      })),
+    };
+
+    this.isLoading = true;
+    try {
+      if (this.vervoerstoer?.id) {
+        this.vervoerstoer = await vervoerstoerService.update({
+          ...upsertable,
+          id: this.vervoerstoer.id,
+        });
+      } else {
+        this.vervoerstoer = await vervoerstoerService.create(upsertable);
+      }
+      this.navigateToStep('tijdsplanning');
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async handleTijdsplanningSaved(entries: TijdsplanningEntry[]) {
+    if (!this.vervoerstoer) return;
+    this.isLoading = true;
+    try {
+      const updated: UpsertableVervoerstoer & { id: number } = {
+        id: this.vervoerstoer.id,
+        projectIds: this.vervoerstoer.projectIds,
+        routes: this.vervoerstoer.routes.map((route) => ({
+          id: route.id,
+          chauffeur: route.chauffeur,
+          stops: route.stops.map((stop) => ({
+            id: stop.id,
+            locatie: stop.locatie,
+            volgnummer: stop.volgnummer,
+            aanmeldersOpTePikken: stop.aanmeldersOpTePikken,
+            geplandeAankomst:
+              entries.find((e) => e.stopId === stop.id)?.geplandeAankomst ??
+              stop.geplandeAankomst,
+          })),
+        })),
+      };
+      this.vervoerstoer = await vervoerstoerService.update(updated);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
   private navigateToStep(step: VervoerstoerStep) {
-    if (step === 'routes-selecteren' && !this.step2Enabled) {
-      return;
-    }
-    if (!this.routePrefix) {
-      return;
-    }
+    if (step === 'routes-selecteren' && !this.step2Enabled) return;
+    if (step === 'tijdsplanning' && !this.step3Enabled) return;
+    if (!this.routePrefix) return;
     router.navigate(`${this.routePrefix}/${step}`, { keepQuery: true });
   }
 
@@ -203,10 +289,13 @@ export class VervoerstoerComponent extends RockElement {
     if (!this.projecten || !this.aanmeldingen) {
       return html`<rock-loading></rock-loading>`;
     }
-    const activeStep =
-      this.step === 'routes-selecteren' && !this.step2Enabled
-        ? 'opstapplaatsen-kiezen'
-        : this.step;
+    let activeStep = this.step;
+    if (activeStep === 'routes-selecteren' && !this.step2Enabled) {
+      activeStep = 'opstapplaatsen-kiezen';
+    }
+    if (activeStep === 'tijdsplanning' && !this.step3Enabled) {
+      activeStep = 'routes-selecteren';
+    }
     if (activeStep !== this.step) {
       this.navigateToStep(activeStep);
     }
@@ -235,8 +324,7 @@ export class VervoerstoerComponent extends RockElement {
         </li>
         <li class="nav-item">
           <button
-            class="nav-link ${this.step2Enabled ? '' : 'disabled'} ${this
-              .step === 'routes-selecteren'
+            class="nav-link ${this.step2Enabled ? '' : 'disabled'} ${activeStep === 'routes-selecteren'
               ? 'active'
               : ''}"
             ?disabled=${!this.step2Enabled}
@@ -246,10 +334,24 @@ export class VervoerstoerComponent extends RockElement {
             Routes maken
           </button>
         </li>
+        <li class="nav-item">
+          <button
+            class="nav-link ${this.step3Enabled ? '' : 'disabled'} ${activeStep === 'tijdsplanning'
+              ? 'active'
+              : ''}"
+            ?disabled=${!this.step3Enabled}
+            tabindex="-1"
+            @click=${() => this.navigateToStep('tijdsplanning')}
+          >
+            Tijdsplanning
+          </button>
+        </li>
       </ul>
-      ${activeStep === 'routes-selecteren'
-        ? this.renderRoutesSelecteren()
-        : this.renderOpstapplaatsenKiezen()}
+      ${activeStep === 'tijdsplanning' && this.vervoerstoer
+        ? this.renderTijdsplanning()
+        : activeStep === 'routes-selecteren'
+          ? this.renderRoutesSelecteren()
+          : this.renderOpstapplaatsenKiezen()}
     `;
   }
 
@@ -272,12 +374,24 @@ export class VervoerstoerComponent extends RockElement {
 
   private renderRoutesSelecteren() {
     return html`<rock-routes-selecteren
-      .begeleiders=${this.begeleiders}
       .opstapplaatsen=${this.opstapplaatsen}
-      .aanmeldingen=${this.aanmeldingen}
-      @begeleiders-changed=${(event: CustomEvent<OverigPersoon[]>) => {
-        this.begeleiders = event.detail;
-      }}
+      .aanmeldingen=${this.aanmeldingen ?? []}
+      .projecten=${this.projecten ?? []}
+      .vervoerstoer=${this.vervoerstoer}
+      @routes-saved=${(e: CustomEvent<LocalRoute[]>) =>
+        this.handleRoutesSaved(e.detail)}
     ></rock-routes-selecteren>`;
   }
+
+  private renderTijdsplanning() {
+    return html`<rock-tijdsplanning
+      .vervoerstoer=${this.vervoerstoer!}
+      .projecten=${this.projecten ?? []}
+      @tijdsplanning-saved=${(e: CustomEvent<TijdsplanningEntry[]>) =>
+        this.handleTijdsplanningSaved(e.detail)}
+    ></rock-tijdsplanning>`;
+  }
 }
+
+// Re-export for use in parent
+export type { VervoerstoerRoute };
