@@ -18,6 +18,7 @@ export interface VervoerstoerRoute {
   id: number;
   stops: VervoerstoerStop[];
   chauffeur: OverigPersoon;
+  vertrekTijd?: Date;
 }
 
 export interface VervoerstoerStop {

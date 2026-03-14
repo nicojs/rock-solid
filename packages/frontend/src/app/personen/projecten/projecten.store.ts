@@ -1,6 +1,6 @@
 import { UpsertableDeelname } from '@rock-solid/shared';
 import { from, Observable, tap } from 'rxjs';
-import { PagedStore } from '../shared/paged-store.store';
+import { PagedStore } from '../../shared/paged-store.store';
 import { ProjectService, projectService } from './project.service';
 
 export class ProjectenStore extends PagedStore<'projecten', ProjectService> {

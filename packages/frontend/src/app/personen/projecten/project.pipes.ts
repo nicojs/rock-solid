@@ -6,7 +6,7 @@ import {
   doelgroepen,
 } from '@rock-solid/shared';
 import { html, nothing } from 'lit';
-import { fullName } from '../personen/persoon.pipe';
+import { fullName } from '../persoon.pipe';
 
 export function printProject(project: UpsertableProject) {
   return `${project.projectnummer}: ${project.naam}`;

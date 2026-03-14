@@ -8,19 +8,19 @@ import {
 } from '@rock-solid/shared';
 import { css, html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { tagsControl } from '../../forms';
-import { formStyles } from '../../forms/reactive-form.component';
-import { showLocatie } from '../../locaties/locatie.pipe';
-import { persoonService } from '../../personen/persoon.service';
-import { fullName } from '../../personen/persoon.pipe';
-import { RockElement } from '../../rock-element';
-import { bootstrap } from '../../../styles';
+import { tagsControl } from '../../../forms';
+import { formStyles } from '../../../forms/reactive-form.component';
+import { showLocatie } from '../../../locaties/locatie.pipe';
+import { persoonService } from '../../persoon.service';
+import { fullName } from '../../persoon.pipe';
+import { RockElement } from '../../../rock-element';
+import { bootstrap } from '../../../../styles';
 import './vervoerstoer-kaart.component';
 import type {
   KaartRoute,
   RouteSamenvatting,
 } from './vervoerstoer-kaart.component';
-import { entities, pluralize } from '../../shared';
+import { entities, pluralize } from '../../../shared';
 
 type LocalStop = { locatie: Locatie; aanmeldingen: Aanmelding[] };
 type LocalRoute = { chauffeur: OverigPersoon; stops: LocalStop[] };

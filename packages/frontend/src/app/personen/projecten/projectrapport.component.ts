@@ -13,9 +13,9 @@ import {
 } from '@rock-solid/shared';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { bootstrap } from '../../styles';
-import { fullName } from '../personen/persoon.pipe';
-import { pluralize, unknown } from '../shared';
+import { bootstrap } from '../../../styles';
+import { fullName } from '../persoon.pipe';
+import { pluralize, unknown } from '../../shared';
 import { createRef, ref } from 'lit/directives/ref.js';
 
 @customElement('rock-projectrapport')

@@ -1,5 +1,5 @@
 import { parse, UpsertableVervoerstoer, Vervoerstoer } from '@rock-solid/shared';
-import { httpClient } from '../../shared/http-client';
+import { httpClient } from '../../../shared/http-client';
 
 class VervoerstoerService {
   async getAll(): Promise<Vervoerstoer[]> {
@@ -28,11 +28,11 @@ class VervoerstoerService {
   async getReistijd(
     origin: string,
     destination: string,
-    vertrekTijd?: number,
-  ): Promise<{ durationSeconds: number | null }> {
+    aankomstTijd?: Date,
+  ): Promise<{ minSeconds: number | null; maxSeconds: number | null }> {
     const params = new URLSearchParams({ origin, destination });
-    if (vertrekTijd !== undefined) {
-      params.set('vertrekTijd', String(vertrekTijd));
+    if (aankomstTijd !== undefined) {
+      params.set('aankomstTijd', aankomstTijd.toISOString());
     }
     const response = await httpClient.fetch(
       `/api/google-maps/reistijd?${params.toString()}`,

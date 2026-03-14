@@ -11,7 +11,7 @@ import {
 import { html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { join } from 'lit/directives/join.js';
-import { bootstrap } from '../../styles';
+import { bootstrap } from '../../../styles';
 import {
   downloadCsv,
   entities,
@@ -20,10 +20,10 @@ import {
   showMoney,
   showNumber,
   toDeelnemersCsv,
-} from '../shared';
+} from '../../shared';
 import { projectService } from './project.service';
-import { privilege } from '../auth/privilege.directive';
-import { ModalComponent } from '../shared/modal.component';
+import { privilege } from '../../auth/privilege.directive';
+import { ModalComponent } from '../../shared/modal.component';
 import { printProject, showDoelgroep } from './project.pipes';
 import { createRef, ref } from 'lit/directives/ref.js';
 

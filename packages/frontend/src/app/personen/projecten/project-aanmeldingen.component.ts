@@ -24,15 +24,15 @@ import {
   printProject,
   statusIcon,
 } from './project.pipes';
-import { bootstrap } from '../../styles';
+import { bootstrap } from '../../../styles';
 import { projectService } from './project.service';
-import { persoonService } from '../personen/persoon.service';
+import { persoonService } from '../persoon.service';
 import {
   determineFotoToestemmingKind,
   fullName,
   fullNameWithAge,
   iconForGeslacht,
-} from '../personen/persoon.pipe';
+} from '../persoon.pipe';
 import {
   TypeAheadHint,
   pluralize,
@@ -44,10 +44,10 @@ import {
   unknown,
   entities,
   showProvincie,
-} from '../shared';
-import { router } from '../router';
-import { privilege } from '../auth/privilege.directive';
-import { ModalComponent } from '../shared/modal.component';
+} from '../../shared';
+import { router } from '../../router';
+import { privilege } from '../../auth/privilege.directive';
+import { ModalComponent } from '../../shared/modal.component';
 
 @customElement('rock-project-aanmeldingen')
 export class ProjectAanmeldingenComponent extends LitElement {

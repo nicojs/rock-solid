@@ -148,6 +148,7 @@ function toRouteCreateInput(vervoerstoer: Vervoerstoer) {
         geplandeAankomst: stop.geplandeAankomst ?? null,
       })),
     },
+    vertrekTijd: route.vertrekTijd ?? null,
   }));
 }
 
@@ -162,6 +163,7 @@ function toVervoerstoer(dbVervoerstoer: DBVervoerstoerAggregate): Vervoerstoer {
         {
           id: route.id,
           chauffeur: toOverigPersoon(route.chauffeur),
+          vertrekTijd: route.vertrekTijd ?? undefined,
           stops: route.stops.map((stop) => ({
             id: stop.id,
             volgnummer: stop.volgnummer,

@@ -196,6 +196,7 @@ model VervoerstoerRoute {
   chauffeurId    Int?
   chauffeur      Persoon?           @relation(fields: [chauffeurId], references: [id], onDelete: SetNull)
   stops          VervoerstoerStop[]
+  vertrekTijd    DateTime?
 }
 
 model VervoerstoerStop {

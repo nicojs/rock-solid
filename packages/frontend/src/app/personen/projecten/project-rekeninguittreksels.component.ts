@@ -1,11 +1,11 @@
 import { Aanmelding, PatchableAanmelding, Project } from '@rock-solid/shared';
 import { LitElement, PropertyValues, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { FormControl, InputType } from '../forms';
-import { fullNameWithAge } from '../personen/persoon.pipe';
+import { FormControl, InputType } from '../../forms';
+import { fullNameWithAge } from '../persoon.pipe';
 import { printProject } from './project.pipes';
-import { bootstrap } from '../../styles';
-import { privilege } from '../auth/privilege.directive';
+import { bootstrap } from '../../../styles';
+import { privilege } from '../../auth/privilege.directive';
 
 @customElement('rock-project-rekeninguittreksels')
 export class ProjectRekeninguittrekselsComponent extends LitElement {

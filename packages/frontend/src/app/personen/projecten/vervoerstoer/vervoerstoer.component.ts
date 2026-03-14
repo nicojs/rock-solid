@@ -1,5 +1,5 @@
 import { customElement, property, state } from 'lit/decorators.js';
-import { RockElement } from '../../rock-element';
+import { RockElement } from '../../../rock-element';
 import { html, PropertyValues } from 'lit';
 import {
   Aanmelding,
@@ -15,14 +15,14 @@ import {
 } from '@rock-solid/shared';
 import { projectService } from '../project.service';
 import { printProject } from '../project.pipes';
-import { bootstrap } from '../../../styles';
-import { persoonService } from '../../personen/persoon.service';
-import { router } from '../../router';
+import { bootstrap } from '../../../../styles';
+import { persoonService } from '../../persoon.service';
+import { router } from '../../../router';
 import './opstapplaatsen-kiezen.component';
 import './routes-selecteren.component';
 import './tijdsplanning.component';
 import { vervoerstoerService } from './vervoerstoer.service';
-import type { TijdsplanningEntry } from './tijdsplanning.component';
+import type { TijdsplanningEntry, RouteVertrekEntry } from './tijdsplanning.component';
 
 const ACTIVE_STATUSSEN = Object.freeze(['Bevestigd', 'Aangemeld']);
 type VervoerstoerStep =
@@ -251,7 +251,7 @@ export class VervoerstoerComponent extends RockElement {
     }
   }
 
-  async handleTijdsplanningSaved(entries: TijdsplanningEntry[]) {
+  async handleTijdsplanningSaved(detail: { stops: TijdsplanningEntry[]; routes: RouteVertrekEntry[] }) {
     if (!this.vervoerstoer) return;
     this.isLoading = true;
     try {
@@ -261,13 +261,16 @@ export class VervoerstoerComponent extends RockElement {
         routes: this.vervoerstoer.routes.map((route) => ({
           id: route.id,
           chauffeur: route.chauffeur,
+          vertrekTijd:
+            detail.routes.find((r) => r.routeId === route.id)?.vertrekTijd ??
+            route.vertrekTijd,
           stops: route.stops.map((stop) => ({
             id: stop.id,
             locatie: stop.locatie,
             volgnummer: stop.volgnummer,
             aanmeldersOpTePikken: stop.aanmeldersOpTePikken,
             geplandeAankomst:
-              entries.find((e) => e.stopId === stop.id)?.geplandeAankomst ??
+              detail.stops.find((e) => e.stopId === stop.id)?.geplandeAankomst ??
               stop.geplandeAankomst,
           })),
         })),
@@ -289,16 +292,6 @@ export class VervoerstoerComponent extends RockElement {
     if (!this.projecten || !this.aanmeldingen) {
       return html`<rock-loading></rock-loading>`;
     }
-    let activeStep = this.step;
-    if (activeStep === 'routes-selecteren' && !this.step2Enabled) {
-      activeStep = 'opstapplaatsen-kiezen';
-    }
-    if (activeStep === 'tijdsplanning' && !this.step3Enabled) {
-      activeStep = 'routes-selecteren';
-    }
-    if (activeStep !== this.step) {
-      this.navigateToStep(activeStep);
-    }
     return html`
       <h2>Vervoerstoer maken</h2>
       <p>
@@ -314,7 +307,7 @@ export class VervoerstoerComponent extends RockElement {
         <li class="nav-item">
           <button
             @click=${() => this.navigateToStep('opstapplaatsen-kiezen')}
-            class="nav-link ${activeStep === 'opstapplaatsen-kiezen'
+            class="nav-link ${this.step === 'opstapplaatsen-kiezen'
               ? 'active'
               : ''}"
             aria-current="page"
@@ -324,7 +317,7 @@ export class VervoerstoerComponent extends RockElement {
         </li>
         <li class="nav-item">
           <button
-            class="nav-link ${this.step2Enabled ? '' : 'disabled'} ${activeStep === 'routes-selecteren'
+            class="nav-link ${this.step2Enabled ? '' : 'disabled'} ${this.step   === 'routes-selecteren'
               ? 'active'
               : ''}"
             ?disabled=${!this.step2Enabled}
@@ -336,7 +329,7 @@ export class VervoerstoerComponent extends RockElement {
         </li>
         <li class="nav-item">
           <button
-            class="nav-link ${this.step3Enabled ? '' : 'disabled'} ${activeStep === 'tijdsplanning'
+            class="nav-link ${this.step3Enabled ? '' : 'disabled'} ${this.step === 'tijdsplanning'
               ? 'active'
               : ''}"
             ?disabled=${!this.step3Enabled}
@@ -347,9 +340,9 @@ export class VervoerstoerComponent extends RockElement {
           </button>
         </li>
       </ul>
-      ${activeStep === 'tijdsplanning' && this.vervoerstoer
+      ${this.step === 'tijdsplanning' && this.vervoerstoer
         ? this.renderTijdsplanning()
-        : activeStep === 'routes-selecteren'
+        : this.step === 'routes-selecteren'
           ? this.renderRoutesSelecteren()
           : this.renderOpstapplaatsenKiezen()}
     `;
@@ -387,7 +380,7 @@ export class VervoerstoerComponent extends RockElement {
     return html`<rock-tijdsplanning
       .vervoerstoer=${this.vervoerstoer!}
       .projecten=${this.projecten ?? []}
-      @tijdsplanning-saved=${(e: CustomEvent<TijdsplanningEntry[]>) =>
+      @tijdsplanning-saved=${(e: CustomEvent<{ stops: TijdsplanningEntry[]; routes: RouteVertrekEntry[] }>) =>
         this.handleTijdsplanningSaved(e.detail)}
     ></rock-tijdsplanning>`;
   }

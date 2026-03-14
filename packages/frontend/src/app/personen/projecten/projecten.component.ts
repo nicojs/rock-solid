@@ -14,16 +14,16 @@ import {
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { bootstrap } from '../../styles';
-import { RockElement } from '../rock-element';
-import { router } from '../router';
+import { bootstrap } from '../../../styles';
+import { RockElement } from '../../rock-element';
+import { router } from '../../router';
 import {
   capitalize,
   entities,
   handleUniquenessError,
   pluralize,
   toQuery,
-} from '../shared';
+} from '../../shared';
 import { newActiviteit } from './project-edit.component';
 import { projectenStore } from './projecten.store';
 import {
@@ -31,7 +31,7 @@ import {
   InputControl,
   InputType,
   checkboxesItemsControl,
-} from '../forms';
+} from '../../forms';
 import { routesByProjectType } from './routing-helper';
 import {
   HeaderSelectionChange,
@@ -101,7 +101,9 @@ export class ProjectenComponent extends RockElement {
           type: this.type,
           activiteiten: [newActiviteit()],
           begeleiders: [],
-          ...(this.type === 'vakantie' ? { vakantiesoort: 'vakantie', seizoen: 'zomer' } : {}),
+          ...(this.type === 'vakantie'
+            ? { vakantiesoort: 'vakantie', seizoen: 'zomer' }
+            : {}),
         };
         this.newProject = project;
       }
@@ -282,19 +284,9 @@ export class ProjectenComponent extends RockElement {
         const routePrefix = `/${routesByProjectType[this.type]}/vervoerstoer/${projectIds.join('+')}`;
         const step = this.path[2];
         if (!step) {
-          router.navigate(`${routePrefix}/opstapplaatsen-kiezen`, {
+          return router.navigate(`${routePrefix}/opstapplaatsen-kiezen`, {
             keepQuery: true,
           });
-          return html``;
-        }
-        if (
-          step !== 'opstapplaatsen-kiezen' &&
-          step !== 'routes-selecteren'
-        ) {
-          router.navigate(`${routePrefix}/opstapplaatsen-kiezen`, {
-            keepQuery: true,
-          });
-          return html``;
         }
 
         return html`<rock-vervoerstoer

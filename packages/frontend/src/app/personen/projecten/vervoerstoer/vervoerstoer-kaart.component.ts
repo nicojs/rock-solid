@@ -103,6 +103,9 @@ export class VervoerstoerKaartComponent extends LitElement {
   @property()
   bestemming = '';
 
+  @property({ type: Number, attribute: false })
+  focusLegIndex: number | null = null;
+
   @state()
   private status: 'laden' | 'niet-beschikbaar' | 'gereed' = 'laden';
 
@@ -140,6 +143,9 @@ export class VervoerstoerKaartComponent extends LitElement {
       clearTimeout(this.tekenTimeout);
       this.tekenTimeout = setTimeout(() => void this.#tekenRoutes(), 400);
     }
+    if (changed.has('focusLegIndex')) {
+      this.#zoomToLeg();
+    }
   }
 
   #initMap() {
@@ -151,6 +157,18 @@ export class VervoerstoerKaartComponent extends LitElement {
       mapTypeControl: false,
     });
     this.map.addListener('zoom_changed', () => this.#tekenPolylines());
+  }
+
+  #zoomToLeg() {
+    if (!this.map || this.focusLegIndex === null) return;
+    const leg = this.cachedResults[0]?.result.routes[0]?.legs[this.focusLegIndex];
+    if (!leg) return;
+    const bounds = new google.maps.LatLngBounds();
+    for (const step of leg.steps ?? []) {
+      bounds.extend(step.start_location);
+      bounds.extend(step.end_location);
+    }
+    this.map.fitBounds(bounds, 60);
   }
 
   async #tekenRoutes() {

@@ -1,14 +1,14 @@
 import { Aanmelding, Deelnemer, Locatie } from '@rock-solid/shared';
 import { css, html, nothing, PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { tagsControl } from '../../forms';
-import { formStyles } from '../../forms/reactive-form.component';
-import { showLocatie } from '../../locaties/locatie.pipe';
-import { locatieService } from '../../locaties/locatie.service';
-import { fullName } from '../../personen/persoon.pipe';
-import { RockElement } from '../../rock-element';
+import { tagsControl } from '../../../forms';
+import { formStyles } from '../../../forms/reactive-form.component';
+import { showLocatie } from '../../../locaties/locatie.pipe';
+import { locatieService } from '../../../locaties/locatie.service';
+import { fullName } from '../../persoon.pipe';
+import { RockElement } from '../../../rock-element';
 import { deelnemerLink } from '../project.pipes';
-import { bootstrap } from '../../../styles';
+import { bootstrap } from '../../../../styles';
 
 @customElement('rock-opstapplaatsen-kiezen')
 export class OpstapplaatsenKiezenComponent extends RockElement {
