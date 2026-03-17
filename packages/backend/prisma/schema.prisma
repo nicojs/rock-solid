@@ -64,7 +64,6 @@ model Persoon {
   locatie             Locatie?                @relation("persoonLocatie", fields: [locatieId], references: [id])
   locatieId           Int?
   chauffeurVoorRoutes VervoerstoerRoute[]
-  vervoerstoerStopId  Int?
 }
 
 model OverigPersoonSelectie {
@@ -158,8 +157,7 @@ model Aanmelding {
   geslacht                   Int?
   eersteCursusAanmeldingen   Persoon[]         @relation("eersteCursusAanmelding")
   eersteVakantieAanmeldingen Persoon[]         @relation("eersteVakantieAanmelding")
-  vervoerstoerStop           VervoerstoerStop? @relation(fields: [vervoerstoerStopId], references: [id])
-  vervoerstoerStopId         Int?
+  vervoerstoerStops          VervoerstoerStop[]
 
   @@unique([projectId, deelnemerId])
 }

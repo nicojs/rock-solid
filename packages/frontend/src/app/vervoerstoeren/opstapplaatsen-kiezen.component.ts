@@ -119,11 +119,7 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
           </rock-reactive-form-tags>
         </div>
       </div>
-      <div class="row mb-3">
-        <div class="col-auto">
-          ${this.#renderBestemmingInput()}
-        </div>
-      </div>
+      <div class="row mb-3">${this.#renderBestemmingInput()}</div>
       <div class="row">
         <div class="col mb-3">
           <div class="d-flex gap-3 align-items-center">
@@ -313,40 +309,45 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
   }
 
   #renderBestemmingInput() {
-    return html` <label class="form-label fw-bold">Bestemming</label>
-      <select
-        class="form-select"
-        @change=${(ev: Event) => {
-          const select = ev.target as HTMLSelectElement;
-          const selectedId = Number(select.value);
-          const oldBestemmingId = this.vervoerstoer.bestemming?.id;
-          const locatie = this.bestemmingLocaties.find(
-            (l) => l.id === selectedId,
-          );
-          if (oldBestemmingId && oldBestemmingId !== locatie?.id) {
-            for (const [, aanmeldingen] of this.aanmeldingenPerDeelnemerId) {
-              for (const aanmelding of aanmeldingen) {
-                if (aanmelding.opstapplaats?.id === oldBestemmingId) {
-                  aanmelding.opstapplaats = undefined;
+    return html`<div class="col-lg-2 col-md-4">
+        <label for="bestemming-input" class="form-label fw-bold">Bestemming</label>
+      </div>
+      <div class="col-lg-10 col-md-8">
+        <select
+          class="form-select"
+          id="bestemming-input"
+          @change=${(ev: Event) => {
+            const select = ev.target as HTMLSelectElement;
+            const selectedId = Number(select.value);
+            const oldBestemmingId = this.vervoerstoer.bestemming?.id;
+            const locatie = this.bestemmingLocaties.find(
+              (l) => l.id === selectedId,
+            );
+            if (oldBestemmingId && oldBestemmingId !== locatie?.id) {
+              for (const [, aanmeldingen] of this.aanmeldingenPerDeelnemerId) {
+                for (const aanmelding of aanmeldingen) {
+                  if (aanmelding.opstapplaats?.id === oldBestemmingId) {
+                    aanmelding.opstapplaats = undefined;
+                  }
                 }
               }
             }
-          }
-          this.vervoerstoer.bestemming = locatie;
-          this.notifyDataChanged();
-        }}
-      >
-        <option value="">Kies bestemming</option>
-        ${this.bestemmingLocaties.map(
-          (locatie) =>
-            html`<option
-              value="${locatie.id}"
-              ?selected=${this.vervoerstoer.bestemming?.id === locatie.id}
-            >
-              ${showLocatie(locatie)}
-            </option>`,
-        )}
-      </select>`;
+            this.vervoerstoer.bestemming = locatie;
+            this.notifyDataChanged();
+          }}
+        >
+          <option value="">Kies bestemming</option>
+          ${this.bestemmingLocaties.map(
+            (locatie) =>
+              html`<option
+                value="${locatie.id}"
+                ?selected=${this.vervoerstoer.bestemming?.id === locatie.id}
+              >
+                ${showLocatie(locatie)}
+              </option>`,
+          )}
+        </select>
+      </div>`;
   }
 
   #renderUitleg() {
