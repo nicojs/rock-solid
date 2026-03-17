@@ -87,6 +87,7 @@ model Adres {
   domiciliepersonen    Persoon[]            @relation("domicilieadres")
   organisatieContacten OrganisatieContact[]
   cursusLocaties       Locatie[]
+  vervoerstoerRoutes   VervoerstoerRoute[]
 }
 
 model Plaats {
@@ -107,8 +108,8 @@ model Plaats {
 }
 
 model Project {
-  id             Int           @id @default(autoincrement())
-  projectnummer  String        @unique
+  id             Int            @id @default(autoincrement())
+  projectnummer  String         @unique
   naam           String
   titel          String
   type           Int
@@ -117,8 +118,7 @@ model Project {
   begeleiders    Persoon[]
   jaar           Int
   saldo          Decimal?
-  vervoerstoerId Int?
-  vervoerstoer   Vervoerstoer? @relation(fields: [vervoerstoerId], references: [id], onDelete: SetNull)
+  vervoerstoeren Vervoerstoer[]
 
   // Cursus
   organisatieonderdeel Int?
@@ -187,6 +187,9 @@ model Vervoerstoer {
   id                 Int                 @id @default(autoincrement())
   projects           Project[]
   vervoerstoerRoutes VervoerstoerRoute[]
+  bestemmingId       Int?
+  bestemming         Locatie?            @relation(fields: [bestemmingId], references: [id])
+  aangemaaktDoor     String
 }
 
 model VervoerstoerRoute {
@@ -197,6 +200,8 @@ model VervoerstoerRoute {
   chauffeur      Persoon?           @relation(fields: [chauffeurId], references: [id], onDelete: SetNull)
   stops          VervoerstoerStop[]
   vertrekTijd    DateTime?
+  vertrekadresId Int?
+  vertrekadres   Adres?             @relation(fields: [vertrekadresId], references: [id])
 }
 
 model VervoerstoerStop {
@@ -229,6 +234,7 @@ model Locatie {
   persoonLocaties              Persoon[]          @relation("persoonLocatie")
   opstapplaatsVoorAanmeldingen Aanmelding[]
   vervoerstoerStops            VervoerstoerStop[]
+  vervoerstoeren               Vervoerstoer[]
 }
 
 model Deelname {

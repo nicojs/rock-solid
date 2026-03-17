@@ -1,9 +1,14 @@
 import { parse, UpsertableVervoerstoer, Vervoerstoer } from '@rock-solid/shared';
-import { httpClient } from '../../../shared/http-client';
+import { httpClient } from '../shared/http-client';
 
 class VervoerstoerService {
   async getAll(): Promise<Vervoerstoer[]> {
     const response = await httpClient.fetch('/api/vervoerstoeren');
+    return parse(await response.text());
+  }
+
+  async get(id: number): Promise<Vervoerstoer> {
+    const response = await httpClient.fetch(`/api/vervoerstoeren/${id}`);
     return parse(await response.text());
   }
 
@@ -17,7 +22,7 @@ class VervoerstoerService {
   }
 
   async update(v: UpsertableVervoerstoer & { id: number }): Promise<Vervoerstoer> {
-    const response = await httpClient.fetch('/api/vervoerstoeren', {
+    const response = await httpClient.fetch(`/api/vervoerstoeren/${v.id}`, {
       method: 'PUT',
       body: JSON.stringify(v),
       headers: { 'Content-Type': 'application/json' },

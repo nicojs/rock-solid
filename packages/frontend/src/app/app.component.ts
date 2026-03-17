@@ -88,6 +88,11 @@ export class RockSolidApp extends LitElement {
           .query=${this.route.query}
         ></rock-personen>`;
       }
+      case 'vervoerstoeren':
+        return html`<rock-vervoerstoeren
+          .path=${this.route.path.slice(1)}
+          .query=${this.route.query}
+        ></rock-vervoerstoeren>`;
       case 'organisaties':
         return html`<rock-organisaties
           .path=${this.route.path.slice(1)}

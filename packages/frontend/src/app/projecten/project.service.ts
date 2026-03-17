@@ -5,8 +5,8 @@ import {
   InsertableAanmelding,
   PatchableAanmelding,
 } from '@rock-solid/shared';
-import { restClient, RestClient } from '../../shared/rest-client';
-import { RestService } from '../../shared/rest-service';
+import { restClient, RestClient } from '../shared/rest-client';
+import { RestService } from '../shared/rest-service';
 
 export class ProjectService extends RestService<'projecten'> {
   constructor(restClient: RestClient) {

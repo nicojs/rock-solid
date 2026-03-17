@@ -1,6 +1,6 @@
 import { customElement, property } from 'lit/decorators.js';
-import { RockElement } from '../../rock-element';
-import { bootstrap } from '../../../styles';
+import { RockElement } from '../rock-element';
+import { bootstrap } from '../../styles';
 import {
   Aanmelding,
   Contactpersoon,
@@ -14,8 +14,8 @@ import {
   fullName,
   showFotoToestemming,
   showVoedingswens,
-} from '../persoon.pipe';
-import { show, showPlaats } from '../../shared';
+} from '../personen/persoon.pipe';
+import { show, showPlaats } from '../shared';
 
 @customElement('rock-deelnemerslijst-printen')
 export class DeelnemerslijstPrintenComponent extends RockElement {

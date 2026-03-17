@@ -1,9 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { OverigPersoon, Vervoerstoer } from '@rock-solid/shared';
+import {
+  OverigPersoon,
+  Vervoerstoer,
+  VervoerstoerFilter,
+} from '@rock-solid/shared';
 import { Prisma } from '../../generated/prisma/index.js';
 import * as db from '../../generated/prisma/index.js';
 import { handleKnownPrismaErrors } from '../errors/index.js';
 import { DBService } from './db.service.js';
+import {
+  DBAdresWithPlaats,
+  includeAdresWithPlaats,
+  toAdres,
+  toCreateAdresInput,
+} from './adres.mapper.js';
 import {
   DBLocatieAggregate,
   includeAdres,
@@ -19,11 +29,14 @@ import {
   includeAanmeldingFields,
   toAanmelding,
 } from './aanmelding.mapper.js';
+import { toPage } from './paging.js';
 
 type DBVervoerstoerAggregate = db.Vervoerstoer & {
+  bestemming: DBLocatieAggregate | null;
   projects: db.Project[];
   vervoerstoerRoutes: (db.VervoerstoerRoute & {
     chauffeur: DBPersonAggregate | null;
+    vertrekadres: DBAdresWithPlaats | null;
     stops: (db.VervoerstoerStop & {
       locatie: DBLocatieAggregate;
       aanmeldersToPickup: DBAanmeldingAggregate[];
@@ -32,6 +45,9 @@ type DBVervoerstoerAggregate = db.Vervoerstoer & {
 };
 
 const includeVervoerstoerAggregate = {
+  bestemming: {
+    include: includeAdres,
+  },
   projects: {
     orderBy: {
       projectnummer: 'asc',
@@ -45,6 +61,7 @@ const includeVervoerstoerAggregate = {
       chauffeur: {
         include: includePersoonAggregate,
       },
+      vertrekadres: includeAdresWithPlaats,
       stops: {
         orderBy: {
           volgnummer: 'asc',
@@ -66,44 +83,81 @@ const includeVervoerstoerAggregate = {
 export class VervoerstoerMapper {
   constructor(private readonly db: DBService) {}
 
-  async getAll(): Promise<Vervoerstoer[]> {
+  async getAll(
+    filter: VervoerstoerFilter | undefined,
+    pageNumber: number | undefined,
+  ): Promise<Vervoerstoer[]> {
     const dbVervoerstoeren = await this.db.vervoerstoer.findMany({
+      where: toWhere(filter),
       include: includeVervoerstoerAggregate,
-      orderBy: {
-        id: 'asc',
-      },
+      orderBy: { id: 'desc' },
+      ...toPage(pageNumber),
     });
     return dbVervoerstoeren.map(toVervoerstoer);
   }
 
-  async create(vervoerstoer: Vervoerstoer): Promise<Vervoerstoer> {
+  async count(filter: VervoerstoerFilter | undefined): Promise<number> {
+    return this.db.vervoerstoer.count({ where: toWhere(filter) });
+  }
+
+  async get(id: number): Promise<Vervoerstoer | undefined> {
+    const db = await this.db.vervoerstoer.findFirst({
+      where: { id },
+      include: includeVervoerstoerAggregate,
+    });
+    return db ? toVervoerstoer(db) : undefined;
+  }
+
+  async create(
+    vervoerstoer: Vervoerstoer,
+    aangemaaktDoor: string,
+  ): Promise<Vervoerstoer> {
     const created = await handleKnownPrismaErrors(
       this.db.vervoerstoer.create({
-        data: toCreateInput(vervoerstoer),
+        data: { ...toCreateInput(vervoerstoer), aangemaaktDoor },
         include: includeVervoerstoerAggregate,
       }),
     );
     return toVervoerstoer(created);
   }
 
-  async update(vervoerstoer: Vervoerstoer): Promise<Vervoerstoer> {
+  async update(
+    id: number,
+    vervoerstoer: Vervoerstoer,
+  ): Promise<Vervoerstoer> {
     const updated = await handleKnownPrismaErrors(
       this.db.vervoerstoer.update({
-        where: {
-          id: vervoerstoer.id,
-        },
+        where: { id },
         data: toUpdateInput(vervoerstoer),
         include: includeVervoerstoerAggregate,
       }),
     );
     return toVervoerstoer(updated);
   }
+
+  async delete(id: number): Promise<void> {
+    await this.db.vervoerstoer.delete({ where: { id } });
+  }
+}
+
+function toWhere(
+  filter: VervoerstoerFilter | undefined,
+): Prisma.VervoerstoerWhereInput | undefined {
+  if (!filter) return undefined;
+  return {
+    projects: filter.projectIds?.length
+      ? { some: { id: { in: filter.projectIds } } }
+      : undefined,
+  };
 }
 
 function toCreateInput(
   vervoerstoer: Vervoerstoer,
-): Prisma.VervoerstoerCreateInput {
+): Omit<Prisma.VervoerstoerCreateInput, 'aangemaaktDoor'> {
   return {
+    bestemming: vervoerstoer.bestemming
+      ? { connect: { id: vervoerstoer.bestemming.id } }
+      : undefined,
     projects: {
       connect: vervoerstoer.projectIds.map((id) => ({ id })),
     },
@@ -117,6 +171,9 @@ function toUpdateInput(
   vervoerstoer: Vervoerstoer,
 ): Prisma.VervoerstoerUpdateInput {
   return {
+    bestemming: vervoerstoer.bestemming
+      ? { connect: { id: vervoerstoer.bestemming.id } }
+      : { disconnect: true },
     projects: {
       set: vervoerstoer.projectIds.map((id) => ({ id })),
     },
@@ -134,6 +191,7 @@ function toRouteCreateInput(vervoerstoer: Vervoerstoer) {
         id: route.chauffeur.id,
       },
     },
+    vertrekadres: toCreateAdresInput(route.vertrekadres),
     stops: {
       create: route.stops.map((stop) => ({
         volgnummer: stop.volgnummer,
@@ -152,11 +210,17 @@ function toRouteCreateInput(vervoerstoer: Vervoerstoer) {
   }));
 }
 
-function toVervoerstoer(dbVervoerstoer: DBVervoerstoerAggregate): Vervoerstoer {
+function toVervoerstoer(
+  dbVervoerstoer: DBVervoerstoerAggregate,
+): Vervoerstoer {
   return {
     id: dbVervoerstoer.id,
     naam: toNaam(dbVervoerstoer),
     projectIds: dbVervoerstoer.projects.map((project) => project.id),
+    bestemming: dbVervoerstoer.bestemming
+      ? toLocatie(dbVervoerstoer.bestemming)
+      : undefined,
+    aangemaaktDoor: dbVervoerstoer.aangemaaktDoor,
     routes: dbVervoerstoer.vervoerstoerRoutes.flatMap((route) => {
       if (!route.chauffeur) return [];
       return [
@@ -164,6 +228,7 @@ function toVervoerstoer(dbVervoerstoer: DBVervoerstoerAggregate): Vervoerstoer {
           id: route.id,
           chauffeur: toOverigPersoon(route.chauffeur),
           vertrekTijd: route.vertrekTijd ?? undefined,
+          vertrekadres: toAdres(route.vertrekadres),
           stops: route.stops.map((stop) => ({
             id: stop.id,
             volgnummer: stop.volgnummer,

@@ -1,18 +1,17 @@
 import {
   Adres,
   Locatie,
-  Project,
+  UpsertableVervoerstoer,
   Vervoerstoer,
   VervoerstoerRoute,
   VervoerstoerStop,
 } from '@rock-solid/shared';
 import { html, nothing, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { fullName } from '../../persoon.pipe';
-import { RockElement } from '../../../rock-element';
-import { bootstrap } from '../../../../styles';
+import { fullName } from '../personen/persoon.pipe';
+import { RockElement } from '../rock-element';
+import { bootstrap } from '../../styles';
 import { vervoerstoerService } from './vervoerstoer.service';
-import './vervoerstoer-kaart.component';
 import type { KaartRoute } from './vervoerstoer-kaart.component';
 
 function formatAdres(adres: Adres): string {
@@ -23,17 +22,9 @@ function formatLocatieAdres(locatie: Locatie): string {
   return locatie.adres ? formatAdres(locatie.adres) : locatie.naam;
 }
 
-function deriveDestination(projecten: Project[]): string {
-  const vakantie = projecten.find((p) => p.type === 'vakantie');
-  if (vakantie && vakantie.type === 'vakantie') {
-    return `${vakantie.bestemming}, ${vakantie.land}`;
-  }
-  const cursus = projecten.find((p) => p.type === 'cursus');
-  if (cursus && cursus.type === 'cursus') {
-    const locatie = cursus.activiteiten[0]?.locatie;
-    if (locatie) return formatLocatieAdres(locatie);
-  }
-  return '';
+function formatBestemming(bestemming?: Locatie): string {
+  if (!bestemming) return '';
+  return formatLocatieAdres(bestemming);
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -57,16 +48,6 @@ interface ReistijdState {
   usedAankomstTijdMs: number | null;
 }
 
-export interface TijdsplanningEntry {
-  stopId: number;
-  geplandeAankomst: Date;
-}
-
-export interface RouteVertrekEntry {
-  routeId: number;
-  vertrekTijd: Date;
-}
-
 @customElement('rock-tijdsplanning')
 export class TijdsplanningComponent extends RockElement {
   static override styles = [bootstrap];
@@ -75,7 +56,7 @@ export class TijdsplanningComponent extends RockElement {
   vervoerstoer!: Vervoerstoer;
 
   @property({ attribute: false })
-  projecten: Project[] = [];
+  baseDatum?: Date;
 
   @state()
   private timings: Map<string, Date> = new Map();
@@ -86,26 +67,24 @@ export class TijdsplanningComponent extends RockElement {
   @state()
   private focusLegIndices: Map<number, number> = new Map();
 
-  private get baseDatum(): Date | undefined {
-    return this.projecten[0]?.activiteiten[0]?.van;
-  }
-
   protected override updated(changed: PropertyValues) {
-    if (changed.has('vervoerstoer') || changed.has('projecten')) {
-      this.#prefillBestemming();
+    if (changed.has('vervoerstoer') || changed.has('baseDatum')) {
+      this.#prefillTimings();
     }
   }
 
-  #prefillBestemming() {
-    if (!this.baseDatum) return;
+  #prefillTimings() {
     for (const route of this.vervoerstoer.routes) {
-      const bestKey = this.timingKey(route.id, 'bestemming');
-      if (!this.timings.has(bestKey)) {
-        this.timings = new Map(this.timings).set(
-          bestKey,
-          new Date(this.baseDatum),
-        );
+      // Prefill bestemming aankomsttijd from activity start date
+      if (this.baseDatum) {
+        const bestKey = this.timingKey(route.id, 'bestemming');
+        if (!this.timings.has(bestKey)) {
+          const aankomstTijd = new Date(this.baseDatum);
+          this.timings = new Map(this.timings).set(bestKey, aankomstTijd);
+          this.#recalculateLeg(route, 'bestemming', aankomstTijd);
+        }
       }
+      // Prefill vertrekTijd
       if (route.vertrekTijd) {
         const vertrekKey = this.timingKey(route.id, 'vertrek');
         if (!this.timings.has(vertrekKey)) {
@@ -113,6 +92,18 @@ export class TijdsplanningComponent extends RockElement {
             vertrekKey,
             route.vertrekTijd,
           );
+        }
+      }
+      // Prefill opgeslagen stop-tijden
+      for (const stop of route.stops) {
+        if (stop.geplandeAankomst) {
+          const stopKey = this.timingKey(route.id, stop.id);
+          if (!this.timings.has(stopKey)) {
+            this.timings = new Map(this.timings).set(
+              stopKey,
+              stop.geplandeAankomst,
+            );
+          }
         }
       }
     }
@@ -143,6 +134,58 @@ export class TijdsplanningComponent extends RockElement {
   ) {
     const key = this.timingKey(routeId, stopId);
     this.timings = new Map(this.timings).set(key, date);
+  }
+
+  private setTimingAndRecalculate(
+    route: VervoerstoerRoute,
+    stopId: number | 'bestemming' | 'vertrek',
+    date: Date,
+  ) {
+    this.setTiming(route.id, stopId, date);
+    if (stopId === 'vertrek') return;
+    this.#recalculateLeg(route, stopId, date);
+  }
+
+  #recalculateLeg(
+    route: VervoerstoerRoute,
+    toStopId: number | 'bestemming',
+    aankomstTijd: Date,
+  ) {
+    const destination = formatBestemming(this.vervoerstoer.bestemming);
+    if (!destination) return;
+    let fromStopIndex: number;
+    let fromAddr: string;
+    let toAddr: string;
+
+    if (toStopId === 'bestemming') {
+      const lastStop = route.stops[route.stops.length - 1];
+      if (!lastStop) return;
+      fromStopIndex = route.stops.length - 1;
+      fromAddr = formatLocatieAdres(lastStop.locatie);
+      toAddr = destination;
+    } else {
+      const stopIndex = route.stops.findIndex((s) => s.id === toStopId);
+      if (stopIndex === -1) return;
+      toAddr = formatLocatieAdres(route.stops[stopIndex]!.locatie);
+      if (stopIndex === 0) {
+        fromStopIndex = -1;
+        const chauffeurAdres = route.chauffeur.verblijfadres;
+        fromAddr = chauffeurAdres
+          ? formatAdres(chauffeurAdres)
+          : 'Ter Rivierenlaan 152, 2100 Deurne';
+      } else {
+        fromStopIndex = stopIndex - 1;
+        fromAddr = formatLocatieAdres(route.stops[stopIndex - 1]!.locatie);
+      }
+    }
+
+    this.berekenReistijd(
+      route.id,
+      fromStopIndex,
+      fromAddr,
+      toAddr,
+      aankomstTijd,
+    );
   }
 
   private async berekenReistijd(
@@ -198,22 +241,26 @@ export class TijdsplanningComponent extends RockElement {
   }
 
   private save() {
-    const stops: TijdsplanningEntry[] = [];
-    const routes: RouteVertrekEntry[] = [];
-    for (const route of this.vervoerstoer.routes) {
-      for (const stop of route.stops) {
-        const timing = this.getTiming(route.id, stop.id);
-        if (timing) stops.push({ stopId: stop.id, geplandeAankomst: timing });
-      }
-      const vertrek = this.getTiming(route.id, 'vertrek');
-      if (vertrek) routes.push({ routeId: route.id, vertrekTijd: vertrek });
-    }
+    const upsertable: UpsertableVervoerstoer = {
+      projectIds: this.vervoerstoer.projectIds,
+      routes: this.vervoerstoer.routes.map((route) => ({
+        id: route.id,
+        chauffeur: route.chauffeur,
+        vertrekTijd:
+          this.getTiming(route.id, 'vertrek') ?? route.vertrekTijd,
+        stops: route.stops.map((stop) => ({
+          id: stop.id,
+          locatie: stop.locatie,
+          volgnummer: stop.volgnummer,
+          aanmeldersOpTePikken: stop.aanmeldersOpTePikken,
+          geplandeAankomst:
+            this.getTiming(route.id, stop.id) ?? stop.geplandeAankomst,
+        })),
+      })),
+    };
     this.dispatchEvent(
-      new CustomEvent<{
-        stops: TijdsplanningEntry[];
-        routes: RouteVertrekEntry[];
-      }>('tijdsplanning-saved', {
-        detail: { stops, routes },
+      new CustomEvent<UpsertableVervoerstoer>('vervoerstoer-saved', {
+        detail: upsertable,
         bubbles: true,
         composed: true,
       }),
@@ -222,8 +269,6 @@ export class TijdsplanningComponent extends RockElement {
 
   private renderLegRow(
     route: VervoerstoerRoute,
-    fromAddr: string,
-    toAddr: string,
     fromStopIndex: number,
     toStopId: number | 'bestemming',
     fromStopId?: number | 'vertrek',
@@ -256,29 +301,13 @@ export class TijdsplanningComponent extends RockElement {
                   >${this.formatDuration(reistijd.minSeconds!)} –
                   ${this.formatDuration(reistijd.maxSeconds!)}</span
                 >`
-          : html`
-              <button
-                class="btn btn-sm ${toTiming ? 'btn-primary' : 'btn-outline-secondary'}"
-                ?disabled=${!toTiming}
-                title=${!toTiming ? 'Vul eerst de aankomsttijd van het volgende punt in' : ''}
-                @click=${() =>
-                  this.berekenReistijd(
-                    route.id,
-                    fromStopIndex,
-                    fromAddr,
-                    toAddr,
-                    toTiming ?? undefined,
-                  )}
-              >
-                Bereken reistijd
-              </button>
-            `}
+          : nothing}
         ${suggestedTime && fromStopId !== undefined
           ? html`<button
               class="btn btn-sm btn-outline-info ms-2"
               title="Gebruik gesuggereerde aankomsttijd"
               @click=${() =>
-                this.setTiming(route.id, fromStopId, suggestedTime)}
+                this.setTimingAndRecalculate(route, fromStopId, suggestedTime)}
             >
               ← ${toTimeValue(suggestedTime)}
             </button>`
@@ -292,7 +321,7 @@ export class TijdsplanningComponent extends RockElement {
     stop: VervoerstoerStop,
     stopIndex: number,
   ) {
-    const existing = stop.geplandeAankomst ?? this.getTiming(route.id, stop.id);
+    const existing = this.getTiming(route.id, stop.id);
     const val = existing ? toTimeValue(existing) : '';
     return html`
       <div class="d-flex align-items-center gap-3 mb-1">
@@ -309,8 +338,8 @@ export class TijdsplanningComponent extends RockElement {
             @change=${(e: Event) => {
               const v = (e.target as HTMLInputElement).value;
               if (v && this.baseDatum)
-                this.setTiming(
-                  route.id,
+                this.setTimingAndRecalculate(
+                  route,
                   stop.id,
                   fromTimeValue(v, this.baseDatum),
                 );
@@ -322,14 +351,11 @@ export class TijdsplanningComponent extends RockElement {
   }
 
   override render() {
-    const destination = deriveDestination(this.projecten);
+    const destination = formatBestemming(this.vervoerstoer.bestemming);
     return html`
       <h3>Tijdsplanning</h3>
       ${this.vervoerstoer.routes.map((route) => {
         const stopsDesc = [...route.stops].reverse();
-        const chauffeurAdres = route.chauffeur.verblijfadres
-          ? formatAdres(route.chauffeur.verblijfadres)
-          : 'Ter Rivierenlaan 152, 2100 Deurne';
 
         const bestemmingTiming = this.getTiming(route.id, 'bestemming');
         const bestemmingVal = bestemmingTiming
@@ -364,8 +390,8 @@ export class TijdsplanningComponent extends RockElement {
                         @change=${(e: Event) => {
                           const v = (e.target as HTMLInputElement).value;
                           if (v && this.baseDatum)
-                            this.setTiming(
-                              route.id,
+                            this.setTimingAndRecalculate(
+                              route,
                               'bestemming',
                               fromTimeValue(v, this.baseDatum),
                             );
@@ -377,20 +403,11 @@ export class TijdsplanningComponent extends RockElement {
                   ${stopsDesc.map((stop, idx) => {
                     const isLastStop = idx === stopsDesc.length - 1;
                     const nextStop = idx === 0 ? null : stopsDesc[idx - 1];
-                    const thisAddr = formatLocatieAdres(stop.locatie);
-                    const nextAddr =
-                      idx === 0
-                        ? destination
-                        : nextStop
-                          ? formatLocatieAdres(nextStop.locatie)
-                          : '';
                     const originalIndex = route.stops.length - 1 - idx;
 
                     return html`
                       ${this.renderLegRow(
                         route,
-                        thisAddr,
-                        nextAddr || destination,
                         originalIndex,
                         idx === 0
                           ? 'bestemming'
@@ -401,8 +418,6 @@ export class TijdsplanningComponent extends RockElement {
                       ${isLastStop
                         ? this.renderLegRow(
                             route,
-                            chauffeurAdres,
-                            thisAddr,
                             -1,
                             stop.id,
                             'vertrek',

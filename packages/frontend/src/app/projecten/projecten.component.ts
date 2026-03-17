@@ -14,16 +14,16 @@ import {
 } from '@rock-solid/shared';
 import { html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { bootstrap } from '../../../styles';
-import { RockElement } from '../../rock-element';
-import { router } from '../../router';
+import { bootstrap } from '../../styles';
+import { RockElement } from '../rock-element';
+import { router } from '../router';
 import {
   capitalize,
   entities,
   handleUniquenessError,
   pluralize,
   toQuery,
-} from '../../shared';
+} from '../shared';
 import { newActiviteit } from './project-edit.component';
 import { projectenStore } from './projecten.store';
 import {
@@ -31,12 +31,13 @@ import {
   InputControl,
   InputType,
   checkboxesItemsControl,
-} from '../../forms';
+} from '../forms';
 import { routesByProjectType } from './routing-helper';
 import {
   HeaderSelectionChange,
   ProjectSelectionChange,
 } from './projecten-list.component';
+import { vervoerstoerService } from '../vervoerstoeren/vervoerstoer.service';
 
 @customElement('rock-projecten')
 export class ProjectenComponent extends RockElement {
@@ -173,6 +174,40 @@ export class ProjectenComponent extends RockElement {
     });
   }
 
+  private async createVervoerstoer() {
+    this.loading = true;
+    try {
+      const projecten = this.projecten?.filter((p) =>
+        this.selectedProjectIds.includes(p.id),
+      );
+      const bestemming = projecten
+        ?.flatMap((p) =>
+          p.type === 'cursus'
+            ? p.activiteiten.map((a) => a.locatie).filter(notEmpty)
+            : [],
+        )?.[0];
+      const begeleiders = projecten
+        ?.flatMap((p) => p.begeleiders)
+        .filter(
+          (value, index, self) =>
+            self.findIndex((val) => val.id === value.id) === index,
+        ) ?? [];
+      const vervoerstoer = await vervoerstoerService.create({
+        projectIds: this.selectedProjectIds,
+        routes: begeleiders.map((chauffeur) => ({
+          chauffeur,
+          stops: [],
+        })),
+        bestemming,
+      });
+      router.navigate(
+        `/vervoerstoeren/edit/${vervoerstoer.id}/opstapplaatsen-kiezen`,
+      );
+    } finally {
+      this.loading = false;
+    }
+  }
+
   private doSearch() {
     const query = toQuery(this.filter);
     delete query['type']; // not needed, already in the path
@@ -195,20 +230,16 @@ export class ProjectenComponent extends RockElement {
                 ><rock-icon icon="journalPlus" size="md"></rock-icon>
                 ${capitalize(this.type)}</rock-link
               >
-              <rock-link
-                href="/${routesByProjectType[
-                  this.type
-                ]}/vervoerstoer/${this.selectedProjectIds.join('+')}"
-                btn
-                keepQuery
-                btnOutlinePrimary
+              <button
+                class="btn btn-outline-primary"
                 ?disabled=${this.selectedProjectIds.length === 0}
+                @click=${() => this.createVervoerstoer()}
                 ><rock-icon icon="busFront" size="md"></rock-icon> Vervoerstoer
                 maken
                 (${entities(
                   this.selectedProjectIds.length,
                   this.type,
-                )})</rock-link
+                )})</button
               >
             </div>
           </div>
@@ -272,31 +303,6 @@ export class ProjectenComponent extends RockElement {
               @project-submitted="${(event: CustomEvent<Project>) =>
                 this.addProject(event.detail)}"
             ></rock-project-edit>`;
-      case 'vervoerstoer': {
-        const projectIds = this.path[1]
-          ?.split('+')
-          .map((id) => tryParseInt(id))
-          .filter(notEmpty);
-        if (!projectIds?.length) {
-          return this.navigateToProjectenPage();
-        }
-
-        const routePrefix = `/${routesByProjectType[this.type]}/vervoerstoer/${projectIds.join('+')}`;
-        const step = this.path[2];
-        if (!step) {
-          return router.navigate(`${routePrefix}/opstapplaatsen-kiezen`, {
-            keepQuery: true,
-          });
-        }
-
-        return html`<rock-vervoerstoer
-          .type=${this.type}
-          .enkelVakanties=${this.type === 'vakantie'}
-          .projectIds=${projectIds}
-          .routePrefix=${routePrefix}
-          .step=${step}
-        ></rock-vervoerstoer>`;
-      }
       default:
         if (this.path[0]?.match(/\d+/)) {
           const [, page, ...rest] = this.path;

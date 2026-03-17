@@ -3,7 +3,9 @@ ALTER TABLE "Persoon" ADD COLUMN "vervoerstoerStopId" INTEGER;
 
 -- CreateTable
 CREATE TABLE "Vervoerstoer" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "bestemmingId" INTEGER,
+    CONSTRAINT "Vervoerstoer_bestemmingId_fkey" FOREIGN KEY ("bestemmingId") REFERENCES "Locatie" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -11,8 +13,11 @@ CREATE TABLE "VervoerstoerRoute" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "vervoerstoerId" INTEGER NOT NULL,
     "chauffeurId" INTEGER,
+    "vertrekTijd" DATETIME,
+    "vertrekadresId" INTEGER,
     CONSTRAINT "VervoerstoerRoute_vervoerstoerId_fkey" FOREIGN KEY ("vervoerstoerId") REFERENCES "Vervoerstoer" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "VervoerstoerRoute_chauffeurId_fkey" FOREIGN KEY ("chauffeurId") REFERENCES "Persoon" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "VervoerstoerRoute_chauffeurId_fkey" FOREIGN KEY ("chauffeurId") REFERENCES "Persoon" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "VervoerstoerRoute_vertrekadresId_fkey" FOREIGN KEY ("vertrekadresId") REFERENCES "Adres" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable

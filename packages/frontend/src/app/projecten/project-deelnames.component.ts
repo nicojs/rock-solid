@@ -8,11 +8,11 @@ import {
 } from '@rock-solid/shared';
 import { css, html, LitElement, nothing, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { bootstrap } from '../../../styles';
-import { InputControl, InputType } from '../../forms';
-import { fullName } from '../persoon.pipe';
+import { bootstrap } from '../../styles';
+import { InputControl, InputType } from '../forms';
+import { fullName } from '../personen/persoon.pipe';
 import { printProject } from './project.pipes';
-import { privilege } from '../../auth/privilege.directive';
+import { privilege } from '../auth/privilege.directive';
 
 interface DeelnameRow {
   deelnemer?: Deelnemer;

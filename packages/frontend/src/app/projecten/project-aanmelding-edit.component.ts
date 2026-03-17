@@ -11,9 +11,9 @@ import {
 } from '@rock-solid/shared';
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { bootstrap } from '../../../styles';
-import { FormControl, InputType, plaatsControl } from '../../forms';
-import { fullNameOrUnknown } from '../persoon.pipe';
+import { bootstrap } from '../../styles';
+import { FormControl, InputType, plaatsControl } from '../forms';
+import { fullNameOrUnknown } from '../personen/persoon.pipe';
 import { printProject } from './project.pipes';
 
 @customElement('rock-project-aanmelding-edit')
