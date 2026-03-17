@@ -57,6 +57,9 @@ export type UpsertableVervoerstoerStop = Omit<VervoerstoerStop, 'id'> & {
 
 export interface VervoerstoerFilter {
   projectIds?: number[];
+  naamLike?: string;
+  bestemmingLike?: string;
+  aangemaaktDoorLike?: string;
 }
 
 export function toVervoerstoerFilter(
@@ -67,5 +70,8 @@ export function toVervoerstoerFilter(
       ?.split(',')
       .map(Number)
       .filter(isFinite),
+    naamLike: query['naamLike'],
+    bestemmingLike: query['bestemmingLike'],
+    aangemaaktDoorLike: query['aangemaaktDoorLike'],
   };
 }

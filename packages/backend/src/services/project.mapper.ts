@@ -504,8 +504,7 @@ function toCursusActiviteit(
   aantalBevestigdeAanmeldingen: number,
 ): CursusActiviteit {
   return {
-    ...toBaseActiviteit(dbActiviteit, aantalBevestigdeAanmeldingen),
-    locatie: toLocatie(dbActiviteit.locatie),
+    ...toBaseActiviteit(dbActiviteit, aantalBevestigdeAanmeldingen)
   };
 }
 
@@ -546,6 +545,7 @@ function toBaseActiviteit(
       (aantalBevestigdeAanmeldingen > 0 &&
         deelnames.length === aantalBevestigdeAanmeldingen) ||
       (aantalBevestigdeAanmeldingen === 0 && totEnMet < new Date()),
+    locatie: toLocatie(val.locatie),
   };
 }
 

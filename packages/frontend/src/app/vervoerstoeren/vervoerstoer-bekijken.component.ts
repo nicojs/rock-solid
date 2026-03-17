@@ -22,7 +22,7 @@ function formatDatum(date: Date | undefined): string {
   return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}`;
 }
 
-@customElement('rock-vervoerstoer-printen')
+@customElement('rock-vervoerstoer-bekijken')
 export class VervoerstoerPrintenComponent extends RockElement {
   static override styles = [
     bootstrap,
@@ -30,23 +30,12 @@ export class VervoerstoerPrintenComponent extends RockElement {
       @media print {
         :host {
           font-size: 10pt;
+          color: rgb(33, 37, 41);
         }
-        .no-print {
-          display: none !important;
+        .table td,
+        .table th {
+          color: rgb(33, 37, 41) !important;
         }
-      }
-      table {
-        border-collapse: collapse;
-      }
-      td,
-      th {
-        border: 2px solid black;
-        padding: 4px 8px;
-        vertical-align: top;
-      }
-      .route-table {
-        display: inline-table;
-        vertical-align: top;
       }
     `,
   ];
@@ -65,9 +54,9 @@ export class VervoerstoerPrintenComponent extends RockElement {
     const datumTerug = formatDatum(this.vervoerstoer.datumTerug);
     const bestemming = this.vervoerstoer.bestemmingStop;
 
-    return html`<div data-bs-theme="light">
+    return html`<div>
       <button
-        class="btn btn-primary mb-3 no-print"
+        class="btn btn-primary mb-3 d-print-none"
         @click=${() => window.print()}
       >
         <rock-icon icon="printer"></rock-icon> Printen
@@ -94,40 +83,54 @@ export class VervoerstoerPrintenComponent extends RockElement {
     const stopsDesc = [...stopsAsc].reverse();
 
     return html`
-      <table class="route-table">
+      <table class="table">
         <thead>
           <tr>
-            <th>HEEN<br />${datumHeen}</th>
-            <th>
+            <th class="border border-2 px-1 py-2 align-top">
+              HEEN<br />${datumHeen}
+            </th>
+            <th class="border border-2 px-1 py-2 align-top">
               ${fullName(route.chauffeur)}
               (${route.stops.reduce(
                 (sum, s) => sum + s.aanmeldersOpTePikken.length,
                 0,
               )})
             </th>
-            <th>TERUG<br />${datumTerug}</th>
+            <th class="border border-2 px-1 py-2 align-top">
+              TERUG<br />${datumTerug}
+            </th>
           </tr>
         </thead>
         <tbody>
           ${stopsAsc.map(
             (stop, idx) => html`
               <tr>
-                <td>${formatTijd(stop.geplandeAankomst)}</td>
-                <td>${this.#renderStopContent(stop)}</td>
-                <td>${formatTijd(stopsDesc[idx]?.geplandeAankomstTerug)}</td>
+                <td class="border border-2 px-1 py-2 align-top">
+                  ${formatTijd(stop.geplandeAankomst)}
+                </td>
+                <td class="border border-2 px-1 py-2 align-top">
+                  ${this.#renderStopContent(stop)}
+                </td>
+                <td class="border border-2 px-1 py-2 align-top">
+                  ${formatTijd(stopsDesc[idx]?.geplandeAankomstTerug)}
+                </td>
               </tr>
             `,
           )}
           ${bestemming
             ? html`<tr>
-                <td>${formatTijd(route.vertrekTijd)}</td>
-                <td>
+                <td class="border border-2 px-1 py-2 align-top">
+                  ${formatTijd(route.vertrekTijd)}
+                </td>
+                <td class="border border-2 px-1 py-2 align-top">
                   <strong>${bestemming.locatie.naam}</strong>
                   ${bestemming.locatie.adres
                     ? html`<br />Adres: ${showAdres(bestemming.locatie.adres)}`
                     : nothing}
                 </td>
-                <td>${formatTijd(route.vertrekTijdTerug)}</td>
+                <td class="border border-2 px-1 py-2 align-top">
+                  ${formatTijd(route.vertrekTijdTerug)}
+                </td>
               </tr>`
             : nothing}
         </tbody>

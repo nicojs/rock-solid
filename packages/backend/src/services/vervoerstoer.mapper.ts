@@ -187,6 +187,14 @@ function toWhere(
   return {
     projects: filter.projectIds?.length
       ? { some: { id: { in: filter.projectIds } } }
+      : filter.naamLike
+        ? { some: { naam: { contains: filter.naamLike } } }
+        : undefined,
+    bestemmingStop: filter.bestemmingLike
+      ? { locatie: { naam: { contains: filter.bestemmingLike } } }
+      : undefined,
+    aangemaaktDoor: filter.aangemaaktDoorLike
+      ? { contains: filter.aangemaaktDoorLike }
       : undefined,
   };
 }

@@ -117,11 +117,11 @@ export interface BaseActiviteit {
   begeleidingsuren?: number;
   aantalDeelnemersuren: number;
   isCompleted: boolean;
-}
-
-export interface CursusActiviteit extends BaseActiviteit {
   locatie?: Locatie;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface CursusActiviteit extends BaseActiviteit {}
 
 export interface VakantieActiviteit extends BaseActiviteit {
   verblijf?: VakantieVerblijf;
@@ -225,16 +225,15 @@ export type UpsertableVakantie = Upsertable<
   activiteiten: UpsertableActiviteit[];
 };
 
-export type ProjectFilter = Pick<Project, 'type'> &
-  Partial<Pick<Project, 'jaar'>> & {
-    titelLike?: string;
-    aanmeldingPersoonId?: number;
-    begeleidDoorPersoonId?: number;
-    organisatieonderdelen?: Organisatieonderdeel[];
-    doelgroepen?: Doelgroep[];
-    categorieen?: CursusCategorie[];
-    ids?: number[];
-  };
+export type ProjectFilter = Partial<Pick<Project, 'jaar' | 'type'>> & {
+  titelLike?: string;
+  aanmeldingPersoonId?: number;
+  begeleidDoorPersoonId?: number;
+  organisatieonderdelen?: Organisatieonderdeel[];
+  doelgroepen?: Doelgroep[];
+  categorieen?: CursusCategorie[];
+  ids?: number[];
+};
 
 export function toProjectFilter(
   query: Queryfied<ProjectFilter>,

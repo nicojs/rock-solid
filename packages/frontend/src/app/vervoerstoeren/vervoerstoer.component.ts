@@ -17,14 +17,13 @@ import { bootstrap } from '../../styles';
 import { persoonService } from '../personen/persoon.service';
 import { router } from '../router';
 import { vervoerstoerService } from './vervoerstoer.service';
-import type { OpstapplaatsInfo } from './routes-selecteren.component';
 
 const ACTIVE_STATUSSEN = Object.freeze(['Bevestigd', 'Aangemeld']);
 type VervoerstoerStep =
   | 'opstapplaatsen-kiezen'
   | 'routes-selecteren'
   | 'tijdsplanning'
-  | 'printen';
+  | 'bekijken';
 
 @customElement('rock-vervoerstoer')
 export class VervoerstoerComponent extends RockElement {
@@ -72,6 +71,7 @@ export class VervoerstoerComponent extends RockElement {
 
   get step3Enabled(): boolean {
     return (
+      this.step2Enabled &&
       (this.vervoerstoer?.routes.length ?? 0) > 0 &&
       this.vervoerstoer.toeTeKennenStops.every(
         (stop) => stop.aanmeldersOpTePikken.length === 0,
@@ -221,7 +221,7 @@ export class VervoerstoerComponent extends RockElement {
     }
     return html`
       <h2 class="d-print-none">Vervoerstoer wijzigen</h2>
-      <p class="d-print-none">
+      <p>
         Projecten geselecteerd:
         ${this.projecten.map(
           (project) =>
@@ -230,11 +230,6 @@ export class VervoerstoerComponent extends RockElement {
             >`,
         )}
       </p>
-      <h2 class="d-none d-print-block">
-        ${this.projecten.map(
-          (project) => html`<span>${printProject(project)}</span>`,
-        )}
-      </h2>
       <ul class="nav nav-tabs mb-3 d-print-none">
         <li class="nav-item">
           <button
@@ -275,15 +270,15 @@ export class VervoerstoerComponent extends RockElement {
         </li>
         <li class="nav-item">
           <button
-            class="nav-link ${this.step === 'printen' ? 'active' : ''}"
-            @click=${() => this.navigateToStep('printen')}
+            class="nav-link ${this.step === 'bekijken' ? 'active' : ''}"
+            @click=${() => this.navigateToStep('bekijken')}
           >
-            Printen
+            Bekijken
           </button>
         </li>
       </ul>
-      ${this.step === 'printen'
-        ? this.renderPrinten()
+      ${this.step === 'bekijken'
+        ? this.renderBekijken()
         : this.step === 'tijdsplanning'
           ? this.renderTijdsplanning()
           : this.step === 'routes-selecteren'
@@ -314,26 +309,23 @@ export class VervoerstoerComponent extends RockElement {
 
   private renderRoutesSelecteren() {
     // Build opstapplaatsen met aanmeldingen from toeTeKennenStops + route stops
-    const aanmeldingenPerLocatie = new Map<
-      number,
-      { locatie: Locatie; aanmeldingen: Aanmelding[] }
-    >();
+    const stopPerLocatie = new Map<number, VervoerstoerStop>();
     for (const stop of [
       ...this.vervoerstoer.toeTeKennenStops,
       ...this.vervoerstoer.routes.flatMap((r) => r.stops),
     ]) {
-      const existing = aanmeldingenPerLocatie.get(stop.locatie.id);
+      const existing = stopPerLocatie.get(stop.locatie.id);
       if (existing) {
-        existing.aanmeldingen.push(...stop.aanmeldersOpTePikken);
+        existing.aanmeldersOpTePikken.push(...stop.aanmeldersOpTePikken);
       } else {
-        aanmeldingenPerLocatie.set(stop.locatie.id, {
-          locatie: stop.locatie,
-          aanmeldingen: [...stop.aanmeldersOpTePikken],
+        stopPerLocatie.set(stop.locatie.id, {
+          ...stop,
+          aanmeldersOpTePikken: [...stop.aanmeldersOpTePikken],
         });
       }
     }
-    const opstapplaatsenMetAanmeldingen: OpstapplaatsInfo[] = [
-      ...aanmeldingenPerLocatie.values(),
+    const opstapplaatsenMetAanmeldingen: VervoerstoerStop[] = [
+      ...stopPerLocatie.values(),
     ];
     return html`<rock-routes-selecteren
       .opstapplaatsen=${opstapplaatsenMetAanmeldingen}
@@ -354,13 +346,13 @@ export class VervoerstoerComponent extends RockElement {
       @vervoerstoer-save-requested=${(e: CustomEvent<UpsertableVervoerstoer>) =>
         this.handleVervoerstoerSaved(e.detail)}
       @vervoerstoer-saved=${(e: CustomEvent<UpsertableVervoerstoer>) =>
-        this.handleVervoerstoerSaved(e.detail, 'printen')}
+        this.handleVervoerstoerSaved(e.detail, 'bekijken')}
     ></rock-tijdsplanning>`;
   }
 
-  private renderPrinten() {
-    return html`<rock-vervoerstoer-printen
+  private renderBekijken() {
+    return html`<rock-vervoerstoer-bekijken
       .vervoerstoer=${this.vervoerstoer}
-    ></rock-vervoerstoer-printen>`;
+    ></rock-vervoerstoer-bekijken>`;
   }
 }

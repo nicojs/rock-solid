@@ -12,12 +12,35 @@ import { vervoerstoerenStore } from './vervoerstoeren.store';
 import { PropertyValues, html } from 'lit';
 import { router } from '../router';
 import { vervoerstoerService } from './vervoerstoer.service';
-
+import { toQuery } from '../shared';
+import { InputControl, InputType } from '../forms';
 
 type VervoerstoerStep =
   | 'opstapplaatsen-kiezen'
   | 'routes-selecteren'
   | 'tijdsplanning';
+
+const mainSearchControl: InputControl<VervoerstoerFilter> = {
+  type: InputType.text,
+  name: 'naamLike',
+  label: 'Projectnaam',
+  placeholder: 'Zoek op projectnaam',
+};
+
+const advancedSearchControls: InputControl<VervoerstoerFilter>[] = [
+  {
+    type: InputType.text,
+    name: 'bestemmingLike',
+    label: 'Bestemming',
+    placeholder: 'Zoek op bestemming',
+  },
+  {
+    type: InputType.text,
+    name: 'aangemaaktDoorLike',
+    label: 'Aangemaakt door',
+    placeholder: 'Zoek op naam',
+  },
+];
 
 @customElement('rock-vervoerstoeren')
 export class VervoerstoerenComponent extends RockElement {
@@ -35,6 +58,9 @@ export class VervoerstoerenComponent extends RockElement {
   @state()
   private editVervoerstoer?: Vervoerstoer;
 
+  @state()
+  private filter: VervoerstoerFilter = {};
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.subscription.add(
@@ -46,7 +72,7 @@ export class VervoerstoerenComponent extends RockElement {
 
   override update(props: PropertyValues<VervoerstoerenComponent>): void {
     if (props.has('path')) {
-      const oldPath = props.get('path') as string[] | undefined;
+      const oldPath = props.get('path');
       const newId = this.path[0] === 'edit' ? this.path[1] : undefined;
       const oldId = oldPath?.[0] === 'edit' ? oldPath[1] : undefined;
       if (newId && newId !== oldId) {
@@ -61,9 +87,9 @@ export class VervoerstoerenComponent extends RockElement {
       !this.path.length
     ) {
       const { page, ...filterParams } = this.query;
-      const filter = toVervoerstoerFilter(filterParams);
+      this.filter = toVervoerstoerFilter(filterParams);
       const currentPage = (tryParseInt(page) ?? 1) - 1;
-      vervoerstoerenStore.setCurrentPage(currentPage, { ...filter });
+      vervoerstoerenStore.setCurrentPage(currentPage, { ...this.filter });
     }
     super.update(props);
   }
@@ -84,6 +110,12 @@ export class VervoerstoerenComponent extends RockElement {
           <div class="row">
             <h2 class="col">Vervoerstoeren</h2>
           </div>
+          <rock-search
+            .mainControl=${mainSearchControl}
+            .advancedControls=${advancedSearchControls}
+            .filter=${this.filter}
+            @search-submitted=${() => router.setQuery(toQuery(this.filter))}
+          ></rock-search>
           ${this.vervoerstoeren !== undefined
             ? html`
                 <rock-vervoerstoeren-list

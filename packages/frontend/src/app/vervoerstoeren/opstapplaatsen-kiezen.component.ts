@@ -1,7 +1,6 @@
 import {
   Aanmelding,
   Activiteit,
-  CursusActiviteit,
   Deelnemer,
   Locatie,
   notEmpty,
@@ -289,7 +288,12 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
                         ),
                       )}
                       ${this.bestemmingStop
-                        ? this.#renderBestemmingCell(deelnemer, gekozenId)
+                        ? this.renderOpstapplaatsCell(
+                            deelnemer,
+                            this.bestemmingStop.locatie,
+                            gekozenId,
+                            true,
+                          )
                         : nothing}
                       <td>
                         <select
@@ -383,14 +387,14 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
     if (!bestemming || !datum) return undefined;
     return this.#activiteitenMetLocatie().find(
       (a) =>
-        (a as CursusActiviteit).locatie?.id === bestemming.id &&
+        a.locatie?.id === bestemming.id &&
         a.van.getTime() === datum.getTime(),
     )?.id;
   }
 
   #activiteitenMetLocatie() {
     return this.activiteiten.filter(
-      (a) => (a as CursusActiviteit).locatie,
+      (a) => a.locatie,
     );
   }
 
@@ -413,7 +417,7 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
               (a) => a.id === activiteitId,
             );
             if (activiteit) {
-              const locatie = (activiteit as CursusActiviteit).locatie;
+              const locatie = activiteit.locatie;
               this.vervoerstoer.bestemmingStop = locatie
                 ? {
                     id: 0,
@@ -435,7 +439,7 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
           <option value="">Kies activiteit</option>
           ${this.#activiteitenMetLocatie().map(
             (activiteit) => {
-              const locatie = (activiteit as CursusActiviteit).locatie!;
+              const locatie = activiteit.locatie!;
               return html`<option
                 value="${activiteit.id}"
                 ?selected=${selectedId === activiteit.id}
@@ -509,20 +513,11 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
     </details>`;
   }
 
-  #renderBestemmingCell(deelnemer: Deelnemer, gekozenId: number | undefined) {
-    const bestemmingLocatieId = this.bestemmingStop!.locatie.id;
-    const isGekozen = gekozenId === bestemmingLocatieId;
-    return html`<td class="text-center bg-dark-subtle">
-      ${isGekozen
-        ? html`<rock-icon icon="checkCircle" class="text-success"></rock-icon>`
-        : html`<rock-icon icon="circle"></rock-icon>`}
-    </td>`;
-  }
-
   private renderOpstapplaatsCell(
     deelnemer: Deelnemer,
     opstapplaats: Locatie,
     gekozenId: number | undefined,
+    isBestemming = false,
   ) {
     const naam = fullName(deelnemer);
     const isMogelijkeOpstapplaats = deelnemer.mogelijkeOpstapplaatsen.some(
@@ -533,7 +528,7 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
       title="${isMogelijkeOpstapplaats
         ? `${naam} heeft ${showLocatie(opstapplaats)} als mogelijke opstapplaats`
         : `Click om ${showLocatie(opstapplaats)} als mogelijke opstapplaats toe te voegen voor ${naam}`}"
-      class="text-center"
+      class="text-center ${isBestemming ? 'bg-dark-subtle' : ''}"
     >
       ${isMogelijkeOpstapplaats
         ? html`<button

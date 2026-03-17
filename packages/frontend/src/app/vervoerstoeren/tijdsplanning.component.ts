@@ -29,6 +29,11 @@ function formatBestemming(bestemming?: Locatie): string {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
+function formatDatum(date: Date | undefined): string {
+  if (!date) return '';
+  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}`;
+}
+
 function toTimeValue(date: Date): string {
   return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
@@ -80,7 +85,7 @@ export class TijdsplanningComponent extends RockElement {
   private reistijden: Map<string, ReistijdState> = new Map();
 
   @state()
-  private focusLegIndices: Map<string, number> = new Map();
+  private focusLegIndices: Map<number, number> = new Map();
 
   protected override willUpdate(changed: PropertyValues) {
     if (changed.has('vervoerstoer') || changed.has('baseDatum') || changed.has('baseDatumTerug')) {
@@ -270,7 +275,7 @@ export class TijdsplanningComponent extends RockElement {
   ) {
     const key = this.reistijdKey(dir, routeId, fromStopIndex);
     this.focusLegIndices = new Map(this.focusLegIndices).set(
-      `${dir}-${routeId}`,
+      routeId,
       fromStopIndex + 1,
     );
     const usedAankomstTijdMs = aankomstTijd?.getTime() ?? null;
@@ -448,10 +453,34 @@ export class TijdsplanningComponent extends RockElement {
   override render() {
     const destination = formatBestemming(this.bestemmingLocatie);
     return html`
+      <details class="alert alert-info">
+        <summary>Uitleg</summary>
+        <p>
+          Hier kun je de tijdsplanning invullen voor de heen- en terugweg.
+        </p>
+        <ol>
+          <li>
+            Vul de <strong>aankomsttijd bij de bestemming</strong> in. De
+            reistijd naar de vorige stop wordt automatisch berekend.
+          </li>
+          <li>
+            Gebruik de lichtblauwe knoppen om de gesuggereerde tijden over te
+            nemen. Werk zo van boven naar beneden.
+          </li>
+          <li>
+            Vul voor de terugweg de <strong>vertrektijd vanaf de bestemming</strong>
+            in. De aankomsttijden bij de stops worden weer automatisch
+            gesuggereerd.
+          </li>
+          <li>
+            Klik op 'Opslaan en bekijken' als alle tijden zijn ingevuld om de
+            printweergave te openen.
+          </li>
+        </ol>
+      </details>
       <h3>Tijdsplanning</h3>
       ${this.sortedRoutes.map((route) => {
         const stopsDesc = [...route.stops].reverse();
-        const stopsAsc = route.stops;
 
         return html`
           <div class="card mb-4">
@@ -477,7 +506,7 @@ export class TijdsplanningComponent extends RockElement {
                       } satisfies KaartRoute,
                     ]}
                     .bestemming=${destination}
-                    .focusLegIndex=${this.focusLegIndices.get(`heen-${route.id}`) ?? null}
+                    .focusLegIndex=${this.focusLegIndices.get(route.id) ?? null}
                   ></rock-vervoerstoer-kaart>
                 </div>
               </div>
@@ -506,9 +535,9 @@ export class TijdsplanningComponent extends RockElement {
     // But terugweg stops are in ascending order (0, 1, 2...) which maps to stopsDesc reversed
     return html`
       <div class="row mb-1">
-        <div class="col"><strong>Heenweg</strong></div>
+        <div class="col"><strong>Heenweg ${formatDatum(this.vervoerstoer.datum)}</strong></div>
         <div class="col"></div>
-        <div class="col"><strong>Terugweg</strong></div>
+        <div class="col"><strong>Terugweg ${formatDatum(this.vervoerstoer.datumTerug)}</strong></div>
       </div>
       <!-- Bestemming -->
       <div class="row align-items-center mb-2">

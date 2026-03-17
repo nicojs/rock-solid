@@ -5,6 +5,8 @@ import {
   OverigPersoon,
   UpsertableVervoerstoer,
   Vervoerstoer,
+  VervoerstoerRoute,
+  VervoerstoerStop,
 } from '@rock-solid/shared';
 import { css, html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -21,10 +23,6 @@ import type {
 } from './vervoerstoer-kaart.component';
 import { entities } from '../shared';
 
-type LocalStop = { locatie: Locatie; aanmeldingen: Aanmelding[] };
-type LocalRoute = { chauffeur: OverigPersoon; stops: LocalStop[] };
-export type OpstapplaatsInfo = { locatie: Locatie; aanmeldingen: Aanmelding[] };
-
 const KLEUREN = [
   '#4285F4',
   '#EA4335',
@@ -33,8 +31,6 @@ const KLEUREN = [
   '#9C27B0',
   '#FF7043',
 ];
-
-const FALLBACK_ADRES = 'Ter Rivierenlaan 152, 2100 Deurne';
 
 function formatDuur(seconds: number): string {
   const uren = Math.floor(seconds / 3600);
@@ -77,13 +73,13 @@ export class RoutesSelecterenComponent extends RockElement {
   ];
 
   @property({ attribute: false })
-  opstapplaatsen: OpstapplaatsInfo[] = [];
+  opstapplaatsen: VervoerstoerStop[] = [];
 
   @property({ attribute: false })
   vervoerstoer!: Vervoerstoer;
 
   @state()
-  private routes: LocalRoute[] = [];
+  private routes: VervoerstoerRoute[] = [];
 
   @state()
   private kaartRoutes: KaartRoute[] = [];
@@ -96,7 +92,7 @@ export class RoutesSelecterenComponent extends RockElement {
 
   private dragSource:
     | { kind: 'unallocated'; locatie: Locatie }
-    | { kind: 'stop'; stop: LocalStop; fromRoute: LocalRoute }
+    | { kind: 'stop'; stop: VervoerstoerStop; fromRoute: VervoerstoerRoute }
     | null = null;
 
   @state()
@@ -109,17 +105,9 @@ export class RoutesSelecterenComponent extends RockElement {
     changedProperties: PropertyValues<RoutesSelecterenComponent>,
   ): void {
     if (changedProperties.has('vervoerstoer')) {
-      this.routes = this.vervoerstoer.routes
-        .map((route) => ({
-          chauffeur: route.chauffeur,
-          stops: route.stops.map((stop) => ({
-            locatie: stop.locatie,
-            aanmeldingen: stop.aanmeldersOpTePikken,
-          })),
-        }))
-        .sort((a, b) =>
-          fullName(a.chauffeur).localeCompare(fullName(b.chauffeur)),
-        );
+      this.routes = [...this.vervoerstoer.routes].sort((a, b) =>
+        fullName(a.chauffeur).localeCompare(fullName(b.chauffeur)),
+      );
       this.chauffeurs = this.routes.map((r) => r.chauffeur);
       this.updateKaartRoutes();
     }
@@ -138,7 +126,7 @@ export class RoutesSelecterenComponent extends RockElement {
       }
       for (const chauffeur of added) {
         if (!this.routes.some((r) => r.chauffeur.id === chauffeur.id)) {
-          this.routes = [...this.routes, { chauffeur, stops: [] }];
+          this.routes = [...this.routes, { id: 0, chauffeur, stops: [] }];
         }
       }
       this.updateKaartRoutes();
@@ -150,7 +138,7 @@ export class RoutesSelecterenComponent extends RockElement {
     const ids = new Set<number>();
     for (const route of this.routes) {
       for (const stop of route.stops) {
-        for (const aanmelding of stop.aanmeldingen) {
+        for (const aanmelding of stop.aanmeldersOpTePikken) {
           ids.add(aanmelding.id);
         }
       }
@@ -161,14 +149,14 @@ export class RoutesSelecterenComponent extends RockElement {
   private unallocatedAt(locatie: Locatie): Aanmelding[] {
     const allocated = this.allocatedAanmeldingIds;
     const info = this.opstapplaatsen.find((o) => o.locatie.id === locatie.id);
-    return info?.aanmeldingen.filter((a) => !allocated.has(a.id)) ?? [];
+    return info?.aanmeldersOpTePikken.filter((a) => !allocated.has(a.id)) ?? [];
   }
 
   private get bestemmingStop() {
     return this.vervoerstoer.bestemmingStop;
   }
 
-  private get unallocatedOpstapplaatsen(): OpstapplaatsInfo[] {
+  private get unallocatedOpstapplaatsen(): VervoerstoerStop[] {
     return this.opstapplaatsen.filter(
       (o) => this.unallocatedAt(o.locatie).length > 0,
     );
@@ -181,8 +169,8 @@ export class RoutesSelecterenComponent extends RockElement {
 
   private onDragStartStop(
     e: DragEvent,
-    stop: LocalStop,
-    fromRoute: LocalRoute,
+    stop: VervoerstoerStop,
+    fromRoute: VervoerstoerRoute,
   ) {
     e.stopPropagation();
     this.dragSource = { kind: 'stop', stop, fromRoute };
@@ -214,7 +202,7 @@ export class RoutesSelecterenComponent extends RockElement {
 
   private onDropOnRoute(
     e: DragEvent,
-    route: LocalRoute,
+    route: VervoerstoerRoute,
     beforeStopIndex: number | null,
   ) {
     e.preventDefault();
@@ -225,12 +213,23 @@ export class RoutesSelecterenComponent extends RockElement {
     this.dragSource = null;
     this.dragOverTarget = null;
 
-    let newStop: LocalStop;
+    let newStop: VervoerstoerStop;
     if (source.kind === 'unallocated') {
+      const aanmeldingen = this.unallocatedAt(source.locatie);
       newStop = {
+        id: 0,
         locatie: source.locatie,
-        aanmeldingen: this.unallocatedAt(source.locatie),
+        volgnummer: 0,
+        aanmeldersOpTePikken: aanmeldingen,
       };
+      // Remove toeTeKennenStop
+      const stopId = this.vervoerstoer.toeTeKennenStops.find(
+        (s) => s.locatie.id === source.locatie.id,
+      )?.id;
+      if (stopId !== undefined) {
+        this.vervoerstoer.toeTeKennenStops =
+          this.vervoerstoer.toeTeKennenStops.filter((s) => s.id !== stopId);
+      }
     } else {
       const isSameRoute = source.fromRoute === route;
       const sourceIndex = source.fromRoute.stops.indexOf(source.stop);
@@ -252,9 +251,9 @@ export class RoutesSelecterenComponent extends RockElement {
       (s) => s.locatie.id === newStop.locatie.id,
     );
     if (bestaandeStop) {
-      bestaandeStop.aanmeldingen = [
-        ...bestaandeStop.aanmeldingen,
-        ...newStop.aanmeldingen,
+      bestaandeStop.aanmeldersOpTePikken = [
+        ...bestaandeStop.aanmeldersOpTePikken,
+        ...newStop.aanmeldersOpTePikken,
       ];
     } else {
       const stops = [...route.stops];
@@ -278,37 +277,25 @@ export class RoutesSelecterenComponent extends RockElement {
     this.dragSource = null;
     this.dragOverTarget = null;
 
-    // Remove stop from route (it goes back to unallocated)
+    // Remove stop from route and add aanmeldingen back to toeTeKennenStops
     source.fromRoute.stops = source.fromRoute.stops.filter(
       (s) => s !== source.stop,
     );
+    const toeTeKennenStop = this.vervoerstoer.toeTeKennenStops.find(
+      (s) => s.locatie.id === source.stop.locatie.id,
+    );
+    if (toeTeKennenStop) {
+      toeTeKennenStop.aanmeldersOpTePikken.push(...source.stop.aanmeldersOpTePikken);
+    } else {
+      this.vervoerstoer.toeTeKennenStops.push({
+        id: 0,
+        locatie: source.stop.locatie,
+        volgnummer: 0,
+        aanmeldersOpTePikken: source.stop.aanmeldersOpTePikken,
+      });
+    }
     this.routes = [...this.routes];
     this.updateKaartRoutes();
-  }
-
-  private googleMapsUrl(route: LocalRoute): string {
-    const origin = route.chauffeur.verblijfadres
-      ? formatAdres(route.chauffeur.verblijfadres)
-      : FALLBACK_ADRES;
-    const destination = formatBestemming(this.bestemmingStop?.locatie);
-    if (!destination) return '#';
-
-    const params = new URLSearchParams({
-      api: '1',
-      origin: origin,
-      destination: destination,
-    });
-    const waypoints = route.stops
-      .map((stop) =>
-        stop.locatie.adres
-          ? formatAdres(stop.locatie.adres)
-          : (stop.locatie.gpsBeschrijving ?? stop.locatie.naam),
-      )
-      .join('|');
-    if (waypoints) {
-      params.set('waypoints', waypoints);
-    }
-    return `https://www.google.com/maps/dir/?${params.toString()}`;
   }
 
   private reset() {
@@ -334,13 +321,13 @@ export class RoutesSelecterenComponent extends RockElement {
         aanmeldersOpTePikken: this.unallocatedAt(stop.locatie),
       })),
       bestemmingStop: this.vervoerstoer.bestemmingStop,
-      routes: this.routes.map((route, routeIdx) => ({
-        id: this.vervoerstoer.routes[routeIdx]?.id,
+      routes: this.routes.map((route) => ({
+        id: route.id || undefined,
         chauffeur: route.chauffeur,
         stops: route.stops.map((stop, stopIdx) => ({
           locatie: stop.locatie,
           volgnummer: stopIdx + 1,
-          aanmeldersOpTePikken: stop.aanmeldingen,
+          aanmeldersOpTePikken: stop.aanmeldersOpTePikken,
         })),
       })),
     };
@@ -370,6 +357,32 @@ export class RoutesSelecterenComponent extends RockElement {
     const isDragging = Boolean(this.dragSource);
     const canDropOnUnallocated = isDragging && this.dragSource?.kind === 'stop';
     return html`
+      <details class="alert alert-info">
+        <summary>Uitleg</summary>
+        <p>
+          Hier kun je opstapplaatsen toekennen aan chauffeurs door ze te
+          verslepen.
+        </p>
+        <ol>
+          <li>
+            Voeg chauffeurs toe via het veld 'Chauffeurs'. De begeleiders van de
+            geselecteerde projecten zijn standaard toegevoegd.
+          </li>
+          <li>
+            Sleep opstapplaatsen vanuit 'Toe te kennen' naar de kolom van een
+            chauffeur om ze toe te wijzen.
+          </li>
+          <li>
+            Versleep stops tussen chauffeurs om de verdeling aan te passen, of
+            sleep ze terug naar 'Toe te kennen'.
+          </li>
+          <li>
+            Deelnemers die rechtstreeks naar de bestemming gaan worden apart
+            getoond en hoeven niet toegekend te worden.
+          </li>
+          <li>Klik op 'Opslaan en verder' als alle stops zijn toegekend.</li>
+        </ol>
+      </details>
       <div class="row mb-3">
         <div class="col mb-3">
           <rock-reactive-form-tags
@@ -459,7 +472,7 @@ export class RoutesSelecterenComponent extends RockElement {
         </div>
         ${this.routes.map((route, routeIdx) => {
           const aantalPassagiers = route.stops.reduce(
-            (sum, s) => sum + s.aanmeldingen.length,
+            (sum, s) => sum + s.aanmeldersOpTePikken.length,
             0,
           );
           return html`
@@ -576,7 +589,7 @@ export class RoutesSelecterenComponent extends RockElement {
                               >${String.fromCharCode(66 + stopIndex)}</span
                             ><strong>${showLocatie(stop.locatie)}</strong>
                             <ul class="mb-0 small list-unstyled ms-1">
-                              ${stop.aanmeldingen.map(
+                              ${stop.aanmeldersOpTePikken.map(
                                 (a) =>
                                   html`<li>
                                     ${a.deelnemer

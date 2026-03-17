@@ -167,6 +167,9 @@ export class VervoerstoerKaartComponent extends LitElement {
     if (changed.has('status')) {
       this.#initMap();
     }
+    if (changed.has('focusLegIndex')) {
+      this.#zoomToLeg();
+    }
     if (
       changed.has('routes') ||
       changed.has('bestemming') ||
@@ -175,6 +178,29 @@ export class VervoerstoerKaartComponent extends LitElement {
       clearTimeout(this.tekenTimeout);
       this.tekenTimeout = setTimeout(() => void this.#tekenRoutes(), 400);
     }
+  }
+
+  #zoomToLeg() {
+    if (!this.map || this.focusLegIndex === null || this.cachedResults.length === 0) return;
+    const { encodedPolyline, legs } = this.cachedResults[0]!;
+    const path = google.maps.geometry?.encoding?.decodePath(encodedPolyline);
+    if (!path || path.length === 0 || this.focusLegIndex >= legs.length) return;
+
+    const totalDistance = legs.reduce((s, l) => s + l.distanceMeters, 0);
+    let startFraction = 0;
+    for (let i = 0; i < this.focusLegIndex; i++) {
+      startFraction += legs[i]!.distanceMeters / totalDistance;
+    }
+    const endFraction = startFraction + legs[this.focusLegIndex]!.distanceMeters / totalDistance;
+
+    const startIdx = Math.round(startFraction * (path.length - 1));
+    const endIdx = Math.round(endFraction * (path.length - 1));
+
+    const bounds = new google.maps.LatLngBounds();
+    for (let i = startIdx; i <= endIdx; i++) {
+      bounds.extend(path[i]!);
+    }
+    this.map.fitBounds(bounds, 60);
   }
 
   #initMap() {
