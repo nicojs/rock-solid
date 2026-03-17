@@ -180,7 +180,7 @@ export class ProjectenComponent extends RockElement {
       const projecten = this.projecten?.filter((p) =>
         this.selectedProjectIds.includes(p.id),
       );
-      const bestemming = projecten
+      const bestemmingLocatie = projecten
         ?.flatMap((p) =>
           p.type === 'cursus'
             ? p.activiteiten.map((a) => a.locatie).filter(notEmpty)
@@ -198,7 +198,14 @@ export class ProjectenComponent extends RockElement {
           chauffeur,
           stops: [],
         })),
-        bestemming,
+        toeTeKennenStops: [],
+        bestemmingStop: bestemmingLocatie
+          ? {
+              locatie: bestemmingLocatie,
+              volgnummer: 0,
+              aanmeldersOpTePikken: [],
+            }
+          : undefined,
       });
       router.navigate(
         `/vervoerstoeren/edit/${vervoerstoer.id}/opstapplaatsen-kiezen`,

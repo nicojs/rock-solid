@@ -31,22 +31,36 @@ import {
 } from './aanmelding.mapper.js';
 import { toPage } from './paging.js';
 
+type DBStopAggregate = db.VervoerstoerStop & {
+  locatie: DBLocatieAggregate;
+  aanmeldersToPickup: DBAanmeldingAggregate[];
+};
+
 type DBVervoerstoerAggregate = db.Vervoerstoer & {
-  bestemming: DBLocatieAggregate | null;
+  toeTeKennenStops: DBStopAggregate[];
+  bestemmingStop: DBStopAggregate | null;
   projects: db.Project[];
   vervoerstoerRoutes: (db.VervoerstoerRoute & {
     chauffeur: DBPersonAggregate | null;
     vertrekadres: DBAdresWithPlaats | null;
-    stops: (db.VervoerstoerStop & {
-      locatie: DBLocatieAggregate;
-      aanmeldersToPickup: DBAanmeldingAggregate[];
-    })[];
+    stops: DBStopAggregate[];
   })[];
 };
 
+const includeStopAggregate = {
+  locatie: { include: includeAdres },
+  aanmeldersToPickup: { include: includeAanmeldingFields },
+};
+
 const includeVervoerstoerAggregate = {
-  bestemming: {
-    include: includeAdres,
+  toeTeKennenStops: {
+    orderBy: {
+      volgnummer: 'asc',
+    },
+    include: includeStopAggregate,
+  },
+  bestemmingStop: {
+    include: includeStopAggregate,
   },
   projects: {
     orderBy: {
@@ -66,14 +80,7 @@ const includeVervoerstoerAggregate = {
         orderBy: {
           volgnummer: 'asc',
         },
-        include: {
-          locatie: {
-            include: includeAdres,
-          },
-          aanmeldersToPickup: {
-            include: includeAanmeldingFields,
-          },
-        },
+        include: includeStopAggregate,
       },
     },
   },
@@ -112,19 +119,26 @@ export class VervoerstoerMapper {
     vervoerstoer: Vervoerstoer,
     aangemaaktDoor: string,
   ): Promise<Vervoerstoer> {
+    // Create vervoerstoer with toeTeKennenStops and routes
     const created = await handleKnownPrismaErrors(
       this.db.vervoerstoer.create({
         data: { ...toCreateInput(vervoerstoer), aangemaaktDoor },
         include: includeVervoerstoerAggregate,
       }),
     );
-    return toVervoerstoer(created);
+    // Create bestemming stop separately and link it
+    return this.#upsertBestemmingStop(created, vervoerstoer.bestemmingStop);
   }
 
   async update(
     id: number,
     vervoerstoer: Vervoerstoer,
   ): Promise<Vervoerstoer> {
+    // Disconnect bestemming stop first (to avoid FK issues when deleting stops)
+    await this.db.vervoerstoer.update({
+      where: { id },
+      data: { bestemmingStop: { disconnect: true } },
+    });
     const updated = await handleKnownPrismaErrors(
       this.db.vervoerstoer.update({
         where: { id },
@@ -132,7 +146,33 @@ export class VervoerstoerMapper {
         include: includeVervoerstoerAggregate,
       }),
     );
-    return toVervoerstoer(updated);
+    return this.#upsertBestemmingStop(updated, vervoerstoer.bestemmingStop);
+  }
+
+  async #upsertBestemmingStop(
+    dbVervoerstoer: DBVervoerstoerAggregate,
+    bestemmingStop: Vervoerstoer['bestemmingStop'],
+  ): Promise<Vervoerstoer> {
+    if (!bestemmingStop) {
+      return toVervoerstoer(dbVervoerstoer);
+    }
+    const stop = await this.db.vervoerstoerStop.create({
+      data: {
+        locatie: { connect: { id: bestemmingStop.locatie.id } },
+        volgnummer: 0,
+        aanmeldersToPickup: {
+          connect: bestemmingStop.aanmeldersOpTePikken.map((a) => ({
+            id: a.id,
+          })),
+        },
+      },
+    });
+    const result = await this.db.vervoerstoer.update({
+      where: { id: dbVervoerstoer.id },
+      data: { bestemmingStop: { connect: { id: stop.id } } },
+      include: includeVervoerstoerAggregate,
+    });
+    return toVervoerstoer(result);
   }
 
   async delete(id: number): Promise<void> {
@@ -155,11 +195,13 @@ function toCreateInput(
   vervoerstoer: Vervoerstoer,
 ): Omit<Prisma.VervoerstoerCreateInput, 'aangemaaktDoor'> {
   return {
-    bestemming: vervoerstoer.bestemming
-      ? { connect: { id: vervoerstoer.bestemming.id } }
-      : undefined,
     projects: {
       connect: vervoerstoer.projectIds.map((id) => ({ id })),
+    },
+    datum: vervoerstoer.datum ?? null,
+    datumTerug: vervoerstoer.datumTerug ?? null,
+    toeTeKennenStops: {
+      create: toStopCreateInputs(vervoerstoer.toeTeKennenStops),
     },
     vervoerstoerRoutes: {
       create: toRouteCreateInput(vervoerstoer),
@@ -171,17 +213,36 @@ function toUpdateInput(
   vervoerstoer: Vervoerstoer,
 ): Prisma.VervoerstoerUpdateInput {
   return {
-    bestemming: vervoerstoer.bestemming
-      ? { connect: { id: vervoerstoer.bestemming.id } }
-      : { disconnect: true },
+    datum: vervoerstoer.datum ?? null,
+    datumTerug: vervoerstoer.datumTerug ?? null,
     projects: {
       set: vervoerstoer.projectIds.map((id) => ({ id })),
+    },
+    toeTeKennenStops: {
+      deleteMany: {},
+      create: toStopCreateInputs(vervoerstoer.toeTeKennenStops),
     },
     vervoerstoerRoutes: {
       deleteMany: {},
       create: toRouteCreateInput(vervoerstoer),
     },
   };
+}
+
+function toStopCreateInputs(stops: Vervoerstoer['toeTeKennenStops']) {
+  return stops.map((stop) => ({
+    volgnummer: stop.volgnummer,
+    locatie: {
+      connect: {
+        id: stop.locatie.id,
+      },
+    },
+    aanmeldersToPickup: {
+      connect: stop.aanmeldersOpTePikken.map((a) => ({ id: a.id })),
+    },
+    geplandeAankomst: stop.geplandeAankomst ?? null,
+    geplandeAankomstTerug: stop.geplandeAankomstTerug ?? null,
+  }));
 }
 
 function toRouteCreateInput(vervoerstoer: Vervoerstoer) {
@@ -204,9 +265,11 @@ function toRouteCreateInput(vervoerstoer: Vervoerstoer) {
           connect: stop.aanmeldersOpTePikken.map((a) => ({ id: a.id })),
         },
         geplandeAankomst: stop.geplandeAankomst ?? null,
+        geplandeAankomstTerug: stop.geplandeAankomstTerug ?? null,
       })),
     },
     vertrekTijd: route.vertrekTijd ?? null,
+    vertrekTijdTerug: route.vertrekTijdTerug ?? null,
   }));
 }
 
@@ -217,9 +280,12 @@ function toVervoerstoer(
     id: dbVervoerstoer.id,
     naam: toNaam(dbVervoerstoer),
     projectIds: dbVervoerstoer.projects.map((project) => project.id),
-    bestemming: dbVervoerstoer.bestemming
-      ? toLocatie(dbVervoerstoer.bestemming)
+    toeTeKennenStops: dbVervoerstoer.toeTeKennenStops.map(toStop),
+    bestemmingStop: dbVervoerstoer.bestemmingStop
+      ? toStop(dbVervoerstoer.bestemmingStop)
       : undefined,
+    datum: dbVervoerstoer.datum ?? undefined,
+    datumTerug: dbVervoerstoer.datumTerug ?? undefined,
     aangemaaktDoor: dbVervoerstoer.aangemaaktDoor,
     routes: dbVervoerstoer.vervoerstoerRoutes.flatMap((route) => {
       if (!route.chauffeur) return [];
@@ -228,17 +294,23 @@ function toVervoerstoer(
           id: route.id,
           chauffeur: toOverigPersoon(route.chauffeur),
           vertrekTijd: route.vertrekTijd ?? undefined,
+          vertrekTijdTerug: route.vertrekTijdTerug ?? undefined,
           vertrekadres: toAdres(route.vertrekadres),
-          stops: route.stops.map((stop) => ({
-            id: stop.id,
-            volgnummer: stop.volgnummer,
-            locatie: toLocatie(stop.locatie),
-            aanmeldersOpTePikken: stop.aanmeldersToPickup.map(toAanmelding),
-            geplandeAankomst: stop.geplandeAankomst ?? undefined,
-          })),
+          stops: route.stops.map(toStop),
         },
       ];
     }),
+  };
+}
+
+function toStop(stop: DBStopAggregate) {
+  return {
+    id: stop.id,
+    volgnummer: stop.volgnummer,
+    locatie: toLocatie(stop.locatie),
+    aanmeldersOpTePikken: stop.aanmeldersToPickup.map(toAanmelding),
+    geplandeAankomst: stop.geplandeAankomst ?? undefined,
+    geplandeAankomstTerug: stop.geplandeAankomstTerug ?? undefined,
   };
 }
 

@@ -46,9 +46,12 @@ export class VervoerstoerenComponent extends RockElement {
 
   override update(props: PropertyValues<VervoerstoerenComponent>): void {
     if (props.has('path')) {
-      if (this.path[0] === 'edit' && this.path[1]) {
-        this.#loadVervoerstoer(+this.path[1]);
-      } else {
+      const oldPath = props.get('path') as string[] | undefined;
+      const newId = this.path[0] === 'edit' ? this.path[1] : undefined;
+      const oldId = oldPath?.[0] === 'edit' ? oldPath[1] : undefined;
+      if (newId && newId !== oldId) {
+        this.#loadVervoerstoer(+newId);
+      } else if (!newId) {
         this.editVervoerstoer = undefined;
       }
     }

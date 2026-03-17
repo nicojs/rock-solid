@@ -1,12 +1,16 @@
 import {
   Aanmelding,
+  Activiteit,
+  CursusActiviteit,
   Deelnemer,
   Locatie,
+  notEmpty,
   Vervoerstoer,
+  VervoerstoerStop,
 } from '@rock-solid/shared';
 import { css, html, nothing, PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { selectControl, tagsControl } from '../forms';
+import { tagsControl } from '../forms';
 import { formStyles } from '../forms/reactive-form.component';
 import { showLocatie } from '../locaties/locatie.pipe';
 import { locatieService } from '../locaties/locatie.service';
@@ -14,6 +18,11 @@ import { fullName } from '../personen/persoon.pipe';
 import { RockElement } from '../rock-element';
 import { deelnemerLink } from '../projecten/project.pipes';
 import { bootstrap } from '../../styles';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+function toDateValue(date: Date): string {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
 
 @customElement('rock-opstapplaatsen-kiezen')
 export class OpstapplaatsenKiezenComponent extends RockElement {
@@ -61,7 +70,7 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
   vervoerstoer!: Vervoerstoer;
 
   @property({ attribute: false })
-  bestemmingLocaties: Locatie[] = [];
+  activiteiten: Activiteit[] = [];
 
   @property({ attribute: false })
   aanmeldingenPerDeelnemerId: Map<number, Aanmelding[]> = new Map();
@@ -74,6 +83,77 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
 
   @property({ type: Boolean })
   step2Enabled = false;
+
+  private get bestemmingStop(): VervoerstoerStop | undefined {
+    return this.vervoerstoer.bestemmingStop;
+  }
+
+  private get allStops(): VervoerstoerStop[] {
+    return [
+      ...this.vervoerstoer.toeTeKennenStops,
+      ...this.vervoerstoer.routes.flatMap((r) => r.stops),
+      ...(this.vervoerstoer.bestemmingStop
+        ? [this.vervoerstoer.bestemmingStop]
+        : []),
+    ];
+  }
+
+  private findStop(locatieId: number): VervoerstoerStop | undefined {
+    return this.allStops.find((s) => s.locatie.id === locatieId);
+  }
+
+  private gekozenLocatieId(deelnemer: Deelnemer): number | undefined {
+    const aanmeldingIds = new Set(
+      (this.aanmeldingenPerDeelnemerId.get(deelnemer.id) ?? []).map(
+        (a) => a.id,
+      ),
+    );
+    const stop = this.allStops.find((s) =>
+      s.aanmeldersOpTePikken.some((a) => aanmeldingIds.has(a.id)),
+    );
+    return stop?.locatie.id;
+  }
+
+  private assignDeelnemerToLocatie(
+    deelnemer: Deelnemer,
+    locatie: Locatie | undefined,
+  ) {
+    const aanmeldingen =
+      this.aanmeldingenPerDeelnemerId.get(deelnemer.id) ?? [];
+
+    // Remove from all current stops (incl. bestemming)
+    for (const stop of this.allStops) {
+      stop.aanmeldersOpTePikken = stop.aanmeldersOpTePikken.filter(
+        (a) => !aanmeldingen.some((aa) => aa.id === a.id),
+      );
+    }
+
+    if (locatie) {
+      const isBestemming =
+        locatie.id === this.vervoerstoer.bestemmingStop?.locatie.id;
+      if (isBestemming) {
+        this.vervoerstoer.bestemmingStop!.aanmeldersOpTePikken.push(
+          ...aanmeldingen,
+        );
+      } else {
+        let stop = this.vervoerstoer.toeTeKennenStops.find(
+          (s) => s.locatie.id === locatie.id,
+        );
+        if (!stop) {
+          stop = {
+            id: 0,
+            locatie,
+            volgnummer: 0,
+            aanmeldersOpTePikken: [],
+          };
+          this.vervoerstoer.toeTeKennenStops.push(stop);
+        }
+        stop.aanmeldersOpTePikken.push(...aanmeldingen);
+      }
+    }
+
+    this.notifyDataChanged();
+  }
 
   protected override update(
     changedProperties: PropertyValues<OpstapplaatsenKiezenComponent>,
@@ -175,15 +255,15 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
                         >
                       </th>`,
                   )}
-                  ${this.vervoerstoer.bestemming
+                  ${this.bestemmingStop
                     ? html`<th
-                        title="Rechtstreeks naar ${this.vervoerstoer.bestemming
+                        title="Rechtstreeks naar ${this.bestemmingStop.locatie
                           .naam}"
                         style="width: 40px"
                         class="text-vertical bg-dark-subtle"
                       >
                         <span class="text-vertical-label"
-                          >${this.vervoerstoer.bestemming.naam}</span
+                          >${this.bestemmingStop.locatie.naam}</span
                         >
                       </th>`
                     : nothing}
@@ -195,19 +275,21 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
                   if (!deelnemer) {
                     return nothing;
                   }
+                  const gekozenId = this.gekozenLocatieId(deelnemer);
                   return html`
                     <tr>
                       <th class="fw-normal sticky-first-column">
                         ${deelnemerLink(deelnemer)}
                       </th>
                       ${this.opstapplaatsen.map((opstapplaats) =>
-                        this.renderOpstapplaatsCell(deelnemer, opstapplaats),
+                        this.renderOpstapplaatsCell(
+                          deelnemer,
+                          opstapplaats,
+                          gekozenId,
+                        ),
                       )}
-                      ${this.vervoerstoer.bestemming
-                        ? this.renderOpstapplaatsCell(
-                            deelnemer,
-                            this.vervoerstoer.bestemming,
-                          )
+                      ${this.bestemmingStop
+                        ? this.#renderBestemmingCell(deelnemer, gekozenId)
                         : nothing}
                       <td>
                         <select
@@ -216,22 +298,17 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
                             const select = ev.target as HTMLSelectElement;
                             const selectedId = Number(select.value);
                             const allLocaties = [
-                              ...deelnemer.mogelijkeOpstapplaatsen,
-                              ...(this.vervoerstoer.bestemming
-                                ? [this.vervoerstoer.bestemming]
+                              ...deelnemer.mogelijkeOpstapplaatsen.filter(
+                                (l) => l.soort !== 'cursushuis',
+                              ),
+                              ...(this.bestemmingStop
+                                ? [this.bestemmingStop.locatie]
                                 : []),
                             ];
-                            const geselecteerdeLocatie = allLocaties.find(
-                              (loc) => loc.id === selectedId,
+                            const locatie = allLocaties.find(
+                              (l) => l.id === selectedId,
                             );
-                            const aanmeldingen =
-                              this.aanmeldingenPerDeelnemerId.get(
-                                deelnemer.id,
-                              ) || [];
-                            for (const aanmelding of aanmeldingen) {
-                              aanmelding.opstapplaats = geselecteerdeLocatie;
-                            }
-                            this.notifyDataChanged();
+                            this.assignDeelnemerToLocatie(deelnemer, locatie);
                           }}
                         >
                           <option value="">Kies opstapplaats</option>
@@ -241,27 +318,19 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
                               (locatie) =>
                                 html`<option
                                   value="${locatie.id}"
-                                  ?selected=${this.aanmeldingenPerDeelnemerId.get(
-                                    deelnemer.id,
-                                  )?.[0]?.opstapplaats?.id === locatie.id}
+                                  ?selected=${gekozenId === locatie.id}
                                 >
                                   ${showLocatie(locatie)}
                                 </option>`,
                             )}
-                          ${this.vervoerstoer.bestemming &&
-                          deelnemer.mogelijkeOpstapplaatsen.some(
-                            (loc) =>
-                              loc.id === this.vervoerstoer.bestemming?.id,
-                          )
+                          ${this.bestemmingStop
                             ? html`<option
-                                value="${this.vervoerstoer.bestemming.id}"
-                                ?selected=${this.aanmeldingenPerDeelnemerId.get(
-                                  deelnemer.id,
-                                )?.[0]?.opstapplaats?.id ===
-                                this.vervoerstoer.bestemming.id}
+                                value="${this.bestemmingStop.locatie.id}"
+                                ?selected=${gekozenId ===
+                                this.bestemmingStop.locatie.id}
                               >
                                 👉 Rechtstreeks naar
-                                ${showLocatie(this.vervoerstoer.bestemming)}
+                                ${showLocatie(this.bestemmingStop.locatie)}
                               </option>`
                             : nothing}
                         </select>
@@ -308,45 +377,100 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
       </div>`;
   }
 
+  #selectedActiviteitId(): number | undefined {
+    const bestemming = this.bestemmingStop?.locatie;
+    const datum = this.vervoerstoer.datum;
+    if (!bestemming || !datum) return undefined;
+    return this.#activiteitenMetLocatie().find(
+      (a) =>
+        (a as CursusActiviteit).locatie?.id === bestemming.id &&
+        a.van.getTime() === datum.getTime(),
+    )?.id;
+  }
+
+  #activiteitenMetLocatie() {
+    return this.activiteiten.filter(
+      (a) => (a as CursusActiviteit).locatie,
+    );
+  }
+
   #renderBestemmingInput() {
-    return html`<div class="col-lg-2 col-md-4">
-        <label for="bestemming-input" class="form-label fw-bold">Bestemming</label>
-      </div>
-      <div class="col-lg-10 col-md-8">
+    const selectedId = this.#selectedActiviteitId();
+    const datumVal = this.vervoerstoer.datum
+      ? toDateValue(this.vervoerstoer.datum)
+      : '';
+    const datumTerugVal = this.vervoerstoer.datumTerug
+      ? toDateValue(this.vervoerstoer.datumTerug)
+      : '';
+    return html`<div class="col-auto">
+        <label class="form-label fw-bold">Activiteit</label>
         <select
           class="form-select"
-          id="bestemming-input"
           @change=${(ev: Event) => {
             const select = ev.target as HTMLSelectElement;
-            const selectedId = Number(select.value);
-            const oldBestemmingId = this.vervoerstoer.bestemming?.id;
-            const locatie = this.bestemmingLocaties.find(
-              (l) => l.id === selectedId,
+            const activiteitId = Number(select.value);
+            const activiteit = this.activiteiten.find(
+              (a) => a.id === activiteitId,
             );
-            if (oldBestemmingId && oldBestemmingId !== locatie?.id) {
-              for (const [, aanmeldingen] of this.aanmeldingenPerDeelnemerId) {
-                for (const aanmelding of aanmeldingen) {
-                  if (aanmelding.opstapplaats?.id === oldBestemmingId) {
-                    aanmelding.opstapplaats = undefined;
+            if (activiteit) {
+              const locatie = (activiteit as CursusActiviteit).locatie;
+              this.vervoerstoer.bestemmingStop = locatie
+                ? {
+                    id: 0,
+                    locatie,
+                    volgnummer: 0,
+                    aanmeldersOpTePikken: [],
                   }
-                }
-              }
+                : undefined;
+              this.vervoerstoer.datum = activiteit.van;
+              this.vervoerstoer.datumTerug = activiteit.totEnMet;
+            } else {
+              this.vervoerstoer.bestemmingStop = undefined;
+              this.vervoerstoer.datum = undefined;
+              this.vervoerstoer.datumTerug = undefined;
             }
-            this.vervoerstoer.bestemming = locatie;
             this.notifyDataChanged();
           }}
         >
-          <option value="">Kies bestemming</option>
-          ${this.bestemmingLocaties.map(
-            (locatie) =>
-              html`<option
-                value="${locatie.id}"
-                ?selected=${this.vervoerstoer.bestemming?.id === locatie.id}
+          <option value="">Kies activiteit</option>
+          ${this.#activiteitenMetLocatie().map(
+            (activiteit) => {
+              const locatie = (activiteit as CursusActiviteit).locatie!;
+              return html`<option
+                value="${activiteit.id}"
+                ?selected=${selectedId === activiteit.id}
               >
-                ${showLocatie(locatie)}
-              </option>`,
+                ${showLocatie(locatie)} (${toDateValue(activiteit.van)} – ${toDateValue(activiteit.totEnMet)})
+              </option>`;
+            },
           )}
         </select>
+      </div>
+      <div class="col-auto">
+        <label class="form-label fw-bold">Datum heen</label>
+        <input
+          type="date"
+          class="form-control"
+          .value=${datumVal}
+          @change=${(e: Event) => {
+            const v = (e.target as HTMLInputElement).value;
+            this.vervoerstoer.datum = v ? new Date(v) : undefined;
+            this.notifyDataChanged();
+          }}
+        />
+      </div>
+      <div class="col-auto">
+        <label class="form-label fw-bold">Datum terug</label>
+        <input
+          type="date"
+          class="form-control"
+          .value=${datumTerugVal}
+          @change=${(e: Event) => {
+            const v = (e.target as HTMLInputElement).value;
+            this.vervoerstoer.datumTerug = v ? new Date(v) : undefined;
+            this.notifyDataChanged();
+          }}
+        />
       </div>`;
   }
 
@@ -385,17 +509,31 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
     </details>`;
   }
 
-  private renderOpstapplaatsCell(deelnemer: Deelnemer, opstapplaats: Locatie) {
+  #renderBestemmingCell(deelnemer: Deelnemer, gekozenId: number | undefined) {
+    const bestemmingLocatieId = this.bestemmingStop!.locatie.id;
+    const isGekozen = gekozenId === bestemmingLocatieId;
+    return html`<td class="text-center bg-dark-subtle">
+      ${isGekozen
+        ? html`<rock-icon icon="checkCircle" class="text-success"></rock-icon>`
+        : html`<rock-icon icon="circle"></rock-icon>`}
+    </td>`;
+  }
+
+  private renderOpstapplaatsCell(
+    deelnemer: Deelnemer,
+    opstapplaats: Locatie,
+    gekozenId: number | undefined,
+  ) {
     const naam = fullName(deelnemer);
-    const isBestemming = opstapplaats.id === this.vervoerstoer.bestemming?.id;
     const isMogelijkeOpstapplaats = deelnemer.mogelijkeOpstapplaatsen.some(
       (value) => value.id === opstapplaats.id,
     );
+    const isGekozen = gekozenId === opstapplaats.id;
     return html`<td
       title="${isMogelijkeOpstapplaats
         ? `${naam} heeft ${showLocatie(opstapplaats)} als mogelijke opstapplaats`
         : `Click om ${showLocatie(opstapplaats)} als mogelijke opstapplaats toe te voegen voor ${naam}`}"
-      class="text-center ${isBestemming ? 'bg-dark-subtle' : ''}"
+      class="text-center"
     >
       ${isMogelijkeOpstapplaats
         ? html`<button
@@ -407,19 +545,13 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
                 ),
                 1,
               );
-              this.aanmeldingenPerDeelnemerId
-                .get(deelnemer.id)
-                ?.forEach((aanmelding) => {
-                  if (aanmelding.opstapplaats?.id === opstapplaats.id) {
-                    aanmelding.opstapplaats = undefined;
-                  }
-                });
+              if (isGekozen) {
+                this.assignDeelnemerToLocatie(deelnemer, undefined);
+              }
               this.notifyDataChanged();
             }}
           >
-            ${opstapplaats.id ===
-            this.aanmeldingenPerDeelnemerId.get(deelnemer.id)?.[0]?.opstapplaats
-              ?.id
+            ${isGekozen
               ? html`<rock-icon
                   icon="checkCircle"
                   class="text-success"

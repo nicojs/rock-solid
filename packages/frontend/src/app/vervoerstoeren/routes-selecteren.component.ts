@@ -47,7 +47,7 @@ function formatAfstand(meters: number): string {
 }
 
 function formatAdres(adres: Adres): string {
-  return `${adres.straatnaam} ${adres.huisnummer}, ${adres.plaats.postcode} ${adres.plaats.gemeente}, België`;
+  return `${adres.straatnaam} ${adres.huisnummer}, ${adres.plaats.postcode} ${adres.plaats.deelgemeente}, België`;
 }
 
 function formatBestemming(bestemming?: Locatie): string {
@@ -61,11 +61,17 @@ export class RoutesSelecterenComponent extends RockElement {
     bootstrap,
     formStyles,
     css`
-      .deelnemer-row .remove-deelnemer {
-        visibility: hidden;
+      [draggable='true'] {
+        cursor: grab;
       }
-      .deelnemer-row:hover .remove-deelnemer {
-        visibility: visible;
+      [draggable='true']:active {
+        cursor: grabbing;
+      }
+      .drop-zone {
+        cursor: default;
+      }
+      .drop-zone.drag-active {
+        cursor: not-allowed;
       }
     `,
   ];
@@ -88,16 +94,14 @@ export class RoutesSelecterenComponent extends RockElement {
   @state()
   private routeSamenvattingen: RouteSamenvatting[] = [];
 
-  // What is being dragged
   private dragSource:
     | { kind: 'unallocated'; locatie: Locatie }
     | { kind: 'stop'; stop: LocalStop; fromRoute: LocalRoute }
     | null = null;
 
-  // Where it will be dropped: chauffeurId + insert position (null = append at end)
   @state()
   private dragOverTarget: {
-    chauffeurId: number;
+    chauffeurId: number | 'unallocated';
     beforeStopIndex: number | null;
   } | null = null;
 
@@ -105,14 +109,18 @@ export class RoutesSelecterenComponent extends RockElement {
     changedProperties: PropertyValues<RoutesSelecterenComponent>,
   ): void {
     if (changedProperties.has('vervoerstoer')) {
-      this.routes = this.vervoerstoer.routes.map((route) => ({
-        chauffeur: route.chauffeur,
-        stops: route.stops.map((stop) => ({
-          locatie: stop.locatie,
-          aanmeldingen: stop.aanmeldersOpTePikken,
-        })),
-      }));
-      this.chauffeurs = this.vervoerstoer.routes.map((r) => r.chauffeur);
+      this.routes = this.vervoerstoer.routes
+        .map((route) => ({
+          chauffeur: route.chauffeur,
+          stops: route.stops.map((stop) => ({
+            locatie: stop.locatie,
+            aanmeldingen: stop.aanmeldersOpTePikken,
+          })),
+        }))
+        .sort((a, b) =>
+          fullName(a.chauffeur).localeCompare(fullName(b.chauffeur)),
+        );
+      this.chauffeurs = this.routes.map((r) => r.chauffeur);
       this.updateKaartRoutes();
     }
     if (changedProperties.has('chauffeurs')) {
@@ -156,20 +164,13 @@ export class RoutesSelecterenComponent extends RockElement {
     return info?.aanmeldingen.filter((a) => !allocated.has(a.id)) ?? [];
   }
 
-  private get rechtstreeks(): Aanmelding[] {
-    const bestemmingId = this.vervoerstoer.bestemming?.id;
-    if (!bestemmingId) return [];
-    return this.opstapplaatsen
-      .filter((o) => o.locatie.id === bestemmingId)
-      .flatMap((o) => o.aanmeldingen);
+  private get bestemmingStop() {
+    return this.vervoerstoer.bestemmingStop;
   }
 
   private get unallocatedOpstapplaatsen(): OpstapplaatsInfo[] {
-    const bestemmingId = this.vervoerstoer.bestemming?.id;
     return this.opstapplaatsen.filter(
-      (o) =>
-        o.locatie.id !== bestemmingId &&
-        this.unallocatedAt(o.locatie).length > 0,
+      (o) => this.unallocatedAt(o.locatie).length > 0,
     );
   }
 
@@ -193,27 +194,25 @@ export class RoutesSelecterenComponent extends RockElement {
     this.dragOverTarget = null;
   }
 
-  private onDragOverZone(e: DragEvent, route: LocalRoute) {
+  private onDragOverZone(e: DragEvent, chauffeurId: number | 'unallocated') {
     if (!this.dragSource) return;
     e.preventDefault();
     e.stopPropagation();
-    this.dragOverTarget = {
-      chauffeurId: route.chauffeur.id,
-      beforeStopIndex: null,
-    };
+    this.dragOverTarget = { chauffeurId, beforeStopIndex: null };
   }
 
-  private onDragOverStop(e: DragEvent, route: LocalRoute, stopIndex: number) {
+  private onDragOverStop(
+    e: DragEvent,
+    chauffeurId: number | 'unallocated',
+    stopIndex: number,
+  ) {
     if (!this.dragSource) return;
     e.preventDefault();
     e.stopPropagation();
-    this.dragOverTarget = {
-      chauffeurId: route.chauffeur.id,
-      beforeStopIndex: stopIndex,
-    };
+    this.dragOverTarget = { chauffeurId, beforeStopIndex: stopIndex };
   }
 
-  private onDrop(
+  private onDropOnRoute(
     e: DragEvent,
     route: LocalRoute,
     beforeStopIndex: number | null,
@@ -233,7 +232,6 @@ export class RoutesSelecterenComponent extends RockElement {
         aanmeldingen: this.unallocatedAt(source.locatie),
       };
     } else {
-      // Moving an existing stop — remove it from the source route first
       const isSameRoute = source.fromRoute === route;
       const sourceIndex = source.fromRoute.stops.indexOf(source.stop);
       source.fromRoute.stops = source.fromRoute.stops.filter(
@@ -241,7 +239,6 @@ export class RoutesSelecterenComponent extends RockElement {
       );
       newStop = source.stop;
 
-      // Adjust beforeStopIndex after removal from same route
       if (
         isSameRoute &&
         beforeStopIndex !== null &&
@@ -251,7 +248,6 @@ export class RoutesSelecterenComponent extends RockElement {
       }
     }
 
-    // Samenvoegen als de route al een stop heeft op dezelfde locatie
     const bestaandeStop = route.stops.find(
       (s) => s.locatie.id === newStop.locatie.id,
     );
@@ -273,21 +269,19 @@ export class RoutesSelecterenComponent extends RockElement {
     this.updateKaartRoutes();
   }
 
-  private removeAanmelding(
-    route: LocalRoute,
-    stop: LocalStop,
-    aanmelding: Aanmelding,
-  ) {
-    stop.aanmeldingen = stop.aanmeldingen.filter((a) => a !== aanmelding);
-    if (stop.aanmeldingen.length === 0) {
-      route.stops = route.stops.filter((s) => s !== stop);
-    }
-    this.routes = [...this.routes];
-    this.updateKaartRoutes();
-  }
+  private onDropOnUnallocated(e: DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!this.dragSource || this.dragSource.kind !== 'stop') return;
 
-  private removeStop(route: LocalRoute, stop: LocalStop) {
-    route.stops = route.stops.filter((s) => s !== stop);
+    const source = this.dragSource;
+    this.dragSource = null;
+    this.dragOverTarget = null;
+
+    // Remove stop from route (it goes back to unallocated)
+    source.fromRoute.stops = source.fromRoute.stops.filter(
+      (s) => s !== source.stop,
+    );
     this.routes = [...this.routes];
     this.updateKaartRoutes();
   }
@@ -296,7 +290,7 @@ export class RoutesSelecterenComponent extends RockElement {
     const origin = route.chauffeur.verblijfadres
       ? formatAdres(route.chauffeur.verblijfadres)
       : FALLBACK_ADRES;
-    const destination = formatBestemming(this.vervoerstoer.bestemming);
+    const destination = formatBestemming(this.bestemmingStop?.locatie);
     if (!destination) return '#';
 
     const params = new URLSearchParams({
@@ -308,7 +302,7 @@ export class RoutesSelecterenComponent extends RockElement {
       .map((stop) =>
         stop.locatie.adres
           ? formatAdres(stop.locatie.adres)
-          : stop.locatie.naam,
+          : (stop.locatie.gpsBeschrijving ?? stop.locatie.naam),
       )
       .join('|');
     if (waypoints) {
@@ -318,8 +312,7 @@ export class RoutesSelecterenComponent extends RockElement {
   }
 
   private reset() {
-    this.routes = [];
-    this.chauffeurs = [];
+    this.routes = this.routes.map((r) => ({ ...r, stops: [] }));
     this.updateKaartRoutes();
   }
 
@@ -331,9 +324,16 @@ export class RoutesSelecterenComponent extends RockElement {
     }));
   }
 
-  private save() {
-    const upsertable: UpsertableVervoerstoer = {
+  private buildUpsertable(): UpsertableVervoerstoer {
+    return {
       projectIds: this.vervoerstoer.projectIds,
+      datum: this.vervoerstoer.datum,
+      datumTerug: this.vervoerstoer.datumTerug,
+      toeTeKennenStops: this.vervoerstoer.toeTeKennenStops.map((stop) => ({
+        ...stop,
+        aanmeldersOpTePikken: this.unallocatedAt(stop.locatie),
+      })),
+      bestemmingStop: this.vervoerstoer.bestemmingStop,
       routes: this.routes.map((route, routeIdx) => ({
         id: this.vervoerstoer.routes[routeIdx]?.id,
         chauffeur: route.chauffeur,
@@ -344,9 +344,22 @@ export class RoutesSelecterenComponent extends RockElement {
         })),
       })),
     };
+  }
+
+  private save() {
+    this.dispatchEvent(
+      new CustomEvent<UpsertableVervoerstoer>('vervoerstoer-save-requested', {
+        detail: this.buildUpsertable(),
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private saveAndNext() {
     this.dispatchEvent(
       new CustomEvent<UpsertableVervoerstoer>('vervoerstoer-saved', {
-        detail: upsertable,
+        detail: this.buildUpsertable(),
         bubbles: true,
         composed: true,
       }),
@@ -354,6 +367,8 @@ export class RoutesSelecterenComponent extends RockElement {
   }
 
   override render() {
+    const isDragging = Boolean(this.dragSource);
+    const canDropOnUnallocated = isDragging && this.dragSource?.kind === 'stop';
     return html`
       <div class="row mb-3">
         <div class="col mb-3">
@@ -381,22 +396,66 @@ export class RoutesSelecterenComponent extends RockElement {
       <div class="row">
         <div class="col-sm-3">
           <h4>Toe te kennen</h4>
-          <ul class="list-group">
-            ${this.unallocatedOpstapplaatsen.map(({ locatie }) => {
-              const count = this.unallocatedAt(locatie).length;
-              return html`<li
-                class="list-group-item d-flex align-items-center gap-2"
-                draggable="true"
-                @dragstart=${(e: DragEvent) =>
-                  this.onDragStartUnallocated(e, locatie)}
-                @dragend=${() => this.onDragEnd()}
-              >
-                <rock-icon icon="gripHorizontal"></rock-icon>
-                ${showLocatie(locatie)}
-                <span class="badge text-bg-secondary ms-auto">${count}</span>
-              </li>`;
-            })}
-          </ul>
+          <div
+            class="drop-zone ${canDropOnUnallocated ? 'drag-active' : ''} ${this
+              .dragOverTarget?.chauffeurId === 'unallocated'
+              ? 'border border-primary bg-light rounded p-2'
+              : ''}"
+            style="min-height: 40px"
+            @dragover=${(e: DragEvent) => {
+              if (this.dragSource?.kind === 'stop') {
+                this.onDragOverZone(e, 'unallocated');
+              }
+            }}
+            @dragleave=${() => {
+              if (this.dragOverTarget?.chauffeurId === 'unallocated') {
+                this.dragOverTarget = null;
+              }
+            }}
+            @drop=${(e: DragEvent) => this.onDropOnUnallocated(e)}
+          >
+            <ul class="list-group">
+              ${this.unallocatedOpstapplaatsen.map(({ locatie }) => {
+                const count = this.unallocatedAt(locatie).length;
+                return html`<li
+                  class="list-group-item d-flex align-items-center gap-2"
+                  draggable="true"
+                  @dragstart=${(e: DragEvent) =>
+                    this.onDragStartUnallocated(e, locatie)}
+                  @dragend=${() => this.onDragEnd()}
+                >
+                  <rock-icon icon="gripHorizontal"></rock-icon>
+                  ${showLocatie(locatie)}
+                  <span class="badge text-bg-secondary ms-auto">${count}</span>
+                </li>`;
+              })}
+            </ul>
+          </div>
+          ${this.bestemmingStop
+            ? html`
+                <h5 class="mt-3">
+                  Rechtstreeks naar ${this.bestemmingStop.locatie.naam}
+                </h5>
+                <div class="border rounded p-2">
+                  <span class="badge text-bg-secondary mb-1"
+                    >${entities(
+                      this.bestemmingStop.aanmeldersOpTePikken.length,
+                      'deelnemer',
+                    )}</span
+                  >
+                  <ul class="mb-0 small list-unstyled">
+                    ${this.bestemmingStop.aanmeldersOpTePikken.map(
+                      (a) =>
+                        html`<li>
+                          ${a.deelnemer
+                            ? fullName(a.deelnemer)
+                            : `Aanmelding ${a.id}`}
+                        </li>`,
+                    )}
+                  </ul>
+                </div>
+              `
+            : ''}
         </div>
         ${this.routes.map((route, routeIdx) => {
           const aantalPassagiers = route.stops.reduce(
@@ -441,15 +500,17 @@ export class RoutesSelecterenComponent extends RockElement {
                   : ''}
               </div>
               <div
-                class="drop-zone border rounded p-2 mb-2 ${this.dragOverTarget
-                  ?.chauffeurId === route.chauffeur.id &&
+                class="drop-zone border rounded p-2 mb-2 ${isDragging
+                  ? 'drag-active'
+                  : ''} ${this.dragOverTarget?.chauffeurId ===
+                  route.chauffeur.id &&
                 this.dragOverTarget?.beforeStopIndex === null
                   ? 'border-primary bg-light'
                   : ''}"
                 style="min-height: 60px"
-                @dragover=${(e: DragEvent) => this.onDragOverZone(e, route)}
+                @dragover=${(e: DragEvent) =>
+                  this.onDragOverZone(e, route.chauffeur.id)}
                 @dragleave=${(e: DragEvent) => {
-                  // Only clear if leaving the zone entirely (not entering a child)
                   if (
                     !e.currentTarget ||
                     !(e.currentTarget as Element).contains(
@@ -463,7 +524,7 @@ export class RoutesSelecterenComponent extends RockElement {
                     }
                   }
                 }}
-                @drop=${(e: DragEvent) => this.onDrop(e, route, null)}
+                @drop=${(e: DragEvent) => this.onDropOnRoute(e, route, null)}
               >
                 ${route.stops.length === 0
                   ? html`<p class="text-muted small mb-0">
@@ -479,64 +540,52 @@ export class RoutesSelecterenComponent extends RockElement {
                             : 'border-transparent'}"
                           style="margin-top: -1px"
                           @dragover=${(e: DragEvent) =>
-                            this.onDragOverStop(e, route, stopIndex)}
+                            this.onDragOverStop(
+                              e,
+                              route.chauffeur.id,
+                              stopIndex,
+                            )}
                           @drop=${(e: DragEvent) =>
-                            this.onDrop(e, route, stopIndex)}
+                            this.onDropOnRoute(e, route, stopIndex)}
                         ></div>
                         <div
-                          class="d-flex justify-content-between align-items-start mb-1 pb-1 border-bottom"
+                          class="d-flex align-items-start mb-1 pb-1 border-bottom"
                           draggable="true"
                           @dragstart=${(e: DragEvent) =>
                             this.onDragStartStop(e, stop, route)}
                           @dragend=${() => this.onDragEnd()}
                           @dragover=${(e: DragEvent) =>
-                            this.onDragOverStop(e, route, stopIndex)}
+                            this.onDragOverStop(
+                              e,
+                              route.chauffeur.id,
+                              stopIndex,
+                            )}
                           @drop=${(e: DragEvent) =>
-                            this.onDrop(e, route, stopIndex)}
+                            this.onDropOnRoute(e, route, stopIndex)}
                         >
-                          <div class="d-flex align-items-start gap-1">
-                            <rock-icon
-                              icon="gripHorizontal"
-                              style="cursor:grab; margin-top:2px"
-                            ></rock-icon>
-                            <div>
-                              <span
-                                class="badge me-1"
-                                style="background-color:${KLEUREN[
-                                  routeIdx % KLEUREN.length
-                                ]}"
-                                >${String.fromCharCode(66 + stopIndex)}</span
-                              ><strong>${showLocatie(stop.locatie)}</strong>
-                              <ul class="mb-0 small list-unstyled ms-1">
-                                ${stop.aanmeldingen.map(
-                                  (a) =>
-                                    html` <li
-                                      class="deelnemer-row d-flex align-items-center gap-1"
-                                    >
-                                      <span
-                                        >${a.deelnemer
-                                          ? fullName(a.deelnemer)
-                                          : `Aanmelding ${a.id}`}</span
-                                      >
-                                      <button
-                                        class="remove-deelnemer btn btn-sm p-0 lh-1 text-danger"
-                                        title="Verwijder uit stop"
-                                        @click=${() =>
-                                          this.removeAanmelding(route, stop, a)}
-                                      >
-                                        ×
-                                      </button>
-                                    </li>`,
-                                )}
-                              </ul>
-                            </div>
+                          <rock-icon
+                            icon="gripHorizontal"
+                            style="margin-top:2px"
+                          ></rock-icon>
+                          <div class="ms-1">
+                            <span
+                              class="badge me-1"
+                              style="background-color:${KLEUREN[
+                                routeIdx % KLEUREN.length
+                              ]}"
+                              >${String.fromCharCode(66 + stopIndex)}</span
+                            ><strong>${showLocatie(stop.locatie)}</strong>
+                            <ul class="mb-0 small list-unstyled ms-1">
+                              ${stop.aanmeldingen.map(
+                                (a) =>
+                                  html`<li>
+                                    ${a.deelnemer
+                                      ? fullName(a.deelnemer)
+                                      : `Aanmelding ${a.id}`}
+                                  </li>`,
+                              )}
+                            </ul>
                           </div>
-                          <button
-                            class="btn btn-sm btn-outline-danger"
-                            @click=${() => this.removeStop(route, stop)}
-                          >
-                            ×
-                          </button>
                         </div>
                       `,
                     )}
@@ -544,50 +593,33 @@ export class RoutesSelecterenComponent extends RockElement {
             </div>
           `;
         })}
-        ${this.rechtstreeks.length > 0
-          ? html`
-              <div class="col">
-                <h5>Rechtstreeks</h5>
-                <div class="d-flex flex-wrap gap-1 mb-2">
-                  <span class="badge text-bg-secondary"
-                    >${entities(this.rechtstreeks.length, 'deelnemer')}</span
-                  >
-                </div>
-                <div class="border rounded p-2 mb-2">
-                  <ul class="mb-0 small list-unstyled">
-                    ${this.rechtstreeks.map(
-                      (a) =>
-                        html`<li>
-                          ${a.deelnemer
-                            ? fullName(a.deelnemer)
-                            : `Aanmelding ${a.id}`}
-                        </li>`,
-                    )}
-                  </ul>
-                </div>
-              </div>
-            `
-          : ''}
       </div>
 
       <rock-vervoerstoer-kaart
         class="d-block mb-4"
         .routes=${this.kaartRoutes}
-        .bestemming=${formatBestemming(this.vervoerstoer.bestemming)}
+        .bestemming=${formatBestemming(this.bestemmingStop?.locatie)}
         @routes-berekend=${(e: CustomEvent<RouteSamenvatting[]>) => {
           this.routeSamenvattingen = e.detail;
         }}
       ></rock-vervoerstoer-kaart>
       <div class="mt-3 d-flex gap-2">
-        <button
-          class="btn btn-primary"
-          @click=${() => this.save()}
-          ?disabled=${this.routes.length === 0}
-        >
-          Opslaan en verder
+        <button class="btn btn-secondary" @click=${() => this.save()}>
+          <rock-icon icon="floppy"></rock-icon> Opslaan
         </button>
-        <button class="btn btn-outline-secondary" @click=${() => this.reset()}>
-          Reset
+        <button
+          class="btn btn-primary ms-3"
+          @click=${() => this.saveAndNext()}
+          ?disabled=${this.routes.length === 0 ||
+          this.unallocatedOpstapplaatsen.length > 0}
+        >
+          <rock-icon icon="arrowRightCircle"></rock-icon> Opslaan en verder
+        </button>
+        <button
+          class="btn btn-outline-secondary ms-3"
+          @click=${() => this.reset()}
+        >
+          Reset stops
         </button>
       </div>
     `;

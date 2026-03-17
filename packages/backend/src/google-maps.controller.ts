@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 
 interface ReistijdResponse {
   minSeconds: number | null;
@@ -7,8 +7,19 @@ interface ReistijdResponse {
 }
 
 type RoutesApiResponse = {
-  routes?: { duration?: string }[];
+  routes?: { duration?: string; polyline?: { encodedPolyline?: string }; legs?: { duration?: string; distanceMeters?: number }[] }[];
 };
+
+interface RouteRequest {
+  origin: string;
+  destination: string;
+  waypoints: string[];
+}
+
+interface RouteResponse {
+  encodedPolyline?: string;
+  legs: { durationSeconds: number; distanceMeters: number }[];
+}
 
 @Controller({ path: 'google-maps' })
 export class GoogleMapsController {
@@ -64,6 +75,52 @@ export class GoogleMapsController {
       };
     } catch {
       return { minSeconds: null, maxSeconds: null };
+    }
+  }
+
+  @Post('route')
+  async computeRoute(@Body() req: RouteRequest): Promise<RouteResponse | null> {
+    const apiKey = process.env['GOOGLE_MAPS_API_KEY'];
+    if (!apiKey) return null;
+
+    const intermediates = req.waypoints.map((address) => ({
+      address,
+    }));
+
+    const body = JSON.stringify({
+      origin: { address: req.origin },
+      destination: { address: req.destination },
+      intermediates,
+      travelMode: 'DRIVE',
+      routingPreference: 'TRAFFIC_AWARE',
+      polylineEncoding: 'ENCODED_POLYLINE',
+    });
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Goog-Api-Key': apiKey,
+      'X-Goog-FieldMask':
+        'routes.polyline.encodedPolyline,routes.legs.duration,routes.legs.distanceMeters',
+    };
+
+    const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
+
+    try {
+      const res = await fetch(url, { method: 'POST', headers, body });
+      const data = (await res.json()) as RoutesApiResponse;
+      const route = data.routes?.[0];
+      if (!route) return null;
+      return {
+        encodedPolyline: route.polyline?.encodedPolyline,
+        legs: (route.legs ?? []).map((leg) => ({
+          durationSeconds: leg.duration
+            ? parseInt(leg.duration.replace('s', ''), 10)
+            : 0,
+          distanceMeters: leg.distanceMeters ?? 0,
+        })),
+      };
+    } catch {
+      return null;
     }
   }
 }

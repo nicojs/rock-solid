@@ -54,7 +54,7 @@ describe(VervoerstoerenController.name, () => {
   });
 
   describe('POST /vervoerstoeren', () => {
-    it('should create a vervoerstoer with empty routes', async () => {
+    it('should create a vervoerstoer with a bestemming stop', async () => {
       const [projectA, projectB, bestemming] = await Promise.all([
         harness.createProject(factory.vakantie()),
         harness.createProject(factory.cursus()),
@@ -67,7 +67,13 @@ describe(VervoerstoerenController.name, () => {
         naam: '',
         aangemaaktDoor: '',
         projectIds: [projectA.id, projectB.id],
-        bestemming,
+        toeTeKennenStops: [],
+        bestemmingStop: {
+          id: 0,
+          locatie: bestemming,
+          volgnummer: 0,
+          aanmeldersOpTePikken: [],
+        },
         routes: [],
       };
 
@@ -80,7 +86,9 @@ describe(VervoerstoerenController.name, () => {
       expect(created.projectIds.sort((a, b) => a - b)).deep.eq(
         requestBody.projectIds.sort((a, b) => a - b),
       );
-      expect(created.bestemming?.id).eq(requestBody.bestemming?.id);
+      expect(created.toeTeKennenStops).lengthOf(0);
+      expect(created.bestemmingStop).to.not.be.undefined;
+      expect(created.bestemmingStop!.locatie.id).eq(bestemming.id);
       expect(created.routes).deep.eq([]);
     });
 
@@ -96,7 +104,6 @@ describe(VervoerstoerenController.name, () => {
       expect(created.projectIds.sort((a, b) => a - b)).deep.eq(
         requestBody.projectIds.sort((a, b) => a - b),
       );
-      expect(created.bestemming?.id).eq(requestBody.bestemming?.id);
       expect(created.routes).lengthOf(1);
       expect(created.routes[0]!.chauffeur.id).eq(
         requestBody.routes[0]!.chauffeur.id,
@@ -105,6 +112,7 @@ describe(VervoerstoerenController.name, () => {
       expect(created.routes[0]!.stops.map((stop) => stop.locatie.id)).deep.eq(
         requestBody.routes[0]!.stops.map((stop) => stop.locatie.id),
       );
+      expect(created.routes[0]!.stops).to.have.length.greaterThan(0);
       expect(created.naam).to.be.a('string').and.not.empty;
 
       const all: Vervoerstoer[] = (await harness.get('/vervoerstoeren').expect(200)).body;
@@ -138,7 +146,13 @@ describe(VervoerstoerenController.name, () => {
       const updatedInput: Vervoerstoer = {
         ...created,
         projectIds: [nieuwProject.id],
-        bestemming: nieuweBestemming,
+        toeTeKennenStops: [],
+        bestemmingStop: {
+          id: 0,
+          locatie: nieuweBestemming,
+          volgnummer: 0,
+          aanmeldersOpTePikken: [],
+        },
         routes: [
           {
             id: created.routes[0]!.id,
@@ -166,20 +180,16 @@ describe(VervoerstoerenController.name, () => {
 
       expect(updated.id).eq(created.id);
       expect(updated.projectIds).deep.eq([nieuwProject.id]);
-      expect(updated.bestemming?.id).eq(nieuweBestemming.id);
+      expect(updated.toeTeKennenStops).lengthOf(0);
+      expect(updated.bestemmingStop).to.not.be.undefined;
+      expect(updated.bestemmingStop!.locatie.id).eq(nieuweBestemming.id);
       expect(updated.routes).lengthOf(1);
       expect(updated.routes[0]!.chauffeur.id).eq(nieuweChauffeur.id);
       expect(updated.routes[0]!.vertrekadres?.straatnaam).eq(
         'Nieuw vertrekstraat',
       );
-      expect(updated.routes[0]!.stops).deep.eq([
-        {
-          id: updated.routes[0]!.stops[0]!.id,
-          volgnummer: 10,
-          locatie: nieuweLocatie,
-          aanmeldersOpTePikken: [],
-        },
-      ]);
+      expect(updated.routes[0]!.stops).lengthOf(1);
+      expect(updated.routes[0]!.stops[0]!.locatie.id).eq(nieuweLocatie.id);
 
       const all = await harness.get('/vervoerstoeren').expect(200);
       expect(all.body).deep.eq([updated]);
@@ -211,7 +221,13 @@ async function arrangeVervoerstoer(): Promise<Vervoerstoer> {
     naam: 'Wordt afgeleid',
     aangemaaktDoor: '',
     projectIds: [projectA.id, projectB.id],
-    bestemming,
+    toeTeKennenStops: [],
+    bestemmingStop: {
+      id: 0,
+      locatie: bestemming,
+      volgnummer: 0,
+      aanmeldersOpTePikken: [],
+    },
     routes: [
       {
         id: 0,
@@ -223,12 +239,14 @@ async function arrangeVervoerstoer(): Promise<Vervoerstoer> {
             volgnummer: 1,
             locatie: stopA,
             aanmeldersOpTePikken: [],
+
           },
           {
             id: 0,
             volgnummer: 2,
             locatie: stopB,
             aanmeldersOpTePikken: [],
+
           },
         ],
       },

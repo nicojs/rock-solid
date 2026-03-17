@@ -54,7 +54,7 @@ export class VervoerstoerenListComponent extends LitElement {
             (v) =>
               html`<tr>
                 <td>${v.naam}</td>
-                <td>${v.bestemming?.naam ?? ''}</td>
+                <td>${v.bestemmingStop?.locatie.naam ?? ''}</td>
                 <td>${entities(v.routes.length, 'route')}</td>
                 <td>${v.aangemaaktDoor}</td>
                 <td>

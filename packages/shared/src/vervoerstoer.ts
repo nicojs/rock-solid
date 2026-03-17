@@ -8,16 +8,21 @@ export interface Vervoerstoer {
   projectIds: number[];
   naam: string;
   routes: VervoerstoerRoute[];
-  bestemming?: Locatie;
+  toeTeKennenStops: VervoerstoerStop[];
+  bestemmingStop?: VervoerstoerStop;
+  datum?: Date;
+  datumTerug?: Date;
   aangemaaktDoor: string;
 }
 
 export type UpsertableVervoerstoer = Omit<
   Vervoerstoer,
-  'id' | 'naam' | 'aangemaaktDoor' | 'routes'
+  'id' | 'naam' | 'aangemaaktDoor' | 'routes' | 'toeTeKennenStops' | 'bestemmingStop'
 > & {
   id?: number;
   routes: UpsertableVervoerstoerRoute[];
+  toeTeKennenStops: UpsertableVervoerstoerStop[];
+  bestemmingStop?: UpsertableVervoerstoerStop;
 };
 
 export interface VervoerstoerRoute {
@@ -25,10 +30,14 @@ export interface VervoerstoerRoute {
   stops: VervoerstoerStop[];
   chauffeur: OverigPersoon;
   vertrekTijd?: Date;
+  vertrekTijdTerug?: Date;
   vertrekadres?: Adres;
 }
 
-export type UpsertableVervoerstoerRoute = Omit<VervoerstoerRoute, 'id' | 'stops'> & {
+export type UpsertableVervoerstoerRoute = Omit<
+  VervoerstoerRoute,
+  'id' | 'stops'
+> & {
   id?: number;
   stops: UpsertableVervoerstoerStop[];
 };
@@ -39,6 +48,7 @@ export interface VervoerstoerStop {
   volgnummer: number;
   aanmeldersOpTePikken: Aanmelding[];
   geplandeAankomst?: Date;
+  geplandeAankomstTerug?: Date;
 }
 
 export type UpsertableVervoerstoerStop = Omit<VervoerstoerStop, 'id'> & {
