@@ -10,7 +10,6 @@ import {
   CursusActiviteit,
   Plaats,
   Deelname,
-  Locatie,
   InsertableAanmelding,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
@@ -786,7 +785,7 @@ describe(ProjectenController.name, () => {
         begeleiders: [],
         vervoerstoerIds: [],
         jaar: 2011,
-        vakantiesoort: "vakantie",
+        vakantiesoort: 'vakantie',
         seizoen: 'winter',
         activiteiten: [
           {
@@ -1179,7 +1178,6 @@ describe(ProjectenController.name, () => {
   describe('POST /projecten/:id/aanmeldingen', () => {
     let project: Project;
     let deelnemer: Deelnemer;
-    let locatie: Locatie;
     let plaats: Plaats;
 
     beforeEach(async () => {
@@ -1190,7 +1188,7 @@ describe(ProjectenController.name, () => {
         }),
       );
 
-      [project, deelnemer, locatie, plaats] = await Promise.all([
+      [project, deelnemer, plaats] = await Promise.all([
         harness.createProject(factory.cursus()),
         harness.createDeelnemer(
           factory.deelnemer({
@@ -1200,7 +1198,6 @@ describe(ProjectenController.name, () => {
             woonsituatie: 'zelfstandigMetProfessioneleBegeleiding',
           }),
         ),
-        harness.createLocatie(factory.locatie()),
         harness.insertPlaats(
           factory.plaats({
             gemeente: 'Luik',
@@ -1382,7 +1379,8 @@ describe(ProjectenController.name, () => {
       ]);
 
       // Assert
-      const { rekeninguittrekselNummerVoorschot, ...aanmelding2Data } = aanmelding2;
+      const { rekeninguittrekselNummerVoorschot, ...aanmelding2Data } =
+        aanmelding2;
       const expectedAanmeldingen: Aanmelding[] = [
         { ...aanmelding1, rekeninguittrekselNummerVoorschot: '123' },
         aanmelding2Data,

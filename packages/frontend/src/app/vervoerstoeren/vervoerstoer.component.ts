@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { customElement, property, state } from 'lit/decorators.js';
 import { RockElement } from '../rock-element';
 import { html, nothing, PropertyValues } from 'lit';
@@ -19,7 +20,6 @@ import { persoonService } from '../personen/persoon.service';
 import { router } from '../router';
 import { vervoerstoerService } from './vervoerstoer.service';
 
-const ACTIVE_STATUSSEN = Object.freeze(['Bevestigd', 'Aangemeld'] as const);
 type VervoerstoerStep =
   | 'opstapplaatsen-kiezen'
   | 'routes-selecteren'

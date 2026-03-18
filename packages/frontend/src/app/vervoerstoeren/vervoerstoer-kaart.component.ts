@@ -74,10 +74,7 @@ function movePoint(
       Math.sin(bearingRad) * Math.sin(d) * Math.cos(lat1),
       Math.cos(d) - Math.sin(lat1) * Math.sin(lat2),
     );
-  return new google.maps.LatLng(
-    (lat2 * 180) / Math.PI,
-    (lng2 * 180) / Math.PI,
-  );
+  return new google.maps.LatLng((lat2 * 180) / Math.PI, (lng2 * 180) / Math.PI);
 }
 
 function offsetPath(
@@ -152,20 +149,24 @@ export class VervoerstoerKaartComponent extends LitElement {
   private tekenGeneratie = 0;
   private tekenTimeout?: ReturnType<typeof setTimeout>;
 
-  override async connectedCallback() {
+  override connectedCallback() {
     super.connectedCallback();
-    try {
-      const res = await fetch('/api/config');
-      const config = (await res.json()) as { googleMapsApiKey: string | null };
-      if (!config.googleMapsApiKey) {
+    (async () => {
+      try {
+        const res = await fetch('/api/config');
+        const config = (await res.json()) as {
+          googleMapsApiKey: string | null;
+        };
+        if (!config.googleMapsApiKey) {
+          this.status = 'niet-beschikbaar';
+          return;
+        }
+        await loadGoogleMapsApi(config.googleMapsApiKey);
+        this.status = 'gereed';
+      } catch {
         this.status = 'niet-beschikbaar';
-        return;
       }
-      await loadGoogleMapsApi(config.googleMapsApiKey);
-      this.status = 'gereed';
-    } catch {
-      this.status = 'niet-beschikbaar';
-    }
+    })();
   }
 
   protected override updated(changed: PropertyValues) {
@@ -188,7 +189,12 @@ export class VervoerstoerKaartComponent extends LitElement {
   }
 
   #zoomToLeg() {
-    if (!this.map || this.focusLegIndex === null || this.cachedResults.length === 0) return;
+    if (
+      !this.map ||
+      this.focusLegIndex === null ||
+      this.cachedResults.length === 0
+    )
+      return;
     const { encodedPolyline, legs } = this.cachedResults[0]!;
     const path = google.maps.geometry?.encoding?.decodePath(encodedPolyline);
     if (!path || path.length === 0 || this.focusLegIndex >= legs.length) return;
@@ -198,7 +204,8 @@ export class VervoerstoerKaartComponent extends LitElement {
     for (let i = 0; i < this.focusLegIndex; i++) {
       startFraction += legs[i]!.distanceMeters / totalDistance;
     }
-    const endFraction = startFraction + legs[this.focusLegIndex]!.distanceMeters / totalDistance;
+    const endFraction =
+      startFraction + legs[this.focusLegIndex]!.distanceMeters / totalDistance;
 
     const startIdx = Math.round(startFraction * (path.length - 1));
     const endIdx = Math.round(endFraction * (path.length - 1));
@@ -341,7 +348,8 @@ export class VervoerstoerKaartComponent extends LitElement {
       const rawPath =
         google.maps.geometry?.encoding?.decodePath(encodedPolyline) ?? [];
       const offsetMeters = (i - (n - 1) / 2) * offsetStep;
-      const path = offsetMeters === 0 ? rawPath : offsetPath(rawPath, offsetMeters);
+      const path =
+        offsetMeters === 0 ? rawPath : offsetPath(rawPath, offsetMeters);
 
       const polyline = new google.maps.Polyline({
         map: this.map,

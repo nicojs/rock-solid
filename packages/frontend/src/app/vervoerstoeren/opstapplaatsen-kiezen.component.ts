@@ -3,7 +3,6 @@ import {
   Activiteit,
   Deelnemer,
   Locatie,
-  notEmpty,
   Vervoerstoer,
   VervoerstoerStop,
 } from '@rock-solid/shared';
