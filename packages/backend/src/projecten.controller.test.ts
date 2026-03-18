@@ -272,6 +272,7 @@ describe(ProjectenController.name, () => {
       const expectedCursus: Cursus = {
         type: 'cursus',
         begeleiders: [],
+        vervoerstoerIds: [],
         id,
         projectnummer: '123',
         naam: 'Foo project',
@@ -783,6 +784,7 @@ describe(ProjectenController.name, () => {
         ...projectData,
         aantalInschrijvingen: 0,
         begeleiders: [],
+        vervoerstoerIds: [],
         jaar: 2011,
         vakantiesoort: "vakantie",
         seizoen: 'winter',

@@ -6,8 +6,18 @@ interface ReistijdResponse {
   reason?: string;
 }
 
+type LatLng = { latitude?: number; longitude?: number };
 type RoutesApiResponse = {
-  routes?: { duration?: string; polyline?: { encodedPolyline?: string }; legs?: { duration?: string; distanceMeters?: number }[] }[];
+  routes?: {
+    duration?: string;
+    polyline?: { encodedPolyline?: string };
+    legs?: {
+      duration?: string;
+      distanceMeters?: number;
+      startLocation?: { latLng?: LatLng };
+      endLocation?: { latLng?: LatLng };
+    }[];
+  }[];
 };
 
 interface RouteRequest {
@@ -18,7 +28,12 @@ interface RouteRequest {
 
 interface RouteResponse {
   encodedPolyline?: string;
-  legs: { durationSeconds: number; distanceMeters: number }[];
+  legs: {
+    durationSeconds: number;
+    distanceMeters: number;
+    startLocation?: { lat: number; lng: number };
+    endLocation?: { lat: number; lng: number };
+  }[];
 }
 
 @Controller({ path: 'google-maps' })
@@ -100,7 +115,7 @@ export class GoogleMapsController {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
       'X-Goog-FieldMask':
-        'routes.polyline.encodedPolyline,routes.legs.duration,routes.legs.distanceMeters',
+        'routes.polyline.encodedPolyline,routes.legs.duration,routes.legs.distanceMeters,routes.legs.startLocation,routes.legs.endLocation',
     };
 
     const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
@@ -117,6 +132,12 @@ export class GoogleMapsController {
             ? parseInt(leg.duration.replace('s', ''), 10)
             : 0,
           distanceMeters: leg.distanceMeters ?? 0,
+          startLocation: leg.startLocation?.latLng
+            ? { lat: leg.startLocation.latLng.latitude!, lng: leg.startLocation.latLng.longitude! }
+            : undefined,
+          endLocation: leg.endLocation?.latLng
+            ? { lat: leg.endLocation.latLng.latitude!, lng: leg.endLocation.latLng.longitude! }
+            : undefined,
         })),
       };
     } catch {

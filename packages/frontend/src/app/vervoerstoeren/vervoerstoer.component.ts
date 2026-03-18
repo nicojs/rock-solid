@@ -1,6 +1,6 @@
 import { customElement, property, state } from 'lit/decorators.js';
 import { RockElement } from '../rock-element';
-import { html, PropertyValues } from 'lit';
+import { html, nothing, PropertyValues } from 'lit';
 import {
   Aanmelding,
   Deelnemer,
@@ -13,12 +13,13 @@ import {
 } from '@rock-solid/shared';
 import { projectService } from '../projecten/project.service';
 import { printProject } from '../projecten/project.pipes';
+import { pluralize } from '../shared';
 import { bootstrap } from '../../styles';
 import { persoonService } from '../personen/persoon.service';
 import { router } from '../router';
 import { vervoerstoerService } from './vervoerstoer.service';
 
-const ACTIVE_STATUSSEN = Object.freeze(['Bevestigd', 'Aangemeld']);
+const ACTIVE_STATUSSEN = Object.freeze(['Bevestigd', 'Aangemeld'] as const);
 type VervoerstoerStep =
   | 'opstapplaatsen-kiezen'
   | 'routes-selecteren'
@@ -46,6 +47,9 @@ export class VervoerstoerComponent extends RockElement {
 
   @state()
   aanmeldingen?: Aanmelding[];
+
+  @state()
+  aantalAangemeld = 0;
 
   @state()
   deelnemers: Deelnemer[] = [];
@@ -150,16 +154,19 @@ export class VervoerstoerComponent extends RockElement {
     this.projecten = undefined;
     this.aanmeldingen = undefined;
     const projectIds = this.vervoerstoer.projectIds;
-    [this.projecten, this.aanmeldingen] = await Promise.all([
+    const [projecten, alleAanmeldingen] = await Promise.all([
       projectService.getAll({ ids: projectIds }),
       Promise.all(
         projectIds.map((id) => projectService.getAanmeldingen(id)),
-      ).then((aanmeldingen) =>
-        aanmeldingen
-          .flat()
-          .filter((aanmelding) => ACTIVE_STATUSSEN.includes(aanmelding.status)),
-      ),
+      ).then((a) => a.flat()),
     ]);
+    this.projecten = projecten;
+    this.aanmeldingen = alleAanmeldingen.filter(
+      (a) => a.status === 'Bevestigd',
+    );
+    this.aantalAangemeld = alleAanmeldingen.filter(
+      (a) => a.status === 'Aangemeld',
+    ).length;
   }
 
   @state()
@@ -193,7 +200,7 @@ export class VervoerstoerComponent extends RockElement {
   }
 
   async handleVervoerstoerSaved(
-    vervoerstoer: UpsertableVervoerstoer,
+    vervoerstoer: UpsertableVervoerstoer | Vervoerstoer,
     nextStep?: VervoerstoerStep,
   ) {
     this.isLoading = true;
@@ -225,11 +232,23 @@ export class VervoerstoerComponent extends RockElement {
         Projecten geselecteerd:
         ${this.projecten.map(
           (project) =>
-            html`<span class="ms-2 badge text-bg-secondary"
-              >${printProject(project)}</span
+            html`<a
+              class="ms-2 badge text-bg-secondary text-decoration-none"
+              href="/${pluralize(project.type)}/${project.id}/aanmeldingen/"
+              @click=${router.linkClick}
+              >${printProject(project)}</a
             >`,
         )}
       </p>
+      ${this.aantalAangemeld > 0
+        ? html`<div class="alert alert-warning d-print-none">
+            Er ${this.aantalAangemeld === 1 ? 'is' : 'zijn'} nog
+            <strong>${this.aantalAangemeld}</strong>
+            ${this.aantalAangemeld === 1 ? 'aanmelding' : 'aanmeldingen'} met
+            status 'Aangemeld'. Alleen bevestigde aanmeldingen worden
+            meegenomen in de vervoerstoer.
+          </div>`
+        : nothing}
       <ul class="nav nav-tabs mb-3 d-print-none">
         <li class="nav-item">
           <button
@@ -308,31 +327,11 @@ export class VervoerstoerComponent extends RockElement {
   }
 
   private renderRoutesSelecteren() {
-    // Build opstapplaatsen met aanmeldingen from toeTeKennenStops + route stops
-    const stopPerLocatie = new Map<number, VervoerstoerStop>();
-    for (const stop of [
-      ...this.vervoerstoer.toeTeKennenStops,
-      ...this.vervoerstoer.routes.flatMap((r) => r.stops),
-    ]) {
-      const existing = stopPerLocatie.get(stop.locatie.id);
-      if (existing) {
-        existing.aanmeldersOpTePikken.push(...stop.aanmeldersOpTePikken);
-      } else {
-        stopPerLocatie.set(stop.locatie.id, {
-          ...stop,
-          aanmeldersOpTePikken: [...stop.aanmeldersOpTePikken],
-        });
-      }
-    }
-    const opstapplaatsenMetAanmeldingen: VervoerstoerStop[] = [
-      ...stopPerLocatie.values(),
-    ];
     return html`<rock-routes-selecteren
-      .opstapplaatsen=${opstapplaatsenMetAanmeldingen}
       .vervoerstoer=${this.vervoerstoer}
-      @vervoerstoer-save-requested=${(e: CustomEvent<UpsertableVervoerstoer>) =>
+      @vervoerstoer-save-requested=${(e: CustomEvent<Vervoerstoer>) =>
         this.handleVervoerstoerSaved(e.detail)}
-      @vervoerstoer-saved=${(e: CustomEvent<UpsertableVervoerstoer>) =>
+      @vervoerstoer-saved=${(e: CustomEvent<Vervoerstoer>) =>
         this.handleVervoerstoerSaved(e.detail, 'tijdsplanning')}
     ></rock-routes-selecteren>`;
   }
@@ -343,9 +342,9 @@ export class VervoerstoerComponent extends RockElement {
       .baseDatum=${this.vervoerstoer.datum ??
       this.projecten?.[0]?.activiteiten[0]?.van}
       .baseDatumTerug=${this.vervoerstoer.datumTerug}
-      @vervoerstoer-save-requested=${(e: CustomEvent<UpsertableVervoerstoer>) =>
+      @vervoerstoer-save-requested=${(e: CustomEvent<Vervoerstoer>) =>
         this.handleVervoerstoerSaved(e.detail)}
-      @vervoerstoer-saved=${(e: CustomEvent<UpsertableVervoerstoer>) =>
+      @vervoerstoer-saved=${(e: CustomEvent<Vervoerstoer>) =>
         this.handleVervoerstoerSaved(e.detail, 'bekijken')}
     ></rock-tijdsplanning>`;
   }

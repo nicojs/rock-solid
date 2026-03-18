@@ -327,7 +327,11 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
                                   ${showLocatie(locatie)}
                                 </option>`,
                             )}
-                          ${this.bestemmingStop
+                          ${this.bestemmingStop &&
+                          deelnemer.mogelijkeOpstapplaatsen.some(
+                            (loc) =>
+                              loc.id === this.bestemmingStop!.locatie.id,
+                          )
                             ? html`<option
                                 value="${this.bestemmingStop.locatie.id}"
                                 ?selected=${gekozenId ===

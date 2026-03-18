@@ -45,6 +45,8 @@ import {
   PatchableAanmelding,
   PatchablePersoon,
   PlaatsFilter,
+  UpsertableVervoerstoer,
+  Vervoerstoer,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -376,6 +378,26 @@ class IntegrationTestingHarness {
     overigPersoon: UpsertableOverigPersoon,
   ): Promise<OverigPersoon> {
     return await this.createPersoon(overigPersoon);
+  }
+
+  async createVervoerstoer(
+    vervoerstoer: UpsertableVervoerstoer,
+  ): Promise<Vervoerstoer> {
+    const response = await this.post('/vervoerstoeren', vervoerstoer).expect(
+      201,
+    );
+    return response.body;
+  }
+
+  async updateVervoerstoer(
+    id: number,
+    vervoerstoer: UpsertableVervoerstoer | Vervoerstoer,
+  ): Promise<Vervoerstoer> {
+    const response = await this.put(
+      `/vervoerstoeren/${id}`,
+      vervoerstoer,
+    ).expect(200);
+    return response.body;
   }
 
   async patchAanmelding(

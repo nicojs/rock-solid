@@ -385,7 +385,7 @@ export function radioControl<
 
 interface BaseSelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, (string | undefined) | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 > extends BaseInputControl<TEntity, TEntity[TKey]> {
   type: InputType.select;
   name: TKey;
@@ -395,7 +395,7 @@ interface BaseSelectControl<
 
 export interface GroupedSelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, (string | undefined) | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 > extends BaseSelectControl<TEntity, TKey> {
   grouped: true;
   items: Record<
@@ -408,7 +408,7 @@ export interface GroupedSelectControl<
 
 export interface IndividualSelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, (string | undefined) | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 > extends BaseSelectControl<TEntity, TKey> {
   grouped: false;
   items: Options<TEntity[TKey] & string>;
@@ -424,7 +424,7 @@ interface SelectOptions<TEntity, TValue> {
 
 export function selectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, (string | undefined) | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 >(
   name: TKey,
   items: Options<TEntity[TKey] & string>,
@@ -445,7 +445,7 @@ export function selectControl<
 
 export function groupedSelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, (string | undefined) | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 >(
   name: TKey,
   groupedItems: GroupedOptions<TEntity[TKey] & string>,
@@ -469,7 +469,7 @@ export function groupedSelectControl<
 
 export type SelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, (string | undefined) | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 > =
   | IndividualSelectControl<TEntity, TKey>
   | GroupedSelectControl<TEntity, TKey>;

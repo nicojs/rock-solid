@@ -325,6 +325,28 @@ export class ProjectenListComponent extends LitElement {
                   >${project.aantalInschrijvingen}</span
                 >
               </rock-link>
+              ${project.vervoerstoerIds.length === 1
+                ? html`<rock-link
+                    btn
+                    sm
+                    btnOutlineSecondary
+                    href="/vervoerstoeren/edit/${project.vervoerstoerIds[0]}"
+                    title="Vervoerstoer openen"
+                    @click=${(e: Event) => e.stopPropagation()}
+                    ><rock-icon icon="busFront"></rock-icon
+                  ></rock-link>`
+                : project.vervoerstoerIds.length > 1
+                  ? html`<rock-link
+                      btn
+                      sm
+                      btnOutlineSecondary
+                      href="/vervoerstoeren?naamLike=${encodeURIComponent(project.naam)}"
+                      title="${project.vervoerstoerIds.length} vervoerstoeren"
+                      @click=${(e: Event) => e.stopPropagation()}
+                      ><rock-icon icon="busFront"></rock-icon>
+                      <span class="badge bg-secondary">${project.vervoerstoerIds.length}</span>
+                    </rock-link>`
+                  : ''}
               <span>
                 <button
                   @click=${() => this.deleteProject(project)}

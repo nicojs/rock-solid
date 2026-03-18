@@ -46,6 +46,7 @@ export class VervoerstoerenListComponent extends LitElement {
             <th>Bestemming</th>
             <th>Routes</th>
             <th>Aangemaakt door</th>
+            <th>Compleet</th>
             <th style="width: 190px">Acties</th>
           </tr>
         </thead>
@@ -58,13 +59,26 @@ export class VervoerstoerenListComponent extends LitElement {
                 <td>${entities(v.routes.length, 'route')}</td>
                 <td>${v.aangemaaktDoor}</td>
                 <td>
+                  ${v.compleet
+                    ? html`<rock-icon icon="checkCircle" class="text-success"></rock-icon>`
+                    : ''}
+                </td>
+                <td>
                   <rock-link
                     btn
                     sm
                     keepQuery
                     btnOutlinePrimary
-                    href="/vervoerstoeren/edit/${v.id}"
+                    href="/vervoerstoeren/edit/${v.id}/opstapplaatsen-kiezen"
                     ><rock-icon icon="pencil"></rock-icon
+                  ></rock-link>
+                  <rock-link
+                    btn
+                    sm
+                    keepQuery
+                    btnOutlineSecondary
+                    href="/vervoerstoeren/edit/${v.id}/bekijken"
+                    ><rock-icon icon="eye"></rock-icon
                   ></rock-link>
                   <button
                     @click=${() => this.deleteVervoerstoer(v)}

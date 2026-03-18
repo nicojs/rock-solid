@@ -14,9 +14,16 @@ export interface RouteSamenvatting {
   distanceMeters: number;
 }
 
+interface BackendLeg {
+  durationSeconds: number;
+  distanceMeters: number;
+  startLocation?: { lat: number; lng: number };
+  endLocation?: { lat: number; lng: number };
+}
+
 interface BackendRouteResponse {
   encodedPolyline?: string;
-  legs: { durationSeconds: number; distanceMeters: number }[];
+  legs: BackendLeg[];
 }
 
 const KLEUREN = [
@@ -115,7 +122,7 @@ function loadGoogleMapsApi(apiKey: string): Promise<void> {
 
 interface CachedRoute {
   encodedPolyline: string;
-  legs: { durationSeconds: number; distanceMeters: number }[];
+  legs: BackendLeg[];
   kleur: string;
 }
 
@@ -290,46 +297,29 @@ export class VervoerstoerKaartComponent extends LitElement {
   #tekenMarkers() {
     if (!this.map) return;
     const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    for (const { encodedPolyline, legs, kleur } of this.cachedResults) {
-      const path = google.maps.geometry?.encoding?.decodePath(encodedPolyline);
-      if (!path || path.length === 0) continue;
-
-      // A = start
-      this.markers.push(
-        new google.maps.marker.AdvancedMarkerElement({
-          map: this.map,
-          position: path[0],
-          content: markerContent(kleur, labels[0]!),
-        }),
-      );
-
-      // Waypoint markers: approximate positions from leg proportions
-      let coveredDistance = 0;
-      const totalDistance = legs.reduce((s, l) => s + l.distanceMeters, 0);
-      for (let legIdx = 0; legIdx < legs.length - 1; legIdx++) {
-        coveredDistance += legs[legIdx]!.distanceMeters;
-        const fraction = coveredDistance / totalDistance;
-        const pointIdx = Math.min(
-          Math.round(fraction * (path.length - 1)),
-          path.length - 1,
-        );
-        this.markers.push(
-          new google.maps.marker.AdvancedMarkerElement({
-            map: this.map,
-            position: path[pointIdx],
-            content: markerContent(kleur, labels[legIdx + 1] ?? ''),
-          }),
-        );
+    for (const { legs, kleur } of this.cachedResults) {
+      // Place markers using actual leg start/end locations from the API
+      for (let legIdx = 0; legIdx < legs.length; legIdx++) {
+        const leg = legs[legIdx]!;
+        if (legIdx === 0 && leg.startLocation) {
+          this.markers.push(
+            new google.maps.marker.AdvancedMarkerElement({
+              map: this.map,
+              position: leg.startLocation,
+              content: markerContent(kleur, labels[0]!),
+            }),
+          );
+        }
+        if (leg.endLocation) {
+          this.markers.push(
+            new google.maps.marker.AdvancedMarkerElement({
+              map: this.map,
+              position: leg.endLocation,
+              content: markerContent(kleur, labels[legIdx + 1] ?? ''),
+            }),
+          );
+        }
       }
-
-      // Last = destination
-      this.markers.push(
-        new google.maps.marker.AdvancedMarkerElement({
-          map: this.map,
-          position: path[path.length - 1],
-          content: markerContent(kleur, labels[legs.length] ?? ''),
-        }),
-      );
     }
   }
 

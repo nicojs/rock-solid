@@ -13,11 +13,12 @@ export interface Vervoerstoer {
   datum?: Date;
   datumTerug?: Date;
   aangemaaktDoor: string;
+  compleet: boolean;
 }
 
 export type UpsertableVervoerstoer = Omit<
   Vervoerstoer,
-  'id' | 'naam' | 'aangemaaktDoor' | 'routes' | 'toeTeKennenStops' | 'bestemmingStop'
+  'id' | 'naam' | 'aangemaaktDoor' | 'routes' | 'toeTeKennenStops' | 'bestemmingStop' | 'compleet'
 > & {
   id?: number;
   routes: UpsertableVervoerstoerRoute[];

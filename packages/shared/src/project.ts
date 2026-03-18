@@ -23,6 +23,7 @@ export interface BaseProject {
   saldo?: Decimal;
   prijs?: Decimal;
   voorschot?: Decimal;
+  vervoerstoerIds: number[];
 }
 
 export type ProjectType = 'cursus' | 'vakantie';
@@ -68,6 +69,7 @@ export const projectLabels: Labels<BaseProject> = {
   saldo: 'Saldo',
   prijs: 'Prijs',
   voorschot: 'Voorschot',
+  vervoerstoerIds: 'Vervoerstoeren',
 };
 
 export const cursusLabels: Labels<Cursus> = {

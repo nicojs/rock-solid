@@ -30,6 +30,7 @@ import {
   toAanmelding,
 } from './aanmelding.mapper.js';
 import { toPage } from './paging.js';
+import { aanmeldingsstatusMapper } from './enum.mapper.js';
 
 type DBStopAggregate = db.VervoerstoerStop & {
   locatie: DBLocatieAggregate;
@@ -39,7 +40,7 @@ type DBStopAggregate = db.VervoerstoerStop & {
 type DBVervoerstoerAggregate = db.Vervoerstoer & {
   toeTeKennenStops: DBStopAggregate[];
   bestemmingStop: DBStopAggregate | null;
-  projects: db.Project[];
+  projects: (db.Project & { _count: { aanmeldingen: number } })[];
   vervoerstoerRoutes: (db.VervoerstoerRoute & {
     chauffeur: DBPersonAggregate | null;
     vertrekadres: DBAdresWithPlaats | null;
@@ -65,6 +66,13 @@ const includeVervoerstoerAggregate = {
   projects: {
     orderBy: {
       projectnummer: 'asc',
+    },
+    include: {
+      _count: {
+        select: {
+          aanmeldingen: { where: { status: aanmeldingsstatusMapper.toDB('Bevestigd') } },
+        },
+      },
     },
   },
   vervoerstoerRoutes: {
@@ -284,30 +292,67 @@ function toRouteCreateInput(vervoerstoer: Vervoerstoer) {
 function toVervoerstoer(
   dbVervoerstoer: DBVervoerstoerAggregate,
 ): Vervoerstoer {
+  const toeTeKennenStops = dbVervoerstoer.toeTeKennenStops.map(toStop);
+  const bestemmingStop = dbVervoerstoer.bestemmingStop
+    ? toStop(dbVervoerstoer.bestemmingStop)
+    : undefined;
+  const routes = dbVervoerstoer.vervoerstoerRoutes.flatMap((route) => {
+    if (!route.chauffeur) return [];
+    return [
+      {
+        id: route.id,
+        chauffeur: toOverigPersoon(route.chauffeur),
+        vertrekTijd: route.vertrekTijd ?? undefined,
+        vertrekTijdTerug: route.vertrekTijdTerug ?? undefined,
+        vertrekadres: toAdres(route.vertrekadres),
+        stops: route.stops.map(toStop),
+      },
+    ];
+  });
+
+  // Bereken compleet: alle bevestigde aanmeldingen in stops, geen toeTeKennen stops,
+  // en alle routes hebben tijden ingevuld
+  const totaalBevestigd = dbVervoerstoer.projects.reduce(
+    (sum, p) => sum + p._count.aanmeldingen,
+    0,
+  );
+  const aanmeldingenInStops = new Set<number>();
+  for (const route of routes) {
+    for (const stop of route.stops) {
+      for (const a of stop.aanmeldersOpTePikken) {
+        aanmeldingenInStops.add(a.id);
+      }
+    }
+  }
+  if (bestemmingStop) {
+    for (const a of bestemmingStop.aanmeldersOpTePikken) {
+      aanmeldingenInStops.add(a.id);
+    }
+  }
+  const alleAanmeldingenIngedeeld = aanmeldingenInStops.size >= totaalBevestigd;
+  const geenToeTeKennen = toeTeKennenStops.every(
+    (s) => s.aanmeldersOpTePikken.length === 0,
+  );
+  const alleTijdenIngevuld = routes.length > 0 && routes.every((route) =>
+    Boolean(route.vertrekTijd) &&
+    Boolean(route.vertrekTijdTerug) &&
+    route.stops.every(
+      (s) => Boolean(s.geplandeAankomst) && Boolean(s.geplandeAankomstTerug),
+    ),
+  );
+
   return {
     id: dbVervoerstoer.id,
     naam: toNaam(dbVervoerstoer),
     projectIds: dbVervoerstoer.projects.map((project) => project.id),
-    toeTeKennenStops: dbVervoerstoer.toeTeKennenStops.map(toStop),
-    bestemmingStop: dbVervoerstoer.bestemmingStop
-      ? toStop(dbVervoerstoer.bestemmingStop)
-      : undefined,
+    toeTeKennenStops,
+    bestemmingStop,
     datum: dbVervoerstoer.datum ?? undefined,
     datumTerug: dbVervoerstoer.datumTerug ?? undefined,
     aangemaaktDoor: dbVervoerstoer.aangemaaktDoor,
-    routes: dbVervoerstoer.vervoerstoerRoutes.flatMap((route) => {
-      if (!route.chauffeur) return [];
-      return [
-        {
-          id: route.id,
-          chauffeur: toOverigPersoon(route.chauffeur),
-          vertrekTijd: route.vertrekTijd ?? undefined,
-          vertrekTijdTerug: route.vertrekTijdTerug ?? undefined,
-          vertrekadres: toAdres(route.vertrekadres),
-          stops: route.stops.map(toStop),
-        },
-      ];
-    }),
+    routes,
+    compleet:
+      alleAanmeldingenIngedeeld && geenToeTeKennen && alleTijdenIngevuld,
   };
 }
 

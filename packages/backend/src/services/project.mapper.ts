@@ -75,6 +75,9 @@ const includeProjectAggregate = {
       },
     },
   },
+  vervoerstoeren: {
+    select: { id: true },
+  },
 } as const satisfies Prisma.ProjectInclude;
 
 /**
@@ -297,6 +300,7 @@ function toDBProject(project: UpsertableProject): db.Prisma.ProjectCreateInput {
     activiteiten,
     begeleiders,
     aantalInschrijvingen: aantalAanmeldingen,
+    vervoerstoerIds,
     type,
     prijs,
     saldo,
@@ -402,6 +406,7 @@ type DBActiviteitAggregate = db.Activiteit & {
 interface DBProjectAggregate extends db.Project {
   activiteiten: DBActiviteitAggregate[];
   begeleiders: DBPersonAggregate[];
+  vervoerstoeren: { id: number }[];
   _count: {
     aanmeldingen: number;
   };
@@ -423,6 +428,7 @@ function toProject(
   {
     type,
     begeleiders,
+    vervoerstoeren,
     _count,
     bestemming,
     land,
@@ -434,6 +440,7 @@ function toProject(
     type,
     begeleiders: begeleiders.map(toPersoon) as OverigPersoon[],
     aantalInschrijvingen: _count.aanmeldingen,
+    vervoerstoerIds: vervoerstoeren.map((v) => v.id),
     id: projectProperties.id,
     projectnummer: projectProperties.projectnummer,
     jaar: projectProperties.jaar,
