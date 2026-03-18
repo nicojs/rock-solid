@@ -19,9 +19,10 @@ import {
 } from '@rock-solid/shared';
 
 @Injectable()
-export class AanmeldingGroupingFieldPipe
-  implements PipeTransform<string, AanmeldingGroupField | undefined>
-{
+export class AanmeldingGroupingFieldPipe implements PipeTransform<
+  string,
+  AanmeldingGroupField | undefined
+> {
   transform(value: string | undefined): AanmeldingGroupField | undefined {
     if (value && value in aanmeldingGroupingFieldOptions) {
       return value as AanmeldingGroupField;
@@ -30,9 +31,10 @@ export class AanmeldingGroupingFieldPipe
   }
 }
 @Injectable()
-export class ActiviteitGroupingFieldPipe
-  implements PipeTransform<string, ActiviteitGroupField | undefined>
-{
+export class ActiviteitGroupingFieldPipe implements PipeTransform<
+  string,
+  ActiviteitGroupField | undefined
+> {
   transform(value: string | undefined): ActiviteitGroupField | undefined {
     if (value && value in activiteitGroupingFieldOptions) {
       return value as ActiviteitGroupField;
@@ -42,9 +44,10 @@ export class ActiviteitGroupingFieldPipe
 }
 
 @Injectable()
-export class AanmeldingReportTypePipe
-  implements PipeTransform<string, AanmeldingReportType | undefined>
-{
+export class AanmeldingReportTypePipe implements PipeTransform<
+  string,
+  AanmeldingReportType | undefined
+> {
   transform(value: string | undefined): AanmeldingReportType | undefined {
     if (value && isAanmeldingReportType(value)) {
       return value;
@@ -54,9 +57,10 @@ export class AanmeldingReportTypePipe
 }
 
 @Injectable()
-export class ActiviteitReportTypePipe
-  implements PipeTransform<string, ActiviteitReportType | undefined>
-{
+export class ActiviteitReportTypePipe implements PipeTransform<
+  string,
+  ActiviteitReportType | undefined
+> {
   transform(value: string | undefined): ActiviteitReportType | undefined {
     if (value && isActiviteitReportType(value)) {
       return value;
@@ -66,10 +70,10 @@ export class ActiviteitReportTypePipe
 }
 
 @Injectable()
-export class AanmeldingReportFilterPipe
-  implements
-    PipeTransform<Record<string, string | undefined>, AanmeldingReportFilter>
-{
+export class AanmeldingReportFilterPipe implements PipeTransform<
+  Record<string, string | undefined>,
+  AanmeldingReportFilter
+> {
   transform(value: Record<string, string | undefined>): AanmeldingReportFilter {
     const filter: AanmeldingReportFilter =
       new ActiviteitReportFilterPipe().transform(value);
@@ -83,10 +87,10 @@ export class AanmeldingReportFilterPipe
   }
 }
 @Injectable()
-export class ActiviteitReportFilterPipe
-  implements
-    PipeTransform<Record<string, string | undefined>, ActiviteitReportFilter>
-{
+export class ActiviteitReportFilterPipe implements PipeTransform<
+  Record<string, string | undefined>,
+  ActiviteitReportFilter
+> {
   transform(value: Record<string, string | undefined>): ActiviteitReportFilter {
     const filter: ActiviteitReportFilter = {};
     const onderdeel = value[key('organisatieonderdeel')];

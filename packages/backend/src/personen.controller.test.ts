@@ -675,24 +675,25 @@ describe(PersonenController.name, () => {
           }),
         ),
       ]);
-      const [deelnemerAntwerpen, deelnemerGent, deelnemerDomicilieAntwerpen ] = await Promise.all([
-        harness.createDeelnemer(
-          factory.deelnemer({
-            verblijfadres: factory.adres({ plaats: antwerpen }),
-          }),
-        ),
-        harness.createDeelnemer(
-          factory.deelnemer({
-            domicilieadres: factory.adres({ plaats: gent }),
-          }),
-        ),
-        harness.createDeelnemer(
-          factory.deelnemer({
-            verblijfadres: factory.adres({ plaats: gent }),
-            domicilieadres: factory.adres({ plaats: antwerpen }), // Domicilieadres heeft voorrang op verblijfadres
-          }),
-        ),
-      ]);
+      const [deelnemerAntwerpen, deelnemerGent, deelnemerDomicilieAntwerpen] =
+        await Promise.all([
+          harness.createDeelnemer(
+            factory.deelnemer({
+              verblijfadres: factory.adres({ plaats: antwerpen }),
+            }),
+          ),
+          harness.createDeelnemer(
+            factory.deelnemer({
+              domicilieadres: factory.adres({ plaats: gent }),
+            }),
+          ),
+          harness.createDeelnemer(
+            factory.deelnemer({
+              verblijfadres: factory.adres({ plaats: gent }),
+              domicilieadres: factory.adres({ plaats: antwerpen }), // Domicilieadres heeft voorrang op verblijfadres
+            }),
+          ),
+        ]);
 
       // Act
       const [antwerpenResult, gentResult, antwerpenAndGentResult, noFilter] =
@@ -719,11 +720,19 @@ describe(PersonenController.name, () => {
         },
         gentResult: { body: [deelnemerGent], totalCount: 1 },
         antwerpenAndGentResult: {
-          body: [deelnemerAntwerpen, deelnemerGent, deelnemerDomicilieAntwerpen].sort(byId),
+          body: [
+            deelnemerAntwerpen,
+            deelnemerGent,
+            deelnemerDomicilieAntwerpen,
+          ].sort(byId),
           totalCount: 3,
         },
         noFilter: {
-          body: [deelnemerAntwerpen, deelnemerGent, deelnemerDomicilieAntwerpen].sort(byId),
+          body: [
+            deelnemerAntwerpen,
+            deelnemerGent,
+            deelnemerDomicilieAntwerpen,
+          ].sort(byId),
           totalCount: 3,
         },
       };

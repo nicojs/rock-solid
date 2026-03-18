@@ -148,7 +148,7 @@ describe(LocatiesController.name, () => {
       // Assert
       expect(actualLocaties.sort(byId)).deep.equal(
         [locaties[0], locaties[2]].sort(byId),
-      );  
+      );
     });
   });
 

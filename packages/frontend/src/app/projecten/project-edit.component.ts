@@ -141,6 +141,13 @@ const cursusActiviteitenControls: FormControl<CursusActiviteit>[] = [
 ];
 const vakantieActiviteitenControls: FormControl<VakantieActiviteit>[] = [
   ...baseActiviteitenControls,
+  {
+    name: 'locatie',
+    type: InputType.autocomplete,
+    label: 'Locatie',
+    searchAction: (text) => locatieService.getAll({ naam: text }),
+    labelFor: showLocatie,
+  },
   radioControl('verblijf', vakantieVerblijven),
   radioControl('vervoer', vakantieVervoerOptions),
 ];

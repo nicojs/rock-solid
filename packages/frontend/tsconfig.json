@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "types": [],
+    "types": ["google.maps"],
     "resolveJsonModule": true,
     "lib": [
       "ES2022",
@@ -13,6 +13,7 @@
     "emitDecoratorMetadata": false,
     "module": "ES2022",
     "moduleResolution": "node",
+    "noEmit": true
 
   },
   "include": [

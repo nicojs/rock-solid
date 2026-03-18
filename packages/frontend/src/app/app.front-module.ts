@@ -5,6 +5,7 @@ import './forms/forms.front-module';
 import './shared/shared.front-module';
 import './personen/personen.front-module';
 import './projecten/projecten.front-module';
+import './vervoerstoeren/vervoerstoeren.front-module';
 import './organisaties/organisaties.front-module';
 import './auth/auth.front-module';
 import './locaties/locaties.front-module';

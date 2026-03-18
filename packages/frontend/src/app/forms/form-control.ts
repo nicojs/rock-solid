@@ -84,7 +84,10 @@ export function formArray<TEntity, TKey extends KeysOfType<TEntity, any[]>>(
   };
 }
 
-export interface FormArray<TEntity, TKey extends KeysOfType<TEntity, any[]>> extends BaseControl<TEntity> {
+export interface FormArray<
+  TEntity,
+  TKey extends KeysOfType<TEntity, any[]>,
+> extends BaseControl<TEntity> {
   type: InputType.array;
   name: TKey;
   factory: () => DeepPartial<ArrayItem<TEntity[TKey]>>;
@@ -227,7 +230,10 @@ export function checkboxesGroupedItemsControl<
   };
 }
 
-export interface FormGroup<TEntity, TKey extends keyof TEntity> extends BaseControl<TEntity> {
+export interface FormGroup<
+  TEntity,
+  TKey extends keyof TEntity,
+> extends BaseControl<TEntity> {
   type: InputType.group;
   name: TKey;
   controls: readonly FormControl<NonNullable<TEntity[TKey]>>[];
@@ -267,7 +273,10 @@ export interface BaseControl<TEntity> {
   show?: (entity: TEntity) => boolean;
 }
 
-export interface BaseInputControl<TEntity, TValue> extends BaseControl<TEntity> {
+export interface BaseInputControl<
+  TEntity,
+  TValue,
+> extends BaseControl<TEntity> {
   id?: string;
   label?: string | false;
   validators?: Validators<TEntity, TValue>;
@@ -376,7 +385,7 @@ export function radioControl<
 
 interface BaseSelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, string | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 > extends BaseInputControl<TEntity, TEntity[TKey]> {
   type: InputType.select;
   name: TKey;
@@ -386,7 +395,7 @@ interface BaseSelectControl<
 
 export interface GroupedSelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, string | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 > extends BaseSelectControl<TEntity, TKey> {
   grouped: true;
   items: Record<
@@ -399,7 +408,7 @@ export interface GroupedSelectControl<
 
 export interface IndividualSelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, string | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 > extends BaseSelectControl<TEntity, TKey> {
   grouped: false;
   items: Options<TEntity[TKey] & string>;
@@ -415,7 +424,7 @@ interface SelectOptions<TEntity, TValue> {
 
 export function selectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, string | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 >(
   name: TKey,
   items: Options<TEntity[TKey] & string>,
@@ -436,7 +445,7 @@ export function selectControl<
 
 export function groupedSelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, string | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 >(
   name: TKey,
   groupedItems: GroupedOptions<TEntity[TKey] & string>,
@@ -460,7 +469,7 @@ export function groupedSelectControl<
 
 export type SelectControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, string | string[]>,
+  TKey extends KeysOfType<TEntity, string  | string[]>,
 > =
   | IndividualSelectControl<TEntity, TKey>
   | GroupedSelectControl<TEntity, TKey>;

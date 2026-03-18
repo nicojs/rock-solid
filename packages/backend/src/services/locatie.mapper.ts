@@ -127,7 +127,7 @@ function where(
     return undefined;
   }
 
-    return {
+  return {
     naam: {
       contains: filter.naam,
     },

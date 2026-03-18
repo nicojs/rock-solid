@@ -10,7 +10,6 @@ import {
   CursusActiviteit,
   Plaats,
   Deelname,
-  Locatie,
   InsertableAanmelding,
 } from '@rock-solid/shared';
 import { ProjectenController } from './projecten.controller.js';
@@ -272,6 +271,7 @@ describe(ProjectenController.name, () => {
       const expectedCursus: Cursus = {
         type: 'cursus',
         begeleiders: [],
+        vervoerstoerIds: [],
         id,
         projectnummer: '123',
         naam: 'Foo project',
@@ -783,8 +783,9 @@ describe(ProjectenController.name, () => {
         ...projectData,
         aantalInschrijvingen: 0,
         begeleiders: [],
+        vervoerstoerIds: [],
         jaar: 2011,
-        vakantiesoort: "vakantie",
+        vakantiesoort: 'vakantie',
         seizoen: 'winter',
         activiteiten: [
           {
@@ -1177,7 +1178,6 @@ describe(ProjectenController.name, () => {
   describe('POST /projecten/:id/aanmeldingen', () => {
     let project: Project;
     let deelnemer: Deelnemer;
-    let locatie: Locatie;
     let plaats: Plaats;
 
     beforeEach(async () => {
@@ -1188,7 +1188,7 @@ describe(ProjectenController.name, () => {
         }),
       );
 
-      [project, deelnemer, locatie, plaats] = await Promise.all([
+      [project, deelnemer, plaats] = await Promise.all([
         harness.createProject(factory.cursus()),
         harness.createDeelnemer(
           factory.deelnemer({
@@ -1198,7 +1198,6 @@ describe(ProjectenController.name, () => {
             woonsituatie: 'zelfstandigMetProfessioneleBegeleiding',
           }),
         ),
-        harness.createLocatie(factory.locatie()),
         harness.insertPlaats(
           factory.plaats({
             gemeente: 'Luik',
@@ -1214,7 +1213,6 @@ describe(ProjectenController.name, () => {
       const expectedAanmelding: InsertableAanmelding = {
         projectId: project.id,
         deelnemerId: deelnemer.id,
-        opstapplaats: locatie,
         bevestigingsbriefVerzondenOp: new Date('2024-01-01'),
         geslacht: 'man',
         opmerking: 'Some remark',
@@ -1345,29 +1343,6 @@ describe(ProjectenController.name, () => {
       expect(aanmeldingen).deep.eq(expectedAanmeldingen);
     });
 
-    it('should be able to update opstapplaats', async () => {
-      // Arrange
-      const expectedOpstapplaats = await harness.createLocatie(
-        factory.locatie({ naam: 'Locatie 1' }),
-      );
-      const expectedOpstapplaats2 = await harness.createLocatie(
-        factory.locatie({ naam: 'Locatie 2' }),
-      );
-
-      // Act
-      const aanmeldingen = await harness.patchAanmeldingen(project.id, [
-        { id: aanmelding1.id, opstapplaats: expectedOpstapplaats },
-        { id: aanmelding2.id, opstapplaats: expectedOpstapplaats2 },
-      ]);
-
-      // Assert
-      const expectedAanmeldingen: Aanmelding[] = [
-        { ...aanmelding1, opstapplaats: expectedOpstapplaats },
-        { ...aanmelding2, opstapplaats: expectedOpstapplaats2 },
-      ];
-      expect(aanmeldingen).deep.eq(expectedAanmeldingen);
-    });
-
     it('should be able to clear the rekeninguittreksel nummers', async () => {
       // Arrange
       await harness.patchAanmeldingen(project.id, [
@@ -1404,7 +1379,8 @@ describe(ProjectenController.name, () => {
       ]);
 
       // Assert
-      const { rekeninguittrekselNummerVoorschot, ...aanmelding2Data } = aanmelding2;
+      const { rekeninguittrekselNummerVoorschot, ...aanmelding2Data } =
+        aanmelding2;
       const expectedAanmeldingen: Aanmelding[] = [
         { ...aanmelding1, rekeninguittrekselNummerVoorschot: '123' },
         aanmelding2Data,
@@ -1412,16 +1388,13 @@ describe(ProjectenController.name, () => {
       expect(aanmeldingen).deep.eq(expectedAanmeldingen);
     });
 
-    it('should not delete "status", "werksituatie", "woonsituatie", "geslacht", "plaats", "opstapplaats" and "opmerking" when not provided', async () => {
+    it('should not delete "status", "werksituatie", "woonsituatie", "geslacht", "plaats" and "opmerking" when not provided', async () => {
       // Arrange
       const deelnemer = await harness.createDeelnemer(factory.deelnemer());
       const aanmelding = await harness.createAanmelding({
         projectId: project.id,
         deelnemerId: deelnemer.id,
       });
-      const opstapplaats = await harness.createLocatie(
-        factory.locatie({ naam: 'Locatie 1' }),
-      );
 
       await harness.updateAanmelding({
         ...aanmelding,
@@ -1429,7 +1402,6 @@ describe(ProjectenController.name, () => {
         woonsituatie: 'residentieleWoonondersteuning',
         geslacht: 'x',
         opmerking: 'Foo',
-        opstapplaats,
       });
 
       // Act
@@ -1443,7 +1415,6 @@ describe(ProjectenController.name, () => {
       expect(actualAanmelding.woonsituatie).eq('residentieleWoonondersteuning');
       expect(actualAanmelding.geslacht).eq('x');
       expect(actualAanmelding.opmerking).eq('Foo');
-      expect(actualAanmelding.opstapplaats).deep.eq(opstapplaats);
     });
 
     it('should also delete existing deelnames when the status is not "Bevestigd"', async () => {
@@ -1533,7 +1504,7 @@ describe(ProjectenController.name, () => {
       ]);
     });
 
-    it('should be able to update "werksituatie", "woonsituatie", "geslacht", "plaats", "status", "opstapplaats" and "opmerking"', async () => {
+    it('should be able to update "werksituatie", "woonsituatie", "geslacht", "plaats", "status" and "opmerking"', async () => {
       // Arrange
       const aanmelding = await harness.createAanmelding({
         projectId: project.id,
@@ -1541,15 +1512,11 @@ describe(ProjectenController.name, () => {
       });
 
       // Act
-      const opstapplaats = await harness.createLocatie(
-        factory.locatie({ naam: 'Locatie 1' }),
-      );
       aanmelding.werksituatie = 'arbeidstrajectbegeleiding';
       aanmelding.woonsituatie = 'residentieleWoonondersteuning';
       aanmelding.geslacht = 'x';
       aanmelding.plaats = plaats;
       aanmelding.status = 'Bevestigd';
-      aanmelding.opstapplaats = opstapplaats;
       aanmelding.opmerking = 'Foo';
       const actualAanmelding = await harness.updateAanmelding(aanmelding);
 
@@ -1561,7 +1528,6 @@ describe(ProjectenController.name, () => {
         plaats,
         status: 'Bevestigd',
         opmerking: 'Foo',
-        opstapplaats,
       };
       expect(actualAanmelding).deep.include(expectedAanmelding);
     });

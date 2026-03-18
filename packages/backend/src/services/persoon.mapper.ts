@@ -254,9 +254,15 @@ export class PersoonMapper {
     const updated = await this.db.persoon.update({
       where: { id: persoonId },
       data: {
-        ...persoon.mogelijkeOpstapplaatsen === undefined ? {} : {mogelijkeOpstapplaatsen: {
-          set: persoon.mogelijkeOpstapplaatsen.map(({ id }) => ({ id })) || [],
-        }}
+        ...(persoon.mogelijkeOpstapplaatsen === undefined
+          ? {}
+          : {
+              mogelijkeOpstapplaatsen: {
+                set:
+                  persoon.mogelijkeOpstapplaatsen.map(({ id }) => ({ id })) ||
+                  [],
+              },
+            }),
       },
       include: includePersoonAggregate,
     });
@@ -429,7 +435,9 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
           OR: [
             {
               verblijfadres: {
-                plaats: { provincieId: { in: provincies.map(provincieMapper.toDB) } },
+                plaats: {
+                  provincieId: { in: provincies.map(provincieMapper.toDB) },
+                },
               },
               AND: {
                 domicilieadresId: null,
@@ -437,7 +445,9 @@ function where(filter: PersoonFilter): db.Prisma.PersoonWhereInput {
             },
             {
               domicilieadres: {
-                plaats: { provincieId: { in: provincies.map(provincieMapper.toDB) } },
+                plaats: {
+                  provincieId: { in: provincies.map(provincieMapper.toDB) },
+                },
               },
             },
           ],

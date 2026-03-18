@@ -46,6 +46,7 @@ import {
   showProvincie,
 } from '../shared';
 import { router } from '../router';
+import { vervoerstoerService } from '../vervoerstoeren/vervoerstoer.service';
 import { privilege } from '../auth/privilege.directive';
 import { ModalComponent } from '../shared/modal.component';
 
@@ -357,6 +358,26 @@ export class ProjectAanmeldingenComponent extends LitElement {
     }
   }
 
+  async #createVervoerstoer() {
+    const bestemmingLocatie = this.project.activiteiten
+      .map((a) => a.locatie)
+      .find((l) => l !== undefined);
+    const begeleiders = this.project.begeleiders.filter(
+      (v, i, self) => self.findIndex((b) => b.id === v.id) === i,
+    );
+    const vervoerstoer = await vervoerstoerService.create({
+      projectIds: [this.project.id],
+      routes: begeleiders.map((chauffeur) => ({ chauffeur, stops: [] })),
+      toeTeKennenStops: [],
+      bestemmingStop: bestemmingLocatie
+        ? { locatie: bestemmingLocatie, volgnummer: 0, aanmeldersOpTePikken: [] }
+        : undefined,
+    });
+    router.navigate(
+      `/vervoerstoeren/edit/${vervoerstoer.id}/opstapplaatsen-kiezen`,
+    );
+  }
+
   private navigateToProjecten() {
     router.navigate(`/${pluralize(this.project.type)}`, { keepQuery: true });
   }
@@ -505,14 +526,28 @@ export class ProjectAanmeldingenComponent extends LitElement {
             ><rock-icon icon="printer"></rock-icon> Deelnemerslijst
             printen</rock-link
           >
-          <rock-link
-            btn
-            btnOutlinePrimary
-            href="/${pluralize(this.project.type)}/vervoerstoer/${this.project
-              .id}"
-            ><rock-icon icon="busFront" size="md"></rock-icon>
-            Vervoerstoer</rock-link
-          >
+          ${this.project.vervoerstoerIds.length === 1
+            ? html`<rock-link
+                btn
+                btnOutlinePrimary
+                href="/vervoerstoeren/edit/${this.project.vervoerstoerIds[0]}"
+                ><rock-icon icon="busFront" size="md"></rock-icon>
+                Vervoerstoer openen</rock-link
+              >`
+            : this.project.vervoerstoerIds.length > 1
+              ? html`<rock-link
+                  btn
+                  btnOutlinePrimary
+                  href="/vervoerstoeren?naamLike=${encodeURIComponent(this.project.naam)}"
+                  ><rock-icon icon="busFront" size="md"></rock-icon>
+                  Vervoerstoeren (${this.project.vervoerstoerIds.length})</rock-link
+                >`
+              : html`<button
+                  class="btn btn-outline-primary"
+                  @click=${() => this.#createVervoerstoer()}
+                  ><rock-icon icon="busFront" size="md"></rock-icon>
+                  Vervoerstoer maken</button
+                >`}
           <rock-link
             btn
             btnOutlinePrimary

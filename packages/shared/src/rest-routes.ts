@@ -26,6 +26,11 @@ import {
   ProjectFilter,
   UpsertableProject,
 } from './project.js';
+import {
+  UpsertableVervoerstoer,
+  Vervoerstoer,
+  VervoerstoerFilter,
+} from './vervoerstoer.js';
 
 export type EntityFrom<TRoute extends keyof RestRoutes> =
   RestRoutes[TRoute]['entity'];
@@ -68,6 +73,11 @@ type TopRoutes = {
     entity: Locatie;
     upsertableEntity: UpsertableLocatie;
     filter: LocatieFilter;
+  };
+  vervoerstoeren: {
+    entity: Vervoerstoer;
+    upsertableEntity: UpsertableVervoerstoer;
+    filter: VervoerstoerFilter;
   };
 };
 

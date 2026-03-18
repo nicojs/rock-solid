@@ -18,3 +18,4 @@ export * from './http-helpers.js';
 export * from './locatie.js';
 export * from './csv.js';
 export * from './plaats.js';
+export * from './vervoerstoer.js';

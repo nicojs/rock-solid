@@ -34,7 +34,9 @@ export class PlaatsenController {
 
   @Post()
   @Privileges('custom:manage-plaatsen')
-  async updateAll(@Body() plaatsen: Pick<Plaats, 'deelgemeente' | 'gemeente' | 'postcode'>[]) {
+  async updateAll(
+    @Body() plaatsen: Pick<Plaats, 'deelgemeente' | 'gemeente' | 'postcode'>[],
+  ) {
     await this.plaatsMapper.upsertMany(plaatsen);
   }
 }

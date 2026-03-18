@@ -45,6 +45,8 @@ import {
   PatchableAanmelding,
   PatchablePersoon,
   PlaatsFilter,
+  UpsertableVervoerstoer,
+  Vervoerstoer,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -145,6 +147,8 @@ class IntegrationTestingHarness {
   async clear() {
     this.authToken = undefined;
     await this.db.$queryRaw`DELETE FROM Foldervoorkeur`;
+    await this.db.$queryRaw`UPDATE Vervoerstoer SET bestemmingStopId = NULL`;
+    await this.db.$queryRaw`DELETE FROM "_AanmeldingToVervoerstoerStop"`;
     await this.db.$queryRaw`DELETE FROM Aanmelding`;
     await this.db.$queryRaw`DELETE FROM Deelname`;
     await this.db.$queryRaw`DELETE FROM Activiteit`;
@@ -155,6 +159,9 @@ class IntegrationTestingHarness {
     await this.db.$queryRaw`DELETE FROM OverigPersoonSelectie`;
     await this.db.$queryRaw`DELETE FROM Persoon`;
     await this.db.$queryRaw`DELETE FROM Project`;
+    await this.db.$queryRaw`DELETE FROM VervoerstoerStop`;
+    await this.db.$queryRaw`DELETE FROM VervoerstoerRoute`;
+    await this.db.$queryRaw`DELETE FROM Vervoerstoer`;
     await this.db.$queryRaw`DELETE FROM Locatie`;
     await this.db.$queryRaw`DELETE FROM Adres`;
     await this.db.$queryRaw`DELETE FROM Plaats`;
@@ -372,6 +379,26 @@ class IntegrationTestingHarness {
     return await this.createPersoon(overigPersoon);
   }
 
+  async createVervoerstoer(
+    vervoerstoer: UpsertableVervoerstoer,
+  ): Promise<Vervoerstoer> {
+    const response = await this.post('/vervoerstoeren', vervoerstoer).expect(
+      201,
+    );
+    return response.body;
+  }
+
+  async updateVervoerstoer(
+    id: number,
+    vervoerstoer: UpsertableVervoerstoer | Vervoerstoer,
+  ): Promise<Vervoerstoer> {
+    const response = await this.put(
+      `/vervoerstoeren/${id}`,
+      vervoerstoer,
+    ).expect(200);
+    return response.body;
+  }
+
   async patchAanmelding(
     projectId: number,
     aanmelding: PatchableAanmelding,
@@ -539,6 +566,15 @@ export const factory = {
     return {
       naam: 'Onbekend',
       soort: 'cursushuis',
+      ...overrides,
+    };
+  },
+
+  vervoerstoer(overrides?: Partial<Vervoerstoer>): UpsertableVervoerstoer {
+    return {
+      projectIds: [],
+      routes: [],
+      toeTeKennenStops: [],
       ...overrides,
     };
   },
