@@ -11,13 +11,16 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.scss$/,        
+        test: /\.scss$/,
         use: ['css-loader', 'sass-loader'],
       },
       {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         exclude: /node_modules/,
+        options: {
+          transpileOnly: true
+        }
       },
     ],
   },
