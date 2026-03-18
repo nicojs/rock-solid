@@ -175,9 +175,13 @@ export class VervoerstoerMapper {
         include: includeVervoerstoerAggregate,
       }),
     );
+    if(updated.bestemmingStop && !vervoerstoer.bestemmingStop) {
+      // Bestemming stop was removed, delete it
+      await this.db.vervoerstoerStop.delete({ where: { id: updated.bestemmingStop.id } });
+      updated.bestemmingStop = null;
+    }
     return toVervoerstoer(updated);
   }
-
 
   async delete(id: number): Promise<void> {
     await this.db.vervoerstoer.delete({ where: { id } });
@@ -264,9 +268,7 @@ function toUpdateInput(
             update: toStopUpdateData(vervoerstoer.bestemmingStop),
           },
         }
-      : {
-          delete: true,
-        },
+      : undefined,
   };
 }
 

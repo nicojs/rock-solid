@@ -153,7 +153,7 @@ export class VervoerstoerKaartComponent extends LitElement {
     super.connectedCallback();
     (async () => {
       try {
-        const res = await fetch('/api/config');
+        const res = await httpClient.fetch('/api/config');
         const config = (await res.json()) as {
           googleMapsApiKey: string | null;
         };

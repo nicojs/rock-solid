@@ -49,6 +49,7 @@ interface ReistijdState {
   minSeconds: number | null;
   maxSeconds: number | null;
   unavailable: boolean;
+  reason?: string;
   usedTimingMs: number | null;
 }
 
@@ -90,7 +91,11 @@ export class TijdsplanningComponent extends RockElement {
   private focusLegIndices: Map<number, number> = new Map();
 
   protected override willUpdate(changed: PropertyValues) {
-    if (changed.has('vervoerstoer') || changed.has('baseDatum') || changed.has('baseDatumTerug')) {
+    if (
+      changed.has('vervoerstoer') ||
+      changed.has('baseDatum') ||
+      changed.has('baseDatumTerug')
+    ) {
       this.#prefillTimings();
     }
   }
@@ -100,51 +105,89 @@ export class TijdsplanningComponent extends RockElement {
       // Heen: prefill bestemming aankomsttijd
       if (this.baseDatum && !this.bestemmingAankomst.has(route.id)) {
         const aankomstTijd = new Date(this.baseDatum);
-        this.bestemmingAankomst = new Map(this.bestemmingAankomst).set(route.id, aankomstTijd);
+        this.bestemmingAankomst = new Map(this.bestemmingAankomst).set(
+          route.id,
+          aankomstTijd,
+        );
         this.#recalculateLeg('heen', route, 'bestemming', aankomstTijd);
       }
       // Terug: prefill bestemming vertrektijd
       const terugDatum = this.baseDatumTerug ?? this.baseDatum;
       if (terugDatum && !this.bestemmingVertrek.has(route.id)) {
         const vertrekTijd = new Date(terugDatum);
-        this.bestemmingVertrek = new Map(this.bestemmingVertrek).set(route.id, vertrekTijd);
+        this.bestemmingVertrek = new Map(this.bestemmingVertrek).set(
+          route.id,
+          vertrekTijd,
+        );
         this.#recalculateLegTerug(route, 'bestemming', vertrekTijd);
       }
     }
   }
 
-  private getTiming(dir: Direction, route: VervoerstoerRoute, stopId: number | 'bestemming' | 'vertrek'): Date | undefined {
+  private getTiming(
+    dir: Direction,
+    route: VervoerstoerRoute,
+    stopId: number | 'bestemming' | 'vertrek',
+  ): Date | undefined {
     if (stopId === 'bestemming') {
-      return dir === 'heen' ? this.bestemmingAankomst.get(route.id) : this.bestemmingVertrek.get(route.id);
+      return dir === 'heen'
+        ? this.bestemmingAankomst.get(route.id)
+        : this.bestemmingVertrek.get(route.id);
     }
     if (stopId === 'vertrek') {
       return dir === 'heen' ? route.vertrekTijd : route.vertrekTijdTerug;
     }
     const stop = route.stops.find((s) => s.id === stopId);
-    return dir === 'heen' ? stop?.geplandeAankomst : stop?.geplandeAankomstTerug;
+    return dir === 'heen'
+      ? stop?.geplandeAankomst
+      : stop?.geplandeAankomstTerug;
   }
 
-  private setTiming(dir: Direction, route: VervoerstoerRoute, stopId: number | 'bestemming' | 'vertrek', date: Date) {
+  private setTiming(
+    dir: Direction,
+    route: VervoerstoerRoute,
+    stopId: number | 'bestemming' | 'vertrek',
+    date: Date,
+  ) {
     if (stopId === 'bestemming') {
       if (dir === 'heen') {
-        this.bestemmingAankomst = new Map(this.bestemmingAankomst).set(route.id, date);
+        this.bestemmingAankomst = new Map(this.bestemmingAankomst).set(
+          route.id,
+          date,
+        );
       } else {
-        this.bestemmingVertrek = new Map(this.bestemmingVertrek).set(route.id, date);
+        this.bestemmingVertrek = new Map(this.bestemmingVertrek).set(
+          route.id,
+          date,
+        );
       }
       return;
     }
     if (stopId === 'vertrek') {
-      if (dir === 'heen') { route.vertrekTijd = date; } else { route.vertrekTijdTerug = date; }
+      if (dir === 'heen') {
+        route.vertrekTijd = date;
+      } else {
+        route.vertrekTijdTerug = date;
+      }
       this.requestUpdate();
       return;
     }
     const stop = route.stops.find((s) => s.id === stopId);
     if (!stop) return;
-    if (dir === 'heen') { stop.geplandeAankomst = date; } else { stop.geplandeAankomstTerug = date; }
+    if (dir === 'heen') {
+      stop.geplandeAankomst = date;
+    } else {
+      stop.geplandeAankomstTerug = date;
+    }
     this.requestUpdate();
   }
 
-  private setTimingAndRecalculate(dir: Direction, route: VervoerstoerRoute, stopId: number | 'bestemming' | 'vertrek', date: Date) {
+  private setTimingAndRecalculate(
+    dir: Direction,
+    route: VervoerstoerRoute,
+    stopId: number | 'bestemming' | 'vertrek',
+    date: Date,
+  ) {
     this.setTiming(dir, route, stopId, date);
     if (stopId === 'vertrek') return;
     if (dir === 'heen') {
@@ -154,11 +197,20 @@ export class TijdsplanningComponent extends RockElement {
     }
   }
 
-  private reistijdKey(dir: Direction, routeId: number, fromStopIndex: number): string {
+  private reistijdKey(
+    dir: Direction,
+    routeId: number,
+    fromStopIndex: number,
+  ): string {
     return `${dir}-${routeId}-${fromStopIndex}`;
   }
 
-  #recalculateLeg(dir: Direction, route: VervoerstoerRoute, toStopId: number | 'bestemming', aankomstTijd: Date) {
+  #recalculateLeg(
+    dir: Direction,
+    route: VervoerstoerRoute,
+    toStopId: number | 'bestemming',
+    aankomstTijd: Date,
+  ) {
     const destination = formatBestemming(this.bestemmingLocatie);
     if (!destination) return;
     let fromStopIndex: number;
@@ -178,17 +230,30 @@ export class TijdsplanningComponent extends RockElement {
       if (stopIndex === 0) {
         fromStopIndex = -1;
         const chauffeurAdres = route.chauffeur.verblijfadres;
-        fromAddr = chauffeurAdres ? formatAdres(chauffeurAdres) : 'Ter Rivierenlaan 152, 2100 Deurne';
+        fromAddr = chauffeurAdres
+          ? formatAdres(chauffeurAdres)
+          : 'Ter Rivierenlaan 152, 2100 Deurne';
       } else {
         fromStopIndex = stopIndex - 1;
         fromAddr = formatLocatieAdres(route.stops[stopIndex - 1]!.locatie);
       }
     }
 
-    this.berekenReistijd(dir, route.id, fromStopIndex, fromAddr, toAddr, aankomstTijd);
+    this.berekenReistijd(
+      dir,
+      route.id,
+      fromStopIndex,
+      fromAddr,
+      toAddr,
+      aankomstTijd,
+    );
   }
 
-  #recalculateLegTerug(route: VervoerstoerRoute, fromStopId: number | 'bestemming', vertrekTijd: Date) {
+  #recalculateLegTerug(
+    route: VervoerstoerRoute,
+    fromStopId: number | 'bestemming',
+    vertrekTijd: Date,
+  ) {
     const destination = formatBestemming(this.bestemmingLocatie);
     if (!destination) return;
     let fromStopIndex: number;
@@ -208,32 +273,67 @@ export class TijdsplanningComponent extends RockElement {
       if (stopIndex === 0) {
         fromStopIndex = -1;
         const chauffeurAdres = route.chauffeur.verblijfadres;
-        toAddr = chauffeurAdres ? formatAdres(chauffeurAdres) : 'Ter Rivierenlaan 152, 2100 Deurne';
+        toAddr = chauffeurAdres
+          ? formatAdres(chauffeurAdres)
+          : 'Ter Rivierenlaan 152, 2100 Deurne';
       } else {
         fromStopIndex = stopIndex - 1;
         toAddr = formatLocatieAdres(route.stops[stopIndex - 1]!.locatie);
       }
     }
 
-    this.berekenReistijd('terug', route.id, fromStopIndex, fromAddr, toAddr, vertrekTijd);
+    this.berekenReistijd(
+      'terug',
+      route.id,
+      fromStopIndex,
+      fromAddr,
+      toAddr,
+      vertrekTijd,
+    );
   }
 
-  private async berekenReistijd(dir: Direction, routeId: number, fromStopIndex: number, origin: string, destination: string, timing?: Date) {
+  private async berekenReistijd(
+    dir: Direction,
+    routeId: number,
+    fromStopIndex: number,
+    origin: string,
+    destination: string,
+    timing?: Date,
+  ) {
     const key = this.reistijdKey(dir, routeId, fromStopIndex);
-    this.focusLegIndices = new Map(this.focusLegIndices).set(routeId, fromStopIndex + 1);
+    this.focusLegIndices = new Map(this.focusLegIndices).set(
+      routeId,
+      fromStopIndex + 1,
+    );
     const usedTimingMs = timing?.getTime() ?? null;
     this.reistijden = new Map(this.reistijden).set(key, {
-      loading: true, minSeconds: null, maxSeconds: null, unavailable: false, usedTimingMs,
+      loading: true,
+      minSeconds: null,
+      maxSeconds: null,
+      unavailable: false,
+      usedTimingMs,
     });
     try {
-      const result = await vervoerstoerService.getReistijd(origin, destination, timing);
+      const result = await vervoerstoerService.getReistijd(
+        origin,
+        destination,
+        timing,
+      );
       this.reistijden = new Map(this.reistijden).set(key, {
-        loading: false, minSeconds: result.minSeconds, maxSeconds: result.maxSeconds,
-        unavailable: result.minSeconds === null, usedTimingMs,
+        loading: false,
+        minSeconds: result.minSeconds,
+        maxSeconds: result.maxSeconds,
+        unavailable: result.minSeconds === null,
+        reason: result.reason,
+        usedTimingMs,
       });
     } catch {
       this.reistijden = new Map(this.reistijden).set(key, {
-        loading: false, minSeconds: null, maxSeconds: null, unavailable: true, usedTimingMs,
+        loading: false,
+        minSeconds: null,
+        maxSeconds: null,
+        unavailable: true,
+        usedTimingMs,
       });
     }
   }
@@ -252,9 +352,20 @@ export class TijdsplanningComponent extends RockElement {
       const hasBestemming = Boolean(this.bestemmingAankomst.get(route.id));
       const hasVertrekTerug = Boolean(this.bestemmingVertrek.get(route.id));
       const hasAankomstTerug = Boolean(route.vertrekTijdTerug);
-      const allStopsHeen = route.stops.every((s) => Boolean(s.geplandeAankomst));
-      const allStopsTerug = route.stops.every((s) => Boolean(s.geplandeAankomstTerug));
-      return hasVertrek && hasBestemming && hasVertrekTerug && hasAankomstTerug && allStopsHeen && allStopsTerug;
+      const allStopsHeen = route.stops.every((s) =>
+        Boolean(s.geplandeAankomst),
+      );
+      const allStopsTerug = route.stops.every((s) =>
+        Boolean(s.geplandeAankomstTerug),
+      );
+      return (
+        hasVertrek &&
+        hasBestemming &&
+        hasVertrekTerug &&
+        hasAankomstTerug &&
+        allStopsHeen &&
+        allStopsTerug
+      );
     });
   }
 
@@ -269,22 +380,28 @@ export class TijdsplanningComponent extends RockElement {
   }
 
   private renderLegRow(
-    dir: Direction, route: VervoerstoerRoute, fromStopIndex: number,
-    aboveStopId: number | 'bestemming', belowStopId?: number | 'vertrek',
+    dir: Direction,
+    route: VervoerstoerRoute,
+    fromStopIndex: number,
+    aboveStopId: number | 'bestemming',
+    belowStopId?: number | 'vertrek',
   ) {
     const key = this.reistijdKey(dir, route.id, fromStopIndex);
     const isHeen = dir === 'heen';
     const aboveTiming = this.getTiming(dir, route, aboveStopId);
     const rawReistijd = this.reistijden.get(key);
-    const reistijdVerlopen = rawReistijd && !rawReistijd.loading &&
+    const reistijdVerlopen =
+      rawReistijd &&
+      !rawReistijd.loading &&
       rawReistijd.usedTimingMs !== (aboveTiming?.getTime() ?? null);
     const reistijd = reistijdVerlopen ? undefined : rawReistijd;
 
-    const suggestedTime = reistijd && !reistijd.loading && !reistijd.unavailable && aboveTiming
-      ? isHeen
-        ? new Date(aboveTiming.getTime() - reistijd.maxSeconds! * 1000)
-        : new Date(aboveTiming.getTime() + reistijd.maxSeconds! * 1000)
-      : null;
+    const suggestedTime =
+      reistijd && !reistijd.loading && !reistijd.unavailable && aboveTiming
+        ? isHeen
+          ? new Date(aboveTiming.getTime() - reistijd.maxSeconds! * 1000)
+          : new Date(aboveTiming.getTime() + reistijd.maxSeconds! * 1000)
+        : null;
 
     return html`
       <div class="d-flex align-items-center gap-2 my-1 text-muted small">
@@ -293,12 +410,28 @@ export class TijdsplanningComponent extends RockElement {
           ? reistijd.loading
             ? html`<span>Berekenen...</span>`
             : reistijd.unavailable
-              ? html`<span class="text-warning">Reistijd niet beschikbaar</span>`
-              : html`<span>${this.formatDuration(reistijd.minSeconds!)} – ${this.formatDuration(reistijd.maxSeconds!)}</span>`
+              ? html`<span class="text-warning"
+                  >${reistijd.reason === 'past_date'
+                    ? 'Reistijd niet beschikbaar, route ligt in het verleden'
+                    : 'Reistijd niet beschikbaar'}</span
+                >`
+              : html`<span
+                  >${this.formatDuration(reistijd.minSeconds!)} –
+                  ${this.formatDuration(reistijd.maxSeconds!)}</span
+                >`
           : nothing}
         ${suggestedTime && belowStopId !== undefined
-          ? html`<button class="btn btn-sm btn-outline-info ms-2" title="Gebruik gesuggereerde tijd"
-              @click=${() => this.setTimingAndRecalculate(dir, route, belowStopId, suggestedTime)}>
+          ? html`<button
+              class="btn btn-sm btn-outline-info ms-2"
+              title="Gebruik gesuggereerde tijd"
+              @click=${() =>
+                this.setTimingAndRecalculate(
+                  dir,
+                  route,
+                  belowStopId,
+                  suggestedTime,
+                )}
+            >
               ${isHeen ? '←' : '→'} ${toTimeValue(suggestedTime)}
             </button>`
           : nothing}
@@ -306,16 +439,32 @@ export class TijdsplanningComponent extends RockElement {
     `;
   }
 
-  private renderTimeInput(dir: Direction, route: VervoerstoerRoute, stopId: number | 'bestemming' | 'vertrek', label: string) {
-    const baseDatum = dir === 'heen' ? this.baseDatum : (this.baseDatumTerug ?? this.baseDatum);
+  private renderTimeInput(
+    dir: Direction,
+    route: VervoerstoerRoute,
+    stopId: number | 'bestemming' | 'vertrek',
+    label: string,
+  ) {
+    const baseDatum =
+      dir === 'heen' ? this.baseDatum : (this.baseDatumTerug ?? this.baseDatum);
     const existing = this.getTiming(dir, route, stopId);
     const val = existing ? toTimeValue(existing) : '';
     return html`<label class="mb-0 d-flex align-items-center gap-2 text-nowrap">
       ${label}
-      <input type="time" class="form-control form-control-sm" style="width:auto" .value=${val}
+      <input
+        type="time"
+        class="form-control form-control-sm"
+        style="width:auto"
+        .value=${val}
         @change=${(e: Event) => {
           const v = (e.target as HTMLInputElement).value;
-          if (v && baseDatum) this.setTimingAndRecalculate(dir, route, stopId, fromTimeValue(v, baseDatum));
+          if (v && baseDatum)
+            this.setTimingAndRecalculate(
+              dir,
+              route,
+              stopId,
+              fromTimeValue(v, baseDatum),
+            );
         }}
       />
     </label>`;
@@ -328,10 +477,23 @@ export class TijdsplanningComponent extends RockElement {
         <summary>Uitleg</summary>
         <p>Hier kun je de tijdsplanning invullen voor de heen- en terugweg.</p>
         <ol>
-          <li>Vul de <strong>aankomsttijd bij de bestemming</strong> in. De reistijd naar de vorige stop wordt automatisch berekend.</li>
-          <li>Gebruik de lichtblauwe knoppen om de gesuggereerde tijden over te nemen. Werk zo van boven naar beneden.</li>
-          <li>Vul voor de terugweg de <strong>vertrektijd vanaf de bestemming</strong> in. De aankomsttijden bij de stops worden weer automatisch gesuggereerd.</li>
-          <li>Klik op 'Opslaan en bekijken' als alle tijden zijn ingevuld om de printweergave te openen.</li>
+          <li>
+            Vul de <strong>aankomsttijd bij de bestemming</strong> in. De
+            reistijd naar de vorige stop wordt automatisch berekend.
+          </li>
+          <li>
+            Gebruik de lichtblauwe knoppen om de gesuggereerde tijden over te
+            nemen. Werk zo van boven naar beneden.
+          </li>
+          <li>
+            Vul voor de terugweg de
+            <strong>vertrektijd vanaf de bestemming</strong> in. De
+            aankomsttijden bij de stops worden weer automatisch gesuggereerd.
+          </li>
+          <li>
+            Klik op 'Opslaan en bekijken' als alle tijden zijn ingevuld om de
+            printweergave te openen.
+          </li>
         </ol>
       </details>
       <h3>Tijdsplanning</h3>
@@ -342,7 +504,9 @@ export class TijdsplanningComponent extends RockElement {
             <div class="card-header">
               <strong>Chauffeur: ${fullName(route.chauffeur)}</strong>
               ${!route.chauffeur.verblijfadres
-                ? html`<span class="badge text-bg-warning ms-2">⚠ Geen adres, fallback gebruikt</span>`
+                ? html`<span class="badge text-bg-warning ms-2"
+                    >⚠ Geen adres, fallback gebruikt</span
+                  >`
                 : nothing}
               &nbsp;— Bestemming: ${destination || '(onbekend)'}
             </div>
@@ -353,7 +517,13 @@ export class TijdsplanningComponent extends RockElement {
                 </div>
                 <div class="col-md-5">
                   <rock-vervoerstoer-kaart
-                    .routes=${[{ naam: fullName(route.chauffeur), startAdres: route.chauffeur.verblijfadres, tussenstops: route.stops.map((s) => s.locatie) } satisfies KaartRoute]}
+                    .routes=${[
+                      {
+                        naam: fullName(route.chauffeur),
+                        startAdres: route.chauffeur.verblijfadres,
+                        tussenstops: route.stops.map((s) => s.locatie),
+                      } satisfies KaartRoute,
+                    ]}
                     .bestemming=${destination}
                     .focusLegIndex=${this.focusLegIndices.get(route.id) ?? null}
                   ></rock-vervoerstoer-kaart>
@@ -364,30 +534,49 @@ export class TijdsplanningComponent extends RockElement {
         `;
       })}
       <div class="d-flex gap-3">
-        <button class="btn btn-secondary" @click=${() => this.emitSave('vervoerstoer-save-requested')}>
+        <button
+          class="btn btn-secondary"
+          @click=${() => this.emitSave('vervoerstoer-save-requested')}
+        >
           <rock-icon icon="floppy"></rock-icon> Opslaan
         </button>
-        <button class="btn btn-primary" @click=${() => this.emitSave('vervoerstoer-saved')} ?disabled=${!this.allTimingsComplete}>
+        <button
+          class="btn btn-primary"
+          @click=${() => this.emitSave('vervoerstoer-saved')}
+          ?disabled=${!this.allTimingsComplete}
+        >
           <rock-icon icon="printer"></rock-icon> Opslaan en bekijken
         </button>
       </div>
     `;
   }
 
-  #renderCombinedSchedule(route: VervoerstoerRoute, stopsDesc: VervoerstoerStop[], destination: string) {
+  #renderCombinedSchedule(
+    route: VervoerstoerRoute,
+    stopsDesc: VervoerstoerStop[],
+    destination: string,
+  ) {
     return html`
       <div class="row mb-1">
-        <div class="col"><strong>Heenweg ${formatDatum(this.vervoerstoer.datum)}</strong></div>
+        <div class="col">
+          <strong>Heenweg ${formatDatum(this.vervoerstoer.datum)}</strong>
+        </div>
         <div class="col"></div>
-        <div class="col"><strong>Terugweg ${formatDatum(this.vervoerstoer.datumTerug)}</strong></div>
+        <div class="col">
+          <strong>Terugweg ${formatDatum(this.vervoerstoer.datumTerug)}</strong>
+        </div>
       </div>
       <div class="row align-items-center mb-2">
         <div class="col text-end">
           ${this.renderTimeInput('heen', route, 'bestemming', 'Aankomst:')}
         </div>
         <div class="col text-center">
-          <span class="badge me-1 bg-primary">${String.fromCharCode(66 + route.stops.length)}</span>
-          <span class="fw-bold">Bestemming: ${destination || '(onbekend)'}</span>
+          <span class="badge me-1 bg-primary"
+            >${String.fromCharCode(66 + route.stops.length)}</span
+          >
+          <span class="fw-bold"
+            >Bestemming: ${destination || '(onbekend)'}</span
+          >
         </div>
         <div class="col">
           ${this.renderTimeInput('terug', route, 'bestemming', 'Vertrek:')}
@@ -401,13 +590,25 @@ export class TijdsplanningComponent extends RockElement {
         return html`
           <div class="row">
             <div class="col text-end">
-              ${this.renderLegRow('heen', route, originalIndex,
-                idx === 0 ? 'bestemming' : (nextStopHeen?.id ?? 'bestemming'), stop.id)}
+              ${this.renderLegRow(
+                'heen',
+                route,
+                originalIndex,
+                idx === 0 ? 'bestemming' : (nextStopHeen?.id ?? 'bestemming'),
+                stop.id,
+              )}
             </div>
             <div class="col"></div>
             <div class="col">
-              ${this.renderLegRow('terug', route, originalIndex,
-                idx === 0 ? 'bestemming' : (stopsDesc[idx - 1]?.id ?? 'bestemming'), stop.id)}
+              ${this.renderLegRow(
+                'terug',
+                route,
+                originalIndex,
+                idx === 0
+                  ? 'bestemming'
+                  : (stopsDesc[idx - 1]?.id ?? 'bestemming'),
+                stop.id,
+              )}
             </div>
           </div>
           <div class="row align-items-center mb-1">
@@ -415,28 +616,50 @@ export class TijdsplanningComponent extends RockElement {
               ${this.renderTimeInput('heen', route, stop.id, 'Aankomst:')}
             </div>
             <div class="col text-center">
-              <span class="badge me-1 bg-primary">${String.fromCharCode(66 + originalIndex)}</span>
+              <span class="badge me-1 bg-primary"
+                >${String.fromCharCode(66 + originalIndex)}</span
+              >
               <span class="fw-bold">${stop.locatie.naam}</span>
             </div>
             <div class="col">
               ${this.renderTimeInput('terug', route, stop.id, 'Aankomst:')}
             </div>
           </div>
-          ${isLastStop ? html`
-            <div class="row">
-              <div class="col text-end">${this.renderLegRow('heen', route, -1, stop.id, 'vertrek')}</div>
-              <div class="col"></div>
-              <div class="col">${this.renderLegRow('terug', route, -1, stop.id, 'vertrek')}</div>
-            </div>
-            <div class="row align-items-center mb-1">
-              <div class="col text-end">${this.renderTimeInput('heen', route, 'vertrek', 'Vertrek:')}</div>
-              <div class="col text-center">
-                <span class="badge me-1 bg-primary">A</span>
-                <span class="fw-bold">Thuis</span>
-              </div>
-              <div class="col">${this.renderTimeInput('terug', route, 'vertrek', 'Aankomst:')}</div>
-            </div>
-          ` : nothing}
+          ${isLastStop
+            ? html`
+                <div class="row">
+                  <div class="col text-end">
+                    ${this.renderLegRow('heen', route, -1, stop.id, 'vertrek')}
+                  </div>
+                  <div class="col"></div>
+                  <div class="col">
+                    ${this.renderLegRow('terug', route, -1, stop.id, 'vertrek')}
+                  </div>
+                </div>
+                <div class="row align-items-center mb-1">
+                  <div class="col text-end">
+                    ${this.renderTimeInput(
+                      'heen',
+                      route,
+                      'vertrek',
+                      'Vertrek:',
+                    )}
+                  </div>
+                  <div class="col text-center">
+                    <span class="badge me-1 bg-primary">A</span>
+                    <span class="fw-bold">Thuis</span>
+                  </div>
+                  <div class="col">
+                    ${this.renderTimeInput(
+                      'terug',
+                      route,
+                      'vertrek',
+                      'Aankomst:',
+                    )}
+                  </div>
+                </div>
+              `
+            : nothing}
         `;
       })}
     `;

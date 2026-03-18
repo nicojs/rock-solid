@@ -479,7 +479,9 @@ function toProject(
         voorschot,
         prijs,
         seizoen: vakantieseizoenMapper.toSchema(projectProperties.seizoen)!,
-        vakantiesoort: vakantiesoortMapper.toSchema(projectProperties.vakantiesoort)!,
+        vakantiesoort: vakantiesoortMapper.toSchema(
+          projectProperties.vakantiesoort,
+        )!,
         type: 'vakantie',
         bestemming: bestemming!,
         land: land!,
@@ -511,7 +513,7 @@ function toCursusActiviteit(
   aantalBevestigdeAanmeldingen: number,
 ): CursusActiviteit {
   return {
-    ...toBaseActiviteit(dbActiviteit, aantalBevestigdeAanmeldingen)
+    ...toBaseActiviteit(dbActiviteit, aantalBevestigdeAanmeldingen),
   };
 }
 

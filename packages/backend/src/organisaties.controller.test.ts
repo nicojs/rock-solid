@@ -217,22 +217,25 @@ describe(OrganisatiesController.name, () => {
         // Assert
         expect(deKeiCursussenOrgs.body.map(({ id }) => id)).deep.eq([acme.id]);
         expect(deKeiCursussenOrgs.body[0]?.contacten).lengthOf(1);
-        expect(deKeiCursussenOrgs.body[0]?.contacten[0]?.terAttentieVan).eq('Hans');
+        expect(deKeiCursussenOrgs.body[0]?.contacten[0]?.terAttentieVan).eq(
+          'Hans',
+        );
         expect(keiJongBusoOrgs.body.map(({ id }) => id).sort()).deep.eq(
           [disney.id, acme.id].sort(),
         );
         const acmeOrg = keiJongBusoOrgs.body.find((org) => org.id === acme.id)!;
-        const disneyOrg = keiJongBusoOrgs.body.find((org) => org.id === disney.id)!;
+        const disneyOrg = keiJongBusoOrgs.body.find(
+          (org) => org.id === disney.id,
+        )!;
         expect(
           acmeOrg.contacten.map(({ terAttentieVan }) => terAttentieVan),
         ).deep.eq(['Piet']);
         expect(
           disneyOrg.contacten.map(({ terAttentieVan }) => terAttentieVan),
         ).deep.eq(['Mickey']);
-        expect(deKeiWintervakantieOrgs.body.sort(byId).map(({ id }) => id)).deep.eq([
-          acme.id,
-          disney.id,
-        ].sort());
+        expect(
+          deKeiWintervakantieOrgs.body.sort(byId).map(({ id }) => id),
+        ).deep.eq([acme.id, disney.id].sort());
         expect(deKeiCursussenOrgs.totalCount).eq(1);
         expect(keiJongBusoOrgs.totalCount).eq(2);
         expect(deKeiWintervakantieOrgs.totalCount).eq(2);
@@ -253,7 +256,9 @@ describe(OrganisatiesController.name, () => {
         ]);
         expect(metAdresOrgs.body[0]?.contacten).lengthOf(1);
         expect(metAdresOrgs.body[0]?.contacten[0]?.terAttentieVan).eq('Hans');
-        expect(metAdresOrgs.body[1]?.contacten[0]?.terAttentieVan).eq('Miyamoto');
+        expect(metAdresOrgs.body[1]?.contacten[0]?.terAttentieVan).eq(
+          'Miyamoto',
+        );
         expect(zonderAdresOrgs.body.map(({ id }) => id)).deep.eq([
           acme.id,
           disney.id,
@@ -273,14 +278,17 @@ describe(OrganisatiesController.name, () => {
 
       it('by provincies', async () => {
         // Act
-        const [antwerpenOrgs, gentOrgs, antwerpenAndGentOrgs, noFilter] = await Promise.all([
-          harness.getAllOrganisaties({ provincies: ['Antwerpen'] }),
-          harness.getAllOrganisaties({
-            provincies: ['West-Vlaanderen'],
-          }),
-          harness.getAllOrganisaties({ provincies: ['Antwerpen', 'West-Vlaanderen'] }),
-          harness.getAllOrganisaties({}),
-        ]);
+        const [antwerpenOrgs, gentOrgs, antwerpenAndGentOrgs, noFilter] =
+          await Promise.all([
+            harness.getAllOrganisaties({ provincies: ['Antwerpen'] }),
+            harness.getAllOrganisaties({
+              provincies: ['West-Vlaanderen'],
+            }),
+            harness.getAllOrganisaties({
+              provincies: ['Antwerpen', 'West-Vlaanderen'],
+            }),
+            harness.getAllOrganisaties({}),
+          ]);
 
         // Assert
         expect(antwerpenOrgs.body.map(({ id }) => id)).deep.eq([acme.id]);
@@ -294,7 +302,10 @@ describe(OrganisatiesController.name, () => {
           disney.id,
           nintendo.id,
         ]);
-        expect(antwerpenAndGentOrgs.body.map(({ id }) => id)).deep.eq([acme.id, nintendo.id]);
+        expect(antwerpenAndGentOrgs.body.map(({ id }) => id)).deep.eq([
+          acme.id,
+          nintendo.id,
+        ]);
         expect(noFilter.totalCount).eq(3);
         expect(antwerpenOrgs.totalCount).eq(1);
         expect(gentOrgs.totalCount).eq(1);
@@ -320,10 +331,9 @@ describe(OrganisatiesController.name, () => {
         ]);
 
         // Assert
-        expect(ambulanteWoonondersteuningOrgs.body.map(({ id }) => id)).deep.eq([
-          acme.id,
-          disney.id,
-        ]);
+        expect(ambulanteWoonondersteuningOrgs.body.map(({ id }) => id)).deep.eq(
+          [acme.id, disney.id],
+        );
         expect(ambulanteWoonondersteuningOrgs.body[0]?.contacten).lengthOf(2);
         expect(cawOrgs.body.map(({ id }) => id)).deep.eq([acme.id]);
         expect(cawClb.body.map(({ id }) => id)).deep.eq([acme.id]);
@@ -357,7 +367,9 @@ describe(OrganisatiesController.name, () => {
         // Assert
         expect(hansOrgs.body.map(({ id }) => id)).deep.eq([acme.id]);
         expect(hansOrgs.body[0]?.contacten).lengthOf(1);
-        expect(hansCaseInsensitiveOrgs.body.map(({ id }) => id)).deep.eq([acme.id]);
+        expect(hansCaseInsensitiveOrgs.body.map(({ id }) => id)).deep.eq([
+          acme.id,
+        ]);
         expect(hansCaseInsensitiveOrgs.body[0]?.contacten).lengthOf(1);
         expect(noFilter.body.map(({ id }) => id)).deep.eq([
           acme.id,
@@ -380,14 +392,13 @@ describe(OrganisatiesController.name, () => {
       //       folders: ['keiJongBuso', 'deKeiWintervakantie'],
       //     }),
       //   ]);
-  
+
       //   // Assert
       //   expect(naamFilter).eq(1);
       //   expect(soortenFilter).eq(2);
       //   expect(foldersFilter).eq(2);
       // });
     });
-
   });
 
   describe('PUT /organisaties/:id', () => {

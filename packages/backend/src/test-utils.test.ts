@@ -147,8 +147,7 @@ class IntegrationTestingHarness {
   async clear() {
     this.authToken = undefined;
     await this.db.$queryRaw`DELETE FROM Foldervoorkeur`;
-    await this.db
-      .$queryRaw`UPDATE Vervoerstoer SET bestemmingStopId = NULL`;
+    await this.db.$queryRaw`UPDATE Vervoerstoer SET bestemmingStopId = NULL`;
     await this.db.$queryRaw`DELETE FROM "_AanmeldingToVervoerstoerStop"`;
     await this.db.$queryRaw`DELETE FROM Aanmelding`;
     await this.db.$queryRaw`DELETE FROM Deelname`;
@@ -576,9 +575,9 @@ export const factory = {
       projectIds: [],
       routes: [],
       toeTeKennenStops: [],
-      ...overrides
-    }
-  }
+      ...overrides,
+    };
+  },
 };
 
 export let harness: IntegrationTestingHarness;

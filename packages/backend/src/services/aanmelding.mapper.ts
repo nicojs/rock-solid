@@ -55,13 +55,8 @@ export class AanmeldingMapper {
   }
 
   public async create(aanmelding: InsertableAanmelding): Promise<Aanmelding> {
-    const {
-      deelnemer,
-      plaats,
-      status,
-      deelnames,
-      ...aanmeldingData
-    } = aanmelding;
+    const { deelnemer, plaats, status, deelnames, ...aanmeldingData } =
+      aanmelding;
     const {
       verblijfadres,
       domicilieadres,

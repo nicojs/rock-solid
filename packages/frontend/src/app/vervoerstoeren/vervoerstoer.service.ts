@@ -34,7 +34,7 @@ class VervoerstoerService {
     origin: string,
     destination: string,
     aankomstTijd?: Date,
-  ): Promise<{ minSeconds: number | null; maxSeconds: number | null }> {
+  ): Promise<{ minSeconds: number | null; maxSeconds: number | null; reason?: string }> {
     const params = new URLSearchParams({ origin, destination });
     if (aankomstTijd !== undefined) {
       params.set('aankomstTijd', aankomstTijd.toISOString());

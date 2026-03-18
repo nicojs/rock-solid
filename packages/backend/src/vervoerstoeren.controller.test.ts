@@ -514,6 +514,22 @@ describe(VervoerstoerenController.name, () => {
 
       expect(updated.bestemmingStop).to.be.undefined;
     });
+
+    it('should be able to update without a bestemming', async () => {
+      const project = await harness.createProject(factory.cursus());
+      const vervoerstoer = await harness.createVervoerstoer(
+        factory.vervoerstoer({
+          projectIds: [project.id],
+          bestemmingStop: undefined,
+        }),
+      );
+      const updated = await harness.updateVervoerstoer(vervoerstoer.id, {
+        ...vervoerstoer,
+        bestemmingStop: undefined,
+      });
+
+      expect(updated.bestemmingStop).to.be.undefined;
+    });
   });
   describe('compleet', () => {
     it('should not be compleet without routes', async () => {

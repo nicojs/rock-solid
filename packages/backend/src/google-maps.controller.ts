@@ -79,6 +79,20 @@ export class GoogleMapsController {
         fetch(url, { method: 'POST', headers, body: body('PESSIMISTIC') }),
       ]);
 
+      if (optimisticRes.status === 400 || pessimisticRes.status === 400) {
+        const errorBody = (await (
+          optimisticRes.status === 400 ? optimisticRes : pessimisticRes
+        ).json()) as { error?: { message?: string } };
+        if (errorBody.error?.message?.includes('future time')) {
+          return { minSeconds: null, maxSeconds: null, reason: 'past_date' };
+        }
+        return {
+          minSeconds: null,
+          maxSeconds: null,
+          reason: 'invalid_request',
+        };
+      }
+
       const [optimistic, pessimistic] = await Promise.all([
         optimisticRes.json() as Promise<RoutesApiResponse>,
         pessimisticRes.json() as Promise<RoutesApiResponse>,
@@ -133,10 +147,16 @@ export class GoogleMapsController {
             : 0,
           distanceMeters: leg.distanceMeters ?? 0,
           startLocation: leg.startLocation?.latLng
-            ? { lat: leg.startLocation.latLng.latitude!, lng: leg.startLocation.latLng.longitude! }
+            ? {
+                lat: leg.startLocation.latLng.latitude!,
+                lng: leg.startLocation.latLng.longitude!,
+              }
             : undefined,
           endLocation: leg.endLocation?.latLng
-            ? { lat: leg.endLocation.latLng.latitude!, lng: leg.endLocation.latLng.longitude! }
+            ? {
+                lat: leg.endLocation.latLng.latitude!,
+                lng: leg.endLocation.latLng.longitude!,
+              }
             : undefined,
         })),
       };
