@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.6.0](https://github.com/nicojs/rock-solid/compare/v2.5.1...v2.6.0) (2026-03-18)
+
+### Features
+
+- **vervoerstoer:** vervoerstoer fase 2 ([#339](https://github.com/nicojs/rock-solid/issues/339)) ([bc6b7ef](https://github.com/nicojs/rock-solid/commit/bc6b7efe4d181929d9799f2595692f8be9b1eac8))
+
 ## [2.5.1](https://github.com/nicojs/rock-solid/compare/v2.5.0...v2.5.1) (2026-03-07)
 
 ### Bug Fixes
