@@ -93,9 +93,7 @@ describe(VervoerstoerenController.name, () => {
       const created = await harness.createVervoerstoer(requestBody);
 
       expect(created.id).greaterThan(0);
-      expect(created.projectIds.sort()).deep.eq(
-        requestBody.projectIds.sort(),
-      );
+      expect(created.projectIds.sort()).deep.eq(requestBody.projectIds.sort());
       expect(created.routes).lengthOf(1);
       expect(created.routes[0]!.chauffeur.id).eq(
         requestBody.routes[0]!.chauffeur.id,
@@ -195,7 +193,8 @@ describe(VervoerstoerenController.name, () => {
         factory.locatie({ naam: 'Nieuwe stop', soort: 'opstapplaats' }),
       );
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created,
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
         toeTeKennenStops: [
           { locatie: nieuweLocatie, volgnummer: 0, aanmeldersOpTePikken: [] },
         ],
@@ -216,7 +215,8 @@ describe(VervoerstoerenController.name, () => {
       const created = await harness.createVervoerstoer(base);
       expect(created.toeTeKennenStops).lengthOf(1);
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created,
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
         toeTeKennenStops: [],
       });
 
@@ -256,7 +256,8 @@ describe(VervoerstoerenController.name, () => {
       });
       expect(created.toeTeKennenStops[0]!.aanmeldersOpTePikken).lengthOf(0);
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created,
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
         toeTeKennenStops: [
           {
             ...created.toeTeKennenStops[0]!,
@@ -277,11 +278,9 @@ describe(VervoerstoerenController.name, () => {
         factory.overigPersoon({ achternaam: 'Extra chauffeur' }),
       );
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created,
-        routes: [
-          ...created.routes,
-          { chauffeur: nieuweChauffeur, stops: [] },
-        ],
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
+        routes: [...created.routes, { chauffeur: nieuweChauffeur, stops: [] }],
       });
 
       expect(updated.routes).lengthOf(2);
@@ -290,7 +289,10 @@ describe(VervoerstoerenController.name, () => {
     it('should remove a route', async () => {
       const created = await arrangeCreatedVervoerstoer();
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created, routes: [] });
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
+        routes: [],
+      });
 
       expect(updated.routes).lengthOf(0);
     });
@@ -307,7 +309,8 @@ describe(VervoerstoerenController.name, () => {
       expect(created.toeTeKennenStops).lengthOf(1);
       expect(created.routes[0]!.stops).lengthOf(2);
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created,
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
         toeTeKennenStops: [],
         routes: [
           {
@@ -357,14 +360,13 @@ describe(VervoerstoerenController.name, () => {
         routes: [
           {
             chauffeur,
-            stops: [
-              { locatie, volgnummer: 1, aanmeldersOpTePikken: [] },
-            ],
+            stops: [{ locatie, volgnummer: 1, aanmeldersOpTePikken: [] }],
           },
         ],
       });
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created,
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
         routes: [
           {
             ...created.routes[0]!,
@@ -378,12 +380,10 @@ describe(VervoerstoerenController.name, () => {
         ],
       });
 
-      expect(
-        updated.routes[0]!.stops[0]!.aanmeldersOpTePikken,
-      ).lengthOf(1);
-      expect(
-        updated.routes[0]!.stops[0]!.aanmeldersOpTePikken[0]!.id,
-      ).eq(aanmelding.id);
+      expect(updated.routes[0]!.stops[0]!.aanmeldersOpTePikken).lengthOf(1);
+      expect(updated.routes[0]!.stops[0]!.aanmeldersOpTePikken[0]!.id).eq(
+        aanmelding.id,
+      );
     });
 
     it('should add aanmeldingen to the bestemmingStop', async () => {
@@ -415,7 +415,8 @@ describe(VervoerstoerenController.name, () => {
         routes: [{ chauffeur, stops: [] }],
       });
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created,
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
         bestemmingStop: {
           ...created.bestemmingStop!,
           aanmeldersOpTePikken: [aanmelding],
@@ -470,11 +471,10 @@ describe(VervoerstoerenController.name, () => {
           },
         ],
       });
-      expect(
-        created.routes[0]!.stops[0]!.aanmeldersOpTePikken,
-      ).lengthOf(1);
+      expect(created.routes[0]!.stops[0]!.aanmeldersOpTePikken).lengthOf(1);
 
-      const updated = await harness.updateVervoerstoer(created.id, { ...created,
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
         routes: [
           {
             ...created.routes[0]!,
@@ -488,12 +488,33 @@ describe(VervoerstoerenController.name, () => {
         ],
       });
 
-      expect(
-        updated.routes[0]!.stops[0]!.aanmeldersOpTePikken,
-      ).lengthOf(0);
+      expect(updated.routes[0]!.stops[0]!.aanmeldersOpTePikken).lengthOf(0);
+    });
+
+    it('should be able to delete a bestemming stop', async () => {
+      const project = await harness.createProject(factory.cursus());
+      const bestemming = await harness.createLocatie(
+        factory.locatie({ naam: 'Bestemming', soort: 'cursushuis' }),
+      );
+      const vervoerstoer = await harness.createVervoerstoer(
+        factory.vervoerstoer({
+          projectIds: [project.id],
+          bestemmingStop: {
+            id: 0,
+            locatie: bestemming,
+            volgnummer: 0,
+            aanmeldersOpTePikken: [],
+          },
+        }),
+      );
+      const updated = await harness.updateVervoerstoer(vervoerstoer.id, {
+        ...vervoerstoer,
+        bestemmingStop: undefined,
+      });
+
+      expect(updated.bestemmingStop).to.be.undefined;
     });
   });
-
   describe('compleet', () => {
     it('should not be compleet without routes', async () => {
       const vervoerstoer = await arrangeVervoerstoer();
@@ -675,4 +696,3 @@ async function arrangeVervoerstoer(): Promise<UpsertableVervoerstoer> {
 async function arrangeCreatedVervoerstoer(): Promise<Vervoerstoer> {
   return harness.createVervoerstoer(await arrangeVervoerstoer());
 }
-

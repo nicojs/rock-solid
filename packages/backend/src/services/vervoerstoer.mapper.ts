@@ -3,6 +3,8 @@ import {
   OverigPersoon,
   Vervoerstoer,
   VervoerstoerFilter,
+  VervoerstoerRoute,
+  VervoerstoerStop,
 } from '@rock-solid/shared';
 import { Prisma } from '../../generated/prisma/index.js';
 import * as db from '../../generated/prisma/index.js';
@@ -70,7 +72,9 @@ const includeVervoerstoerAggregate = {
     include: {
       _count: {
         select: {
-          aanmeldingen: { where: { status: aanmeldingsstatusMapper.toDB('Bevestigd') } },
+          aanmeldingen: {
+            where: { status: aanmeldingsstatusMapper.toDB('Bevestigd') },
+          },
         },
       },
     },
@@ -135,18 +139,35 @@ export class VervoerstoerMapper {
       }),
     );
     // Create bestemming stop separately and link it
-    return this.#upsertBestemmingStop(created, vervoerstoer.bestemmingStop);
+    return toVervoerstoer(created);
   }
 
-  async update(
-    id: number,
-    vervoerstoer: Vervoerstoer,
-  ): Promise<Vervoerstoer> {
-    // Disconnect bestemming stop first (to avoid FK issues when deleting stops)
-    await this.db.vervoerstoer.update({
-      where: { id },
-      data: { bestemmingStop: { disconnect: true } },
+  async update(id: number, vervoerstoer: Vervoerstoer): Promise<Vervoerstoer> {
+    // Delete orphaned stops and routes, then upsert remaining
+    const existingStopIds = vervoerstoer.toeTeKennenStops
+      .map((s) => s.id)
+      .filter((id) => id > 0);
+    const existingRouteIds = vervoerstoer.routes
+      .map((r) => r.id)
+      .filter((id) => id > 0);
+
+    // Collect all stop ids that should be kept (route stops + toeTeKennen stops)
+    const allRouteStopIds = vervoerstoer.routes
+      .flatMap((r) => r.stops.map((s) => s.id))
+      .filter((id) => id > 0);
+
+    await this.db.vervoerstoerStop.deleteMany({
+      where: {
+        OR: [
+          { vervoerstoerId: id, id: { notIn: existingStopIds } },
+          { route: { vervoerstoerId: id }, id: { notIn: allRouteStopIds } },
+        ],
+      },
     });
+    await this.db.vervoerstoerRoute.deleteMany({
+      where: { vervoerstoerId: id, id: { notIn: existingRouteIds } },
+    });
+
     const updated = await handleKnownPrismaErrors(
       this.db.vervoerstoer.update({
         where: { id },
@@ -154,34 +175,9 @@ export class VervoerstoerMapper {
         include: includeVervoerstoerAggregate,
       }),
     );
-    return this.#upsertBestemmingStop(updated, vervoerstoer.bestemmingStop);
+    return toVervoerstoer(updated);
   }
 
-  async #upsertBestemmingStop(
-    dbVervoerstoer: DBVervoerstoerAggregate,
-    bestemmingStop: Vervoerstoer['bestemmingStop'],
-  ): Promise<Vervoerstoer> {
-    if (!bestemmingStop) {
-      return toVervoerstoer(dbVervoerstoer);
-    }
-    const stop = await this.db.vervoerstoerStop.create({
-      data: {
-        locatie: { connect: { id: bestemmingStop.locatie.id } },
-        volgnummer: 0,
-        aanmeldersToPickup: {
-          connect: bestemmingStop.aanmeldersOpTePikken.map((a) => ({
-            id: a.id,
-          })),
-        },
-      },
-    });
-    const result = await this.db.vervoerstoer.update({
-      where: { id: dbVervoerstoer.id },
-      data: { bestemmingStop: { connect: { id: stop.id } } },
-      include: includeVervoerstoerAggregate,
-    });
-    return toVervoerstoer(result);
-  }
 
   async delete(id: number): Promise<void> {
     await this.db.vervoerstoer.delete({ where: { id } });
@@ -217,11 +213,16 @@ function toCreateInput(
     datum: vervoerstoer.datum ?? null,
     datumTerug: vervoerstoer.datumTerug ?? null,
     toeTeKennenStops: {
-      create: toStopCreateInputs(vervoerstoer.toeTeKennenStops),
+      create: vervoerstoer.toeTeKennenStops.map(toStopCreateData),
     },
     vervoerstoerRoutes: {
-      create: toRouteCreateInput(vervoerstoer),
+      create: vervoerstoer.routes.map(toRouteCreateData),
     },
+    bestemmingStop: vervoerstoer.bestemmingStop
+      ? {
+          create: toStopCreateData(vervoerstoer.bestemmingStop),
+        }
+      : undefined,
   };
 }
 
@@ -235,63 +236,100 @@ function toUpdateInput(
       set: vervoerstoer.projectIds.map((id) => ({ id })),
     },
     toeTeKennenStops: {
-      deleteMany: {},
-      create: toStopCreateInputs(vervoerstoer.toeTeKennenStops),
+      upsert: vervoerstoer.toeTeKennenStops
+        .filter((s) => s.id > 0)
+        .map((stop) => ({
+          where: { id: stop.id },
+          update: toStopUpdateData(stop),
+          create: toStopCreateData(stop),
+        })),
+      create: vervoerstoer.toeTeKennenStops
+        .filter((s) => !s.id)
+        .map(toStopCreateData),
     },
     vervoerstoerRoutes: {
-      deleteMany: {},
-      create: toRouteCreateInput(vervoerstoer),
+      upsert: vervoerstoer.routes
+        .filter((r) => r.id > 0)
+        .map((route) => ({
+          where: { id: route.id },
+          update: toRouteUpdateData(route),
+          create: toRouteCreateData(route),
+        })),
+      create: vervoerstoer.routes.filter((r) => !r.id).map(toRouteCreateData),
     },
+    bestemmingStop: vervoerstoer.bestemmingStop
+      ? {
+          upsert: {
+            create: toStopCreateData(vervoerstoer.bestemmingStop),
+            update: toStopUpdateData(vervoerstoer.bestemmingStop),
+          },
+        }
+      : {
+          delete: true,
+        },
   };
 }
 
-function toStopCreateInputs(stops: Vervoerstoer['toeTeKennenStops']) {
-  return stops.map((stop) => ({
+function toStopCreateData(stop: VervoerstoerStop) {
+  return {
     volgnummer: stop.volgnummer,
-    locatie: {
-      connect: {
-        id: stop.locatie.id,
-      },
-    },
+    locatie: { connect: { id: stop.locatie.id } },
     aanmeldersToPickup: {
       connect: stop.aanmeldersOpTePikken.map((a) => ({ id: a.id })),
     },
     geplandeAankomst: stop.geplandeAankomst ?? null,
     geplandeAankomstTerug: stop.geplandeAankomstTerug ?? null,
-  }));
+  };
 }
 
-function toRouteCreateInput(vervoerstoer: Vervoerstoer) {
-  return vervoerstoer.routes.map((route) => ({
-    chauffeur: {
-      connect: {
-        id: route.chauffeur.id,
-      },
+function toStopUpdateData(stop: VervoerstoerStop) {
+  return {
+    volgnummer: stop.volgnummer,
+    locatie: { connect: { id: stop.locatie.id } },
+    aanmeldersToPickup: {
+      set: stop.aanmeldersOpTePikken.map((a) => ({ id: a.id })),
     },
+    geplandeAankomst: stop.geplandeAankomst ?? null,
+    geplandeAankomstTerug: stop.geplandeAankomstTerug ?? null,
+  };
+}
+
+function toRouteCreateData(route: VervoerstoerRoute) {
+  return {
+    chauffeur: { connect: { id: route.chauffeur.id } },
     vertrekadres: toCreateAdresInput(route.vertrekadres),
     stops: {
-      create: route.stops.map((stop) => ({
-        volgnummer: stop.volgnummer,
-        locatie: {
-          connect: {
-            id: stop.locatie.id,
-          },
-        },
-        aanmeldersToPickup: {
-          connect: stop.aanmeldersOpTePikken.map((a) => ({ id: a.id })),
-        },
-        geplandeAankomst: stop.geplandeAankomst ?? null,
-        geplandeAankomstTerug: stop.geplandeAankomstTerug ?? null,
-      })),
+      create: route.stops.map(toStopCreateData),
     },
     vertrekTijd: route.vertrekTijd ?? null,
     vertrekTijdTerug: route.vertrekTijdTerug ?? null,
-  }));
+  };
 }
 
-function toVervoerstoer(
-  dbVervoerstoer: DBVervoerstoerAggregate,
-): Vervoerstoer {
+function toRouteUpdateData(route: VervoerstoerRoute) {
+  const existingStopIds = route.stops.map((s) => s.id).filter((id) => id > 0);
+  return {
+    chauffeur: { connect: { id: route.chauffeur.id } },
+    vertrekadres: toCreateAdresInput(route.vertrekadres),
+    stops: {
+      deleteMany: { id: { notIn: existingStopIds } },
+      upsert: route.stops
+        .filter((s) => s.id > 0)
+        .map((stop) => ({
+          where: { id: stop.id },
+          update: toStopUpdateData(stop),
+          create: toStopCreateData(stop),
+        })),
+      create: route.stops
+        .filter((s) => !s.id || s.id === 0)
+        .map(toStopCreateData),
+    },
+    vertrekTijd: route.vertrekTijd ?? null,
+    vertrekTijdTerug: route.vertrekTijdTerug ?? null,
+  };
+}
+
+function toVervoerstoer(dbVervoerstoer: DBVervoerstoerAggregate): Vervoerstoer {
   const toeTeKennenStops = dbVervoerstoer.toeTeKennenStops.map(toStop);
   const bestemmingStop = dbVervoerstoer.bestemmingStop
     ? toStop(dbVervoerstoer.bestemmingStop)
@@ -333,13 +371,17 @@ function toVervoerstoer(
   const geenToeTeKennen = toeTeKennenStops.every(
     (s) => s.aanmeldersOpTePikken.length === 0,
   );
-  const alleTijdenIngevuld = routes.length > 0 && routes.every((route) =>
-    Boolean(route.vertrekTijd) &&
-    Boolean(route.vertrekTijdTerug) &&
-    route.stops.every(
-      (s) => Boolean(s.geplandeAankomst) && Boolean(s.geplandeAankomstTerug),
-    ),
-  );
+  const alleTijdenIngevuld =
+    routes.length > 0 &&
+    routes.every(
+      (route) =>
+        Boolean(route.vertrekTijd) &&
+        Boolean(route.vertrekTijdTerug) &&
+        route.stops.every(
+          (s) =>
+            Boolean(s.geplandeAankomst) && Boolean(s.geplandeAankomstTerug),
+        ),
+    );
 
   return {
     id: dbVervoerstoer.id,

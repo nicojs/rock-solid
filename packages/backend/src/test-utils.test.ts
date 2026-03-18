@@ -570,6 +570,15 @@ export const factory = {
       ...overrides,
     };
   },
+
+  vervoerstoer(overrides?: Partial<Vervoerstoer>): UpsertableVervoerstoer {
+    return {
+      projectIds: [],
+      routes: [],
+      toeTeKennenStops: [],
+      ...overrides
+    }
+  }
 };
 
 export let harness: IntegrationTestingHarness;
