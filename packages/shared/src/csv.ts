@@ -1,3 +1,4 @@
+import { Decimal } from 'decimal.js';
 import {
   Labels,
   capitalize,
@@ -110,6 +111,9 @@ export function toCsv<T>(
     }
     if (val instanceof Date) {
       return showDatum(val);
+    }
+    if (val instanceof Decimal) {
+      return val.toString();
     }
     if (val === undefined || val === null) {
       return '';

@@ -12,6 +12,10 @@ import {
   OverigPersoon,
   overigPersoonLabels,
   toCsv,
+  Project,
+  CursusActiviteit,
+  VakantieActiviteit,
+  showDatum,
 } from '@rock-solid/shared';
 import { foldervoorkeurenCsv, optionsCsv, show } from './utility.pipes';
 
@@ -127,6 +131,35 @@ function adresCsvFields(adres: Adres | undefined): AdresCsvFields {
   };
 }
 
+function projectCsvFields(project: Project) {
+  return {
+    projectNaam: project.naam,
+    projectType: project.type,
+    prijs: project.prijs,
+    saldo: project.saldo,
+    voorschot: project.voorschot,
+  };
+}
+
+const projectCsvColumns = Object.freeze([
+  'projectNaam',
+  'projectType',
+  'prijs',
+  'saldo',
+  'voorschot',
+] as const) satisfies readonly (keyof ReturnType<typeof projectCsvFields>)[];
+
+function activiteitenCsvFields(
+  activiteiten: CursusActiviteit[] | VakantieActiviteit[],
+): Record<`activiteit-${number}-${'van' | 'totEnMet'}`, string> {
+  return activiteiten
+    .map((activiteit, index) => ({
+      [`activiteit-${index + 1}-van`]: showDatum(activiteit.van),
+      [`activiteit-${index + 1}-totEnMet`]: showDatum(activiteit.totEnMet),
+    }))
+    .reduce((acc, cur) => ({ ...acc, ...cur }), {});
+}
+
 /**
  * To personen csv for mailings
  */
@@ -142,14 +175,27 @@ export function toDeelnemersCsv(personen: Deelnemer[]): string {
   );
 }
 
-export function toAanmeldingenCsv(aanmeldingen: Aanmelding[]): string {
+export function toAanmeldingenCsv(
+  aanmeldingen: Aanmelding[],
+  project: Project,
+): string {
+  const projectCsv = projectCsvFields(project);
+  const activiteitenCsv = activiteitenCsvFields(project.activiteiten);
   return toCsv(
     aanmeldingen.map(({ deelnemer, ...aanmelding }) => ({
       ...aanmelding,
       ...deelnemer,
       ...adresCsvFields(deelnemer?.verblijfadres),
+      ...projectCsv,
+      ...activiteitenCsv,
     })),
-    [...basePersoonColumns, ...adresCsvColumns, ...aanmeldingCsvColumns],
+    [
+      ...basePersoonColumns,
+      ...adresCsvColumns,
+      ...aanmeldingCsvColumns,
+      ...projectCsvColumns,
+      ...(Object.keys(activiteitenCsv) as any), // 🤷‍♂️
+    ],
     { ...deelnemerLabels, ...aanmeldingLabels },
     {},
   );
