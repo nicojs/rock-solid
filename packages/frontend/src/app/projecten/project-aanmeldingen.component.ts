@@ -429,7 +429,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
           <button
             @click=${() =>
               downloadCsv(
-                toAanmeldingenCsv(aanmeldingen),
+                toAanmeldingenCsv(aanmeldingen, this.project),
                 `${printProject(this.project)}-${heading}`,
               )}
             class="btn btn-outline-secondary"
@@ -494,7 +494,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
       ? html`<button
             @click=${() =>
               downloadCsv(
-                toAanmeldingenCsv(aanmeldingen),
+                toAanmeldingenCsv(aanmeldingen, this.project),
                 `${printProject(this.project)}-aanmeldingen`,
               )}
             class="btn btn-outline-secondary"
