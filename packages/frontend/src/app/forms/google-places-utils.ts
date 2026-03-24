@@ -1,28 +1,4 @@
-import { Provincie, UpsertablePlaats } from '@rock-solid/shared';
-
-export function toProvincie(postCode: string): Provincie {
-  const postnr = parseInt(postCode);
-  if (postnr >= 1000 && postnr <= 1299) return 'Brussels Hoofdstedelijk Gewest';
-  if (postnr >= 1300 && postnr <= 1499) return 'Waals-Brabant';
-  if (
-    (postnr >= 1500 && postnr <= 1999) ||
-    (postnr >= 3000 && postnr <= 3499)
-  )
-    return 'Vlaams-Brabant';
-  if (postnr >= 2000 && postnr <= 2999) return 'Antwerpen';
-  if (postnr >= 3500 && postnr <= 3999) return 'Limburg';
-  if (postnr >= 4000 && postnr <= 4999) return 'Luik';
-  if (postnr >= 5000 && postnr <= 5999) return 'Namen';
-  if (
-    (postnr >= 6000 && postnr <= 6599) ||
-    (postnr >= 7000 && postnr <= 7999)
-  )
-    return 'Henegouwen';
-  if (postnr >= 6600 && postnr <= 6999) return 'Luxemburg';
-  if (postnr >= 8000 && postnr <= 8999) return 'West-Vlaanderen';
-  if (postnr >= 9000 && postnr <= 9999) return 'Oost-Vlaanderen';
-  return 'Onbekend';
-}
+import { UpsertablePlaats, toProvincie } from '@rock-solid/shared';
 
 interface ParsedComponents {
   straatnaam: string;
@@ -77,14 +53,17 @@ export function toUpsertablePlaats(
     ParsedComponents,
     'deelgemeente' | 'gemeente' | 'postcode' | 'land'
   >,
-): UpsertablePlaats {
+): UpsertablePlaats | undefined {
+  if (!parsed.postcode || !parsed.deelgemeente || !parsed.land) {
+    return undefined;
+  }
   const provincie =
     parsed.land === 'België' ? toProvincie(parsed.postcode) : 'Onbekend';
   return {
     deelgemeente: parsed.deelgemeente,
-    gemeente: parsed.gemeente,
+    gemeente: parsed.gemeente || parsed.deelgemeente,
     postcode: parsed.postcode,
-    land: parsed.land || 'Onbekend',
+    land: parsed.land,
     provincie,
   };
 }

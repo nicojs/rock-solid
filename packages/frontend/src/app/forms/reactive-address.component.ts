@@ -73,7 +73,9 @@ export class ReactiveAddressComponent<
     const input = this.plaatsValidatieRef.value;
     if (!input) return;
     const hasPlaats = Boolean(this.adres?.plaats?.deelgemeente);
-    input.setCustomValidity(hasPlaats ? '' : 'required');
+    input.setCustomValidity(
+      hasPlaats ? '' : 'Selecteer een plaats via "Zoek adres"',
+    );
     if (hasPlaats) {
       this.#googlePlacesElement?.classList.remove('is-invalid');
     } else {
@@ -106,11 +108,13 @@ export class ReactiveAddressComponent<
       void place.fetchFields({ fields: ['addressComponents'] }).then(() => {
         if (!place.addressComponents) return;
         const parsed = parseAddressComponents(place.addressComponents);
+        const plaats = toUpsertablePlaats(parsed);
+        if (!plaats) return;
         this.adres = {
           ...this.adres,
           straatnaam: parsed.straatnaam,
           huisnummer: parsed.huisnummer,
-          plaats: toUpsertablePlaats(parsed),
+          plaats,
         };
       });
     }) as EventListener);

@@ -1,6 +1,5 @@
 import {
   Aanmelding,
-  Adres,
   Locatie,
   OverigPersoon,
   Vervoerstoer,
@@ -20,7 +19,7 @@ import type {
   KaartRoute,
   RouteSamenvatting,
 } from './vervoerstoer-kaart.component';
-import { entities } from '../shared';
+import { entities, showAdres } from '../shared';
 
 const KLEUREN = [
   '#4285F4',
@@ -41,13 +40,9 @@ function formatAfstand(meters: number): string {
   return `${Math.round(meters / 1000)} km`;
 }
 
-function formatAdres(adres: Adres): string {
-  return `${adres.straatnaam} ${adres.huisnummer}, ${adres.plaats.postcode} ${adres.plaats.deelgemeente}, België`;
-}
-
 function formatBestemming(bestemming?: Locatie): string {
   if (!bestemming) return '';
-  return bestemming.adres ? formatAdres(bestemming.adres) : bestemming.naam;
+  return bestemming.adres ? showAdres(bestemming.adres) : bestemming.naam;
 }
 
 @customElement('rock-routes-selecteren')
@@ -351,7 +346,7 @@ export class RoutesSelecterenComponent extends RockElement {
         <ol>
           <li>
             Voeg chauffeurs toe via het veld 'Chauffeurs'. De begeleiders van de
-            geselecteerde projecten zijn standaard toegevoegd. Je kunt personeel 
+            geselecteerde projecten zijn standaard toegevoegd. Je kunt personeel
             en vakantievrijwilligers toevoegen.
           </li>
           <li>
