@@ -33,10 +33,6 @@ export const formStyles = css`
     border-radius: var(--bs-border-radius);
   }
 
-  gmp-place-autocomplete.is-invalid ~ .invalid-feedback {
-    display: block;
-  }
-
   gmp-place-autocomplete::part(input) {
     border-color: var(--bs-body-bg);
     border-radius: var(--bs-border-radius);
