@@ -1,6 +1,6 @@
 import * as db from '../../generated/prisma/index.js';
 import { Adres, UpsertableAdres } from '@rock-solid/shared';
-import { toPlaats } from './plaats.mapper.js';
+import { toPlaats, toPlaatsConnectOrCreate } from './plaats.mapper.js';
 
 export type DBAdresWithPlaats = db.Adres & { plaats: db.Plaats };
 
@@ -37,7 +37,7 @@ export function toCreateAdresInput(
     return {
       create: {
         ...props,
-        plaats: { connect: { id: plaats.id } },
+        plaats: toPlaatsConnectOrCreate(plaats),
       },
     };
   }
@@ -55,16 +55,17 @@ export function toUpdateAdresInput(
 ): db.Prisma.AdresUpdateOneWithoutDomiciliepersonenNestedInput {
   if (adres) {
     const { id, plaats, ...props } = adres;
+    const plaatsInput = toPlaatsConnectOrCreate(plaats);
     return {
       upsert: {
         create: {
           ...props,
-          plaats: { connect: { id: plaats.id } },
+          plaats: plaatsInput,
         },
         update: {
           ...props,
           busnummer: props.busnummer ?? null,
-          plaats: { connect: { id: plaats.id } },
+          plaats: plaatsInput,
         },
       },
     };

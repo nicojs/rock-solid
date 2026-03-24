@@ -2,6 +2,7 @@ import { Adres, Locatie } from '@rock-solid/shared';
 import { html, LitElement, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { httpClient } from '../shared/http-client';
+import { ensureGoogleMapsLoaded } from '../shared/google-maps.service';
 
 export interface KaartRoute {
   naam: string;
@@ -41,7 +42,6 @@ function formatAdres(adres: Adres): string {
   return `${adres.straatnaam} ${adres.huisnummer}, ${adres.plaats.postcode} ${adres.plaats.gemeente}, België`;
 }
 
-let mapsApiPromise: Promise<void> | null = null;
 
 const EARTH_RADIUS = 6371000;
 
@@ -100,22 +100,6 @@ function markerContent(kleur: string, label: string): HTMLElement {
   return div;
 }
 
-function loadGoogleMapsApi(apiKey: string): Promise<void> {
-  if (mapsApiPromise) return mapsApiPromise;
-  mapsApiPromise = new Promise<void>((resolve, reject) => {
-    const callbackName = '__googleMapsReady';
-    (window as unknown as Record<string, unknown>)[callbackName] = resolve;
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,marker&callback=${callbackName}&loading=async`;
-    script.async = true;
-    script.onerror = () => {
-      mapsApiPromise = null;
-      reject(new Error('Google Maps script kon niet geladen worden'));
-    };
-    document.head.appendChild(script);
-  });
-  return mapsApiPromise;
-}
 
 interface CachedRoute {
   encodedPolyline: string;
@@ -152,20 +136,8 @@ export class VervoerstoerKaartComponent extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     (async () => {
-      try {
-        const res = await httpClient.fetch('/api/config');
-        const config = (await res.json()) as {
-          googleMapsApiKey: string | null;
-        };
-        if (!config.googleMapsApiKey) {
-          this.status = 'niet-beschikbaar';
-          return;
-        }
-        await loadGoogleMapsApi(config.googleMapsApiKey);
-        this.status = 'gereed';
-      } catch {
-        this.status = 'niet-beschikbaar';
-      }
+      const loaded = await ensureGoogleMapsLoaded();
+      this.status = loaded ? 'gereed' : 'niet-beschikbaar';
     })();
   }
 

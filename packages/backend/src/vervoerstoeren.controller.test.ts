@@ -135,7 +135,7 @@ describe(VervoerstoerenController.name, () => {
           ),
         ]);
 
-      const updatedInput: Vervoerstoer = {
+      const updatedInput: UpsertableVervoerstoer & { compleet: boolean } = {
         ...created,
         projectIds: [nieuwProject.id],
         toeTeKennenStops: [],

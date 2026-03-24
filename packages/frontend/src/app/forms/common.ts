@@ -1,9 +1,11 @@
 import {
   Adres,
+  adresLabels,
   communicatievoorkeuren,
   foldersoorten,
   Foldervoorkeur,
   Plaats,
+  UpsertablePlaats,
 } from '@rock-solid/shared';
 import {
   AutocompleteControl,
@@ -16,19 +18,30 @@ import {
 } from './form-control';
 import { plaatsService, showPlaats } from '../shared';
 
-export const adresControls: readonly FormControl<Adres>[] = Object.freeze([
+export const adresFieldControls: readonly FormControl<Adres>[] = Object.freeze([
   Object.freeze({
     name: 'straatnaam',
+    label: adresLabels.straatnaam, 
     type: InputType.text,
     validators: { required: true },
+    cols: 8,
+    labelCols: 3,
   }),
   Object.freeze({
     name: 'huisnummer',
+    label: adresLabels.huisnummer,
     type: InputType.text,
     validators: { required: true },
+    cols: 2,
+    labelCols: 6,
   }),
-  plaatsControl('plaats', { validators: { required: true }, label: 'Plaats' }),
-  Object.freeze({ name: 'busnummer', type: InputType.text }),
+  Object.freeze({
+    name: 'busnummer',
+    label: adresLabels.busnummer,
+    type: InputType.text,
+    cols: 2,
+    labelCols: 6,
+  }),
 ] satisfies FormControl<Adres>[]);
 
 export const foldervoorkeurControls: readonly FormControl<Foldervoorkeur>[] = [
@@ -50,16 +63,16 @@ export function generateInputId(control: InputControl<any>, path: string) {
 
 export function plaatsControl<
   TEntity,
-  TKey extends KeysOfType<TEntity, Plaats>,
+  TKey extends KeysOfType<TEntity, Plaats | UpsertablePlaats>,
 >(
   name: TKey,
   additionalOptions?: Omit<
     AutocompleteControl<TEntity, TKey>,
     'name' | 'searchAction' | 'labelFor' | 'type' | 'validators'
   > & {
-    validators?: Validators<TEntity, Plaats>;
+    validators?: Validators<TEntity, Plaats | UpsertablePlaats>;
   },
-): AutocompleteControl<TEntity, Plaats> {
+): AutocompleteControl<TEntity, Plaats | UpsertablePlaats> {
   return {
     name,
     type: InputType.autocomplete,

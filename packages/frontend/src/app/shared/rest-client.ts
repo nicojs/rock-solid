@@ -3,7 +3,6 @@ import {
   FilterFrom,
   PAGE_QUERY_STRING_NAME,
   parse,
-  Patchable,
   PatchableFrom,
   Query,
   RestRoutes,
@@ -133,9 +132,7 @@ export class RestClient {
 
   async patchAll<TRoute extends keyof RestRoutes>(
     route: TRoute,
-    patches: (Patchable<RestRoutes[TRoute]['entity']> & {
-      id: string | number;
-    })[],
+    patches: (PatchableFrom<TRoute> & { id: string | number })[],
   ): Promise<RestRoutes[TRoute]['entity'][]> {
     const response = await this.http.fetch(`/api/${route}`, {
       method: 'PATCH',

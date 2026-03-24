@@ -1139,6 +1139,92 @@ describe(PersonenController.name, () => {
       expect(actualDeelnemer.verblijfadres!.busnummer).undefined;
     });
 
+    describe('plaats via adres', () => {
+      it('should connect to an existing plaats', async () => {
+        // Arrange
+        const bestaandePlaats = await harness.insertPlaats({
+          deelgemeente: 'Deurne',
+          gemeente: 'Antwerpen',
+          postcode: '2100',
+          provincie: 'Antwerpen',
+          land: 'België',
+        });
+
+        // Act
+        await harness.updateDeelnemer({
+          ...deelnemer,
+          verblijfadres: {
+            ...deelnemer.verblijfadres!,
+            plaats: bestaandePlaats,
+          },
+        });
+
+        // Assert
+        const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+        expect(actualDeelnemer.verblijfadres!.plaats.id).eq(bestaandePlaats.id);
+        expect(actualDeelnemer.verblijfadres!.plaats.deelgemeente).eq('Deurne');
+      });
+
+      it('should create a new plaats when it does not exist', async () => {
+        // Act
+        const nieuweAdres = {
+          ...deelnemer.verblijfadres!,
+          plaats: {
+            deelgemeente: 'Fes',
+            gemeente: 'Fes',
+            postcode: '30000',
+            provincie: 'Onbekend' as const,
+            land: 'Marokko',
+          },
+        };
+        await harness.put(`/personen/${deelnemer.id}`, {
+          ...deelnemer,
+          verblijfadres: nieuweAdres,
+        }).expect(200);
+
+        // Assert
+        const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+        const plaats = actualDeelnemer.verblijfadres!.plaats;
+        expect(plaats.id).to.be.a('number');
+        expect(plaats.deelgemeente).eq('Fes');
+        expect(plaats.land).eq('Marokko');
+        expect(plaats.provincie).eq('Onbekend');
+      });
+
+      it('should keep the plaats when removing the adres', async () => {
+        // Arrange
+        const nieuwePlaats = await harness.insertPlaats({
+          deelgemeente: 'Minderhout',
+          gemeente: 'Hoogstraten',
+          postcode: '2322',
+          provincie: 'Antwerpen',
+          land: 'België',
+        });
+        await harness.updateDeelnemer({
+          ...deelnemer,
+          verblijfadres: {
+            ...deelnemer.verblijfadres!,
+            plaats: nieuwePlaats,
+          },
+        });
+
+        // Act
+        await harness.updateDeelnemer({
+          ...deelnemer,
+          verblijfadres: undefined,
+        });
+
+        // Assert
+        const actualDeelnemer = await harness.getDeelnemer(deelnemer.id);
+        expect(actualDeelnemer.verblijfadres).undefined;
+
+        // Plaats should still exist in the database
+        const plaatsen = await harness.getPlaatsen({ search: 'Minderhout' });
+        expect(plaatsen.body).to.have.length(1);
+        expect(plaatsen.body[0]!.deelgemeente).eq('Minderhout');
+      });
+    });
+
     it('should be able to update contactpersoon fields', async () => {
       // Arrange
       const contactpersoon: Contactpersoon = {

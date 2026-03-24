@@ -134,7 +134,10 @@ export class VervoerstoerMapper {
     // Create vervoerstoer with toeTeKennenStops and routes
     const created = await handleKnownPrismaErrors(
       this.db.vervoerstoer.create({
-        data: { ...toCreateInput(vervoerstoer), aangemaaktDoor },
+        data: {
+          ...toCreateInput(vervoerstoer),
+          aangemaaktDoor,
+        },
         include: includeVervoerstoerAggregate,
       }),
     );

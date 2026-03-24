@@ -70,10 +70,11 @@ export class ReactiveFormInputControl<
   }
 
   private updateValidationMessage() {
-    if (this.inputs.length) {
-      this.validationMessage = this.inputs.item(0).validationMessage;
-    } else {
-      this.validationMessage = 'false';
+    const newMessage = this.inputs.length
+      ? this.inputs.item(0).validationMessage
+      : 'false';
+    if (newMessage !== this.validationMessage) {
+      this.validationMessage = newMessage;
     }
   }
 

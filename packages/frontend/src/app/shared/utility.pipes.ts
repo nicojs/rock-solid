@@ -1,5 +1,4 @@
 import {
-  Plaats,
   Adres,
   Decimal,
   foldersoorten,
@@ -15,6 +14,7 @@ import {
   calculateAge,
   showDatum,
   provincies,
+  plaatsToString,
 } from '@rock-solid/shared';
 import { html } from 'lit';
 import { TypeAheadHint } from './autocomplete.component';
@@ -117,13 +117,7 @@ export function showDatumWithAge(val?: Date): string {
   return `${showDatum(val)}${val ? ` (${calculateAge(val)} jaar)` : ''}`;
 }
 
-export function showPlaats(plaats?: Plaats): string {
-  if (plaats) {
-    return `${plaats.postcode} ${plaats.deelgemeente} (${plaats.gemeente})`;
-  } else {
-    return '';
-  }
-}
+export { plaatsToString as showPlaats };
 
 export function showProvincie(provincie?: Provincie): string {
   return (typeof provincie === 'string' && provincies[provincie]) || unknown;
@@ -137,7 +131,7 @@ export function showAdres(adres?: Adres) {
     const straatHuisnummerBus = `${straatNaamEnHuisnummer}${
       adres.busnummer ? ` bus ${adres.busnummer}` : ''
     }`;
-    return [straatHuisnummerBus, showPlaats(adres.plaats)]
+    return [straatHuisnummerBus, plaatsToString(adres.plaats)]
       .filter(Boolean)
       .join(', ');
   }

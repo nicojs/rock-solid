@@ -1,6 +1,6 @@
 import { Options } from './options.js';
 import { Deelnemer, Geslacht, Werksituatie, Woonsituatie } from './persoon.js';
-import { Plaats } from './plaats.js';
+import { Plaats, UpsertablePlaats } from './plaats.js';
 import { Patchable, Upsertable } from './upsertable.js';
 import { Labels } from './util.js';
 
@@ -46,16 +46,22 @@ export function isAanmeldingsstatus(maybe: string): maybe is Aanmeldingsstatus {
   return maybe in aanmeldingsstatussen;
 }
 
-export type InsertableAanmelding = Upsertable<
-  Aanmelding,
-  'deelnemerId' | 'projectId'
->;
+export type InsertableAanmelding = Omit<
+  Upsertable<Aanmelding, 'deelnemerId' | 'projectId'>,
+  'plaats'
+> & { plaats?: UpsertablePlaats };
 
-export type UpdatableAanmelding = Upsertable<Aanmelding, 'id' | 'status'> & {
+export type UpdatableAanmelding = Omit<
+  Upsertable<Aanmelding, 'id' | 'status'>,
+  'plaats'
+> & {
   overrideDeelnemerFields?: boolean;
+  plaats?: UpsertablePlaats;
 };
 
-export type PatchableAanmelding = Patchable<Aanmelding>;
+export type PatchableAanmelding = Omit<Patchable<Aanmelding>, 'plaats'> & {
+  plaats?: UpsertablePlaats | null;
+};
 
 export const aanmeldingLabels: Labels<Aanmelding> = {
   id: 'id',

@@ -474,6 +474,7 @@ describe(ReportsController.name, () => {
             gemeente: 'Test',
             postcode: '5678',
             provincie: 'West-Vlaanderen',
+            land: 'België',
           });
 
           const deelnemerC = await harness.createDeelnemer(
@@ -723,6 +724,7 @@ describe(ReportsController.name, () => {
       gemeente: 'Test',
       postcode: '1234',
       provincie: 'Antwerpen',
+      land: 'België',
     });
 
     const aanmelding1 = await harness.createAanmelding({

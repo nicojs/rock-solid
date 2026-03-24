@@ -18,7 +18,7 @@ import {
   includePersoonAggregate,
   toPersoon,
 } from './persoon.mapper.js';
-import { toPlaats } from './plaats.mapper.js';
+import { toPlaats, toPlaatsConnectOrCreate } from './plaats.mapper.js';
 import {
   aanmeldingsstatusMapper,
   geslachtMapper,
@@ -75,21 +75,26 @@ export class AanmeldingMapper {
       },
     });
 
+    const { deelnemerId, projectId, id: _, ...restAanmeldingData } = aanmeldingData;
     const dbAanmelding = await handleKnownPrismaErrors(
       this.db.aanmelding.create({
         data: {
-          ...aanmeldingData,
+          ...restAanmeldingData,
+          project: { connect: { id: projectId } },
+          deelnemer: { connect: { id: deelnemerId } },
           status: aanmeldingsstatusMapper.toDB(status),
           woonsituatie:
             woonsituatieMapper.toDB(aanmelding.woonsituatie) ?? woonsituatie,
           werksituatie:
             werksituatieMapper.toDB(aanmelding.werksituatie) ?? werksituatie,
           geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? geslacht,
-          plaatsId:
-            aanmelding.plaats?.id ??
-            domicilieadres?.plaatsId ??
-            verblijfadres?.plaatsId ??
-            undefined,
+          plaats: aanmelding.plaats
+            ? toPlaatsConnectOrCreate(aanmelding.plaats)
+            : domicilieadres?.plaatsId
+              ? { connect: { id: domicilieadres.plaatsId } }
+              : verblijfadres?.plaatsId
+                ? { connect: { id: verblijfadres.plaatsId } }
+                : undefined,
         },
       }),
     );
@@ -248,7 +253,7 @@ export class AanmeldingMapper {
         werksituatie: werksituatieMapper.toDB(werksituatie),
         woonsituatie: woonsituatieMapper.toDB(woonsituatie),
         geslacht: geslachtMapper.toDB(geslacht),
-        plaatsId: plaats?.id,
+        plaats: plaats ? toPlaatsConnectOrCreate(plaats) : undefined,
         deelnames:
           status && aanmeldingsstatussenWithoutDeelnames.includes(status)
             ? {
@@ -300,7 +305,7 @@ function toUpdateAanmeldingData(
     woonsituatie: woonsituatieMapper.toDB(aanmelding.woonsituatie) ?? null,
     geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? null,
     opmerking: opmerking ?? null,
-    plaats: plaats ? { connect: { id: plaats.id } } : { disconnect: true },
+    plaats: plaats ? toPlaatsConnectOrCreate(plaats) : { disconnect: true },
     deelnames:
       aanmelding.status &&
       aanmeldingsstatussenWithoutDeelnames.includes(aanmelding.status)

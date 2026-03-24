@@ -149,7 +149,7 @@ export class OrganisatieMapper {
               .map(toCreateContactInput),
             update: contacten
               .filter((contact) => notEmpty(contact.id))
-              .map((contact) => toUpdateContactInput(contact)),
+              .map(toUpdateContactInput),
           },
         },
         include: includeOrganisatie(),

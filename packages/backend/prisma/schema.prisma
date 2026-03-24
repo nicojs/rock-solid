@@ -96,11 +96,12 @@ model Plaats {
   postcode      String
   volledigeNaam String
   provincieId   Int
+  land          String @default("België")
 
   Adressen     Adres[]
   Aanmeldingen Aanmelding[]
 
-  @@unique([postcode, deelgemeente])
+  @@unique([postcode, deelgemeente, land])
   @@index(deelgemeente)
   @@index(gemeente)
   @@index(provincieId)

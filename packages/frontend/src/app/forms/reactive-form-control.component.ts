@@ -69,29 +69,43 @@ export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
           .path=${this.path}
           ${ref(this.inputRef)}
         ></rock-reactive-form-autocomplete>`;
+      case InputType.adres:
+        return html`<rock-reactive-address
+          .control=${this.control}
+          .entity=${this.entity}
+          .path=${this.path}
+          ${ref(this.inputRef)}
+        ></rock-reactive-address>`;
       default:
-        return this.renderInputControl(this.control);
+        return this.#renderInputControl(this.control);
     }
   }
 
-  private renderInputControl(control: InputControl<TEntity>) {
-    return html` <div class="mb-3 row">
-      <div class="col-lg-2 col-md-4">
-        ${control.type !== InputType.checkbox
-          ? html`<label
-              for=${generateInputId(control, this.path)}
-              class="col-form-label"
-              >${control.label ?? capitalize(this.control.name)}</label
-            >`
-          : ''}
+  #renderLabel(control: InputControl<TEntity>, className: string) {
+    if (control.type === InputType.checkbox) return '';
+    return html`<label
+      for=${generateInputId(control, this.path)}
+      class="${className}"
+      >${control.label ?? capitalize(this.control.name)}</label
+    >`;
+  }
+
+  #renderInput(control: InputControl<TEntity>) {
+    return html`<rock-reactive-form-input-control
+      .control="${control}"
+      .entity="${this.entity}"
+      .path="${this.path}"
+      ${ref(this.inputRef)}
+    ></rock-reactive-form-input-control>`;
+  }
+
+  #renderInputControl(control: InputControl<TEntity>) {
+    const labelCols = control.labelCols ?? 2;
+    return html`<div class="row">
+      <div class="col-lg-${labelCols} col-md-${labelCols * 2}">
+        ${this.#renderLabel(control, 'col-form-label')}
       </div>
-      <rock-reactive-form-input-control
-        class="col-lg-10 col-md-8"
-        .control="${control}"
-        .entity="${this.entity}"
-        .path="${this.path}"
-        ${ref(this.inputRef)}
-      ></rock-reactive-form-input-control>
+      <div class="col">${this.#renderInput(control)}</div>
     </div>`;
   }
 }
