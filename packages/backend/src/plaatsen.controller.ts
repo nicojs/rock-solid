@@ -4,12 +4,11 @@ import {
   type Plaats,
   type PlaatsFilter,
 } from '@rock-solid/shared';
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { PlaatsMapper } from './services/plaats.mapper.js';
 import { PagePipe } from './pipes/page.pipe.js';
 import { PlaatsFilterPipe } from './pipes/plaats-filter.pipe.js';
-import { Privileges } from './auth/privileges.guard.js';
 
 @Controller({ path: 'plaatsen' })
 export class PlaatsenController {
@@ -30,13 +29,5 @@ export class PlaatsenController {
     resp.set(TOTAL_COUNT_HEADER, count.toString());
 
     return plaatsen;
-  }
-
-  @Post()
-  @Privileges('custom:manage-plaatsen')
-  async updateAll(
-    @Body() plaatsen: Pick<Plaats, 'deelgemeente' | 'gemeente' | 'postcode'>[],
-  ) {
-    await this.plaatsMapper.upsertMany(plaatsen);
   }
 }

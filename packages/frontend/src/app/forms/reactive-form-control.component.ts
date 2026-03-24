@@ -69,6 +69,20 @@ export class ReactiveFormControl<TEntity> extends FormControlElement<TEntity> {
           .path=${this.path}
           ${ref(this.inputRef)}
         ></rock-reactive-form-autocomplete>`;
+      case InputType.adres:
+        return html`<rock-reactive-address
+          .control=${this.control}
+          .entity=${this.entity}
+          .path=${this.path}
+          ${ref(this.inputRef)}
+        ></rock-reactive-address>`;
+      case InputType.plaats:
+        return html`<rock-reactive-plaats
+          .control=${this.control}
+          .entity=${this.entity}
+          .path=${this.path}
+          ${ref(this.inputRef)}
+        ></rock-reactive-plaats>`;
       default:
         return this.renderInputControl(this.control);
     }

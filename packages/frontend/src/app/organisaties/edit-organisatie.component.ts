@@ -10,8 +10,6 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
 import {
-  adresControls,
-  formGroup,
   FormControl,
   InputType,
   patterns,
@@ -110,10 +108,12 @@ const organisatieControls: FormControl<Organisatie>[] = [
         type: InputType.tel,
         validators: { pattern: patterns.tel },
       },
-      formGroup('adres', adresControls, {
+      {
+        name: 'adres',
+        type: InputType.adres,
         required: false,
         requiredLabel: 'Met adres',
-      }),
+      },
     ],
     () => ({ terAttentieVan: '', foldervoorkeuren: [{}] }),
   ),

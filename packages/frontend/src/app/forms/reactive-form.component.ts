@@ -24,14 +24,32 @@ export const formStyles = css`
   .was-validated .radio-input-invalid ~ .invalid-feedback {
     display: block;
   }
+
+  /* Google places custom styling  */
+  gmp-place-autocomplete {
+    color-scheme: inherit;
+  }
+
+  gmp-place-autocomplete.is-invalid ~ .invalid-feedback {
+    display: block;
+  }
+
+  gmp-place-autocomplete::part(input) {
+    border-color: var(--bs-body-bg);
+    border-radius: var(--bs-border-radius);
+    border-width: var(--bs-form-control-border-width);
+  }
+
+  .was-validated gmp-place-autocomplete.is-invalid {
+    border-color: var(--bs-form-invalid-color);
+    border-radius: var(--bs-border-radius);
+    border-width: var(--bs-form-invalid-border-width);
+  }
 `;
 
 @customElement('rock-reactive-form')
 export class ReactiveFormComponent<TEntity> extends LitElement {
-  static override styles = [
-    bootstrap,
-    formStyles,
-  ];
+  static override styles = [bootstrap, formStyles];
 
   @property({ attribute: false })
   public entity!: TEntity;

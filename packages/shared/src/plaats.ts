@@ -6,7 +6,10 @@ export interface Plaats {
   gemeente: string;
   provincie: Provincie;
   postcode: string;
+  land: string;
 }
+
+export type UpsertablePlaats = Omit<Plaats, 'id'> & { id?: number };
 
 export interface PlaatsFilter {
   search: string;
@@ -49,4 +52,13 @@ export function isProvincie(maybe: string): maybe is Provincie {
   return Object.hasOwn(provincies, maybe);
 }
 
-
+export function plaatsToString(
+  plaats?: Pick<Plaats, 'postcode' | 'deelgemeente' | 'gemeente' | 'land'>,
+): string {
+  if (plaats) {
+    const { postcode, deelgemeente, gemeente, land } = plaats;
+    return `${postcode}, ${deelgemeente}${deelgemeente === gemeente ? '' : ` (${gemeente})`}${land === 'België' ? '' : `, ${land}`}`;
+  } else {
+    return '';
+  }
+}

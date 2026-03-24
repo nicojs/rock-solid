@@ -12,7 +12,7 @@ import {
 import { html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { bootstrap } from '../../styles';
-import { FormControl, InputType, plaatsControl } from '../forms';
+import { FormControl, InputType } from '../forms';
 import { fullNameOrUnknown } from '../personen/persoon.pipe';
 import { printProject } from './project.pipes';
 
@@ -87,7 +87,7 @@ function getAanmeldingControls(project: Project) {
       grouped: false,
       items: aanmeldingsstatussen,
     },
-    plaatsControl('plaats', { label: aanmeldingLabels.plaats }),
+    { name: 'plaats', type: InputType.plaats, label: aanmeldingLabels.plaats },
     {
       name: 'woonsituatie',
       label: aanmeldingLabels.woonsituatie,

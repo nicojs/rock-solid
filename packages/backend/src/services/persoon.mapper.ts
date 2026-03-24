@@ -24,6 +24,7 @@ import {
   toCreateAdresInput,
   toUpdateAdresInput,
 } from './adres.mapper.js';
+import { PlaatsMapper } from './plaats.mapper.js';
 import {
   communicatievoorkeurMapper,
   foldersoortMapper,
@@ -57,7 +58,10 @@ export type DBPersonAggregate = db.Persoon & {
  */
 @Injectable()
 export class PersoonMapper {
-  constructor(private db: DBService) {}
+  constructor(
+    private db: DBService,
+    private plaatsMapper: PlaatsMapper,
+  ) {}
 
   async getOne(
     userWhereUniqueInput: db.Prisma.PersoonWhereUniqueInput,
@@ -123,9 +127,9 @@ export class PersoonMapper {
         ...toContactPersoonFields(contactpersoon),
         ...toFotoToestemmingFields(fotoToestemming),
         volledigeNaam: computeVolledigeNaam(props),
-        verblijfadres: toCreateAdresInput(verblijfadres),
+        verblijfadres: await toCreateAdresInput(verblijfadres, this.plaatsMapper),
         domicilieadres: domicilieadres
-          ? toCreateAdresInput(domicilieadres)
+          ? await toCreateAdresInput(domicilieadres, this.plaatsMapper)
           : undefined,
         geslacht: geslachtMapper.toDB(geslacht),
         type: persoonTypeMapper.toDB(type),
@@ -192,13 +196,15 @@ export class PersoonMapper {
         ...toContactPersoonFields(contactpersoon),
         ...toFotoToestemmingFields(fotoToestemming),
         volledigeNaam: computeVolledigeNaam(props),
-        verblijfadres: toUpdateAdresInput(
+        verblijfadres: await toUpdateAdresInput(
           verblijfadres,
           typeof verblijfadresId === 'number',
+          this.plaatsMapper,
         ),
-        domicilieadres: toUpdateAdresInput(
+        domicilieadres: await toUpdateAdresInput(
           domicilieadres,
           typeof domicilieadresId === 'number',
+          this.plaatsMapper,
         ),
         type: persoonTypeMapper.toDB(type),
         geslacht: geslachtMapper.toDB(geslacht),

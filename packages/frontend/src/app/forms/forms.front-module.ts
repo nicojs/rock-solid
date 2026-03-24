@@ -7,3 +7,5 @@ import './reactive-form-checkboxes.component';
 import './reactive-form-tags.component';
 import './reactive-form-control-list.component';
 import './reactive-form-autocomplete.component';
+import './reactive-address.component';
+import './reactive-plaats.component';

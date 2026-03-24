@@ -24,6 +24,7 @@ async function bootstrap() {
             'ws://localhost:35729',
             'https://maps.googleapis.com',
             'https://maps.gstatic.com',
+            'https://places.googleapis.com',
           ],
           imgSrc: [
             "'self'",

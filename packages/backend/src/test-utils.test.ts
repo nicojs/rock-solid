@@ -47,6 +47,7 @@ import {
   PlaatsFilter,
   UpsertableVervoerstoer,
   Vervoerstoer,
+  plaatsToString,
 } from '@rock-solid/shared';
 import { INestApplication } from '@nestjs/common';
 import bodyParser from 'body-parser';
@@ -128,7 +129,7 @@ class IntegrationTestingHarness {
       data: {
         ...plaatsData,
         provincieId: provincieMapper.toDB(provincie),
-        volledigeNaam: `${plaats.gemeente} (${plaats.postcode})`,
+        volledigeNaam: plaatsToString(plaats),
       },
     });
     return toPlaats(dbPlaats);
@@ -496,6 +497,7 @@ export const factory = {
       gemeente: 'Onbekend',
       postcode: '0',
       provincie: 'Onbekend',
+      land: 'België',
       ...overrides,
     };
   },

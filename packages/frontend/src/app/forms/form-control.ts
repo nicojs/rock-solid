@@ -3,6 +3,8 @@ import {
   DeepPartial,
   GroupedOptions,
   Options,
+  UpsertableAdres,
+  UpsertablePlaats,
 } from '@rock-solid/shared';
 import { TypeAheadHint } from '../shared';
 
@@ -28,6 +30,8 @@ export enum InputType {
   currency = 'currency',
   tags = 'tags',
   checkboxes = 'checkboxes',
+  adres = 'adres',
+  plaats = 'plaats',
 }
 
 export interface Validators<TEntity, TValue> {
@@ -53,7 +57,22 @@ export type FormControl<TEntity> =
 export type CustomControl<TEntity> =
   | AutocompleteControl<TEntity, any>
   | TagsControl<TEntity, any>
-  | CheckboxesControl<TEntity>;
+  | CheckboxesControl<TEntity>
+  | AdresControl<TEntity>
+  | PlaatsControl<TEntity>;
+
+export interface AdresControl<TEntity> extends BaseControl<TEntity> {
+  name: KeysOfType<TEntity, UpsertableAdres>;
+  type: InputType.adres;
+  required?: boolean;
+  requiredLabel?: string;
+}
+
+export interface PlaatsControl<TEntity> extends BaseControl<TEntity> {
+  name: KeysOfType<TEntity, UpsertablePlaats>;
+  type: InputType.plaats;
+  label?: string;
+}
 
 export function formGroup<TEntity, TKey extends keyof TEntity & string>(
   name: TKey,

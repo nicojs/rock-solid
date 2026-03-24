@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service.js';
-import { PlaatsFilter, Plaats, Provincie } from '@rock-solid/shared';
+import {
+  PlaatsFilter,
+  Plaats,
+  Provincie,
+  UpsertablePlaats,
+  plaatsToString,
+} from '@rock-solid/shared';
 import * as db from '../../generated/prisma/index.js';
 import { provincieMapper } from './enum.mapper.js';
 import { toPage } from './paging.js';
@@ -34,27 +40,31 @@ export class PlaatsMapper {
     return count;
   }
 
-  async upsertMany(
-    plaatsen: Pick<Plaats, 'deelgemeente' | 'gemeente' | 'postcode'>[],
-  ) {
-    const upserts = plaatsen.map(({ deelgemeente, gemeente, postcode }) => {
-      const volledigeNaam = `${postcode} ${deelgemeente} (${gemeente})`;
-      const provincieId = provincieMapper.toDB(toProvincie(postcode));
-      return this.db.plaats.upsert({
-        where: {
-          postcode_deelgemeente: { postcode, deelgemeente },
-        },
-        update: { gemeente, volledigeNaam, provincieId },
-        create: {
-          deelgemeente,
-          gemeente,
-          postcode,
-          volledigeNaam,
-          provincieId,
-        },
-      });
+  async findOrCreate(plaats: UpsertablePlaats): Promise<db.Plaats> {
+    if (plaats.id) {
+      return this.db.plaats.findUniqueOrThrow({ where: { id: plaats.id } });
+    }
+    const { postcode, deelgemeente, land } = plaats;
+    const existing = await this.db.plaats.findUnique({
+      where: {
+        postcode_deelgemeente_land: { postcode, deelgemeente, land },
+      },
     });
-    await this.db.$transaction(upserts);
+    if (existing) {
+      return existing;
+    }
+    const provincieId = provincieMapper.toDB(toProvincie(postcode));
+    const volledigeNaam = plaatsToString(plaats);
+    return this.db.plaats.create({
+      data: {
+        deelgemeente,
+        gemeente: plaats.gemeente,
+        postcode,
+        volledigeNaam,
+        provincieId,
+        land,
+      },
+    });
   }
 }
 
@@ -63,7 +73,7 @@ export function toPlaats(p: db.Plaats): Plaats {
   return { ...props, provincie: provincieMapper.toSchema(provincieId) };
 }
 
-function toProvincie(postCode: string): Provincie {
+export function toProvincie(postCode: string): Provincie {
   const postnr = parseInt(postCode);
 
   if (postnr >= 1000 && postnr <= 1299) {
@@ -105,7 +115,7 @@ function toProvincie(postCode: string): Provincie {
   if (postnr >= 9000 && postnr <= 9999) {
     return 'Oost-Vlaanderen';
   }
-  throw new Error(`Postcode invalid: "${postCode}"`);
+  return 'Onbekend';
   // 'Brussels Hoofdstedelijk Gewest': 1000-1299
   // 'Waals-Brabant': 1300-1499
   // 'Vlaams-Brabant': 1500-1999, 3000-3499

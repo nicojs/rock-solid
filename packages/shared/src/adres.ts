@@ -1,4 +1,4 @@
-import { Plaats } from './plaats.js';
+import { Plaats, UpsertablePlaats } from './plaats.js';
 import { Upsertable } from './upsertable.js';
 
 export interface Adres {
@@ -9,8 +9,7 @@ export interface Adres {
   busnummer?: string;
 }
 
-export type UpsertableAdres = Upsertable<
-  Adres,
-  'plaats' | 'huisnummer' | 'straatnaam'
->;
-
+export type UpsertableAdres = Omit<
+  Upsertable<Adres, 'plaats' | 'huisnummer' | 'straatnaam'>,
+  'plaats'
+> & { plaats: UpsertablePlaats };

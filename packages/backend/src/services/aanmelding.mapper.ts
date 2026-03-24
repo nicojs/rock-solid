@@ -18,7 +18,7 @@ import {
   includePersoonAggregate,
   toPersoon,
 } from './persoon.mapper.js';
-import { toPlaats } from './plaats.mapper.js';
+import { PlaatsMapper, toPlaats } from './plaats.mapper.js';
 import {
   aanmeldingsstatusMapper,
   geslachtMapper,
@@ -43,7 +43,10 @@ export const includeAanmeldingFields = Object.freeze({
 
 @Injectable()
 export class AanmeldingMapper {
-  constructor(private db: DBService) {}
+  constructor(
+    private db: DBService,
+    private plaatsMapper: PlaatsMapper,
+  ) {}
 
   public async getAll(filter: { projectId: number }): Promise<Aanmelding[]> {
     const aanmeldingen = await this.db.aanmelding.findMany({
@@ -86,7 +89,10 @@ export class AanmeldingMapper {
             werksituatieMapper.toDB(aanmelding.werksituatie) ?? werksituatie,
           geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? geslacht,
           plaatsId:
-            aanmelding.plaats?.id ??
+            (aanmelding.plaats
+              ? (aanmelding.plaats.id ??
+                (await this.plaatsMapper.findOrCreate(aanmelding.plaats)).id)
+              : undefined) ??
             domicilieadres?.plaatsId ??
             verblijfadres?.plaatsId ??
             undefined,
@@ -176,7 +182,7 @@ export class AanmeldingMapper {
     aanmelding: UpdatableAanmelding,
   ): Promise<Aanmelding> {
     const dbAanmelding = await this.db.aanmelding.update({
-      data: toUpdateAanmeldingData(aanmelding),
+      data: await toUpdateAanmeldingData(aanmelding, this.plaatsMapper),
       where: { id },
       include: includeAanmeldingFields,
     });
@@ -248,7 +254,10 @@ export class AanmeldingMapper {
         werksituatie: werksituatieMapper.toDB(werksituatie),
         woonsituatie: woonsituatieMapper.toDB(woonsituatie),
         geslacht: geslachtMapper.toDB(geslacht),
-        plaatsId: plaats?.id,
+        plaatsId: plaats
+          ? (plaats.id ??
+            (await this.plaatsMapper.findOrCreate(plaats)).id)
+          : undefined,
         deelnames:
           status && aanmeldingsstatussenWithoutDeelnames.includes(status)
             ? {
@@ -277,9 +286,10 @@ export class AanmeldingMapper {
   }
 }
 
-function toUpdateAanmeldingData(
+async function toUpdateAanmeldingData(
   aanmelding: UpdatableAanmelding,
-): db.Prisma.AanmeldingUpdateInput {
+  plaatsMapper: PlaatsMapper,
+): Promise<db.Prisma.AanmeldingUpdateInput> {
   const {
     plaats,
     projectId,
@@ -292,6 +302,9 @@ function toUpdateAanmeldingData(
     deelnames,
     ...aanmeldingData
   } = aanmelding;
+  const plaatsId = plaats
+    ? (plaats.id ?? (await plaatsMapper.findOrCreate(plaats)).id)
+    : undefined;
   return {
     ...aanmeldingData,
     rekeninguittrekselNummer: rekeninguittrekselNummer ?? null,
@@ -300,7 +313,7 @@ function toUpdateAanmeldingData(
     woonsituatie: woonsituatieMapper.toDB(aanmelding.woonsituatie) ?? null,
     geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? null,
     opmerking: opmerking ?? null,
-    plaats: plaats ? { connect: { id: plaats.id } } : { disconnect: true },
+    plaats: plaatsId ? { connect: { id: plaatsId } } : { disconnect: true },
     deelnames:
       aanmelding.status &&
       aanmeldingsstatussenWithoutDeelnames.includes(aanmelding.status)

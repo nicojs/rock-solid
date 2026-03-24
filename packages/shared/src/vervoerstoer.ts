@@ -1,5 +1,5 @@
 import { Aanmelding } from './aanmelding.js';
-import { Adres } from './adres.js';
+import { Adres, UpsertableAdres } from './adres.js';
 import { Locatie } from './locatie.js';
 import { OverigPersoon } from './persoon.js';
 
@@ -37,10 +37,11 @@ export interface VervoerstoerRoute {
 
 export type UpsertableVervoerstoerRoute = Omit<
   VervoerstoerRoute,
-  'id' | 'stops'
+  'id' | 'stops' | 'vertrekadres'
 > & {
   id?: number;
   stops: UpsertableVervoerstoerStop[];
+  vertrekadres?: UpsertableAdres;
 };
 
 export interface VervoerstoerStop {

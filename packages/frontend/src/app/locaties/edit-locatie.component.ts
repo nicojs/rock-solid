@@ -9,7 +9,7 @@ import {
   locatiesoorten,
 } from '@rock-solid/shared';
 import { showLocatie } from './locatie.pipe';
-import { FormControl, InputType, adresControls, formGroup } from '../forms';
+import { FormControl, InputType } from '../forms';
 
 @customElement('rock-edit-locatie')
 export class EditLocatieComponent extends LitElement {
@@ -79,10 +79,12 @@ const locatieControls: FormControl<Locatie>[] = [
     label: locatieLabels.opmerking,
     type: InputType.text,
   },
-  formGroup('adres', adresControls, {
+  {
+    name: 'adres',
+    type: InputType.adres,
     required: false,
     requiredLabel: 'Met adres',
-  }),
+  },
   {
     name: 'gpsBeschrijving',
     label: locatieLabels.gpsBeschrijving,

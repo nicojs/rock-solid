@@ -14,6 +14,7 @@ import {
 import { ExplicitNulls } from './mapper-utils.js';
 import { handleKnownPrismaErrors } from '../errors/index.js';
 import { locatiesoortMapper } from './enum.mapper.js';
+import { PlaatsMapper } from './plaats.mapper.js';
 
 export type DBLocatieAggregate = Omit<db.Locatie, 'adresId'> & {
   adres: DBAdresWithPlaats | null;
@@ -25,7 +26,10 @@ export const includeAdres = Object.freeze({
 
 @Injectable()
 export class LocatieMapper {
-  constructor(private db: DBService) {}
+  constructor(
+    private db: DBService,
+    private plaatsMapper: PlaatsMapper,
+  ) {}
 
   async getAll(
     filter: LocatieFilter | undefined,
@@ -65,7 +69,9 @@ export class LocatieMapper {
         data: {
           ...props,
           soort: locatiesoortMapper.toDB(soort),
-          adres: adres ? toCreateAdresInput(adres) : undefined,
+          adres: adres
+            ? await toCreateAdresInput(adres, this.plaatsMapper)
+            : undefined,
         },
         include: includeAdres,
       }),
@@ -91,7 +97,7 @@ export class LocatieMapper {
         data: {
           ...props,
           soort: locatiesoortMapper.toDB(soort),
-          adres: toUpdateAdresInput(adres, adresId !== null),
+          adres: await toUpdateAdresInput(adres, adresId !== null, this.plaatsMapper),
         },
         include: includeAdres,
       }),

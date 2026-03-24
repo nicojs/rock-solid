@@ -22,7 +22,6 @@ import {
   FormControl,
   InputType,
   formGroup,
-  adresControls,
   formArray,
   foldervoorkeurControls,
   checkboxesItemsControl,
@@ -106,17 +105,21 @@ function controlsFor<TType extends PersoonType>(
         required: true,
       },
     },
-    formGroup('verblijfadres', adresControls, {
+    {
+      name: 'verblijfadres',
+      type: InputType.adres,
       required: false,
       requiredLabel: 'Verblijfadres invullen',
-    }),
+    },
   );
   if (type === 'deelnemer') {
     controls.push(
-      formGroup('domicilieadres', adresControls, {
+      {
+        name: 'domicilieadres',
+        type: InputType.adres,
         required: false,
         requiredLabel: 'Domicilieadres is anders dan het verblijfadres',
-      }),
+      },
     );
   }
   controls.push(

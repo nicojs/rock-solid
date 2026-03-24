@@ -27,6 +27,7 @@ import {
   organisatiesoortMapper,
   provincieMapper,
 } from './enum.mapper.js';
+import { PlaatsMapper } from './plaats.mapper.js';
 
 type DBOrganisatieContactAggregate = db.OrganisatieContact & {
   adres: DBAdresWithPlaats | null;
@@ -45,7 +46,10 @@ const includeAggregate = Object.freeze({
 
 @Injectable()
 export class OrganisatieMapper {
-  constructor(private db: DBService) {}
+  constructor(
+    private db: DBService,
+    private plaatsMapper: PlaatsMapper,
+  ) {}
 
   public async getAll(
     filter: OrganisatieFilter,
@@ -97,7 +101,11 @@ export class OrganisatieMapper {
             })),
           },
           contacten: {
-            create: contacten.map(toCreateContactInput),
+            create: await Promise.all(
+              contacten.map((c) =>
+                toCreateContactInput(c, this.plaatsMapper),
+              ),
+            ),
           },
         },
         include: includeOrganisatie(),
@@ -144,12 +152,18 @@ export class OrganisatieMapper {
                 notIn: contacten.map(({ id }) => id).filter(notEmpty),
               },
             },
-            create: contacten
-              .filter((contact) => empty(contact.id))
-              .map(toCreateContactInput),
-            update: contacten
-              .filter((contact) => notEmpty(contact.id))
-              .map((contact) => toUpdateContactInput(contact)),
+            create: await Promise.all(
+              contacten
+                .filter((contact) => empty(contact.id))
+                .map((c) => toCreateContactInput(c, this.plaatsMapper)),
+            ),
+            update: await Promise.all(
+              contacten
+                .filter((contact) => notEmpty(contact.id))
+                .map((contact) =>
+                  toUpdateContactInput(contact, this.plaatsMapper),
+                ),
+            ),
           },
         },
         include: includeOrganisatie(),
@@ -289,13 +303,14 @@ function includeOrganisatie(filter?: OrganisatieFilter) {
   } as const satisfies db.Prisma.OrganisatieInclude;
 }
 
-function toCreateContactInput(
+async function toCreateContactInput(
   contact: UpsertableOrganisatieContact | OrganisatieContactUpdateFields,
-): db.Prisma.OrganisatieContactCreateWithoutOrganisatieInput {
+  plaatsMapper: PlaatsMapper,
+): Promise<db.Prisma.OrganisatieContactCreateWithoutOrganisatieInput> {
   const { adres, id, foldervoorkeuren, ...props } = contact;
   return {
     ...props,
-    adres: toCreateAdresInput(adres),
+    adres: await toCreateAdresInput(adres, plaatsMapper),
     terAttentieVan: props.terAttentieVan ?? '', // Empty string so we can use the unique key constraint
     foldervoorkeuren: {
       create: foldervoorkeuren?.map(({ communicatie, folder }) => ({
@@ -306,15 +321,16 @@ function toCreateContactInput(
   };
 }
 
-function toUpdateContactInput(
+async function toUpdateContactInput(
   contact: OrganisatieContactUpdateFields,
-): db.Prisma.OrganisatieContactUpdateWithWhereUniqueWithoutOrganisatieInput {
+  plaatsMapper: PlaatsMapper,
+): Promise<db.Prisma.OrganisatieContactUpdateWithWhereUniqueWithoutOrganisatieInput> {
   return {
     where: { id: contact.id },
     data: {
-      ...toCreateContactInput(contact),
+      ...(await toCreateContactInput(contact, plaatsMapper)),
       // we provide false here and delete it afterwards, because of issue https://github.com/prisma/prisma/issues/20448
-      adres: toUpdateAdresInput(contact.adres, false),
+      adres: await toUpdateAdresInput(contact.adres, false, plaatsMapper),
       foldervoorkeuren: {
         deleteMany: {
           organisatieContactId: contact.id,
