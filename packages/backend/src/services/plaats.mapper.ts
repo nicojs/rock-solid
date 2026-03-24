@@ -40,32 +40,32 @@ export class PlaatsMapper {
     return count;
   }
 
-  async findOrCreate(plaats: UpsertablePlaats): Promise<db.Plaats> {
-    if (plaats.id) {
-      return this.db.plaats.findUniqueOrThrow({ where: { id: plaats.id } });
-    }
-    const { postcode, deelgemeente, land } = plaats;
-    const existing = await this.db.plaats.findUnique({
+}
+
+export function toPlaatsConnectOrCreate(
+  plaats: UpsertablePlaats,
+): { connect: { id: number } } | { connectOrCreate: db.Prisma.PlaatsCreateOrConnectWithoutAdressenInput } {
+  if (plaats.id) {
+    return { connect: { id: plaats.id } };
+  }
+  const { postcode, deelgemeente, land, gemeente } = plaats;
+  const provincieId = provincieMapper.toDB(toProvincie(postcode));
+  const volledigeNaam = plaatsToString(plaats);
+  return {
+    connectOrCreate: {
       where: {
         postcode_deelgemeente_land: { postcode, deelgemeente, land },
       },
-    });
-    if (existing) {
-      return existing;
-    }
-    const provincieId = provincieMapper.toDB(toProvincie(postcode));
-    const volledigeNaam = plaatsToString(plaats);
-    return this.db.plaats.create({
-      data: {
+      create: {
         deelgemeente,
-        gemeente: plaats.gemeente,
+        gemeente,
         postcode,
         volledigeNaam,
         provincieId,
         land,
       },
-    });
-  }
+    },
+  };
 }
 
 export function toPlaats(p: db.Plaats): Plaats {

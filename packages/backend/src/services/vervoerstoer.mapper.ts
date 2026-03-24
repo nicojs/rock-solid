@@ -16,7 +16,6 @@ import {
   toAdres,
   toCreateAdresInput,
 } from './adres.mapper.js';
-import { PlaatsMapper } from './plaats.mapper.js';
 import {
   DBLocatieAggregate,
   includeAdres,
@@ -101,10 +100,7 @@ const includeVervoerstoerAggregate = {
 
 @Injectable()
 export class VervoerstoerMapper {
-  constructor(
-    private readonly db: DBService,
-    private readonly plaatsMapper: PlaatsMapper,
-  ) {}
+  constructor(private readonly db: DBService) {}
 
   async getAll(
     filter: VervoerstoerFilter | undefined,
@@ -139,7 +135,7 @@ export class VervoerstoerMapper {
     const created = await handleKnownPrismaErrors(
       this.db.vervoerstoer.create({
         data: {
-          ...(await toCreateInput(vervoerstoer, this.plaatsMapper)),
+          ...toCreateInput(vervoerstoer),
           aangemaaktDoor,
         },
         include: includeVervoerstoerAggregate,
@@ -178,7 +174,7 @@ export class VervoerstoerMapper {
     const updated = await handleKnownPrismaErrors(
       this.db.vervoerstoer.update({
         where: { id },
-        data: await toUpdateInput(vervoerstoer, this.plaatsMapper),
+        data: toUpdateInput(vervoerstoer),
         include: includeVervoerstoerAggregate,
       }),
     );
@@ -214,10 +210,9 @@ function toWhere(
   };
 }
 
-async function toCreateInput(
+function toCreateInput(
   vervoerstoer: Vervoerstoer,
-  plaatsMapper: PlaatsMapper,
-): Promise<Omit<Prisma.VervoerstoerCreateInput, 'aangemaaktDoor'>> {
+): Omit<Prisma.VervoerstoerCreateInput, 'aangemaaktDoor'> {
   return {
     projects: {
       connect: vervoerstoer.projectIds.map((id) => ({ id })),
@@ -228,9 +223,7 @@ async function toCreateInput(
       create: vervoerstoer.toeTeKennenStops.map(toStopCreateData),
     },
     vervoerstoerRoutes: {
-      create: await Promise.all(
-        vervoerstoer.routes.map((r) => toRouteCreateData(r, plaatsMapper)),
-      ),
+      create: vervoerstoer.routes.map(toRouteCreateData),
     },
     bestemmingStop: vervoerstoer.bestemmingStop
       ? {
@@ -240,10 +233,9 @@ async function toCreateInput(
   };
 }
 
-async function toUpdateInput(
+function toUpdateInput(
   vervoerstoer: Vervoerstoer,
-  plaatsMapper: PlaatsMapper,
-): Promise<Prisma.VervoerstoerUpdateInput> {
+): Prisma.VervoerstoerUpdateInput {
   return {
     datum: vervoerstoer.datum ?? null,
     datumTerug: vervoerstoer.datumTerug ?? null,
@@ -263,20 +255,14 @@ async function toUpdateInput(
         .map(toStopCreateData),
     },
     vervoerstoerRoutes: {
-      upsert: await Promise.all(
-        vervoerstoer.routes
-          .filter((r) => r.id > 0)
-          .map(async (route) => ({
-            where: { id: route.id },
-            update: await toRouteUpdateData(route, plaatsMapper),
-            create: await toRouteCreateData(route, plaatsMapper),
-          })),
-      ),
-      create: await Promise.all(
-        vervoerstoer.routes
-          .filter((r) => !r.id)
-          .map((r) => toRouteCreateData(r, plaatsMapper)),
-      ),
+      upsert: vervoerstoer.routes
+        .filter((r) => r.id > 0)
+        .map((route) => ({
+          where: { id: route.id },
+          update: toRouteUpdateData(route),
+          create: toRouteCreateData(route),
+        })),
+      create: vervoerstoer.routes.filter((r) => !r.id).map(toRouteCreateData),
     },
     bestemmingStop: vervoerstoer.bestemmingStop
       ? {
@@ -313,13 +299,10 @@ function toStopUpdateData(stop: VervoerstoerStop) {
   };
 }
 
-async function toRouteCreateData(
-  route: VervoerstoerRoute,
-  plaatsMapper: PlaatsMapper,
-) {
+function toRouteCreateData(route: VervoerstoerRoute) {
   return {
     chauffeur: { connect: { id: route.chauffeur.id } },
-    vertrekadres: await toCreateAdresInput(route.vertrekadres, plaatsMapper),
+    vertrekadres: toCreateAdresInput(route.vertrekadres),
     stops: {
       create: route.stops.map(toStopCreateData),
     },
@@ -328,14 +311,11 @@ async function toRouteCreateData(
   };
 }
 
-async function toRouteUpdateData(
-  route: VervoerstoerRoute,
-  plaatsMapper: PlaatsMapper,
-) {
+function toRouteUpdateData(route: VervoerstoerRoute) {
   const existingStopIds = route.stops.map((s) => s.id).filter((id) => id > 0);
   return {
     chauffeur: { connect: { id: route.chauffeur.id } },
-    vertrekadres: await toCreateAdresInput(route.vertrekadres, plaatsMapper),
+    vertrekadres: toCreateAdresInput(route.vertrekadres),
     stops: {
       deleteMany: { id: { notIn: existingStopIds } },
       upsert: route.stops

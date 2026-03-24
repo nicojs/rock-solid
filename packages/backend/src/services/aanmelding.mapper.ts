@@ -18,7 +18,7 @@ import {
   includePersoonAggregate,
   toPersoon,
 } from './persoon.mapper.js';
-import { PlaatsMapper, toPlaats } from './plaats.mapper.js';
+import { toPlaats, toPlaatsConnectOrCreate } from './plaats.mapper.js';
 import {
   aanmeldingsstatusMapper,
   geslachtMapper,
@@ -43,10 +43,7 @@ export const includeAanmeldingFields = Object.freeze({
 
 @Injectable()
 export class AanmeldingMapper {
-  constructor(
-    private db: DBService,
-    private plaatsMapper: PlaatsMapper,
-  ) {}
+  constructor(private db: DBService) {}
 
   public async getAll(filter: { projectId: number }): Promise<Aanmelding[]> {
     const aanmeldingen = await this.db.aanmelding.findMany({
@@ -78,24 +75,26 @@ export class AanmeldingMapper {
       },
     });
 
+    const { deelnemerId, projectId, id: _, ...restAanmeldingData } = aanmeldingData;
     const dbAanmelding = await handleKnownPrismaErrors(
       this.db.aanmelding.create({
         data: {
-          ...aanmeldingData,
+          ...restAanmeldingData,
+          project: { connect: { id: projectId } },
+          deelnemer: { connect: { id: deelnemerId } },
           status: aanmeldingsstatusMapper.toDB(status),
           woonsituatie:
             woonsituatieMapper.toDB(aanmelding.woonsituatie) ?? woonsituatie,
           werksituatie:
             werksituatieMapper.toDB(aanmelding.werksituatie) ?? werksituatie,
           geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? geslacht,
-          plaatsId:
-            (aanmelding.plaats
-              ? (aanmelding.plaats.id ??
-                (await this.plaatsMapper.findOrCreate(aanmelding.plaats)).id)
-              : undefined) ??
-            domicilieadres?.plaatsId ??
-            verblijfadres?.plaatsId ??
-            undefined,
+          plaats: aanmelding.plaats
+            ? toPlaatsConnectOrCreate(aanmelding.plaats)
+            : domicilieadres?.plaatsId
+              ? { connect: { id: domicilieadres.plaatsId } }
+              : verblijfadres?.plaatsId
+                ? { connect: { id: verblijfadres.plaatsId } }
+                : undefined,
         },
       }),
     );
@@ -182,7 +181,7 @@ export class AanmeldingMapper {
     aanmelding: UpdatableAanmelding,
   ): Promise<Aanmelding> {
     const dbAanmelding = await this.db.aanmelding.update({
-      data: await toUpdateAanmeldingData(aanmelding, this.plaatsMapper),
+      data: toUpdateAanmeldingData(aanmelding),
       where: { id },
       include: includeAanmeldingFields,
     });
@@ -254,10 +253,7 @@ export class AanmeldingMapper {
         werksituatie: werksituatieMapper.toDB(werksituatie),
         woonsituatie: woonsituatieMapper.toDB(woonsituatie),
         geslacht: geslachtMapper.toDB(geslacht),
-        plaatsId: plaats
-          ? (plaats.id ??
-            (await this.plaatsMapper.findOrCreate(plaats)).id)
-          : undefined,
+        plaats: plaats ? toPlaatsConnectOrCreate(plaats) : undefined,
         deelnames:
           status && aanmeldingsstatussenWithoutDeelnames.includes(status)
             ? {
@@ -286,10 +282,9 @@ export class AanmeldingMapper {
   }
 }
 
-async function toUpdateAanmeldingData(
+function toUpdateAanmeldingData(
   aanmelding: UpdatableAanmelding,
-  plaatsMapper: PlaatsMapper,
-): Promise<db.Prisma.AanmeldingUpdateInput> {
+): db.Prisma.AanmeldingUpdateInput {
   const {
     plaats,
     projectId,
@@ -302,9 +297,6 @@ async function toUpdateAanmeldingData(
     deelnames,
     ...aanmeldingData
   } = aanmelding;
-  const plaatsId = plaats
-    ? (plaats.id ?? (await plaatsMapper.findOrCreate(plaats)).id)
-    : undefined;
   return {
     ...aanmeldingData,
     rekeninguittrekselNummer: rekeninguittrekselNummer ?? null,
@@ -313,7 +305,7 @@ async function toUpdateAanmeldingData(
     woonsituatie: woonsituatieMapper.toDB(aanmelding.woonsituatie) ?? null,
     geslacht: geslachtMapper.toDB(aanmelding.geslacht) ?? null,
     opmerking: opmerking ?? null,
-    plaats: plaatsId ? { connect: { id: plaatsId } } : { disconnect: true },
+    plaats: plaats ? toPlaatsConnectOrCreate(plaats) : { disconnect: true },
     deelnames:
       aanmelding.status &&
       aanmeldingsstatussenWithoutDeelnames.includes(aanmelding.status)
