@@ -77,6 +77,7 @@ const adresCsvColumns = Object.freeze([
   'postcode',
   'gemeente',
   'deelgemeente',
+  'land',
 ] as const) satisfies readonly (keyof ReturnType<typeof adresCsvFields>)[];
 
 const aanmeldingCsvColumns = Object.freeze([
@@ -106,12 +107,13 @@ interface AdresCsvFields {
   adres: string;
   gemeente: string;
   deelgemeente: string;
+  land: string;
 }
 
 function adresCsvFields(adres: Adres | undefined): AdresCsvFields {
   if (adres) {
     const {
-      plaats: { postcode, gemeente, deelgemeente },
+      plaats: { postcode, gemeente, deelgemeente, land },
       straatnaam,
       huisnummer,
       busnummer,
@@ -121,6 +123,7 @@ function adresCsvFields(adres: Adres | undefined): AdresCsvFields {
       adres: toStraatEnHuisnummer({ straatnaam, huisnummer, busnummer }),
       gemeente,
       deelgemeente,
+      land,
     };
   }
   return {
@@ -128,6 +131,7 @@ function adresCsvFields(adres: Adres | undefined): AdresCsvFields {
     deelgemeente: '',
     gemeente: '',
     postcode: '',
+    land: '',
   };
 }
 

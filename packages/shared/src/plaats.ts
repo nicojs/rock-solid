@@ -57,7 +57,7 @@ export function plaatsToString(
 ): string {
   if (plaats) {
     const { postcode, deelgemeente, gemeente, land } = plaats;
-    return `${postcode}, ${deelgemeente}${deelgemeente === gemeente ? '' : ` (${gemeente})`}${land === 'België' ? '' : `, ${land}`}`;
+    return `${postcode ? `${postcode}, ` : ''}${deelgemeente}${deelgemeente === gemeente ? '' : ` (${gemeente})`}${land === 'België' ? '' : `, ${land}`}`;
   } else {
     return '';
   }

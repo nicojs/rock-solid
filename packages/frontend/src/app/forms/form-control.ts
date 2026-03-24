@@ -4,7 +4,6 @@ import {
   GroupedOptions,
   Options,
   UpsertableAdres,
-  UpsertablePlaats,
 } from '@rock-solid/shared';
 import { TypeAheadHint } from '../shared';
 
@@ -31,7 +30,6 @@ export enum InputType {
   tags = 'tags',
   checkboxes = 'checkboxes',
   adres = 'adres',
-  plaats = 'plaats',
 }
 
 export interface Validators<TEntity, TValue> {
@@ -58,20 +56,13 @@ export type CustomControl<TEntity> =
   | AutocompleteControl<TEntity, any>
   | TagsControl<TEntity, any>
   | CheckboxesControl<TEntity>
-  | AdresControl<TEntity>
-  | PlaatsControl<TEntity>;
+  | AdresControl<TEntity>;
 
 export interface AdresControl<TEntity> extends BaseControl<TEntity> {
   name: KeysOfType<TEntity, UpsertableAdres>;
   type: InputType.adres;
   required?: boolean;
   requiredLabel?: string;
-}
-
-export interface PlaatsControl<TEntity> extends BaseControl<TEntity> {
-  name: KeysOfType<TEntity, UpsertablePlaats>;
-  type: InputType.plaats;
-  label?: string;
 }
 
 export function formGroup<TEntity, TKey extends keyof TEntity & string>(
@@ -303,6 +294,10 @@ export interface BaseInputControl<
   postfix?: string;
   /** When updated with empty text, should the underlying field be set to null? */
   nullable?: boolean;
+  /** Bootstrap grid columns (1-12). When set, consecutive controls with `cols` share a row. */
+  cols?: number;
+  /** Bootstrap grid columns for the label (1-12). Defaults to 2 (lg) / 4 (md) when not in compact mode. */
+  labelCols?: number;
 }
 
 export type KeysOfType<TEntity, TValue> = keyof {

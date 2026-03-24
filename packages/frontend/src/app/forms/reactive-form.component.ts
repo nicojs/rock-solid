@@ -28,6 +28,9 @@ export const formStyles = css`
   /* Google places custom styling  */
   gmp-place-autocomplete {
     color-scheme: inherit;
+    background-color: var(--bs-body-bg);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
   }
 
   gmp-place-autocomplete.is-invalid ~ .invalid-feedback {
