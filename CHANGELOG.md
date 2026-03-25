@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.7.0](https://github.com/nicojs/rock-solid/compare/v2.6.0...v2.7.0) (2026-03-25)
+
+### Features
+
+- **aanmeldingen:** extra velden bij export lijst ([#343](https://github.com/nicojs/rock-solid/issues/343)) ([fce3c37](https://github.com/nicojs/rock-solid/commit/fce3c378b1ce2de422373e3e83d51dd24cb55020))
+- **adres:** ondersteun Europese adressen ([#344](https://github.com/nicojs/rock-solid/issues/344)) ([eb34d42](https://github.com/nicojs/rock-solid/commit/eb34d4237b6b60af4639e4aadce28b0e0d6733da))
+
 # [2.6.0](https://github.com/nicojs/rock-solid/compare/v2.5.1...v2.6.0) (2026-03-18)
 
 ### Features
