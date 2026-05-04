@@ -169,7 +169,6 @@ export class RoutesSelecterenComponent extends RockElement {
       this.vervoerstoer.toeTeKennenStops.push({
         id: 0,
         locatie: stop.locatie,
-        volgnummer: 0,
         aanmeldersOpTePikken: [aanmelding],
       });
     }

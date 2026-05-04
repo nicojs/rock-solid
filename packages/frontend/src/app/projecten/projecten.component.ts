@@ -202,7 +202,6 @@ export class ProjectenComponent extends RockElement {
         bestemmingStop: bestemmingLocatie
           ? {
               locatie: bestemmingLocatie,
-              volgnummer: 0,
               aanmeldersOpTePikken: [],
             }
           : undefined,

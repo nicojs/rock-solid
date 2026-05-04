@@ -75,10 +75,9 @@ export class VervoerstoerPrintenComponent extends RockElement {
     datumTerug: string,
     bestemming?: VervoerstoerStop,
   ) {
-    // Stops in de volgorde van heen (van huis naar bestemming)
-    const stopsAsc = [...route.stops].sort(
-      (a, b) => a.volgnummer - b.volgnummer,
-    );
+    // Stops in de volgorde van heen (van huis naar bestemming).
+    // Backend levert stops al in de juiste volgorde.
+    const stopsAsc = route.stops;
     // Stops voor terugweg: van bestemming naar huis (omgekeerde volgorde)
     const stopsDesc = [...stopsAsc].reverse();
 
