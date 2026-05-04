@@ -141,7 +141,6 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
           stop = {
             id: 0,
             locatie,
-            volgnummer: 0,
             aanmeldersOpTePikken: [],
           };
           this.vervoerstoer.toeTeKennenStops.push(stop);
@@ -425,7 +424,6 @@ export class OpstapplaatsenKiezenComponent extends RockElement {
                 ? {
                     id: 0,
                     locatie,
-                    volgnummer: 0,
                     aanmeldersOpTePikken: [],
                   }
                 : undefined;

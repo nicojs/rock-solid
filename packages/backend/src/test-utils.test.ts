@@ -400,6 +400,11 @@ class IntegrationTestingHarness {
     return response.body;
   }
 
+  async getVervoerstoer(id: number): Promise<Vervoerstoer> {
+    const response = await this.get(`/vervoerstoeren/${id}`).expect(200);
+    return response.body;
+  }
+
   async patchAanmelding(
     projectId: number,
     aanmelding: PatchableAanmelding,

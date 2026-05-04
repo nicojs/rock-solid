@@ -370,7 +370,7 @@ export class ProjectAanmeldingenComponent extends LitElement {
       routes: begeleiders.map((chauffeur) => ({ chauffeur, stops: [] })),
       toeTeKennenStops: [],
       bestemmingStop: bestemmingLocatie
-        ? { locatie: bestemmingLocatie, volgnummer: 0, aanmeldersOpTePikken: [] }
+        ? { locatie: bestemmingLocatie, aanmeldersOpTePikken: [] }
         : undefined,
     });
     router.navigate(

@@ -227,7 +227,7 @@ function toCreateInput(
     },
     bestemmingStop: vervoerstoer.bestemmingStop
       ? {
-          create: toStopCreateData(vervoerstoer.bestemmingStop),
+          create: toStopCreateData(vervoerstoer.bestemmingStop, 0),
         }
       : undefined,
   };
@@ -244,15 +244,17 @@ function toUpdateInput(
     },
     toeTeKennenStops: {
       upsert: vervoerstoer.toeTeKennenStops
-        .filter((s) => s.id > 0)
-        .map((stop) => ({
+        .map((stop, index) => ({ stop, index }))
+        .filter(({ stop }) => stop.id > 0)
+        .map(({ stop, index }) => ({
           where: { id: stop.id },
-          update: toStopUpdateData(stop),
-          create: toStopCreateData(stop),
+          update: toStopUpdateData(stop, index),
+          create: toStopCreateData(stop, index),
         })),
       create: vervoerstoer.toeTeKennenStops
-        .filter((s) => !s.id)
-        .map(toStopCreateData),
+        .map((stop, index) => ({ stop, index }))
+        .filter(({ stop }) => !stop.id)
+        .map(({ stop, index }) => toStopCreateData(stop, index)),
     },
     vervoerstoerRoutes: {
       upsert: vervoerstoer.routes
@@ -267,17 +269,17 @@ function toUpdateInput(
     bestemmingStop: vervoerstoer.bestemmingStop
       ? {
           upsert: {
-            create: toStopCreateData(vervoerstoer.bestemmingStop),
-            update: toStopUpdateData(vervoerstoer.bestemmingStop),
+            create: toStopCreateData(vervoerstoer.bestemmingStop, 0),
+            update: toStopUpdateData(vervoerstoer.bestemmingStop, 0),
           },
         }
       : undefined,
   };
 }
 
-function toStopCreateData(stop: VervoerstoerStop) {
+function toStopCreateData(stop: VervoerstoerStop, volgnummer: number) {
   return {
-    volgnummer: stop.volgnummer,
+    volgnummer,
     locatie: { connect: { id: stop.locatie.id } },
     aanmeldersToPickup: {
       connect: stop.aanmeldersOpTePikken.map((a) => ({ id: a.id })),
@@ -287,9 +289,9 @@ function toStopCreateData(stop: VervoerstoerStop) {
   };
 }
 
-function toStopUpdateData(stop: VervoerstoerStop) {
+function toStopUpdateData(stop: VervoerstoerStop, volgnummer: number) {
   return {
-    volgnummer: stop.volgnummer,
+    volgnummer,
     locatie: { connect: { id: stop.locatie.id } },
     aanmeldersToPickup: {
       set: stop.aanmeldersOpTePikken.map((a) => ({ id: a.id })),
@@ -304,7 +306,7 @@ function toRouteCreateData(route: VervoerstoerRoute) {
     chauffeur: { connect: { id: route.chauffeur.id } },
     vertrekadres: toCreateAdresInput(route.vertrekadres),
     stops: {
-      create: route.stops.map(toStopCreateData),
+      create: route.stops.map((stop, index) => toStopCreateData(stop, index)),
     },
     vertrekTijd: route.vertrekTijd ?? null,
     vertrekTijdTerug: route.vertrekTijdTerug ?? null,
@@ -319,15 +321,17 @@ function toRouteUpdateData(route: VervoerstoerRoute) {
     stops: {
       deleteMany: { id: { notIn: existingStopIds } },
       upsert: route.stops
-        .filter((s) => s.id > 0)
-        .map((stop) => ({
+        .map((stop, index) => ({ stop, index }))
+        .filter(({ stop }) => stop.id > 0)
+        .map(({ stop, index }) => ({
           where: { id: stop.id },
-          update: toStopUpdateData(stop),
-          create: toStopCreateData(stop),
+          update: toStopUpdateData(stop, index),
+          create: toStopCreateData(stop, index),
         })),
       create: route.stops
-        .filter((s) => !s.id || s.id === 0)
-        .map(toStopCreateData),
+        .map((stop, index) => ({ stop, index }))
+        .filter(({ stop }) => !stop.id || stop.id === 0)
+        .map(({ stop, index }) => toStopCreateData(stop, index)),
     },
     vertrekTijd: route.vertrekTijd ?? null,
     vertrekTijdTerug: route.vertrekTijdTerug ?? null,
@@ -406,7 +410,6 @@ function toVervoerstoer(dbVervoerstoer: DBVervoerstoerAggregate): Vervoerstoer {
 function toStop(stop: DBStopAggregate) {
   return {
     id: stop.id,
-    volgnummer: stop.volgnummer,
     locatie: toLocatie(stop.locatie),
     aanmeldersOpTePikken: stop.aanmeldersToPickup.map(toAanmelding),
     geplandeAankomst: stop.geplandeAankomst ?? undefined,

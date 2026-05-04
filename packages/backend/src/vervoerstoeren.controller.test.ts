@@ -71,7 +71,6 @@ describe(VervoerstoerenController.name, () => {
         toeTeKennenStops: [],
         bestemmingStop: {
           locatie: bestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [],
@@ -142,7 +141,6 @@ describe(VervoerstoerenController.name, () => {
         bestemmingStop: {
           id: 0,
           locatie: nieuweBestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [
@@ -156,7 +154,6 @@ describe(VervoerstoerenController.name, () => {
             stops: [
               {
                 id: created.routes[0]!.stops[0]!.id,
-                volgnummer: 10,
                 locatie: nieuweLocatie,
                 aanmeldersOpTePikken: [],
               },
@@ -196,7 +193,7 @@ describe(VervoerstoerenController.name, () => {
       const updated = await harness.updateVervoerstoer(created.id, {
         ...created,
         toeTeKennenStops: [
-          { locatie: nieuweLocatie, volgnummer: 0, aanmeldersOpTePikken: [] },
+          { locatie: nieuweLocatie, aanmeldersOpTePikken: [] },
         ],
       });
 
@@ -209,9 +206,7 @@ describe(VervoerstoerenController.name, () => {
         factory.locatie({ naam: 'Te verwijderen', soort: 'opstapplaats' }),
       );
       const base = await arrangeVervoerstoer();
-      base.toeTeKennenStops = [
-        { locatie, volgnummer: 0, aanmeldersOpTePikken: [] },
-      ];
+      base.toeTeKennenStops = [{ locatie, aanmeldersOpTePikken: [] }];
       const created = await harness.createVervoerstoer(base);
       expect(created.toeTeKennenStops).lengthOf(1);
 
@@ -244,12 +239,9 @@ describe(VervoerstoerenController.name, () => {
       );
       const created = await harness.createVervoerstoer({
         projectIds: [project.id],
-        toeTeKennenStops: [
-          { locatie, volgnummer: 0, aanmeldersOpTePikken: [] },
-        ],
+        toeTeKennenStops: [{ locatie, aanmeldersOpTePikken: [] }],
         bestemmingStop: {
           locatie: bestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [{ chauffeur, stops: [] }],
@@ -297,14 +289,35 @@ describe(VervoerstoerenController.name, () => {
       expect(updated.routes).lengthOf(0);
     });
 
+    it('should preserve the order of route stops after reordering', async () => {
+      const created = await arrangeCreatedVervoerstoer();
+      const originalStops = created.routes[0]!.stops;
+      expect(originalStops).lengthOf(2);
+
+      // Reverse the stops order
+      const reversedStops = [...originalStops].reverse();
+      const updated = await harness.updateVervoerstoer(created.id, {
+        ...created,
+        routes: [{ ...created.routes[0]!, stops: reversedStops }],
+      });
+
+      expect(updated.routes[0]!.stops.map((s) => s.locatie.id)).deep.eq(
+        reversedStops.map((s) => s.locatie.id),
+      );
+
+      // Reload from the API to make sure the order persists in the database
+      const reloaded = await harness.getVervoerstoer(created.id);
+      expect(reloaded.routes[0]!.stops.map((s) => s.locatie.id)).deep.eq(
+        reversedStops.map((s) => s.locatie.id),
+      );
+    });
+
     it('should move a stop from toeTeKennen to a route', async () => {
       const locatie = await harness.createLocatie(
         factory.locatie({ naam: 'Verplaatste stop', soort: 'opstapplaats' }),
       );
       const base = await arrangeVervoerstoer();
-      base.toeTeKennenStops = [
-        { locatie, volgnummer: 0, aanmeldersOpTePikken: [] },
-      ];
+      base.toeTeKennenStops = [{ locatie, aanmeldersOpTePikken: [] }];
       const created = await harness.createVervoerstoer(base);
       expect(created.toeTeKennenStops).lengthOf(1);
       expect(created.routes[0]!.stops).lengthOf(2);
@@ -317,7 +330,7 @@ describe(VervoerstoerenController.name, () => {
             ...created.routes[0]!,
             stops: [
               ...created.routes[0]!.stops,
-              { locatie, volgnummer: 3, aanmeldersOpTePikken: [] },
+              { locatie, aanmeldersOpTePikken: [] },
             ],
           },
         ],
@@ -354,13 +367,12 @@ describe(VervoerstoerenController.name, () => {
         toeTeKennenStops: [],
         bestemmingStop: {
           locatie: bestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [
           {
             chauffeur,
-            stops: [{ locatie, volgnummer: 1, aanmeldersOpTePikken: [] }],
+            stops: [{ locatie, aanmeldersOpTePikken: [] }],
           },
         ],
       });
@@ -409,7 +421,6 @@ describe(VervoerstoerenController.name, () => {
         toeTeKennenStops: [],
         bestemmingStop: {
           locatie: bestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [{ chauffeur, stops: [] }],
@@ -455,7 +466,6 @@ describe(VervoerstoerenController.name, () => {
         toeTeKennenStops: [],
         bestemmingStop: {
           locatie: bestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [
@@ -464,7 +474,6 @@ describe(VervoerstoerenController.name, () => {
             stops: [
               {
                 locatie,
-                volgnummer: 1,
                 aanmeldersOpTePikken: [aanmelding],
               },
             ],
@@ -502,7 +511,6 @@ describe(VervoerstoerenController.name, () => {
           bestemmingStop: {
             id: 0,
             locatie: bestemming,
-            volgnummer: 0,
             aanmeldersOpTePikken: [],
           },
         }),
@@ -568,11 +576,10 @@ describe(VervoerstoerenController.name, () => {
       const created = await harness.createVervoerstoer({
         projectIds: [project.id],
         toeTeKennenStops: [
-          { locatie, volgnummer: 0, aanmeldersOpTePikken: [aanmelding] },
+          { locatie, aanmeldersOpTePikken: [aanmelding] },
         ],
         bestemmingStop: {
           locatie: bestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [{ chauffeur, stops: [] }],
@@ -604,7 +611,6 @@ describe(VervoerstoerenController.name, () => {
         toeTeKennenStops: [],
         bestemmingStop: {
           locatie: bestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [
@@ -641,7 +647,6 @@ describe(VervoerstoerenController.name, () => {
         toeTeKennenStops: [],
         bestemmingStop: {
           locatie: bestemming,
-          volgnummer: 0,
           aanmeldersOpTePikken: [],
         },
         routes: [
@@ -652,7 +657,6 @@ describe(VervoerstoerenController.name, () => {
             stops: [
               {
                 locatie,
-                volgnummer: 1,
                 aanmeldersOpTePikken: [aanmelding],
                 geplandeAankomst: now,
                 geplandeAankomstTerug: now,
@@ -690,7 +694,6 @@ async function arrangeVervoerstoer(): Promise<UpsertableVervoerstoer> {
     toeTeKennenStops: [],
     bestemmingStop: {
       locatie: bestemming,
-      volgnummer: 0,
       aanmeldersOpTePikken: [],
     },
     routes: [
@@ -701,8 +704,8 @@ async function arrangeVervoerstoer(): Promise<UpsertableVervoerstoer> {
           id: 0,
         },
         stops: [
-          { volgnummer: 1, locatie: stopA, aanmeldersOpTePikken: [] },
-          { volgnummer: 2, locatie: stopB, aanmeldersOpTePikken: [] },
+          { locatie: stopA, aanmeldersOpTePikken: [] },
+          { locatie: stopB, aanmeldersOpTePikken: [] },
         ],
       },
     ],

@@ -47,7 +47,6 @@ export type UpsertableVervoerstoerRoute = Omit<
 export interface VervoerstoerStop {
   id: number;
   locatie: Locatie;
-  volgnummer: number;
   aanmeldersOpTePikken: Aanmelding[];
   geplandeAankomst?: Date;
   geplandeAankomstTerug?: Date;
